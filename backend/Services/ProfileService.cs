@@ -64,6 +64,7 @@ namespace PetHaven.Services
                 // dto.ClinicName = user.Vet.ClinicName;
                 // dto.ClinicAddress = user.Vet.ClinicAddress;
                 dto.ExperienceLevel = user.Vet.ExperienceYears.ToString();
+                dto.CertificateUrl = user.Vet.CertificateUrl;
             }
 
             return dto;
@@ -158,6 +159,8 @@ namespace PetHaven.Services
             user.Vet.Specialization = dto.Specialization;
             user.Vet.ExperienceYears = dto.ExperienceYears;
             user.Vet.LicenseNumber = dto.LicenseNumber;
+            if (!string.IsNullOrWhiteSpace(dto.CertificateUrl))
+                user.Vet.CertificateUrl = dto.CertificateUrl;
             user.Vet.Location_Lat = dto.Location_Lat;
             user.Vet.Location_Lng = dto.Location_Lng;
 
