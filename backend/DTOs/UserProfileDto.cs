@@ -32,6 +32,7 @@
         public string? Specialization { get; set; }
         public int? ExperienceYears { get; set; }
         public string? LicenseNumber { get; set; }
+        public string? CertificateUrl { get; set; }
         public bool? IsVerified { get; set; }
     }
 }

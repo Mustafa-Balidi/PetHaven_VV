@@ -35,6 +35,9 @@ namespace PetHaven.Models
         [MaxLength(50)]
         public string? LicenseNumber { get; set; }
 
+        [MaxLength(1000)]
+        public string? CertificateUrl { get; set; }
+
         public decimal? Location_Lat { get; set; }  // 👈 تغير من Latitude
         public decimal? Location_Lng { get; set; }  // 👈 تغير من Longitude
 

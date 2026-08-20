@@ -135,6 +135,7 @@ namespace PetHaven.Services
                 Email = vet.Email,
                 ExperienceYears = vet.ExperienceYears,
                 LicenseNumber = vet.LicenseNumber,
+                CertificateUrl = vet.CertificateUrl,
                 Location_Lat = vet.Location_Lat,
                 Location_Lng = vet.Location_Lng,
                 IsVerified = vet.IsVerified,

@@ -11,6 +11,7 @@ namespace PetHaven.DTOs
         public string? Email { get; set; }
         public int? ExperienceYears { get; set; }
         public string? LicenseNumber { get; set; }
+        public string? CertificateUrl { get; set; }
         public decimal? Location_Lat { get; set; }
         public decimal? Location_Lng { get; set; }
         public bool IsVerified { get; set; }
