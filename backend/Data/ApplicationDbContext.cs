@@ -10,7 +10,7 @@ namespace PetHaven.Data
         {
         }
 
-        public double? CalculateDistance(double? lat1, double? lng1, double? lat2, double? lng2)
+        public virtual double? CalculateDistance(double? lat1, double? lng1, double? lat2, double? lng2)
                 => throw new NotSupportedException(); // لا يتم تنفيذها هنا، بل تترجم في قاعدة البيانات
 
         // =============================================
