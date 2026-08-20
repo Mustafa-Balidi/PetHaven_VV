@@ -1,0 +1,251 @@
+/* ==========================================================================
+   Veterinarian Account Pending Approval — extracted from Stitch screen
+   a61b7afff140491ea6275d5c97ce86da ("Account Pending Approval - Pet Haven")
+   All selectors are scoped under the vet-pending-* prefix so they cannot
+   leak into adopter, adoption center, admin, store, or public pages.
+   UI-only screen: no backend polling, no approval APIs.
+   ========================================================================== */
+
+.vet-pending-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f9fb;
+  color: #191c1e;
+  overflow: hidden;
+}
+
+.vet-pending-page__glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.vet-pending-page__glow-blob {
+  position: absolute;
+  width: 45%;
+  height: 45%;
+  border-radius: 9999px;
+  filter: blur(64px);
+  mix-blend-mode: multiply;
+}
+
+.vet-pending-page__glow-blob--top {
+  top: -10%;
+  inset-inline-start: -10%;
+  background: rgba(107, 216, 203, 0.2);
+}
+
+.vet-pending-page__glow-blob--bottom {
+  bottom: -10%;
+  inset-inline-end: -10%;
+  width: 55%;
+  height: 55%;
+  background: rgba(225, 224, 255, 0.2);
+}
+
+.vet-pending-main {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 96px 16px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .vet-pending-main {
+    padding-inline: 40px;
+  }
+}
+
+.vet-pending-card {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  padding: 32px 24px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .vet-pending-card {
+    padding: 48px;
+  }
+}
+
+.vet-pending-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.vet-pending-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.vet-pending-icon__circle {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 9999px;
+  background: #008378;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vet-pending-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.vet-pending-icon__circle .material-symbols-outlined {
+  color: #ffffff;
+  font-size: 48px !important;
+}
+
+.vet-pending-icon__badge {
+  position: absolute;
+  bottom: -8px;
+  inset-inline-end: -8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: #f59e0b;
+  border: 4px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vet-pending-icon__badge .material-symbols-outlined {
+  color: #2a1700;
+  font-size: 14px !important;
+}
+
+@keyframes vet-pending-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
+.vet-pending-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #00685f;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .vet-pending-title {
+    font-size: 32px;
+  }
+}
+
+.vet-pending-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.vet-pending-message {
+  font-size: 18px;
+  color: #3d4947;
+}
+
+.vet-pending-note {
+  background: #f2f4f6;
+  border-inline-start: 4px solid #00685f;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  color: #191c1e;
+  text-align: start;
+}
+
+.vet-pending-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding-top: 32px;
+  border-top: 1px solid #f1f5f9;
+}
+
+@media (min-width: 640px) {
+  .vet-pending-actions {
+    flex-direction: row;
+  }
+}
+
+.vet-pending-btn {
+  width: 100%;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  text-decoration: none;
+}
+
+@media (min-width: 640px) {
+  .vet-pending-btn {
+    width: auto;
+  }
+}
+
+.vet-pending-btn--secondary {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #00685f;
+}
+
+.vet-pending-btn--secondary:hover {
+  background: #f2f4f6;
+}
+
+.vet-pending-btn--secondary .material-symbols-outlined {
+  font-size: 18px !important;
+}
+
+.vet-pending-btn--primary {
+  border: none;
+  background: #00685f;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.vet-pending-btn--primary:hover {
+  background: #008378;
+  transform: translateY(-1px);
+}
+
+.vet-pending-application-id {
+  margin-top: 32px;
+  padding-top: 16px;
+  font-size: 12px;
+  color: #6d7a77;
+}
+
+.vet-pending-application-id__value {
+  font-family: monospace;
+}

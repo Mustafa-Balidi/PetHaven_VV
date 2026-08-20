@@ -1,0 +1,727 @@
+/* ==========================================================================
+   Veterinarian Patients Directory — extracted from Stitch screen
+   8dbad80a2c6d45d1b9fbad31386aafa4 ("Patients Directory - Veterinarian Dashboard - Pet Haven")
+   All selectors are scoped under the vet-patients-* prefix so they cannot
+   leak into adopter, adoption center, admin, public, dashboard, profile, or
+   reviews pages.
+   ========================================================================== */
+
+.vet-patients-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f9fb;
+  color: #191c1e;
+}
+
+.vet-patients-main {
+  flex: 1 1 auto;
+  max-width: 1280px;
+  margin-inline: auto;
+  width: 100%;
+  padding: 32px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .vet-patients-main {
+    padding-inline: 40px;
+  }
+}
+
+.vet-patients-heading {
+  border-bottom: 2px solid #e6e8ea;
+  padding-bottom: 16px;
+}
+
+.vet-patients-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #191c1e;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+  .vet-patients-title {
+    font-size: 32px;
+  }
+}
+
+.vet-patients-subtitle {
+  font-size: 16px;
+  color: #3d4947;
+}
+
+.vet-patients-empty {
+  padding: 24px 0;
+  text-align: center;
+  color: #6d7a77;
+  font-size: 14px;
+}
+
+.vet-patients-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #ffdad6;
+  color: #93000a;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   Summary cards
+   ========================================================================== */
+
+.vet-patients-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .vet-patients-summary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.vet-patients-summary__card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.vet-patients-summary__card:hover {
+  transform: translateY(-2px);
+}
+
+.vet-patients-summary__icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vet-patients-summary__icon--primary {
+  background: #89f5e7;
+  color: #00201d;
+}
+
+.vet-patients-summary__icon--yellow {
+  background: rgba(245, 158, 11, 0.2);
+  color: #855300;
+}
+
+.vet-patients-summary__icon--tertiary {
+  background: #e1e0ff;
+  color: #2f2ebe;
+}
+
+.vet-patients-summary__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3d4947;
+}
+
+.vet-patients-summary__value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #191c1e;
+}
+
+/* ==========================================================================
+   Toolbar — species chips + search + status filter
+   ========================================================================== */
+
+.vet-patients-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+  .vet-patients-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.vet-patients-toolbar__chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+  .vet-patients-toolbar__chips {
+    padding-bottom: 0;
+  }
+}
+
+.vet-patients-chip {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #bcc9c6;
+  background: #ffffff;
+  color: #3d4947;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.vet-patients-chip:hover {
+  background: #f2f4f6;
+}
+
+.vet-patients-chip--active {
+  background: #f2f4f6;
+  color: #191c1e;
+  border-color: #6d7a77;
+}
+
+.vet-patients-toolbar__controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .vet-patients-toolbar__controls {
+    flex-wrap: nowrap;
+  }
+}
+
+.vet-patients-search {
+  position: relative;
+  flex: 1 1 220px;
+}
+
+.vet-patients-search__icon {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6d7a77;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.vet-patients-search__input {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  padding-inline-start: 40px;
+  border: 1px solid #bcc9c6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #191c1e;
+  background: #ffffff;
+}
+
+.vet-patients-search__input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 131, 120, 0.3);
+}
+
+.vet-patients-select {
+  position: relative;
+  flex: 1 1 200px;
+}
+
+.vet-patients-select__icon {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6d7a77;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.vet-patients-select__input {
+  width: 100%;
+  padding: 10px 12px;
+  padding-inline-start: 40px;
+  border: 1px solid #bcc9c6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #191c1e;
+  background: #ffffff;
+  appearance: none;
+  cursor: pointer;
+}
+
+.vet-patients-select__input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 131, 120, 0.3);
+}
+
+/* ==========================================================================
+   Patient cards grid
+   ========================================================================== */
+
+.vet-patients-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .vet-patients-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .vet-patients-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.vet-patients-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.vet-patients-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.vet-patients-card--followup {
+  border-inline-start: 4px solid #f59e0b;
+}
+
+.vet-patients-card--vaccine {
+  border-inline-start: 4px solid #4648d4;
+}
+
+.vet-patients-card__body {
+  padding: 24px;
+  flex: 1 1 auto;
+}
+
+.vet-patients-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.vet-patients-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.vet-patients-card__avatar {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #eceef0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6d7a77;
+  font-size: 28px;
+}
+
+.vet-patients-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vet-patients-card__name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #191c1e;
+}
+
+.vet-patients-card__meta {
+  font-size: 14px;
+  color: #3d4947;
+}
+
+.vet-patients-card__badge {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vet-patients-card__badge--healthy {
+  background: #dcfce7;
+  color: #22c55e;
+  border: 1px solid #bbf7d0;
+}
+
+.vet-patients-card__badge--followup {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.vet-patients-card__badge--vaccine {
+  background: #dbeafe;
+  color: #4648d4;
+  border: 1px solid #bfdbfe;
+}
+
+.vet-patients-card__badge--default {
+  background: #eceef0;
+  color: #3d4947;
+  border: 1px solid #bcc9c6;
+}
+
+.vet-patients-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.vet-patients-card__stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.vet-patients-card__stat dt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #3d4947;
+}
+
+.vet-patients-card__stat dd {
+  font-weight: 500;
+  color: #191c1e;
+}
+
+.vet-patients-card__stat-icon {
+  font-size: 16px !important;
+}
+
+.vet-patients-card__actions {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #f1f5f9;
+  background: #f7f9fb;
+}
+
+.vet-patients-card__action {
+  flex: 1 1 0;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #bcc9c6;
+  background: #ffffff;
+  color: #191c1e;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.vet-patients-card__action:hover {
+  background: #f2f4f6;
+}
+
+/* ==========================================================================
+   Pagination — mirrors vet-reviews-pagination
+   ========================================================================== */
+
+.vet-patients-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 24px;
+}
+
+.vet-patients-pagination__nav,
+.vet-patients-pagination__page {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid #bcc9c6;
+  background: #ffffff;
+  color: #3d4947;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vet-patients-pagination__nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.vet-patients-pagination__page--active {
+  background: #00685f;
+  border-color: #00685f;
+  color: #ffffff;
+}
+
+.vet-patients-pagination__ellipsis {
+  padding: 0 4px;
+  color: #6d7a77;
+}
+
+/* ==========================================================================
+   Records modal
+   ========================================================================== */
+
+.vet-patients-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 28, 30, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+.vet-patients-modal {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.vet-patients-modal__close {
+  position: absolute;
+  inset-inline-end: 16px;
+  top: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: none;
+  background: #eceef0;
+  color: #3d4947;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vet-patients-modal__close:hover {
+  background: #e6e8ea;
+}
+
+.vet-patients-modal__tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0 0 24px;
+  margin-inline-end: 40px;
+  padding: 4px;
+  border-radius: 10px;
+  background: #f2f4f6;
+}
+
+.vet-patients-modal__tab {
+  min-width: 0;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6d7a77;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vet-patients-modal__tab:hover {
+  color: #191c1e;
+}
+
+.vet-patients-modal__tab:focus-visible {
+  outline: 2px solid #008378;
+  outline-offset: 2px;
+}
+
+.vet-patients-modal__tab--active {
+  background: #ffffff;
+  color: #00685f;
+  box-shadow: 0 1px 3px rgba(25, 28, 30, 0.12);
+}
+
+.vet-patients-modal__head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-inline-end: 32px;
+}
+
+.vet-patients-modal__avatar {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #eceef0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6d7a77;
+  font-size: 28px;
+}
+
+.vet-patients-modal__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vet-patients-modal__name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #191c1e;
+}
+
+.vet-patients-modal__meta {
+  font-size: 14px;
+  color: #3d4947;
+}
+
+.vet-patients-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 16px;
+  background: #f7f9fb;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.vet-patients-modal__grid dt {
+  font-size: 12px;
+  color: #6d7a77;
+  margin-bottom: 2px;
+}
+
+.vet-patients-modal__grid dd {
+  font-size: 14px;
+  font-weight: 600;
+  color: #191c1e;
+}
+
+.vet-patients-modal__section {
+  margin-top: 0;
+}
+
+.vet-patients-modal__section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #191c1e;
+  margin-bottom: 12px;
+}
+
+.vet-patients-modal__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vet-patients-modal__timeline li {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+}
+
+.vet-patients-modal__timeline-date {
+  flex-shrink: 0;
+  width: 84px;
+  font-size: 12px;
+  color: #6d7a77;
+}
+
+.vet-patients-modal__timeline-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #191c1e;
+}
+
+.vet-patients-modal__timeline-desc {
+  font-size: 13px;
+  color: #3d4947;
+  margin-top: 2px;
+}
+
+.vet-patients-modal__timeline-doctor {
+  font-size: 12px;
+  color: #6d7a77;
+  margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+  .vet-patients-modal {
+    padding: 24px 16px;
+  }
+
+  .vet-patients-modal__tabs {
+    margin-inline-end: 40px;
+  }
+
+  .vet-patients-modal__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vet-patients-modal__timeline li {
+    flex-direction: column;
+  }
+
+  .vet-patients-modal__timeline-date {
+    width: auto;
+  }
+}

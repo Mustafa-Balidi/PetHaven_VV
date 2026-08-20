@@ -1,0 +1,618 @@
+/* ==========================================================================
+   PetProfile.css
+   ملف CSS واحد لكل صفحة بروفايل الحيوان الأليف (Daisy - Pet Haven)
+   ========================================================================== */
+
+.pet-profile-page {
+  --pp-primary: #00685f;
+  --pp-primary-soft: rgba(0, 104, 95, 0.05);
+  --pp-primary-soft-hover: rgba(0, 104, 95, 0.1);
+  --pp-primary-border: rgba(0, 104, 95, 0.2);
+
+  --pp-surface: #f7f9fb;
+  --pp-surface-white: #ffffff;
+  --pp-border-slate: #f1f5f9;
+
+  --pp-on-surface: #191c1e;
+  --pp-on-surface-variant: #3d4947;
+
+  --pp-green: #22c55e;
+  --pp-green-bg: #f0fdf4;
+  --pp-green-border: #dcfce7;
+
+  --pp-warning: #f59e0b;
+
+  --pp-radius-lg: 1rem;
+  --pp-radius-xl: 1.25rem;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--pp-surface);
+  color: var(--pp-on-surface);
+  font-family: "Inter", sans-serif;
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+.pet-profile-page__main {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .pet-profile-page__main {
+    flex-direction: row;
+    padding: 1.5rem 2.5rem 3rem;
+  }
+}
+
+.pet-profile-page__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  border: none;
+  background: transparent;
+  color: var(--pp-on-surface-variant);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.pet-profile-page__back-btn:hover {
+  color: var(--pp-primary);
+}
+
+.pet-profile-page__left {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .pet-profile-page__left {
+    width: 66.6667%;
+  }
+}
+
+.pet-profile-page__sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .pet-profile-page__sidebar {
+    width: 33.3333%;
+  }
+}
+
+.pet-profile-page__empty-state {
+  background: var(--pp-surface-white);
+  border: 1px solid var(--pp-border-slate);
+  border-radius: var(--pp-radius-xl);
+  padding: 2rem;
+  text-align: center;
+  color: var(--pp-on-surface-variant);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================================================
+   PetHeroCard
+   ========================================================================== */
+
+.pet-hero-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--pp-surface-white);
+  border: 1px solid var(--pp-border-slate);
+  border-radius: var(--pp-radius-xl);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .pet-hero-card {
+    flex-direction: row;
+    padding: 2rem;
+  }
+}
+
+.pet-hero-card__glow {
+  position: absolute;
+  top: -6rem;
+  inset-inline-end: -6rem;
+  width: 16rem;
+  height: 16rem;
+  background: var(--pp-primary-soft);
+  border-radius: 9999px;
+  filter: blur(64px);
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
+
+.pet-hero-card:hover .pet-hero-card__glow {
+  background: var(--pp-primary-soft-hover);
+}
+
+.pet-hero-card__image-wrap {
+  position: relative;
+  z-index: 10;
+  width: 8rem;
+  height: 8rem;
+  flex-shrink: 0;
+  border-radius: var(--pp-radius-xl);
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  border: 4px solid var(--pp-surface-white);
+}
+
+@media (min-width: 768px) {
+  .pet-hero-card__image-wrap {
+    width: 12rem;
+    height: 12rem;
+  }
+}
+
+.pet-hero-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.pet-hero-card__image:hover {
+  transform: scale(1.05);
+}
+
+.pet-hero-card__info {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.pet-hero-card__top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.pet-hero-card__name {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--pp-on-surface);
+  margin: 0 0 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .pet-hero-card__name {
+    font-size: 48px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+}
+
+.pet-hero-card__breed {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--pp-on-surface-variant);
+  margin: 0 0 1rem;
+}
+
+.pet-hero-card__edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--pp-surface-white);
+  border: 1px solid var(--pp-border-slate);
+  border-radius: 0.5rem;
+  color: var(--pp-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.pet-hero-card__edit-btn:hover {
+  background: var(--pp-surface);
+}
+
+.pet-hero-card__edit-btn:active {
+  transform: translateY(-2px);
+}
+
+.pet-hero-card__edit-label {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .pet-hero-card__edit-label {
+    display: inline;
+  }
+}
+
+.pet-hero-card__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .pet-hero-card__stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.pet-hero-card__stat {
+  background: var(--pp-surface);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--pp-border-slate);
+}
+
+.pet-hero-card__stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pp-on-surface-variant);
+  margin: 0 0 0.25rem;
+}
+
+.pet-hero-card__stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--pp-on-surface);
+  margin: 0;
+}
+
+.pet-hero-card__stat--health {
+  grid-column: span 2 / span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .pet-hero-card__stat--health {
+    grid-column: span 1 / span 1;
+  }
+}
+
+.pet-hero-card__health-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: center;
+  background: var(--pp-green-bg);
+  color: var(--pp-green);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--pp-green-border);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   ProfileTabs
+   ========================================================================== */
+
+.profile-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--pp-border-slate);
+  gap: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.profile-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.profile-tabs__btn {
+  padding-bottom: 0.75rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--pp-on-surface-variant);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.profile-tabs__btn:hover {
+  color: var(--pp-primary);
+}
+
+.profile-tabs__btn--active {
+  border-bottom-color: var(--pp-primary);
+  color: var(--pp-primary);
+}
+
+/* ==========================================================================
+   MedicalTimeline
+   ========================================================================== */
+
+.medical-timeline {
+  position: relative;
+  background: var(--pp-surface-white);
+  border: 1px solid var(--pp-border-slate);
+  border-radius: var(--pp-radius-xl);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+}
+
+.medical-timeline__title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--pp-on-surface);
+  margin: 0 0 1.5rem;
+}
+
+.medical-timeline__list {
+  position: relative;
+  border-inline-start: 1px solid var(--pp-border-slate);
+  margin-inline-start: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 1rem;
+}
+
+.medical-timeline__item {
+  position: relative;
+  padding-inline-start: 2rem;
+}
+
+.medical-timeline__dot {
+  position: absolute;
+  inset-inline-start: -5px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  background: var(--pp-primary);
+  border-radius: 9999px;
+  box-shadow: 0 0 0 4px var(--pp-surface-white);
+}
+
+.medical-timeline__dot--warning {
+  background: var(--pp-warning);
+}
+
+.medical-timeline__card {
+  background: var(--pp-surface);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--pp-border-slate);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.medical-timeline__card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+.medical-timeline__card--warning {
+  border-inline-start: 4px solid var(--pp-warning);
+}
+
+.medical-timeline__card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.medical-timeline__card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pp-on-surface);
+  margin: 0;
+}
+
+.medical-timeline__card-date {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pp-on-surface-variant);
+  white-space: nowrap;
+}
+
+.medical-timeline__card-desc {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--pp-on-surface-variant);
+  margin: 0;
+}
+
+.medical-timeline__vet {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--pp-primary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   UpcomingAppointments
+   ========================================================================== */
+
+.upcoming-appointments {
+  background: var(--pp-surface-white);
+  border: 1px solid var(--pp-border-slate);
+  border-radius: var(--pp-radius-xl);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+}
+
+.upcoming-appointments__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.upcoming-appointments__title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--pp-on-surface);
+  margin: 0;
+}
+
+.upcoming-appointments__add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--pp-primary);
+  padding: 0.375rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.upcoming-appointments__add-btn:hover {
+  background: var(--pp-surface);
+}
+
+.upcoming-appointments__card {
+  background: var(--pp-primary-soft);
+  border: 1px solid var(--pp-primary-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.upcoming-appointments__card:hover {
+  transform: translateY(-4px);
+}
+
+.upcoming-appointments__date-box {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  background: var(--pp-surface-white);
+  border: 1px solid var(--pp-border-slate);
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--pp-primary);
+}
+
+.upcoming-appointments__date-month {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.upcoming-appointments__date-day {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.upcoming-appointments__appt-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pp-on-surface);
+  margin: 0 0 0.25rem;
+}
+
+.upcoming-appointments__appt-meta {
+  font-size: 14px;
+  color: var(--pp-on-surface-variant);
+  margin: 0 0 0.5rem;
+}
+
+.upcoming-appointments__vet {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--pp-on-surface-variant);
+}
+
+.upcoming-appointments__vet-avatar {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.upcoming-appointments__vet span {
+  font-size: 12px;
+  font-weight: 500;
+}
+.pet-profile-page__back-btn svg {
+  transition: transform 0.2s ease;
+}
+
+[dir="rtl"] .pet-profile-page__back-btn svg {
+  transform: rotate(180deg);
+}
+
+.pet-profile-page__left--full {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .pet-profile-page__left.pet-profile-page__left--full { width: 100%; }
+}
+
+.pet-profile-page__empty-state--error { color: #ba1a1a; }
+
+.pet-profile-page__empty-state button {
+  margin-top: 1rem;
+  padding: 0.625rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--pp-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pet-hero-card__description {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--pp-border-slate);
+}
+
+.pet-hero-card__description h2 { margin: 0 0 0.5rem; font-size: 16px; }
+.pet-hero-card__description p { margin: 0; color: var(--pp-on-surface-variant); line-height: 1.6; }

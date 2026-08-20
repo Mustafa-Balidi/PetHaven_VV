@@ -1,0 +1,472 @@
+/* ==========================================================================
+   Veterinarian Clinic Calendar — extracted from Stitch screen
+   e8ae4bd3a51f489bb1148ef9a4b39fa9 ("Clinic Calendar - Veterinarian Dashboard - Pet Haven")
+   All selectors are scoped under the vet-calendar-* prefix so they cannot
+   leak into adopter, adoption center, admin, public, dashboard, profile,
+   reviews, patients, or appointments pages. The one intentional exception is
+   the ".vet-calendar-event-modal .vet-appointments-card" override below,
+   which only fires when that card is nested inside this page's own modal.
+   ========================================================================== */
+
+.vet-calendar-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f9fb;
+  color: #191c1e;
+}
+
+.vet-calendar-main {
+  flex: 1 1 auto;
+  max-width: 1280px;
+  margin-inline: auto;
+  width: 100%;
+  padding: 32px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .vet-calendar-main {
+    padding-inline: 40px;
+  }
+}
+
+.vet-calendar-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-bottom: 2px solid #e6e8ea;
+  padding-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .vet-calendar-heading {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+}
+
+.vet-calendar-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #191c1e;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+  .vet-calendar-title {
+    font-size: 32px;
+  }
+}
+
+.vet-calendar-subtitle {
+  font-size: 16px;
+  color: #3d4947;
+}
+
+.vet-calendar-empty {
+  padding: 48px 0;
+  text-align: center;
+  color: #6d7a77;
+  font-size: 14px;
+}
+
+/* View toggle (List View / Calendar) — mirrors vet-appointments-view-toggle */
+
+.vet-calendar-view-toggle {
+  display: flex;
+  padding: 4px;
+  background: #f2f4f6;
+  border: 1px solid #e0e3e5;
+  border-radius: 8px;
+  gap: 2px;
+  align-self: flex-start;
+}
+
+.vet-calendar-view-toggle__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #3d4947;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.vet-calendar-view-toggle__btn:hover {
+  background: #e6e8ea;
+}
+
+.vet-calendar-view-toggle__btn--active {
+  background: #ffffff;
+  color: #008378;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  cursor: default;
+}
+
+.vet-calendar-view-toggle__btn--active:hover {
+  background: #ffffff;
+}
+
+.vet-calendar-view-toggle__icon {
+  font-size: 18px !important;
+}
+
+/* Panel wrapping toolbar + grid */
+
+.vet-calendar-panel {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Toolbar
+   ========================================================================== */
+
+.vet-calendar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f7f9fb;
+}
+
+.vet-calendar-toolbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vet-calendar-toolbar__today {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #bcc9c6;
+  background: #ffffff;
+  color: #3d4947;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vet-calendar-toolbar__today:hover:not(:disabled) {
+  background: #f2f4f6;
+}
+
+.vet-calendar-toolbar__today:disabled {
+  color: #bcc9c6;
+  cursor: default;
+}
+
+.vet-calendar-toolbar__arrows {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.vet-calendar-toolbar__arrows button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #3d4947;
+  cursor: pointer;
+}
+
+.vet-calendar-toolbar__arrows button:hover {
+  background: #e6e8ea;
+}
+
+.vet-calendar-toolbar__title {
+  margin-inline-start: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #191c1e;
+}
+
+.vet-calendar-toolbar__filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #3d4947;
+}
+
+.vet-calendar-toolbar__filter select {
+  border: 1px solid #bcc9c6;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #191c1e;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Grid
+   ========================================================================== */
+
+.vet-calendar-grid {
+  overflow-x: auto;
+}
+
+.vet-calendar-grid__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.vet-calendar-grid__weekday {
+  padding: 8px 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3d4947;
+}
+
+.vet-calendar-grid__cells {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+}
+
+.vet-calendar-day {
+  min-height: 108px;
+  padding: 8px;
+  border-inline-end: 1px solid #f1f5f9;
+  border-block-end: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vet-calendar-day--outside {
+  background: #fafbfc;
+}
+
+.vet-calendar-day--outside .vet-calendar-day__number {
+  color: #bcc9c6;
+}
+
+.vet-calendar-day--today {
+  background: rgba(0, 131, 120, 0.06);
+}
+
+.vet-calendar-day__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vet-calendar-day__number {
+  font-size: 12px;
+  font-weight: 500;
+  color: #3d4947;
+}
+
+.vet-calendar-day__number--today {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #00685f;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.vet-calendar-day__spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  border: 2px solid #bcc9c6;
+  border-top-color: #00685f;
+  animation: vet-calendar-spin 0.7s linear infinite;
+}
+
+@keyframes vet-calendar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vet-calendar-day__error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #ba1a1a;
+}
+
+.vet-calendar-day__error span {
+  font-size: 14px !important;
+}
+
+.vet-calendar-day__events {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vet-calendar-event {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: none;
+  border-inline-start: 2px solid transparent;
+  background: transparent;
+  font-size: 11px;
+  text-align: start;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.vet-calendar-event__time {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #191c1e;
+}
+
+.vet-calendar-event__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #191c1e;
+}
+
+.vet-calendar-event--pending {
+  background: rgba(254, 166, 25, 0.15);
+  border-inline-start-color: #fea619;
+}
+
+.vet-calendar-event--confirmed {
+  background: rgba(34, 197, 94, 0.15);
+  border-inline-start-color: #22c55e;
+}
+
+.vet-calendar-event--completed {
+  background: #e0e3e5;
+  border-inline-start-color: #9aa3a1;
+  opacity: 0.75;
+}
+
+.vet-calendar-event--cancelled {
+  background: rgba(239, 68, 68, 0.12);
+  border-inline-start-color: #ef4444;
+  text-decoration: line-through;
+}
+
+.vet-calendar-day__more {
+  align-self: flex-start;
+  padding: 2px 4px;
+  border: none;
+  background: transparent;
+  color: #00685f;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vet-calendar-day__more:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Event details modal — reuses VetAppointmentCard as-is
+   ========================================================================== */
+
+.vet-calendar-event-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 28, 30, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+.vet-calendar-event-modal {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.vet-calendar-event-modal__close {
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: none;
+  background: #eceef0;
+  color: #3d4947;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.vet-calendar-event-modal__close:hover {
+  background: #e6e8ea;
+}
+
+/* The reused card is designed for a wide list row; stack it for the modal. */
+.vet-calendar-event-modal .vet-appointments-card {
+  flex-direction: column;
+  align-items: stretch;
+  border: none;
+  padding: 32px 8px 8px;
+}
+
+.vet-calendar-event-modal .vet-appointments-card__side {
+  margin-inline-start: 0;
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .vet-calendar-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vet-calendar-toolbar__nav {
+    justify-content: space-between;
+  }
+}

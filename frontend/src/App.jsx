@@ -1,0 +1,207 @@
+// React & Router
+import { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { isAuthenticated } from "./api/authApi.js";
+import { onSessionExpired } from "./utils/sessionEvents.js";
+
+// CSS imports (keep ALL existing CSS imports)
+import "./Styling/AdminPages.css";
+import "./Styling/CenterPages.css";
+
+// Pages — Public
+import PublicPage from "./Pages/public/PublicPage.jsx";
+
+// Pages — Pet Adopter
+import PetHavenShopPage from "./Pages/PetHavenShopPage.jsx";
+import PetHavenDashboardPage from "./Pages/PetHavenDashboardPage.jsx";
+import AdopterProfile from "./Pages/AdopterProfile.jsx";
+import PetHavenHealthAssistant from "./Pages/PetHavenHealthAssistant.jsx";
+import PetProfilePage from "./Pages/PetProfilePage.jsx";
+import AdoptionHubPage from "./Pages/AdoptionHubPage.jsx";
+import ApplicationDetailsPage from "./Pages/ApplicationDetailsPage.jsx";
+import PetHavenProductPage from "./Pages/PetHavenProductPage.jsx";
+import ShoppingCart from "./Pages/ShoppingCart.jsx";
+import CheckoutPage from "./Pages/CheckoutPage.jsx";
+import OrderConfirmed from "./Pages/OrderConfirmed.jsx";
+import OrderDetailsModal from "./Pages/OrderDetailsModal.jsx";
+import {
+  BookAppointmentPage,
+  ConfirmAppointmentPage,
+  MyVisitsPage,
+  VetHubPage,
+} from "./Pages/VetPages.jsx";
+
+// Pages — Veterinarian
+import VetDashboard from "./Pages/vet/VetDashboard.jsx";
+import VetProfile from "./Pages/vet/VetProfile.jsx";
+import VetReviews from "./Pages/vet/VetReviews.jsx";
+import VetPatients from "./Pages/vet/VetPatients.jsx";
+import VetAppointments from "./Pages/vet/VetAppointments.jsx";
+import VetCalendar from "./Pages/vet/VetCalendar.jsx";
+import VetProfessionalVerification from "./Pages/vet/VetProfessionalVerification.jsx";
+import VetPendingApproval from "./Pages/vet/VetPendingApproval.jsx";
+
+// Pages — Adoption Center
+import CenterDashboard from "./Pages/adoptionCenter/CenterDashboard.jsx";
+import AdoptionProfile from "./Pages/adoptionCenter/AdoptionProfile.jsx";
+import CenterReviews from "./Pages/adoptionCenter/CenterReviews.jsx";
+import Inventory from "./Pages/adoptionCenter/Inventory.jsx";
+import Reports from "./Pages/adoptionCenter/Reports.jsx";
+import AdoptionRequests from "./Pages/adoptionCenter/AdoptionRequests.jsx";
+import CenterProvider from "./context/CenterContext.jsx";
+
+// Pages — Admin
+import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
+import AdminClinicApprovals from "./Pages/admin/AdminClinicApprovals.jsx";
+import AdminUsers from "./Pages/admin/AdminUsers.jsx";
+import AdminProvider from "./context/AdminContext.jsx";
+// pages _ vet
+const getRoleRedirect = (role) => {
+  switch (role) {
+    case "AdoptionCenter": return "/center/dashboard";
+    case "Admin": return "/admin";
+    case "Adopter": return "/adopter/dashboard";
+    case "Vet": return "/vet/dashboard";
+    default: return "/";
+  }
+};
+
+function ProtectedRoute({ allowedRoles, element }) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
+  let role;
+  try {
+    role = JSON.parse(localStorage.getItem("user"))?.role;
+  } catch {
+    role = undefined;
+  }
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to={getRoleRedirect(role)} replace />;
+  }
+  return element;
+}
+
+function SessionExpiryHandler() {
+  const navigate = useNavigate();
+
+  useEffect(
+    () => onSessionExpired(() => navigate("/", { replace: true })),
+    [navigate]
+  );
+
+  return null;
+}
+
+function OrderConfirmedRoute() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const orderId = searchParams.get("orderId");
+  const orderDetailsPath = orderId
+    ? `/adopter/order-details?orderId=${encodeURIComponent(orderId)}`
+    : "/adopter/order-details";
+
+  return (
+    <OrderConfirmed
+      orderNumber={orderId}
+      onContinueShopping={() => navigate("/adopter/store")}
+      onViewOrderHistory={() => navigate(orderDetailsPath)}
+    />
+  );
+}
+
+function OrderDetailsRoute() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  return (
+    <OrderDetailsModal
+      orderId={searchParams.get("orderId")}
+      onClose={() => navigate("/adopter/store")}
+    />
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <SessionExpiryHandler />
+      <Routes>
+        {/* PUBLIC */}
+        <Route path="/" element={<PublicPage />} />
+
+        {/* PET ADOPTER */}
+        <Route path="/adopter/dashboard" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetHavenDashboardPage />} />} />
+        <Route path="/adopter/profile" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<AdopterProfile />} />} />
+        <Route path="/adopter/store" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetHavenShopPage />} />} />
+        <Route path="/adopter/product" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetHavenProductPage />} />} />
+        <Route path="/adopter/cart" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<ShoppingCart />} />} />
+        <Route path="/adopter/checkout" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<CheckoutPage />} />} />
+        <Route path="/adopter/order-confirmed" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<OrderConfirmedRoute />} />} />
+        <Route path="/adopter/order-details" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<OrderDetailsRoute />} />} />
+        <Route path="/adopter/adoption-hub" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<AdoptionHubPage />} />} />
+        <Route path="/adopter/application-details/:requestId" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<ApplicationDetailsPage />} />} />
+        <Route path="/adopter/pet-profile/:petId" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetProfilePage />} />} />
+        <Route path="/adopter/pet-profile" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetProfilePage />} />} />
+        <Route path="/adopter/health" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetHavenHealthAssistant />} />} />
+        <Route path="/adopter/vets" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<VetHubPage />} />} />
+        <Route path="/adopter/vets/visits" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<MyVisitsPage />} />} />
+        <Route path="/adopter/vets/book/:vetId" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<BookAppointmentPage />} />} />
+        <Route path="/adopter/vets/confirm" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<ConfirmAppointmentPage />} />} />
+
+        {/* ADOPTION CENTER */}
+        <Route
+          path="/center/*"
+          element={
+            <CenterProvider>
+              <Routes>
+                <Route path="dashboard" element={<ProtectedRoute allowedRoles={["AdoptionCenter"]} element={<CenterDashboard />} />} />
+                <Route path="profile" element={<ProtectedRoute allowedRoles={["AdoptionCenter"]} element={<AdoptionProfile />} />} />
+                <Route path="reviews" element={<ProtectedRoute allowedRoles={["AdoptionCenter"]} element={<CenterReviews />} />} />
+                <Route path="inventory" element={<ProtectedRoute allowedRoles={["AdoptionCenter"]} element={<Inventory />} />} />
+                <Route path="vaccinations" element={<ProtectedRoute allowedRoles={["AdoptionCenter"]} element={<Reports />} />} />
+                <Route path="adoptions" element={<ProtectedRoute allowedRoles={["AdoptionCenter"]} element={<AdoptionRequests />} />} />
+              </Routes>
+            </CenterProvider>
+          }
+        />
+
+        {/* ADMIN */}
+        <Route
+          path="/admin/*"
+          element={
+            <AdminProvider>
+              <Routes>
+                <Route path="" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminDashboard />} />} />
+                <Route path="clinic-approvals" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminClinicApprovals />} />} />
+                <Route path="users" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminUsers />} />} />
+              </Routes>
+            </AdminProvider>
+          }
+        />
+
+        {/* VETERINARIAN */}
+        <Route path="/vet/dashboard" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetDashboard />} />} />
+        <Route path="/vet/profile" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetProfile />} />} />
+        <Route path="/vet/reviews" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetReviews />} />} />
+        <Route path="/vet/patients" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetPatients />} />} />
+        <Route path="/vet/appointments" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetAppointments />} />} />
+        <Route path="/vet/calendar" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetCalendar />} />} />
+        <Route path="/vet/professional-verification" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetProfessionalVerification />} />} />
+        <Route path="/vet/pending-approval" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetPendingApproval />} />} />
+
+        {/* CATCH-ALL */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;

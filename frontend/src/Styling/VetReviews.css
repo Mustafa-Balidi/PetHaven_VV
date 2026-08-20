@@ -1,0 +1,449 @@
+/* ==========================================================================
+   Veterinarian Client Reviews — extracted from Stitch screen
+   16961237473925846139 ("Client Reviews - Veterinarian Dashboard - Pet Haven")
+   All selectors are scoped under the vet-reviews-* prefix so they cannot
+   leak into adopter, adoption center, admin, public, dashboard, or profile pages.
+   ========================================================================== */
+
+.vet-reviews-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f9fb;
+  color: #191c1e;
+}
+
+.vet-reviews-main {
+  flex: 1 1 auto;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 32px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .vet-reviews-main {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+.vet-reviews-loading {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3d4947;
+  font-size: 16px;
+}
+
+.vet-reviews-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #ffdad6;
+  color: #93000a;
+  font-size: 14px;
+}
+
+.vet-reviews-empty {
+  padding: 24px 0;
+  text-align: center;
+  color: #6d7a77;
+  font-size: 14px;
+}
+
+/* Heading */
+
+.vet-reviews-heading {
+  border-bottom: 2px solid #e6e8ea;
+  padding-bottom: 16px;
+}
+
+.vet-reviews-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #191c1e;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+  .vet-reviews-title {
+    font-size: 32px;
+  }
+}
+
+.vet-reviews-subtitle {
+  font-size: 16px;
+  color: #3d4947;
+}
+
+/* Shared card */
+
+.vet-reviews-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.vet-reviews-card__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #191c1e;
+  margin-bottom: 24px;
+}
+
+/* Stars */
+
+.vet-reviews-stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #f59e0b;
+}
+
+.vet-reviews-stars--sm {
+  margin-top: 4px;
+}
+
+.vet-reviews-star {
+  font-size: 20px;
+}
+
+.vet-reviews-stars--sm .vet-reviews-star {
+  font-size: 16px;
+}
+
+.vet-reviews-star--empty {
+  color: #bcc9c6;
+}
+
+/* Overall rating summary */
+
+.vet-reviews-summary__body {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .vet-reviews-summary__body {
+    flex-direction: row;
+  }
+}
+
+.vet-reviews-summary__score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f2f4f6;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.vet-reviews-summary__score-value {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #191c1e;
+}
+
+.vet-reviews-summary__score-count {
+  font-size: 12px;
+  color: #3d4947;
+  margin-top: 8px;
+}
+
+.vet-reviews-summary__distribution {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vet-reviews-summary__bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vet-reviews-summary__bar-star {
+  width: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3d4947;
+}
+
+.vet-reviews-summary__bar-star-icon {
+  font-size: 14px;
+  color: #f59e0b;
+}
+
+.vet-reviews-summary__bar-track {
+  flex-grow: 1;
+  height: 8px;
+  background: #e6e8ea;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.vet-reviews-summary__bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.vet-reviews-summary__bar-pct {
+  width: 36px;
+  text-align: end;
+  font-size: 12px;
+  color: #3d4947;
+}
+
+/* Toolbar */
+
+.vet-reviews-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 640px) {
+  .vet-reviews-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.vet-reviews-search {
+  position: relative;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .vet-reviews-search {
+    width: 384px;
+  }
+}
+
+.vet-reviews-search__icon {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6d7a77;
+  pointer-events: none;
+}
+
+.vet-reviews-search__input {
+  width: 100%;
+  padding-inline-start: 40px;
+  padding-inline-end: 16px;
+  padding-block: 10px;
+  border: 1px solid #bcc9c6;
+  border-radius: 8px;
+  background: #f7f9fb;
+  color: #191c1e;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vet-reviews-search__input:focus {
+  border-color: #00685f;
+  box-shadow: 0 0 0 2px rgba(0, 104, 95, 0.2);
+}
+
+.vet-reviews-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.vet-reviews-filter-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #bcc9c6;
+  background: #ffffff;
+  color: #191c1e;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.vet-reviews-filter-btn:hover {
+  background: #f2f4f6;
+}
+
+.vet-reviews-filter-btn--active {
+  background: #e6e8ea;
+  border-color: #6d7a77;
+}
+
+/* Review list */
+
+.vet-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vet-reviews-card-item {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.15s ease;
+}
+
+.vet-reviews-card-item:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.vet-reviews-card-item__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.vet-reviews-card-item__avatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #fea619;
+  color: #684000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.vet-reviews-card-item__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #191c1e;
+}
+
+.vet-reviews-card-item__date {
+  font-size: 12px;
+  color: #3d4947;
+}
+
+.vet-reviews-card-item__text {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #191c1e;
+}
+
+.vet-reviews-card-item__text--muted {
+  color: #6d7a77;
+  font-style: italic;
+}
+
+/* Pagination */
+
+.vet-reviews-pagination {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+@media (min-width: 640px) {
+  .vet-reviews-pagination {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.vet-reviews-pagination__summary {
+  font-size: 12px;
+  color: #3d4947;
+}
+
+.vet-reviews-pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vet-reviews-pagination__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #191c1e;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.vet-reviews-pagination__nav:hover:not(:disabled) {
+  background: #f2f4f6;
+}
+
+.vet-reviews-pagination__nav:disabled {
+  color: #bcc9c6;
+  cursor: not-allowed;
+}
+
+.vet-reviews-pagination__page {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #191c1e;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.vet-reviews-pagination__page:hover {
+  background: #f2f4f6;
+}
+
+.vet-reviews-pagination__page--active {
+  background: #00685f;
+  color: #ffffff;
+}
+
+.vet-reviews-pagination__ellipsis {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6d7a77;
+}

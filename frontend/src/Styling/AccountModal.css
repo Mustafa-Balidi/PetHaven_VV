@@ -1,0 +1,163 @@
+.account-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.account-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 26px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.account-modal-close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #8a8a8a;
+  cursor: pointer;
+}
+
+.account-modal-close:hover {
+  color: #2d2d2d;
+}
+
+.account-modal-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1f1f1f;
+  margin: 0 0 18px 0;
+  text-align: center;
+}
+
+.account-modal-status {
+  text-align: center;
+  font-size: 14px;
+  color: #8a8a8a;
+  margin: 12px 0;
+}
+
+.account-modal-error {
+  color: #d64545;
+}
+
+.account-modal-success {
+  color: #2e9e5b;
+}
+
+.account-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.account-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #fafafa;
+  border-radius: 10px;
+}
+
+.account-info-label {
+  font-size: 13px;
+  color: #8a8a8a;
+}
+
+.account-info-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.account-modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.account-btn {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.account-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.account-btn-primary {
+  background-color: #f5813f;
+  color: #ffffff;
+}
+
+.account-btn-primary:hover:not(:disabled) {
+  background-color: #d96a2a;
+}
+
+.account-btn-secondary {
+  background-color: #f0f0f0;
+  color: #2d2d2d;
+}
+
+.account-btn-secondary:hover:not(:disabled) {
+  background-color: #e2e2e2;
+}
+
+.account-btn-danger {
+  background-color: #fdecea;
+  color: #d64545;
+}
+
+.account-btn-danger:hover:not(:disabled) {
+  background-color: #f9d6d3;
+}
+
+.account-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #4a4a4a;
+}
+
+.account-field input,
+.account-field select {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  outline: none;
+}
+
+.account-field input:focus,
+.account-field select:focus {
+  border-color: #f5813f;
+}
