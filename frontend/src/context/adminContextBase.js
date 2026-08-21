@@ -1,10 +1,11 @@
-import { useContext } from 'react';
-import { AdminContext } from './AdminContext';
+import { createContext, useContext } from "react";
+
+export const AdminContext = createContext(null);
 
 export function useAdminContext() {
   const context = useContext(AdminContext);
   if (!context) {
-    throw new Error('useAdminContext must be used inside <AdminProvider>');
+    throw new Error("useAdminContext must be used inside <AdminProvider>");
   }
   return context;
 }

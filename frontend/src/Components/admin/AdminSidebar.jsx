@@ -5,10 +5,14 @@ import Icon from "../Icon.jsx";
 export default function AdminSidebar() {
   const { t } = useTranslation();
 
+  // Only features backed by a real AdminController endpoint are listed here.
   const NAV_ITEMS = [
     { to: "/admin", label: t("admin.sidebar.dashboard"), icon: "dashboard", end: true },
-    { to: "/admin/clinic-approvals", label: t("admin.sidebar.clinicApprovals"), icon: "verified_user" },
-    { to: "/admin/vet-approvals", label: t("admin.sidebar.vetApprovals"), icon: "medical_information" },
+    {
+      to: "/admin/vet-approvals",
+      label: t("admin.sidebar.vetApprovals"),
+      icon: "medical_information",
+    },
     { to: "/admin/users", label: t("admin.sidebar.userManagement"), icon: "group" },
   ];
 
@@ -20,12 +24,13 @@ export default function AdminSidebar() {
           alt={t("admin.sidebar.logoAlt")}
         />
       </div>
-      <nav className="admin-sidebar__nav">
+      <nav className="admin-sidebar__nav" aria-label={t("admin.sidebar.navLabel")}>
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
+            title={item.label}
             className={({ isActive }) =>
               `admin-sidebar__link${isActive ? " admin-sidebar__link--active" : ""}`
             }

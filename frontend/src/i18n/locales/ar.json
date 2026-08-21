@@ -1943,125 +1943,116 @@
     }
   },
   "admin": {
+    "common": {
+      "loading": "جارٍ التحميل…",
+      "refresh": "تحديث",
+      "refreshing": "جارٍ التحديث…",
+      "retry": "إعادة المحاولة",
+      "cancel": "إلغاء",
+      "dismiss": "إغلاق",
+      "processing": "جارٍ التنفيذ…",
+      "actionFailed": "تعذر إتمام الطلب.",
+      "notProvided": "غير متوفر"
+    },
     "navbar": {
-      "help": "مساعدة",
-      "notifications": "الإشعارات",
-      "avatarAlt": "صورة المسؤول",
-      "switchLanguage": "تبديل اللغة"
+      "workspace": "لوحة المدير",
+      "switchLanguage": "تغيير اللغة",
+      "profileTitle": "ملف المدير",
+      "profileError": "تعذر جلب الملف الشخصي"
     },
     "sidebar": {
-      "logoAlt": "شعار بيت هافن",
+      "logoAlt": "شعار Pet Haven",
+      "navLabel": "تنقل المدير",
       "dashboard": "لوحة التحكم",
-      "clinicApprovals": "اعتماد العيادات",
-      "userManagement": "إدارة المستخدمين وقائمة الحظر"
-    },
-    "status": {
-      "Active": "نشط",
-      "Inactive": "غير نشط",
-      "Suspended": "موقوف",
-      "Banned": "محظور",
-      "Pending": "قيد الانتظار",
-      "Approved": "مقبول",
-      "Rejected": "مرفوض"
+      "vetApprovals": "موافقات الأطباء",
+      "userManagement": "إدارة المستخدمين"
     },
     "dashboard": {
-      "loading": "جارٍ تحميل لوحة التحكم…",
-      "activeUsers": "المستخدمون النشطون",
-      "totalRevenue": "إجمالي الإيرادات",
-      "reviewNow": "راجع الآن",
-      "clinicPerformanceOverview": "نظرة عامة على أداء العيادات",
-      "viewFullReport": "عرض التقرير الكامل",
-      "table": {
-        "clinicName": "اسم العيادة",
-        "location": "الموقع",
-        "orders": "الطلبات",
-        "growth": "النمو",
-        "lastActive": "آخر نشاط",
-        "status": "الحالة"
+      "title": "لوحة تحكم المدير",
+      "subtitle": "إحصاءات مباشرة من خوادم Pet Haven.",
+      "statsSection": "إحصاءات المنصة",
+      "statsUnavailable": "تعذر تحميل الإحصاءات.",
+      "stats": {
+        "totalUsers": "إجمالي المستخدمين",
+        "adopters": "المتبنون",
+        "centers": "مراكز التبني",
+        "vets": "الأطباء البيطريون",
+        "admins": "المدراء",
+        "totalPets": "إجمالي الحيوانات",
+        "bannedUsers": "المستخدمون المحظورون"
       },
-      "platformHealth": "صحة المنصة",
-      "apiResponseTime": "زمن استجابة الواجهة البرمجية",
-      "serverLoad": "حمل الخادم",
-      "uptimeLabel": "وقت التشغيل (آخر 24 ساعة):",
-      "systemAlerts": "تنبيهات النظام"
+      "pendingVets": {
+        "title": "طلبات موافقة الأطباء",
+        "subtitle": "حسابات أطباء بانتظار التحقق.",
+        "manage": "مراجعة الطلبات",
+        "awaiting": "بانتظار المراجعة",
+        "more": "ويوجد {{remaining}} إضافي في قائمة الانتظار."
+      }
     },
-    "clinicApprovals": {
-      "loading": "جارٍ تحميل اعتمادات العيادات…",
-      "title": "اعتماد العيادات",
-      "subtitle": "راجع وأدر طلبات انضمام العيادات البيطرية الجديدة. تحقق من التراخيص وتأكد من الامتثال لمعايير بيت هافن المهنية قبل التفعيل.",
-      "pendingRequests": "الطلبات قيد الانتظار",
-      "filter": "تصفية",
-      "table": {
-        "centerName": "اسم المركز",
-        "contactPerson": "جهة الاتصال",
-        "submissionDate": "تاريخ التقديم",
-        "licenseVerification": "التحقق من الترخيص",
-        "actions": "إجراءات"
-      },
-      "centerLogoAlt": "شعار {{name}}",
-      "viewDocument": "عرض المستند",
+    "vetApprovals": {
+      "title": "موافقات الأطباء",
+      "subtitle": "الموافقة على حسابات الأطباء البيطريين أو رفضها.",
+      "pendingCount": "{{total}} بانتظار المراجعة",
+      "idLabel": "معرف الطبيب {{id}}",
+      "empty": "لا يوجد أطباء بانتظار الموافقة.",
+      "emptyHint": "تظهر الطلبات الجديدة هنا فور تسجيل أي طبيب.",
+      "loadFailed": "تعذر تحميل قائمة الأطباء المعلقة.",
+      "verify": "موافقة",
+      "verifying": "جارٍ الموافقة…",
+      "verifySuccess": "تمت الموافقة على {{name}}.",
       "reject": "رفض",
-      "activate": "تفعيل",
-      "recentDecisions": "القرارات الأخيرة",
-      "processedByPrefix": "تمت المعالجة بواسطة",
-      "approved": "مقبول",
-      "rejected": "مرفوض",
-      "reasonLabel": "السبب:"
+      "rejecting": "جارٍ الرفض…",
+      "rejectSuccess": "تم رفض {{name}}.",
+      "yearsValue": "{{years}} سنوات خبرة",
+      "fields": {
+        "specialization": "التخصص",
+        "clinicName": "اسم العيادة",
+        "clinicAddress": "عنوان العيادة",
+        "licenseNumber": "رقم الترخيص",
+        "experienceYears": "الخبرة",
+        "createdAt": "تاريخ التسجيل"
+      },
+      "rejectConfirm": {
+        "title": "رفض هذا الطبيب؟",
+        "message": "أنت على وشك رفض {{name}}.",
+        "warning": "سيؤدي ذلك إلى حذف حساب الطبيب نهائياً من المنصة، ولا يمكن التراجع عن ذلك.",
+        "confirm": "رفض وحذف"
+      }
     },
     "users": {
-      "loading": "جارٍ تحميل إدارة المستخدمين…",
-      "title": "إدارة المستخدمين وقائمة الحظر",
-      "subtitle": "أدر صلاحيات الوصول للمنصة، وراقب الأدوار، وراجع سجلات المخالفات.",
-      "registeredUsers": "المستخدمون المسجّلون",
-      "totalPrefix": "الإجمالي:",
-      "table": {
-        "user": "المستخدم",
-        "role": "الدور",
-        "status": "الحالة",
-        "joinedDate": "تاريخ الانضمام",
-        "lastActive": "آخر نشاط",
-        "actions": "إجراءات"
+      "title": "إدارة المستخدمين",
+      "subtitle": "حظر حسابات المستخدمين أو فك الحظر عنها.",
+      "notice": {
+        "title": "تتم العمليات باستخدام معرف المستخدم",
+        "text": "يوفر الخادم واجهتي الحظر وفك الحظر فقط، ولا توجد واجهة لجلب قائمة المستخدمين، لذلك يتم تحديد الحساب عبر معرفه الرقمي. لا يمكن حظر حسابات المدراء."
       },
-      "idPrefix": "المعرّف:",
-      "statusLabel": {
-        "active": "نشط",
-        "suspended": "موقوف",
-        "banned": "محظور"
+      "fields": {
+        "userId": "معرف المستخدم",
+        "userIdPlaceholder": "مثال: 42",
+        "reason": "السبب",
+        "reasonPlaceholder": "اذكر سبب حظر هذا الحساب",
+        "reasonHint": "يُرسل إلى الخادم مع طلب الحظر."
       },
-      "moreActions": "مزيد من الإجراءات",
-      "footer": {
-        "showingPrefix": "عرض 1 إلى",
-        "of": "من",
-        "entries": "إدخالات"
+      "errors": {
+        "invalidUserId": "أدخل معرف مستخدم رقمياً صحيحاً."
       },
-      "pagination": {
-        "previous": "السابق",
-        "next": "التالي"
+      "ban": {
+        "title": "حظر مستخدم",
+        "subtitle": "يمنع الحساب من تسجيل الدخول إلى Pet Haven.",
+        "submit": "حظر المستخدم",
+        "submitting": "جارٍ الحظر…",
+        "success": "تم حظر المستخدم {{userId}}.",
+        "confirmTitle": "حظر هذا المستخدم؟",
+        "confirmMessage": "سيفقد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
       },
-      "auditLog": {
-        "title": "سجل تدقيق المخالفات",
-        "subtitle": "الإجراءات الإدارية الأخيرة التي أثرت على وصول المستخدمين.",
-        "table": {
-          "entityId": "معرّف الكيان",
-          "reason": "سبب الحظر/الإيقاف",
-          "blockedAt": "تاريخ الحظر",
-          "enforcement": "الإجراء المتخذ"
-        },
-        "enforcementLabel": {
-          "active_suspension": "إيقاف نشط",
-          "permanent_ban": "حظر دائم",
-          "resolved": "تم الحل (رفع الحظر)"
-        }
-      },
-      "security": {
-        "title": "أمان المنصة",
-        "activeUsers": "المستخدمون النشطون",
-        "suspendedAccounts": "الحسابات الموقوفة",
-        "bannedEntities": "الكيانات المحظورة"
-      },
-      "privacyNote": {
-        "title": "متوافق مع خصوصية البيانات",
-        "text": "بيانات المعلومات الشخصية بما فيها الموقع الجغرافي وأرقام الهواتف مُخفاة حالياً وفق إرشادات SRS 6.1."
+      "unban": {
+        "title": "فك الحظر",
+        "subtitle": "يعيد الوصول لحساب محظور سابقاً.",
+        "submit": "فك الحظر",
+        "submitting": "جارٍ فك الحظر…",
+        "success": "تم فك الحظر عن المستخدم {{userId}}.",
+        "confirmTitle": "فك الحظر عن هذا المستخدم؟",
+        "confirmMessage": "سيستعيد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
       }
     }
   },

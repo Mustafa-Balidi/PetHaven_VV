@@ -58,6 +58,12 @@ namespace PetHaven.Services
                 dto.CenterName = user.AdoptionCenter.CenterName;
                 dto.Address = user.AdoptionCenter.Address;
                 dto.ContactInfo = user.AdoptionCenter.ContactInfo;
+
+                // رصيد محفظة المركز = مجموع مبيعات منتجاته في الطلبات المدفوعة
+                var centerId = user.AdoptionCenter.CenterId;
+                dto.Balance = await _context.OrderItems
+                    .Where(oi => oi.Product!.CenterId == centerId && oi.Order!.Status == "Paid")
+                    .SumAsync(oi => oi.UnitPrice * oi.Quantity);
             }
             else if (user.Vet != null)
             {

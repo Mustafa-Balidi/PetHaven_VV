@@ -24,6 +24,7 @@ namespace PetHaven.Data
             var roleAdopter        = await EnsureRoleAsync("Adopter");
             var roleCenter         = await EnsureRoleAsync("AdoptionCenter");
             var roleVet            = await EnsureRoleAsync("Vet");
+            var roleAdmin   = await EnsureRoleAsync("Admin");
             await _context.SaveChangesAsync();
 
             // =========================================================

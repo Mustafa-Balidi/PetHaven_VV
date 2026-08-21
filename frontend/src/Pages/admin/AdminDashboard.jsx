@@ -1,226 +1,170 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import AdminSidebar from "../../Components/admin/AdminSidebar.jsx";
-import AdminNavbar from "../../Components/admin/AdminNavbar.jsx";
+import AdminLayout from "../../Components/admin/AdminLayout.jsx";
+import AdminStatCard from "../../Components/admin/AdminStatCard.jsx";
+import AdminFeedback from "../../Components/admin/AdminFeedback.jsx";
 import Icon from "../../Components/Icon.jsx";
 import { useAdminContext } from "../../context/adminContextBase";
+import { formatAdminDate } from "../../Components/admin/adminFormat.js";
 
 export default function AdminDashboard() {
-  const { t: translate } = useTranslation();
-  const adminText = { dashboard: translate("admin.dashboard", { returnObjects: true }) };
+  const { t, i18n } = useTranslation();
   const {
-    kpis,
-    platformHealth: health,
-    clinicPerformance: clinics,
-    systemAlerts: alerts,
-    dashboardLoading: loading,
-    fetchDashboard,
+    stats,
+    dashboardLoading,
+    dashboardError,
+    pendingVets,
+    pendingVetsLoading,
+    pendingVetsError,
+    fetchStats,
+    fetchPendingVets,
   } = useAdminContext();
 
   useEffect(() => {
-    fetchDashboard();
-  }, [fetchDashboard]);
+    fetchStats();
+    fetchPendingVets();
+  }, [fetchStats, fetchPendingVets]);
+
+  const refreshAll = () => {
+    fetchStats();
+    fetchPendingVets();
+  };
+
+  const busy = dashboardLoading || pendingVetsLoading;
+  const statCards = stats
+    ? [
+        { key: "totalUsers", icon: "groups", tone: "primary", value: stats.totalUsers },
+        { key: "adopters", icon: "person", tone: "primary", value: stats.adopters },
+        { key: "centers", icon: "home_work", tone: "accent", value: stats.centers },
+        { key: "vets", icon: "stethoscope", tone: "accent", value: stats.vets },
+        { key: "admins", icon: "shield_person", tone: "neutral", value: stats.admins },
+        { key: "totalPets", icon: "pets", tone: "neutral", value: stats.totalPets },
+        { key: "bannedUsers", icon: "block", tone: "danger", value: stats.bannedUsers },
+      ]
+    : [];
 
   return (
-    <div className="admin-layout">
-      <AdminSidebar />
-      <div className="admin-layout__main">
-        <AdminNavbar />
-        <main className="admin-content">
-          {loading || !kpis ? (
-            <div className="admin-loading">{adminText.dashboard.loading}</div>
-          ) : (
-            <div className="admin-dashboard">
-              <div className="admin-dashboard__grid">
-                <div className="admin-dashboard__primary">
-                  <div className="admin-kpis">
-                    <div className="admin-card admin-kpi">
-                      <div className="admin-kpi__top">
-                        <div className="admin-kpi__icon admin-kpi__icon--primary">
-                          <Icon name="groups" />
-                        </div>
-                        <div className="admin-kpi__trend-wrap">
-                          <span className="admin-kpi__label">{adminText.dashboard.activeUsers}</span>
-                          <span className="admin-kpi__trend admin-kpi__trend--up">
-                            <Icon name="trending_up" />
-                            {kpis.activeUsers.changePercent}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="admin-kpi__value-wrap">
-                        <p className="admin-kpi__value">{kpis.activeUsers.value.toLocaleString()}</p>
-                        <p className="admin-kpi__subtext">{kpis.activeUsers.changeLabel}</p>
-                      </div>
-                      <div className="admin-kpi__breakdown">
-                        {kpis.activeUsers.breakdown.map((row) => (
-                          <div className="admin-kpi__breakdown-row" key={row.label}>
-                            <span>{row.label}</span>
-                            <span>
-                              {row.value}{" "}
-                              <span className={`admin-kpi__mini-trend admin-kpi__mini-trend--${row.trend}`}>
-                                {row.trend === "up" ? "↑" : "→"}
-                              </span>
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+    <AdminLayout
+      title={t("admin.dashboard.title")}
+      subtitle={t("admin.dashboard.subtitle")}
+      actions={
+        <button
+          type="button"
+          className="admin-btn admin-btn--ghost"
+          onClick={refreshAll}
+          disabled={busy}
+        >
+          <Icon name="refresh" />
+          {busy ? t("admin.common.refreshing") : t("admin.common.refresh")}
+        </button>
+      }
+    >
+      {dashboardError ? (
+        <AdminFeedback type="error" message={dashboardError} />
+      ) : null}
 
-                    <div className="admin-card admin-kpi">
-                      <div className="admin-kpi__top">
-                        <div className="admin-kpi__icon admin-kpi__icon--secondary">
-                          <Icon name="payments" />
-                        </div>
-                        <div className="admin-kpi__trend-wrap">
-                          <span className="admin-kpi__label">{adminText.dashboard.totalRevenue}</span>
-                          <span className="admin-kpi__trend admin-kpi__trend--up">
-                            <Icon name="trending_up" />
-                            {kpis.totalRevenue.changePercent}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="admin-kpi__value-wrap">
-                        <p className="admin-kpi__value">${kpis.totalRevenue.value.toLocaleString()}</p>
-                      </div>
-                      <div className="admin-kpi__breakdown">
-                        {kpis.totalRevenue.breakdown.map((row) => (
-                          <div className="admin-kpi__breakdown-row" key={row.label}>
-                            <span>{row.label}</span>
-                            <span>{row.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+      {!stats && dashboardLoading ? (
+        <div className="admin-state admin-state--loading">
+          <span className="admin-spinner" aria-hidden="true" />
+          <p>{t("admin.common.loading")}</p>
+        </div>
+      ) : null}
 
-                    <div className="admin-card admin-kpi">
-                      <div className="admin-kpi__top">
-                        <div className="admin-kpi__icon admin-kpi__icon--warning">
-                          <Icon name="pending_actions" />
-                        </div>
-                        <span className="admin-kpi__priority">{kpis.pendingApprovals.priority}</span>
-                      </div>
-                      <div className="admin-kpi__value-wrap">
-                        <p className="admin-kpi__value">{kpis.pendingApprovals.value}</p>
-                        <span className="admin-kpi__label">{kpis.pendingApprovals.subtitle}</span>
-                        <p className="admin-kpi__subtext">{kpis.pendingApprovals.note}</p>
-                      </div>
-                      <div className="admin-kpi__footer">
-                        <a href="#" className="admin-kpi__link">
-                          {adminText.dashboard.reviewNow} <Icon name="arrow_forward" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+      {!stats && !dashboardLoading && dashboardError ? (
+        <div className="admin-state">
+          <Icon name="cloud_off" />
+          <p>{t("admin.dashboard.statsUnavailable")}</p>
+          <button type="button" className="admin-btn admin-btn--primary" onClick={fetchStats}>
+            {t("admin.common.retry")}
+          </button>
+        </div>
+      ) : null}
 
-                  <div className="admin-card admin-table-card">
-                    <div className="admin-table-card__header">
-                      <h2>{adminText.dashboard.clinicPerformanceOverview}</h2>
-                      <button type="button" className="admin-link-btn">{adminText.dashboard.viewFullReport}</button>
-                    </div>
-                    <div className="admin-table-card__scroll">
-                      <table className="admin-table">
-                        <thead>
-                          <tr>
-                            <th>{adminText.dashboard.table.clinicName}</th>
-                            <th>{adminText.dashboard.table.location}</th>
-                            <th className="admin-table__center">{adminText.dashboard.table.orders}</th>
-                            <th className="admin-table__center">{adminText.dashboard.table.growth}</th>
-                            <th>{adminText.dashboard.table.lastActive}</th>
-                            <th>{adminText.dashboard.table.status}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {clinics.map((clinic) => (
-                            <tr key={clinic.id}>
-                              <td>{clinic.name}</td>
-                              <td>{clinic.location}</td>
-                              <td className="admin-table__center">{clinic.orders}</td>
-                              <td className="admin-table__center">
-                                <span
-                                  className={`admin-growth admin-growth--${
-                                    clinic.growthPercent > 0 ? "up" : clinic.growthPercent < 0 ? "down" : "flat"
-                                  }`}
-                                >
-                                  {clinic.growthPercent > 0 ? "+" : ""}
-                                  {clinic.growthPercent}%
-                                </span>
-                              </td>
-                              <td className="admin-table__muted">{clinic.lastActive}</td>
-                              <td>
-                                <span className={`admin-status admin-status--${clinic.status.toLowerCase()}`}>
-                                  {translate(`admin.status.${clinic.status}`, { defaultValue: clinic.status })}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
+      {stats ? (
+        <section className="admin-section" aria-label={t("admin.dashboard.statsSection")}>
+          <div className="admin-stat-grid">
+            {statCards.map((card) => (
+              <AdminStatCard
+                key={card.key}
+                label={t(`admin.dashboard.stats.${card.key}`)}
+                value={card.value}
+                icon={card.icon}
+                tone={card.tone}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
-                <div className="admin-dashboard__side">
-                  <div className="admin-card admin-health">
-                    <div className="admin-health__header">
-                      <h3>{adminText.dashboard.platformHealth}</h3>
-                      <span className="admin-health__status">
-                        <span className="admin-health__dot" /> {health.status}
-                      </span>
-                    </div>
-                    <div className="admin-health__metric">
-                      <div className="admin-health__metric-row">
-                        <span>{adminText.dashboard.apiResponseTime}</span>
-                        <span>{health.apiResponseTime.value}</span>
-                      </div>
-                      <div className="admin-health__bar">
-                        <div className="admin-health__bar-fill" style={{ width: `${health.apiResponseTime.percent}%` }} />
-                      </div>
-                    </div>
-                    <div className="admin-health__metric">
-                      <div className="admin-health__metric-row">
-                        <span>{adminText.dashboard.serverLoad}</span>
-                        <span>{health.serverLoad.value}</span>
-                      </div>
-                      <div className="admin-health__bar">
-                        <div className="admin-health__bar-fill" style={{ width: `${health.serverLoad.percent}%` }} />
-                      </div>
-                    </div>
-                    <div className="admin-health__history">
-                      <div className="admin-health__bars">
-                        {health.loadHistory.map((v, i) => (
-                          <div
-                            key={i}
-                            className={`admin-health__history-bar${
-                              i === health.loadHistory.length - 2 ? " admin-health__history-bar--peak" : ""
-                            }`}
-                            style={{ height: `${v * 4}px` }}
-                          />
-                        ))}
-                      </div>
-                      <p className="admin-health__uptime">{adminText.dashboard.uptimeLabel} {health.uptimeLast24h}</p>
-                    </div>
-                  </div>
-
-                  <div className="admin-card admin-alerts">
-                    <h3>{adminText.dashboard.systemAlerts}</h3>
-                    <div className="admin-alerts__list">
-                      {alerts.map((alert) => (
-                        <div className={`admin-alert admin-alert--${alert.severity}`} key={alert.id}>
-                          <Icon name={alert.severity === "error" ? "error" : "warning"} />
-                          <div>
-                            <p className="admin-alert__title">{alert.title}</p>
-                            <p className="admin-alert__detail">{alert.detail}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <section className="admin-section">
+        <div className="admin-panel admin-panel--pending">
+          <div className="admin-panel__header">
+            <div className="admin-panel__heading">
+              <h2 className="admin-panel__title">
+                <Icon name="pending_actions" />
+                {t("admin.dashboard.pendingVets.title")}
+              </h2>
+              <p className="admin-panel__subtitle">
+                {t("admin.dashboard.pendingVets.subtitle")}
+              </p>
             </div>
-          )}
-        </main>
-      </div>
-    </div>
+            <Link className="admin-btn admin-btn--primary" to="/admin/vet-approvals">
+              {t("admin.dashboard.pendingVets.manage")}
+              <Icon name="arrow_forward" />
+            </Link>
+          </div>
+
+          {pendingVetsError ? (
+            <AdminFeedback type="error" message={pendingVetsError} />
+          ) : null}
+
+          {pendingVetsLoading && !pendingVets.length ? (
+            <div className="admin-state admin-state--inline">
+              <span className="admin-spinner" aria-hidden="true" />
+              <p>{t("admin.common.loading")}</p>
+            </div>
+          ) : null}
+
+          {!pendingVetsLoading && !pendingVetsError && !pendingVets.length ? (
+            <div className="admin-state admin-state--inline">
+              <Icon name="task_alt" />
+              <p>{t("admin.vetApprovals.empty")}</p>
+            </div>
+          ) : null}
+
+          {pendingVets.length ? (
+            <>
+              <p className="admin-panel__count">
+                <span className="admin-panel__count-value">{pendingVets.length}</span>
+                <span className="admin-panel__count-label">
+                  {t("admin.dashboard.pendingVets.awaiting")}
+                </span>
+              </p>
+              <ul className="admin-mini-list">
+                {pendingVets.slice(0, 5).map((vet) => (
+                  <li className="admin-mini-list__item" key={vet.vetId}>
+                    <span className="admin-mini-list__main">
+                      <span className="admin-mini-list__name">{vet.fullName || vet.email}</span>
+                      {vet.specialization ? (
+                        <span className="admin-mini-list__meta">{vet.specialization}</span>
+                      ) : null}
+                    </span>
+                    <span className="admin-mini-list__date">
+                      {formatAdminDate(vet.createdAt, i18n.language)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {pendingVets.length > 5 ? (
+                <p className="admin-panel__more">
+                  {t("admin.dashboard.pendingVets.more", { remaining: pendingVets.length - 5 })}
+                </p>
+              ) : null}
+            </>
+          ) : null}
+        </div>
+      </section>
+    </AdminLayout>
   );
 }

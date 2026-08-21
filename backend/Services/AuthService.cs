@@ -45,6 +45,7 @@ namespace PetHaven.Services
                 "Pet Owner"       => "Adopter",
                 "Veterinarian"    => "Vet",
                 "Adoption Center" => "AdoptionCenter",
+                "Admin" => "Admin", 
                 _                 => throw new Exception($"الدور '{dto.Role}' غير مدعوم. الأدوار المقبولة: Pet Owner, Veterinarian, Adoption Center.")
             };
 
@@ -171,6 +172,11 @@ namespace PetHaven.Services
 
             if (!isPasswordValid)
                 throw new Exception("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+ // New for Admin 
+            //  التحقق من الحظر
+            if (user.IsBanned)
+                throw new Exception("تم حظر حسابك من قبل الإدارة.");
+
 
             // 3. قراءة مدة انتهاء الصلاحية من appsettings.json وإنشاء JWT
             var expiryInMinutes = _configuration.GetValue<int>("Jwt:ExpiryInMinutes", 20);
