@@ -133,8 +133,57 @@ export async function getRecentSales(count = 3) {
 
 // TODO: backend endpoint missing
 export async function getRecentActivity() { return []; }
-// TODO: backend endpoint missing (AdoptionCenter has no wallet/balance)
-export async function getWallet() { return { balance: 0, currency: 'USD', transactions: [] }; }
+
+// ── Center Wallet ─────────────────────────────────────────
+// The center balance is what it earned from paid product orders
+// (see CenterWalletController on the backend).
+const EMPTY_WALLET = { balance: 0, currency: 'USD', transactions: [] };
+
+function mapWalletTransaction(tx) {
+  return {
+    id: tx.id,
+    orderId: tx.orderId,
+    description: tx.description,
+    date: tx.date ? String(tx.date).slice(0, 10) : '',
+    amount: tx.amount ?? 0,
+    type: tx.type ?? 'credit',
+    itemsCount: tx.itemsCount ?? 0,
+    buyerName: tx.buyerName ?? '',
+  };
+}
+
+export async function getWallet(transactionsCount = 10) {
+  try {
+    const w = await apiRequest(`/CenterWallet?transactionsCount=${transactionsCount}`);
+    return {
+      balance: w?.balance ?? 0,
+      currency: 'USD',
+      pendingBalance: w?.pendingBalance ?? 0,
+      earningsToday: w?.earningsToday ?? 0,
+      earningsThisMonth: w?.earningsThisMonth ?? 0,
+      paidOrdersCount: w?.paidOrdersCount ?? 0,
+      soldItemsCount: w?.soldItemsCount ?? 0,
+      lastTransactionDate: w?.lastTransactionDate
+        ? String(w.lastTransactionDate).slice(0, 10)
+        : '',
+      transactions: (w?.transactions ?? []).map(mapWalletTransaction),
+    };
+  } catch {
+    // The dashboard loads the wallet inside a Promise.all — never let a
+    // wallet failure take the whole dashboard down.
+    return { ...EMPTY_WALLET };
+  }
+}
+
+export async function getWalletTransactions(page = 1, pageSize = 10) {
+  const data = await apiRequest(`/CenterWallet/transactions?page=${page}&pageSize=${pageSize}`);
+  return {
+    totalCount: data?.totalCount ?? 0,
+    page: data?.page ?? page,
+    pageSize: data?.pageSize ?? pageSize,
+    transactions: (data?.items ?? []).map(mapWalletTransaction),
+  };
+}
 
 // ── Product Reviews ───────────────────────────────────────
 export async function getCenterProductReviews() {

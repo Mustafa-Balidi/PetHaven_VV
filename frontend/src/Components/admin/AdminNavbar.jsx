@@ -1,37 +1,96 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Icon from "../Icon.jsx";
+import { fetchMyProfile } from "../../api/profileApi";
+
+function getInitials(name) {
+  const parts = String(name ?? "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!parts.length) return "";
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
+}
 
 export default function AdminNavbar() {
   const { t, i18n } = useTranslation();
+  const [profile, setProfile] = useState(null);
+  const [profileError, setProfileError] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    fetchMyProfile()
+      .then((data) => {
+        if (!active) return;
+        setProfile(data);
+        setProfileError(null);
+      })
+      .catch((error) => {
+        if (!active) return;
+        setProfile(null);
+        setProfileError(error.message);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === "ar" ? "en" : "ar");
   };
 
+  const displayName = profile?.fullName || profile?.userName || profile?.username || "";
+  const email = profile?.email || "";
+  const imageUrl = profile?.profileImageUrl || "";
+  const initials = getInitials(displayName || email);
+
   return (
     <header className="admin-navbar">
-      <div className="admin-navbar__spacer" />
+      <div className="admin-navbar__brand">
+        <span className="admin-navbar__brand-title">{t("admin.navbar.workspace")}</span>
+      </div>
+
       <div className="admin-navbar__actions">
         <button
-          className="admin-navbar__icon-btn"
+          className="admin-navbar__lang-btn"
           type="button"
           aria-label={t("admin.navbar.switchLanguage")}
           onClick={toggleLanguage}
         >
           {i18n.language === "ar" ? "EN" : "عربي"}
         </button>
-        <button className="admin-navbar__icon-btn" type="button" aria-label={t("admin.navbar.help")}>
-          <Icon name="help" />
-        </button>
-        <button className="admin-navbar__icon-btn admin-navbar__icon-btn--bell" type="button" aria-label={t("admin.navbar.notifications")}>
-          <Icon name="notifications" />
-          <span className="admin-navbar__badge" />
-        </button>
-        <img
-          className="admin-navbar__avatar"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8mpNg8_UsLTwot_g_I4U_dyv7rr6xhl4OaVPKc4hO_yT4r60ZqPv99x9V791K1LlGvBNH4sM6Td25y1S0uKeNLh0vz3pNjKOJw7I_vyWVpFoaUPYFaTiPebHVCd4lcZx15JSOe1rLS66jHMz-6mupDRA8uXMl94f0WGde9LVqaJ1cayW_nNxDQ_JjODgPBVq4lEV6pKQLxIOF82B44uoUHZ8QhkGlKO08XPzFs0KkwOx5DOnWWRZbdpUPSFYL6KN63PfseesVWUAe"
-          alt={t("admin.navbar.avatarAlt")}
-        />
+
+        {profileError ? (
+          <span className="admin-navbar__profile-error" title={profileError}>
+            {t("admin.navbar.profileError")}
+          </span>
+        ) : null}
+
+        {profile ? (
+          <div className="admin-navbar__profile">
+            {imageUrl ? (
+              <img
+                className="admin-navbar__avatar"
+                src={imageUrl}
+                alt={displayName || t("admin.navbar.profileTitle")}
+              />
+            ) : (
+              <span className="admin-navbar__avatar admin-navbar__avatar--initials" aria-hidden="true">
+                {initials || "A"}
+              </span>
+            )}
+            <span className="admin-navbar__profile-text">
+              {displayName ? (
+                <span className="admin-navbar__profile-name">{displayName}</span>
+              ) : null}
+              {email ? <span className="admin-navbar__profile-email">{email}</span> : null}
+            </span>
+          </div>
+        ) : null}
       </div>
     </header>
   );

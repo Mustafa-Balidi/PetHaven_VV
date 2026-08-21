@@ -56,6 +56,8 @@ namespace PetHaven.Services
             _context.Payments.Add(payment);
 
             // 6. تحديث حالة الطلب ليصبح مدفوعاً
+            // ملاحظة: بمجرد أن تصبح الحالة "Paid" يدخل مبلغ منتجات كل مركز إلى
+            // محفظته تلقائياً (انظر CenterWalletService) دون أي عمود إضافي في القاعدة.
             order.Status = "Paid";
 
             // 7. حفظ جميع التغييرات في معاملة واحدة (Transaction)

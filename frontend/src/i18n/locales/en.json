@@ -1917,125 +1917,116 @@
     }
   },
   "admin": {
+    "common": {
+      "loading": "Loading…",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing…",
+      "retry": "Try again",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss",
+      "processing": "Processing…",
+      "actionFailed": "The request could not be completed.",
+      "notProvided": "Not provided"
+    },
     "navbar": {
-      "help": "Help",
-      "notifications": "Notifications",
-      "avatarAlt": "Admin Avatar",
-      "switchLanguage": "Switch Language"
+      "workspace": "Admin Workspace",
+      "switchLanguage": "Switch language",
+      "profileTitle": "Admin profile",
+      "profileError": "Profile unavailable"
     },
     "sidebar": {
       "logoAlt": "Pet Haven Logo",
+      "navLabel": "Admin navigation",
       "dashboard": "Dashboard",
-      "clinicApprovals": "Clinic Approvals",
-      "userManagement": "User Management and Blocklist"
-    },
-    "status": {
-      "Active": "Active",
-      "Inactive": "Inactive",
-      "Suspended": "Suspended",
-      "Banned": "Banned",
-      "Pending": "Pending",
-      "Approved": "Approved",
-      "Rejected": "Rejected"
+      "vetApprovals": "Vet Approvals",
+      "userManagement": "User Management"
     },
     "dashboard": {
-      "loading": "Loading dashboard…",
-      "activeUsers": "Active Users",
-      "totalRevenue": "Total Revenue",
-      "reviewNow": "Review now",
-      "clinicPerformanceOverview": "Clinic Performance Overview",
-      "viewFullReport": "View Full Report",
-      "table": {
-        "clinicName": "Clinic Name",
-        "location": "Location",
-        "orders": "Orders",
-        "growth": "Growth",
-        "lastActive": "Last Active",
-        "status": "Status"
+      "title": "Admin Dashboard",
+      "subtitle": "Live platform counters served by the Pet Haven backend.",
+      "statsSection": "Platform statistics",
+      "statsUnavailable": "Statistics could not be loaded.",
+      "stats": {
+        "totalUsers": "Total Users",
+        "adopters": "Adopters",
+        "centers": "Adoption Centers",
+        "vets": "Veterinarians",
+        "admins": "Admins",
+        "totalPets": "Total Pets",
+        "bannedUsers": "Banned Users"
       },
-      "platformHealth": "Platform Health",
-      "apiResponseTime": "API Response Time",
-      "serverLoad": "Server Load",
-      "uptimeLabel": "Uptime (Last 24h):",
-      "systemAlerts": "System Alerts"
+      "pendingVets": {
+        "title": "Pending Vet Approvals",
+        "subtitle": "Veterinarian accounts waiting for verification.",
+        "manage": "Review approvals",
+        "awaiting": "awaiting review",
+        "more": "+{{remaining}} more waiting in the approvals queue."
+      }
     },
-    "clinicApprovals": {
-      "loading": "Loading clinic approvals…",
-      "title": "Clinic Approvals",
-      "subtitle": "Review and manage onboarding applications for new veterinary centers. Verify licenses and ensure compliance with Pet Haven's professional standards before activation.",
-      "pendingRequests": "Pending Requests",
-      "filter": "Filter",
-      "table": {
-        "centerName": "Center Name",
-        "contactPerson": "Contact Person",
-        "submissionDate": "Submission Date",
-        "licenseVerification": "License Verification",
-        "actions": "Actions"
-      },
-      "centerLogoAlt": "{{name}} Logo",
-      "viewDocument": "View Document",
+    "vetApprovals": {
+      "title": "Vet Approvals",
+      "subtitle": "Verify or reject veterinarian accounts submitted for review.",
+      "pendingCount": "{{total}} pending",
+      "idLabel": "Vet ID {{id}}",
+      "empty": "No veterinarians are waiting for approval.",
+      "emptyHint": "New submissions appear here as soon as a veterinarian registers.",
+      "loadFailed": "The pending veterinarians list could not be loaded.",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "verifySuccess": "{{name}} has been verified.",
       "reject": "Reject",
-      "activate": "Activate",
-      "recentDecisions": "Recent Decisions",
-      "processedByPrefix": "Processed by",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "reasonLabel": "Reason:"
+      "rejecting": "Rejecting…",
+      "rejectSuccess": "{{name}} has been rejected.",
+      "yearsValue": "{{years}} years of experience",
+      "fields": {
+        "specialization": "Specialization",
+        "clinicName": "Clinic name",
+        "clinicAddress": "Clinic address",
+        "licenseNumber": "License number",
+        "experienceYears": "Experience",
+        "createdAt": "Submitted on"
+      },
+      "rejectConfirm": {
+        "title": "Reject this veterinarian?",
+        "message": "You are about to reject {{name}}.",
+        "warning": "This permanently deletes the veterinarian account from the platform. The action cannot be undone.",
+        "confirm": "Reject and delete"
+      }
     },
     "users": {
-      "loading": "Loading user management…",
-      "title": "User Management & Blocklist",
-      "subtitle": "Manage platform access, monitor roles, and review violation logs.",
-      "registeredUsers": "Registered Users",
-      "totalPrefix": "Total:",
-      "table": {
-        "user": "User",
-        "role": "Role",
-        "status": "Status",
-        "joinedDate": "Joined Date",
-        "lastActive": "Last Active",
-        "actions": "Actions"
+      "title": "User Management",
+      "subtitle": "Ban or unban platform accounts.",
+      "notice": {
+        "title": "Actions are performed by User ID",
+        "text": "The backend exposes ban and unban endpoints only — there is no user listing endpoint — so accounts are targeted by their numeric User ID. Admin accounts cannot be banned."
       },
-      "idPrefix": "ID:",
-      "statusLabel": {
-        "active": "Active",
-        "suspended": "Suspended",
-        "banned": "Banned"
+      "fields": {
+        "userId": "User ID",
+        "userIdPlaceholder": "e.g. 42",
+        "reason": "Reason",
+        "reasonPlaceholder": "Describe why this account is being banned",
+        "reasonHint": "Sent to the backend together with the ban request."
       },
-      "moreActions": "More actions",
-      "footer": {
-        "showingPrefix": "Showing 1 to",
-        "of": "of",
-        "entries": "entries"
+      "errors": {
+        "invalidUserId": "Enter a valid numeric User ID."
       },
-      "pagination": {
-        "previous": "Previous",
-        "next": "Next"
+      "ban": {
+        "title": "Ban User",
+        "subtitle": "Blocks the account from signing in to Pet Haven.",
+        "submit": "Ban user",
+        "submitting": "Banning…",
+        "success": "User {{userId}} has been banned.",
+        "confirmTitle": "Ban this user?",
+        "confirmMessage": "User ID {{userId}} will lose access to the platform."
       },
-      "auditLog": {
-        "title": "Violation Audit Log",
-        "subtitle": "Recent administrative actions affecting user access.",
-        "table": {
-          "entityId": "Entity ID",
-          "reason": "Reason for Ban/Suspension",
-          "blockedAt": "Blocked At",
-          "enforcement": "Enforcement"
-        },
-        "enforcementLabel": {
-          "active_suspension": "Active Suspension",
-          "permanent_ban": "Permanent Ban",
-          "resolved": "Resolved (Unbanned)"
-        }
-      },
-      "security": {
-        "title": "Platform Security",
-        "activeUsers": "Active Users",
-        "suspendedAccounts": "Suspended Accounts",
-        "bannedEntities": "Banned Entities"
-      },
-      "privacyNote": {
-        "title": "Data Privacy Compliant",
-        "text": "PII data including GPS and phone numbers are currently masked per SRS 6.1 guidelines."
+      "unban": {
+        "title": "Unban User",
+        "subtitle": "Restores access for a previously banned account.",
+        "submit": "Unban user",
+        "submitting": "Unbanning…",
+        "success": "User {{userId}} has been unbanned.",
+        "confirmTitle": "Unban this user?",
+        "confirmMessage": "User ID {{userId}} will regain access to the platform."
       }
     }
   },

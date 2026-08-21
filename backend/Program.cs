@@ -140,11 +140,16 @@ builder.Services.AddScoped<IAdopterDashboardService, AdopterDashboardService>();
 // Registering Center Dashboard Service
 builder.Services.AddScoped<ICenterDashboardService, CenterDashboardService>();
 
+// Registering Center Wallet Service
+builder.Services.AddScoped<ICenterWalletService, CenterWalletService>();
+
 // Registering Vet Dashboard Service
 builder.Services.AddScoped<IVetDashboardService, VetDashboardService>();
 
 // Registering Patients Service
 builder.Services.AddScoped<IPatientsService, PatientsService>();
+// Registering Admin Service
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // إعدادات قراءة وتأكيد الـ Token
 builder.Services.AddAuthentication(options =>

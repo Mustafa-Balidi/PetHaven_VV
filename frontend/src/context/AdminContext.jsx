@@ -1,90 +1,165 @@
-import { createContext, useState, useCallback } from 'react';
-import * as adminApi from '../api/adminApi';
-
-export const AdminContext = createContext(null);
-
-const initialState = {
-  // Dashboard
-  kpis: null,
-  platformHealth: null,
-  clinicPerformance: [],
-  systemAlerts: [],
-  dashboardLoading: false,
-  dashboardError: null,
-
-  // Clinic Approvals
-  clinicApprovals: [],
-  blocklist: [],
-  approvalsLoading: false,
-  approvalsError: null,
-
-  // Users
-  users: [],
-  usersLoading: false,
-  usersError: null,
-};
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import * as adminApi from "../api/adminApi";
+import { AdminContext } from "./adminContextBase.js";
 
 export default function AdminProvider({ children }) {
-  const [state, setState] = useState(initialState);
+  // ── Dashboard stats (GET /api/Admin/stats) ─────────────────────────
+  const [stats, setStats] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
+  const [dashboardError, setDashboardError] = useState(null);
 
-  const set = useCallback(
-    (slice) => setState((prev) => ({ ...prev, ...slice })),
+  // ── Pending vets (GET /api/Admin/vets/pending) ─────────────────────
+  const [pendingVets, setPendingVets] = useState([]);
+  const [pendingVetsLoaded, setPendingVetsLoaded] = useState(false);
+  const [pendingVetsLoading, setPendingVetsLoading] = useState(false);
+  const [pendingVetsError, setPendingVetsError] = useState(null);
+
+  // ── In-flight mutation key, e.g. "verify-12" / "ban" / "unban" ─────
+  const [actionLoading, setActionLoading] = useState(null);
+
+  const mountedRef = useRef(true);
+  const statsLoadedRef = useRef(false);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const fetchStats = useCallback(async () => {
+    setDashboardLoading(true);
+    setDashboardError(null);
+    try {
+      const data = await adminApi.getAdminStats();
+      if (!mountedRef.current) return null;
+      statsLoadedRef.current = true;
+      setStats(data);
+      return data;
+    } catch (error) {
+      if (!mountedRef.current) return null;
+      setDashboardError(error.message);
+      return null;
+    } finally {
+      if (mountedRef.current) setDashboardLoading(false);
+    }
+  }, []);
+
+  const fetchPendingVets = useCallback(async () => {
+    setPendingVetsLoading(true);
+    setPendingVetsError(null);
+    try {
+      const data = await adminApi.getPendingVets();
+      if (!mountedRef.current) return [];
+      setPendingVets(data);
+      setPendingVetsLoaded(true);
+      return data;
+    } catch (error) {
+      if (!mountedRef.current) return [];
+      setPendingVetsError(error.message);
+      setPendingVets([]);
+      setPendingVetsLoaded(false);
+      return [];
+    } finally {
+      if (mountedRef.current) setPendingVetsLoading(false);
+    }
+  }, []);
+
+  /** Re-syncs the stat counters only for pages that already loaded them. */
+  const refreshStatsIfLoaded = useCallback(() => {
+    if (!statsLoadedRef.current) return;
+    fetchStats();
+  }, [fetchStats]);
+
+  const runAction = useCallback(
+    async (key, request, onSuccess) => {
+      setActionLoading(key);
+      try {
+        const result = await request();
+        if (onSuccess) onSuccess();
+        return { success: true, message: adminApi.extractMessage(result) };
+      } catch (error) {
+        return { success: false, message: error.message };
+      } finally {
+        if (mountedRef.current) setActionLoading(null);
+      }
+    },
     []
   );
 
-  // ── Dashboard ──────────────────────────────────────────
-  const fetchDashboard = useCallback(async () => {
-    set({ dashboardLoading: true, dashboardError: null });
-    try {
-      const [kpis, platformHealth, clinicPerformance, systemAlerts] =
-        await Promise.all([
-          adminApi.getAdminKpis(),
-          adminApi.getPlatformHealth(),
-          adminApi.getClinicPerformance(),
-          adminApi.getSystemAlerts(),
-        ]);
-      set({ kpis, platformHealth, clinicPerformance,
-            systemAlerts, dashboardLoading: false });
-    } catch (e) {
-      set({ dashboardError: e.message, dashboardLoading: false });
-    }
-  }, [set]);
-
-  // ── Clinic Approvals ───────────────────────────────────
-  const fetchApprovals = useCallback(async () => {
-    set({ approvalsLoading: true, approvalsError: null });
-    try {
-      const [clinicApprovals, blocklist] = await Promise.all([
-        adminApi.getClinicApprovals(),
-        adminApi.getBlocklist(),
-      ]);
-      set({ clinicApprovals, blocklist, approvalsLoading: false });
-    } catch (e) {
-      set({ approvalsError: e.message, approvalsLoading: false });
-    }
-  }, [set]);
-
-  // ── Users ──────────────────────────────────────────────
-  const fetchUsers = useCallback(async () => {
-    set({ usersLoading: true, usersError: null });
-    try {
-      const users = await adminApi.getUsers();
-      set({ users, usersLoading: false });
-    } catch (e) {
-      set({ usersError: e.message, usersLoading: false });
-    }
-  }, [set]);
-
-  const value = {
-    ...state,
-    fetchDashboard,
-    fetchApprovals,
-    fetchUsers,
-  };
-
-  return (
-    <AdminContext.Provider value={value}>
-      {children}
-    </AdminContext.Provider>
+  const verifyVet = useCallback(
+    (vetId) =>
+      runAction(
+        `verify-${vetId}`,
+        () => adminApi.verifyVet(vetId),
+        () => {
+          if (!mountedRef.current) return;
+          setPendingVets((previous) => previous.filter((vet) => vet.vetId !== vetId));
+        }
+      ),
+    [runAction]
   );
+
+  const rejectVet = useCallback(
+    (vetId) =>
+      runAction(
+        `reject-${vetId}`,
+        () => adminApi.rejectVet(vetId),
+        () => {
+          if (!mountedRef.current) return;
+          setPendingVets((previous) => previous.filter((vet) => vet.vetId !== vetId));
+          // Rejection deletes the user account, so the counters move too.
+          refreshStatsIfLoaded();
+        }
+      ),
+    [runAction, refreshStatsIfLoaded]
+  );
+
+  const banUser = useCallback(
+    (userId, reason) =>
+      runAction("ban", () => adminApi.banUser(userId, reason), refreshStatsIfLoaded),
+    [runAction, refreshStatsIfLoaded]
+  );
+
+  const unbanUser = useCallback(
+    (userId) => runAction("unban", () => adminApi.unbanUser(userId), refreshStatsIfLoaded),
+    [runAction, refreshStatsIfLoaded]
+  );
+
+  const value = useMemo(
+    () => ({
+      stats,
+      dashboardLoading,
+      dashboardError,
+      pendingVets,
+      pendingVetsLoaded,
+      pendingVetsLoading,
+      pendingVetsError,
+      actionLoading,
+      fetchStats,
+      fetchPendingVets,
+      verifyVet,
+      rejectVet,
+      banUser,
+      unbanUser,
+    }),
+    [
+      stats,
+      dashboardLoading,
+      dashboardError,
+      pendingVets,
+      pendingVetsLoaded,
+      pendingVetsLoading,
+      pendingVetsError,
+      actionLoading,
+      fetchStats,
+      fetchPendingVets,
+      verifyVet,
+      rejectVet,
+      banUser,
+      unbanUser,
+    ]
+  );
+
+  return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
 }

@@ -32,7 +32,9 @@ namespace PetHaven.Models
 
         // ImageUrl 
         public string? ImageUrl { get; set; }
-
+ // This line to make the admin ban  any user 
+        //IsBanned
+        public bool IsBanned { get; set; } = false;
 
         // العلاقات
         [ForeignKey("RoleId")]

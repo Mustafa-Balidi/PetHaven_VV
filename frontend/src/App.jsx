@@ -59,7 +59,7 @@ import CenterProvider from "./context/CenterContext.jsx";
 
 // Pages — Admin
 import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
-import AdminClinicApprovals from "./Pages/admin/AdminClinicApprovals.jsx";
+import AdminVetApprovals from "./Pages/admin/AdminVetApprovals.jsx";
 import AdminUsers from "./Pages/admin/AdminUsers.jsx";
 import AdminProvider from "./context/AdminContext.jsx";
 // pages _ vet
@@ -180,8 +180,9 @@ function App() {
             <AdminProvider>
               <Routes>
                 <Route path="" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminDashboard />} />} />
-                <Route path="clinic-approvals" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminClinicApprovals />} />} />
+                <Route path="vet-approvals" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminVetApprovals />} />} />
                 <Route path="users" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminUsers />} />} />
+                <Route path="*" element={<Navigate to="/admin" replace />} />
               </Routes>
             </AdminProvider>
           }
