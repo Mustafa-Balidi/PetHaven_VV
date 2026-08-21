@@ -124,6 +124,87 @@ namespace PetHaven.Controllers
         }
 
         // =============================================
+        // POST: api/VetPatients/{petId}/medical-history
+        // إضافة فحص طبي جديد للسجل الطبي
+        // =============================================
+        [HttpPost("{petId:int}/medical-history")]
+        public async Task<IActionResult> AddDiagnosis(int petId, [FromBody] CreateDiagnosisDto dto)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Success = false, Message = "لم يتم التعرف على المستخدم." });
+
+                var diagnosis = await _patientsService.AddDiagnosisAsync(userId, petId, dto);
+                return Ok(new { Success = true, Message = "تمت إضافة الفحص الطبي بنجاح!", Data = diagnosis });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { Success = false, Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+
+        // =============================================
+        // PUT: api/VetPatients/medical-history/{diagnosisId}
+        // تعديل فحص طبي في السجل الطبي
+        // =============================================
+        [HttpPut("medical-history/{diagnosisId:int}")]
+        public async Task<IActionResult> UpdateDiagnosis(int diagnosisId, [FromBody] UpdateDiagnosisDto dto)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Success = false, Message = "لم يتم التعرف على المستخدم." });
+
+                var diagnosis = await _patientsService.UpdateDiagnosisAsync(userId, diagnosisId, dto);
+                return Ok(new { Success = true, Message = "تم تعديل الفحص الطبي بنجاح!", Data = diagnosis });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { Success = false, Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+
+        // =============================================
+        // DELETE: api/VetPatients/medical-history/{diagnosisId}
+        // حذف فحص طبي من السجل الطبي
+        // =============================================
+        [HttpDelete("medical-history/{diagnosisId:int}")]
+        public async Task<IActionResult> DeleteDiagnosis(int diagnosisId)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Success = false, Message = "لم يتم التعرف على المستخدم." });
+
+                var deleted = await _patientsService.DeleteDiagnosisAsync(userId, diagnosisId);
+                if (!deleted)
+                    return NotFound(new { Success = false, Message = "الفحص الطبي غير موجود." });
+
+                return Ok(new { Success = true, Message = "تم حذف الفحص الطبي بنجاح!" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { Success = false, Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+
+        // =============================================
         // GET: api/VetPatients/{petId}/vaccinations
         // سجل تطعيمات المريض
         // =============================================

@@ -67,10 +67,13 @@ namespace PetHaven.Services
             }
             else if (user.Vet != null)
             {
-                // dto.ClinicName = user.Vet.ClinicName;
-                // dto.ClinicAddress = user.Vet.ClinicAddress;
-                dto.ExperienceLevel = user.Vet.ExperienceYears.ToString();
+                dto.ClinicName = user.Vet.ClinicName;
+                dto.ClinicAddress = user.Vet.ClinicAddress;
+                dto.Specialization = user.Vet.Specialization;
+                dto.ExperienceYears = user.Vet.ExperienceYears;
+                dto.LicenseNumber = user.Vet.LicenseNumber;
                 dto.CertificateUrl = user.Vet.CertificateUrl;
+                dto.IsVerified = user.Vet.IsVerified;
             }
 
             return dto;

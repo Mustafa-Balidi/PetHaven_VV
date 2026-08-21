@@ -212,6 +212,87 @@ namespace PetHaven.Services
             return await GetMedicalHistoryInternalAsync(petId);
         }
 
+        public async Task<MedicalHistoryEntryDto> AddDiagnosisAsync(string userId, int petId, CreateDiagnosisDto dto)
+        {
+            var vet = await GetVetAsync(userId);
+            await EnsurePetBelongsToVetAsync(vet.VetId, petId);
+
+            if (!int.TryParse(userId, out int parsedUserId))
+                throw new Exception("معرّف المستخدم غير صالح.");
+
+            var diagnosis = new Diagnosis
+            {
+                UserId = parsedUserId,
+                PetId = petId,
+                Symptoms = dto.Symptoms,
+                Result = dto.Result,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Diagnoses.Add(diagnosis);
+            await _context.SaveChangesAsync();
+
+            // Reload with User to get doctor name
+            await _context.Entry(diagnosis).Reference(d => d.User).LoadAsync();
+
+            return new MedicalHistoryEntryDto
+            {
+                Id = diagnosis.DiagnosisId,
+                Date = diagnosis.CreatedAt,
+                Type = "CONSULTATION",
+                Title = string.IsNullOrWhiteSpace(diagnosis.Result) ? "فحص عام" : diagnosis.Result!,
+                Description = diagnosis.Symptoms,
+                DoctorName = diagnosis.User?.FullName
+            };
+        }
+
+        public async Task<MedicalHistoryEntryDto> UpdateDiagnosisAsync(string userId, int diagnosisId, UpdateDiagnosisDto dto)
+        {
+            var vet = await GetVetAsync(userId);
+
+            var diagnosis = await _context.Diagnoses
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.DiagnosisId == diagnosisId);
+
+            if (diagnosis == null)
+                throw new Exception("الفحص الطبي غير موجود.");
+
+            await EnsurePetBelongsToVetAsync(vet.VetId, diagnosis.PetId);
+
+            diagnosis.Symptoms = dto.Symptoms;
+            diagnosis.Result = dto.Result;
+
+            await _context.SaveChangesAsync();
+
+            return new MedicalHistoryEntryDto
+            {
+                Id = diagnosis.DiagnosisId,
+                Date = diagnosis.CreatedAt,
+                Type = "CONSULTATION",
+                Title = string.IsNullOrWhiteSpace(diagnosis.Result) ? "فحص عام" : diagnosis.Result!,
+                Description = diagnosis.Symptoms,
+                DoctorName = diagnosis.User?.FullName
+            };
+        }
+
+        public async Task<bool> DeleteDiagnosisAsync(string userId, int diagnosisId)
+        {
+            var vet = await GetVetAsync(userId);
+
+            var diagnosis = await _context.Diagnoses
+                .FirstOrDefaultAsync(d => d.DiagnosisId == diagnosisId);
+
+            if (diagnosis == null)
+                return false;
+
+            await EnsurePetBelongsToVetAsync(vet.VetId, diagnosis.PetId);
+
+            _context.Diagnoses.Remove(diagnosis);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         private async Task<IEnumerable<MedicalHistoryEntryDto>> GetMedicalHistoryInternalAsync(int petId)
         {
             var diagnoses = await _context.Diagnoses
