@@ -70,16 +70,16 @@ namespace PetHaven.Controllers
             }
         }
         // =============================================
-        // DELETE: api/Admin/vets/{id}/reject
-        // رفض طبيب (حذف الحساب)
+        // PUT: api/Admin/vets/{id}/reject
+        // رفض طبيب (تحديث الحالة إلى Rejected مع السبب)
         // =============================================
-        [HttpDelete("vets/{id}/reject")]
-        public async Task<IActionResult> RejectVet(int id)
+        [HttpPut("vets/{id}/reject")]
+        public async Task<IActionResult> RejectVet(int id, [FromBody] RejectVetDto dto)
         {
             try
             {
-                await _adminService.RejectVetAsync(id);
-                return Ok(new { Success = true, Message = "تم رفض الطبيب وحذف حسابه." });
+                await _adminService.RejectVetAsync(id, dto?.Reason);
+                return Ok(new { Success = true, Message = "تم رفض الطبيب." });
             }
             catch (Exception ex)
             {

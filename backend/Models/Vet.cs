@@ -35,6 +35,8 @@ namespace PetHaven.Models
         [MaxLength(50)]
         public string? LicenseNumber { get; set; }
 
+        public DateTime? LicenseIssueDate { get; set; }
+
         [MaxLength(1000)]
         public string? CertificateUrl { get; set; }
 
@@ -42,6 +44,15 @@ namespace PetHaven.Models
         public decimal? Location_Lng { get; set; }  // 👈 تغير من Longitude
 
         public bool IsVerified { get; set; }
+
+        // حالة التحقق المهني: Pending / Approved / Rejected
+        [MaxLength(20)]
+        public string VerificationStatus { get; set; } = "Pending";
+
+        [MaxLength(500)]
+        public string? RejectionReason { get; set; }
+
+        public DateTime? SubmittedAt { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

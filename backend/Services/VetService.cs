@@ -120,6 +120,100 @@ namespace PetHaven.Services
         }
 
         // ═══════════════════════════════════════════════════════════════════════
+        // POST: إرسال طلب التحقق المهني (رقم الترخيص + ملف الشهادة)
+        // ═══════════════════════════════════════════════════════════════════════
+        public async Task<VetVerificationStatusDto> SubmitVerificationAsync(string userId, SubmitVetVerificationDto dto)
+        {
+            var vet = await GetVetByUserIdAsync(userId);
+
+            if (vet.IsVerified || vet.VerificationStatus == "Approved")
+                throw new Exception("تم التحقق من حسابك مسبقاً.");
+
+            if (string.IsNullOrWhiteSpace(dto.LicenseNumber))
+                throw new Exception("رقم الترخيص مطلوب.");
+
+            if (dto.CertificateFile == null || dto.CertificateFile.Length == 0)
+                throw new Exception("الرجاء رفع مستند الترخيص أو الشهادة.");
+
+            var certificateUrl = await SaveCertificateFileAsync(dto.CertificateFile);
+            if (certificateUrl == null)
+                throw new Exception("يجب رفع ملف PDF أو JPG أو PNG بحد أقصى 10 ميغابايت.");
+
+            vet.LicenseNumber = dto.LicenseNumber.Trim();
+            vet.LicenseIssueDate = dto.IssueDate;
+            vet.CertificateUrl = certificateUrl;
+            vet.VerificationStatus = "Pending";
+            vet.RejectionReason = null;
+            vet.SubmittedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return MapToStatusDto(vet);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: حالة التحقق المهني للطبيب الحالي
+        // ═══════════════════════════════════════════════════════════════════════
+        public async Task<VetVerificationStatusDto?> GetVerificationStatusAsync(string userId)
+        {
+            if (!int.TryParse(userId, out int parsedUserId))
+                return null;
+
+            var vet = await _context.Vets.FirstOrDefaultAsync(v => v.UserId == parsedUserId);
+            return vet == null ? null : MapToStatusDto(vet);
+        }
+
+        private async Task<Vet> GetVetByUserIdAsync(string userId)
+        {
+            if (!int.TryParse(userId, out int parsedUserId))
+                throw new Exception("معرف المستخدم غير صالح.");
+
+            var vet = await _context.Vets.FirstOrDefaultAsync(v => v.UserId == parsedUserId);
+            if (vet == null)
+                throw new Exception("الملف الشخصي للطبيب غير موجود.");
+
+            return vet;
+        }
+
+        private static VetVerificationStatusDto MapToStatusDto(Vet vet)
+        {
+            return new VetVerificationStatusDto
+            {
+                VetId = vet.VetId,
+                Status = vet.IsVerified ? "Approved" : vet.VerificationStatus,
+                LicenseNumber = vet.LicenseNumber,
+                LicenseIssueDate = vet.LicenseIssueDate,
+                CertificateUrl = vet.CertificateUrl,
+                SubmittedAt = vet.SubmittedAt,
+                RejectionReason = vet.RejectionReason
+            };
+        }
+
+        private static async Task<string?> SaveCertificateFileAsync(IFormFile file)
+        {
+            if (file.Length == 0 || file.Length > 10 * 1024 * 1024)
+                return null;
+
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+            if (!allowedExtensions.Contains(extension))
+                return null;
+
+            var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "vet-certificates");
+            Directory.CreateDirectory(uploadFolder);
+
+            var fileName = $"{Guid.NewGuid():N}{extension}";
+            var filePath = Path.Combine(uploadFolder, fileName);
+
+            await using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return "/uploads/vet-certificates/" + fileName;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
         // Helper: Map Vet entity to VetResponseDto
         // ═══════════════════════════════════════════════════════════════════════
         private VetResponseDto MapToDto(Vet vet, double? distanceInKm, double? averageRating, int totalRatings)

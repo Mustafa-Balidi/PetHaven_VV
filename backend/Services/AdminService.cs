@@ -60,30 +60,26 @@ namespace PetHaven.Services
                 throw new Exception("تمت الموافقة على هذا الطبيب مسبقاً.");
 
             vet.IsVerified = true;
+            vet.VerificationStatus = "Approved";
+            vet.RejectionReason = null;
             await _context.SaveChangesAsync();
             return true;
         }
 
-        // ─── رفض طبيب (حذف الحساب) ──────────────────────────────
-        public async Task<bool> RejectVetAsync(int vetId)
+        // ─── رفض طبيب (تحديث الحالة إلى Rejected مع السبب) ──────
+        public async Task<bool> RejectVetAsync(int vetId, string? reason)
         {
-            var vet = await _context.Vets
-                .Include(v => v.User)
-                .FirstOrDefaultAsync(v => v.VetId == vetId);
+            var vet = await _context.Vets.FindAsync(vetId);
 
             if (vet == null)
                 throw new Exception("الطبيب غير موجود.");
 
-            // حذف حساب المستخدم المرتبط (سيحذف الطبيب تلقائياً بسبب Cascade)
-            if (vet.User != null)
-            {
-                _context.Users.Remove(vet.User);
-            }
-            else
-            {
-                _context.Vets.Remove(vet);
-            }
+            if (vet.VerificationStatus == "Rejected")
+                throw new Exception("تم رفض هذا الطبيب مسبقاً.");
 
+            vet.IsVerified = false;
+            vet.VerificationStatus = "Rejected";
+            vet.RejectionReason = string.IsNullOrWhiteSpace(reason) ? "لم يتم قبول مستندات التحقق." : reason.Trim();
             await _context.SaveChangesAsync();
             return true;
         }

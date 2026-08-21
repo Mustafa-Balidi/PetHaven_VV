@@ -13,8 +13,8 @@ namespace PetHaven.Services
         // الموافقة على طبيب
         Task<bool> VerifyVetAsync(int vetId);
 
-        // رفض طبيب
-        Task<bool> RejectVetAsync(int vetId);
+        // رفض طبيب (مع سبب الرفض)
+        Task<bool> RejectVetAsync(int vetId, string? reason);
 
         // حظر مستخدم
         Task<bool> BanUserAsync(int userId, string? reason);
