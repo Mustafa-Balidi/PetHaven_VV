@@ -104,7 +104,7 @@ export default function ShoppingCart() {
     return (
       <div className="sc-page">
         <Navbar />
-        <main className="sc-main">
+        <main id="main-content" tabIndex={-1} className="sc-main">
           <p>{t('adopter.cart.loading')}</p>
         </main>
         <Footer />
@@ -116,9 +116,9 @@ export default function ShoppingCart() {
     return (
       <div className="sc-page">
         <Navbar />
-        <main className="sc-main">
+        <main id="main-content" tabIndex={-1} className="sc-main">
           <p>{error}</p>
-          <button onClick={fetchCart}>{t('adopter.cart.retry')}</button>
+          <button type="button" onClick={fetchCart}>{t('adopter.cart.retry')}</button>
         </main>
         <Footer />
       </div>
@@ -129,7 +129,7 @@ export default function ShoppingCart() {
     return (
       <div className="sc-page">
         <Navbar />
-        <main className="sc-main">
+        <main id="main-content" tabIndex={-1} className="sc-main">
           <section className="sc-empty-state">
             <div className="sc-empty-state__icon" aria-hidden="true">
               <Icon name="lock" />
@@ -149,7 +149,7 @@ export default function ShoppingCart() {
     return (
       <div className="sc-page">
         <Navbar />
-        <main className="sc-main">
+        <main id="main-content" tabIndex={-1} className="sc-main">
           <CartHeader itemCount={0} />
           <section className="sc-empty-state" aria-live="polite">
             <div className="sc-empty-state__icon" aria-hidden="true">
@@ -175,7 +175,7 @@ export default function ShoppingCart() {
   return (
     <div className="sc-page">
       <Navbar />
-      <main className="sc-main">
+      <main id="main-content" tabIndex={-1} className="sc-main">
         <CartHeader itemCount={cart.items.length} />
         <div className="sc-grid">
           <CartItemsList

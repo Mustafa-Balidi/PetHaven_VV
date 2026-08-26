@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 export default function AdoptionApplicationReview({ request, onApprove, onReject, onClose }) {
   const { t: translate } = useTranslation();
+  const titleId = useId();
+  const dialogRef = useModalA11y({ onClose });
   const tr = translate("center.adoptionRequests.review", { returnObjects: true });
   const modalClose = translate("center.modals.close");
 
@@ -29,9 +32,16 @@ export default function AdoptionApplicationReview({ request, onApprove, onReject
   return (
     <div className="center-modal-overlay">
       <button type="button" aria-label={modalClose} className="center-modal-backdrop" onClick={onClose} />
-      <div className="center-modal-panel center-modal-panel--xl">
+      <div
+        className="center-modal-panel center-modal-panel--xl"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <div className="center-modal-header">
-          <h2 className="center-modal-title">
+          <h2 id={titleId} className="center-modal-title">
             {tr.titlePrefix} {request.pet.name}
           </h2>
           <button type="button" aria-label={modalClose} className="center-modal-close-btn" onClick={onClose}>

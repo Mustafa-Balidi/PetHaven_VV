@@ -12,7 +12,7 @@ export default function HeroBanner({ hero, onShopNowClick }) {
         <h1 className="hero-title">{t("adopter.store.hero.title")}</h1>
         <p className="hero-description">{t("adopter.store.hero.description")}</p>
         <div className="hero-action">
-          <button className="btn-primary-hero" onClick={onShopNowClick}>
+          <button type="button" className="btn-primary-hero" onClick={onShopNowClick}>
             {t("adopter.store.hero.cta")}
             <Icon name="arrow_forward" className="hero-btn-icon" />
           </button>

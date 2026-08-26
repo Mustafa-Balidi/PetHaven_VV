@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 const MAX_LENGTH = 500;
 
 export default function RejectApplication({ request, onConfirm, onClose }) {
   const { t: translate } = useTranslation();
+  const titleId = useId();
   const tr = translate("center.adoptionRequests.reject", { returnObjects: true });
   const modalClose = translate("center.modals.close");
   const [reason, setReason] = useState("");
   const [rejecting, setRejecting] = useState(false);
+  const dialogRef = useModalA11y({ onClose, closeOnEscape: !rejecting });
 
   function handleQuickInsert(text) {
     setReason((prev) => (prev ? `${prev} ${text}.` : `${text}.`));
@@ -27,9 +30,16 @@ export default function RejectApplication({ request, onConfirm, onClose }) {
   return (
     <div className="center-modal-overlay">
       <button type="button" aria-label={tr.cancel} className="center-modal-backdrop" onClick={onClose} />
-      <div className="center-modal-panel center-modal-panel--sm">
+      <div
+        className="center-modal-panel center-modal-panel--sm"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <div className="center-modal-header">
-          <h2 className="center-modal-title">{tr.title}</h2>
+          <h2 id={titleId} className="center-modal-title">{tr.title}</h2>
           <button type="button" aria-label={modalClose} className="center-modal-close-btn" onClick={onClose}>
             <Icon name="close" />
           </button>
@@ -39,10 +49,11 @@ export default function RejectApplication({ request, onConfirm, onClose }) {
           <p className="center-modal-reject__description">{tr.description}</p>
 
           <div className="center-modal-field">
-            <label className="center-modal-label">
+            <label htmlFor="reject-application-reason" className="center-modal-label">
               {tr.reasonLabel} <span className="center-modal-reject__required">*</span>
             </label>
             <textarea
+              id="reject-application-reason"
               className="center-modal-textarea"
               placeholder={tr.reasonPlaceholder}
               rows={4}

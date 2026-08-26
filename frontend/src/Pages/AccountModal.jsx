@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { createPortal } from "react-dom";
 import { fetchMyProfile, updateAdopterProfile } from "../api/profileApi";
 import { logoutUser } from "../api/authApi";
 import "../Styling/AccountModal.css";
+import useModalA11y from "../hooks/useModalA11y.js";
 
 const HOUSING_OPTIONS = ["Apartment", "Department", "House", "Villa"];
 const EXPERIENCE_OPTIONS = ["Beginner", "Intermediate", "Expert"];
@@ -26,13 +27,11 @@ export default function AccountModal({ onClose, onLogout }) {
     const [saveError, setSaveError] = useState(null);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
+    const titleId = useId();
+    const dialogRef = useModalA11y({ onClose, closeOnEscape: !isSaving });
+
     useEffect(() => {
         loadProfile();
-        // امنع سكرول الصفحة اللي وراء المودال وقت ما يكون مفتوح
-        document.body.style.overflow = "hidden";
-        return () => {
-            document.body.style.overflow = "";
-        };
     }, []);
 
     async function loadProfile() {
@@ -88,20 +87,33 @@ export default function AccountModal({ onClose, onLogout }) {
     }
 
     const modalContent = (
-        <div className="account-modal-overlay" onClick={onClose}>
-            <div className="account-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="account-modal-close" onClick={onClose}>
-                    ×
+        <div className="account-modal-overlay" role="presentation" onClick={onClose}>
+            <div
+                className="account-modal"
+                onClick={(e) => e.stopPropagation()}
+                ref={dialogRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={titleId}
+                tabIndex={-1}
+            >
+                <button
+                    type="button"
+                    className="account-modal-close"
+                    onClick={onClose}
+                    aria-label="Close account dialog"
+                >
+                    <span aria-hidden="true">×</span>
                 </button>
 
                 {mode === "view" && (
                     <>
-                        <h2 className="account-modal-title">Account</h2>
+                        <h2 id={titleId} className="account-modal-title">Account</h2>
 
                         {isLoading ? (
-                            <p className="account-modal-status">...Loading</p>
+                            <p className="account-modal-status" role="status">...Loading</p>
                         ) : error ? (
-                            <p className="account-modal-status account-modal-error">
+                            <p className="account-modal-status account-modal-error" role="alert">
                                 {error}
                             </p>
                         ) : (
@@ -143,6 +155,7 @@ export default function AccountModal({ onClose, onLogout }) {
 
                         <div className="account-modal-actions">
                             <button
+                                type="button"
                                 className="account-btn account-btn-primary"
                                 onClick={() => setMode("edit")}
                                 disabled={isLoading || !!error}
@@ -162,7 +175,7 @@ export default function AccountModal({ onClose, onLogout }) {
 
                 {mode === "edit" && (
                     <>
-                        <h2 className="account-modal-title">Edite profile</h2>
+                        <h2 id={titleId} className="account-modal-title">Edite profile</h2>
 
                         <form className="account-edit-form" onSubmit={handleSave}>
                             <label className="account-field">
@@ -240,12 +253,12 @@ export default function AccountModal({ onClose, onLogout }) {
                             </label>
 
                             {saveError && (
-                                <p className="account-modal-status account-modal-error">
+                                <p className="account-modal-status account-modal-error" role="alert">
                                     {saveError}
                                 </p>
                             )}
                             {saveSuccess && (
-                                <p className="account-modal-status account-modal-success">
+                                <p className="account-modal-status account-modal-success" role="status">
                                     info has been updated!
                                 </p>
                             )}

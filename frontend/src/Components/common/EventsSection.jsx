@@ -16,16 +16,16 @@ export default function EventsSection({ requireAuth }) {
   }
 
   return (
-    <section className="events">
+    <section className="events" aria-labelledby="public-events-title">
       <div className="events__header">
-        <h2 className="events__title">{t("events.title")}</h2>
-        <a className="events__view-all events__view-all--desktop" href="#" onClick={handleViewAll}>
+        <h2 id="public-events-title" className="events__title">{t("events.title")}</h2>
+        <button type="button" className="events__view-all events__view-all--desktop" onClick={handleViewAll}>
           {t("events.viewAll")}
-        </a>
+        </button>
       </div>
       <div className="events__grid">
         {EVENTS.map((event, i) => (
-          <div
+          <article
             key={event.title}
             className={`events__card${event.hiddenOnMobile ? " events__card--hidden-mobile" : ""}`}
           >
@@ -34,7 +34,7 @@ export default function EventsSection({ requireAuth }) {
               <span className="events__date-month">{event.month}</span>
             </div>
             <div className="events__body">
-              <h3 className="events__card-title">{items[i].title}</h3>
+              <h3 id={`public-event-title-${i}`} className="events__card-title">{items[i].title}</h3>
               <div className="events__meta">
                 <Icon name="schedule" className="events__meta-icon" />
                 <span>{items[i].time}</span>
@@ -43,11 +43,16 @@ export default function EventsSection({ requireAuth }) {
                 <Icon name="location_on" className="events__meta-icon" />
                 <span>{items[i].location}</span>
               </div>
-              <button onClick={handleEventAction} className="events__cta">
+              <button
+                type="button"
+                aria-label={t("events.ctaAria", { cta: items[i].cta, title: items[i].title })}
+                onClick={handleEventAction}
+                className="events__cta"
+              >
                 {items[i].cta}
               </button>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>

@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import "../Styling/Footer.css";
 
 export default function Footer({ onContactClick }) {
   const { t } = useTranslation();
@@ -9,19 +10,19 @@ export default function Footer({ onContactClick }) {
     { label: t("footer.termsOfService") },
   ];
   return (
-    <footer className="site-footer">
-      <div className="footer-inner">
-        <div className="footer-brand">
-          <img src={LOGO_GRAY} alt={t("footer.logoAlt")} className="footer-logo" />
-          <span className="footer-copyright">{t("footer.copyright")}</span>
+    <footer className="app-footer">
+      <div className="app-footer__inner">
+        <div className="app-footer__brand">
+          <img src={LOGO_GRAY} alt={t("footer.logoAlt")} className="app-footer__logo" />
+          <span className="app-footer__copyright">{t("footer.copyright")}</span>
         </div>
-        <div className="footer-links">
+        <div className="app-footer__links">
           {links.map((link) => (
-            <a key={link.label} href="#" className="footer-link">
+            <span key={link.label} className="app-footer__link">
               {link.label}
-            </a>
+            </span>
           ))}
-          <button type="button" className="footer-link footer-link--button" onClick={onContactClick}>
+          <button type="button" className="app-footer__link" onClick={onContactClick}>
             {t("footer.contactUs")}
           </button>
         </div>

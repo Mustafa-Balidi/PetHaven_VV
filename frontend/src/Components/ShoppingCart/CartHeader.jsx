@@ -9,7 +9,7 @@ export default function CartHeader({ itemCount }) {
       <h1 className="sc-header__title">
         <Link to="/adopter/store" className="sc-back-btn" aria-label={t('adopter.cart.backToStore')}>
          
-          <span className="material-symbols-outlined">arrow_back</span>
+          <span className="material-symbols-outlined" aria-hidden="true">arrow_back</span>
         </Link>
         {t('adopter.cart.title')}
       </h1>

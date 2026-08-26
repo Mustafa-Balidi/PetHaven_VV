@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import VetPatientsSummary from "../../Components/vet/VetPatientsSummary.jsx";
 import VetPatientsDirectory from "../../Components/vet/VetPatientsDirectory.jsx";
 import VetPatientRecordsModal from "../../Components/vet/VetPatientRecordsModal.jsx";
@@ -16,6 +17,7 @@ const PAGE_SIZE = 12;
 
 export default function VetPatients() {
   const { t } = useTranslation();
+  useDocumentTitle(t("vetPatients.title"));
 
   const [stats, setStats] = useState(null);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -131,7 +133,7 @@ export default function VetPatients() {
     <div className="vet-patients-page">
       <VetHeader />
 
-      <main className="vet-patients-main">
+      <main id="main-content" tabIndex={-1} className="vet-patients-main">
         <header className="vet-patients-heading">
           <h1 className="vet-patients-title">{t("vetPatients.title")}</h1>
           <p className="vet-patients-subtitle">{t("vetPatients.subtitle")}</p>
@@ -142,7 +144,7 @@ export default function VetPatients() {
             <span>{statsError}</span>
           </div>
         ) : statsLoading ? (
-          <p className="vet-patients-empty">{t("vetPatients.summary.loading")}</p>
+          <p className="vet-patients-empty" role="status">{t("vetPatients.summary.loading")}</p>
         ) : (
           <VetPatientsSummary stats={stats} />
         )}

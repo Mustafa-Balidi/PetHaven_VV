@@ -32,7 +32,11 @@ export default function VetReviewCard({ review }) {
                 })
               : ""}
           </p>
-          <div className="vet-reviews-stars vet-reviews-stars--sm">
+          <div
+            className="vet-reviews-stars vet-reviews-stars--sm"
+            role="img"
+            aria-label={t("vetReviews.card.ratingLabel", { value: review.starsCount })}
+          >
             {Array.from({ length: 5 }).map((_, i) => (
               <Icon
                 key={i}

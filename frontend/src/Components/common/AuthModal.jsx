@@ -1,8 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
 import { loginUser, registerUser } from "../../api/authApi.js";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 const getRoleRedirect = (role) => {
   switch (role) {
@@ -45,13 +46,27 @@ export default function AuthModal({ mode, onClose }) {
     password: "",
     role: "",
   });
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  const baseId = useId();
+  const signInTabId = baseId + "-tab-signin";
+  const signUpTabId = baseId + "-tab-signup";
+  const signInPanelId = baseId + "-panel-signin";
+  const signUpPanelId = baseId + "-panel-signup";
+  const signInTitleId = baseId + "-title-signin";
+  const signUpTitleId = baseId + "-title-signup";
+  const signInDescriptionId = baseId + "-description-signin";
+  const signUpDescriptionId = baseId + "-description-signup";
+  const roleLabelId = baseId + "-role-label";
+  const roleErrorId = baseId + "-role-error";
+  const signInEmailId = baseId + "-signin-email";
+  const signInPasswordId = baseId + "-signin-password";
+  const fullNameId = baseId + "-signup-full-name";
+  const userNameId = baseId + "-signup-username";
+  const phoneId = baseId + "-signup-phone";
+  const signUpEmailId = baseId + "-signup-email";
+  const signUpPasswordId = baseId + "-signup-password";
+  const signupFirstInputRef = useRef(null);
+  const roleRefs = useRef([]);
+  const dialogRef = useModalA11y({ onClose, closeOnEscape: !loading });
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -72,12 +87,14 @@ export default function AuthModal({ mode, onClose }) {
     e.preventDefault();
     setError("");
     setSignupStep(2);
+    requestAnimationFrame(() => roleRefs.current[0]?.focus());
   };
 
   const handleBackStep = () => {
     setError("");
     setRoleError("");
     setSignupStep(1);
+    requestAnimationFrame(() => signupFirstInputRef.current?.focus());
   };
 
   const handleSignUp = async (e) => {
@@ -105,84 +122,133 @@ export default function AuthModal({ mode, onClose }) {
     setSignupStep(1);
     setError("");
     setRoleError("");
+    requestAnimationFrame(() => {
+      document.getElementById(nextTab === "signin" ? signInTabId : signUpTabId)?.focus();
+    });
   };
 
-  const handleGoogleAuth = () => {
-    console.log("Google OAuth not yet implemented");
+  const handleTabKeyDown = (event, currentTab) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const tabs = ["signin", "signup"];
+    const currentIndex = tabs.indexOf(currentTab);
+    const isRtl = document.documentElement.dir === "rtl";
+    let nextTab = currentTab;
+    if (event.key === "Home") nextTab = "signin";
+    if (event.key === "End") nextTab = "signup";
+    if (event.key === "ArrowRight") {
+      nextTab = tabs[(currentIndex + (isRtl ? -1 : 1) + tabs.length) % tabs.length];
+    }
+    if (event.key === "ArrowLeft") {
+      nextTab = tabs[(currentIndex + (isRtl ? 1 : -1) + tabs.length) % tabs.length];
+    }
+    handleTabChange(nextTab);
+  };
+
+  const handleRoleKeyDown = (event, currentIndex) => {
+    if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const isRtl = document.documentElement.dir === "rtl";
+    let nextIndex = currentIndex;
+    if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = roleOptions.length - 1;
+    else {
+      const movesBackward = event.key === "ArrowUp" ||
+        (event.key === "ArrowLeft" && !isRtl) ||
+        (event.key === "ArrowRight" && isRtl);
+      nextIndex = (currentIndex + (movesBackward ? -1 : 1) + roleOptions.length) % roleOptions.length;
+    }
+    setSignUpForm((current) => ({ ...current, role: roleOptions[nextIndex].value }));
+    setRoleError("");
+    roleRefs.current[nextIndex]?.focus();
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-backdrop" role="presentation" onClick={onClose}>
       <div
         className={`auth-modal ${tab === "signup" ? "auth-modal--signup" : ""}`}
         onClick={(e) => e.stopPropagation()}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={tab === "signin" ? signInTitleId : signUpTitleId}
+        aria-describedby={tab === "signin" ? signInDescriptionId : signUpDescriptionId}
+        aria-busy={loading}
+        tabIndex={-1}
       >
-        <button aria-label={t("authModal.close")} className="modal-close" onClick={onClose}>
+        <button
+          type="button"
+          aria-label={t("authModal.close")}
+          className="modal-close"
+          onClick={onClose}
+        >
           <Icon name="close" />
         </button>
 
-        <div className="auth-modal__tabs">
+        <div className="auth-modal__tabs" role="tablist" aria-label={t("authModal.tabsLabel")}>
           <button
+            type="button"
+            id={signInTabId}
+            role="tab"
+            aria-selected={tab === "signin"}
+            aria-controls={signInPanelId}
+            tabIndex={tab === "signin" ? 0 : -1}
             className={`auth-modal__tab ${tab === "signin" ? "auth-modal__tab--active" : ""}`}
             onClick={() => handleTabChange("signin")}
+            onKeyDown={(event) => handleTabKeyDown(event, "signin")}
           >
             {t("authModal.signIn")}
           </button>
           <button
+            type="button"
+            id={signUpTabId}
+            role="tab"
+            aria-selected={tab === "signup"}
+            aria-controls={signUpPanelId}
+            tabIndex={tab === "signup" ? 0 : -1}
             className={`auth-modal__tab ${tab === "signup" ? "auth-modal__tab--active" : ""}`}
             onClick={() => handleTabChange("signup")}
+            onKeyDown={(event) => handleTabKeyDown(event, "signup")}
           >
             {t("authModal.signUp")}
           </button>
         </div>
 
-        {error && <p className="auth-modal__error">{error}</p>}
+        {error && <p className="auth-modal__error" role="alert">{error}</p>}
 
         {tab === "signin" ? (
-          <>
+          <div id={signInPanelId} role="tabpanel" aria-labelledby={signInTabId}>
             <div className="auth-modal__welcome">
-              <h2 className="auth-modal__welcome-title">{t("authModal.welcomeBack")}</h2>
-              <p className="auth-modal__welcome-subtitle">{t("authModal.signInSubtitle")}</p>
+              <h2 id={signInTitleId} className="auth-modal__welcome-title">{t("authModal.welcomeBack")}</h2>
+              <p id={signInDescriptionId} className="auth-modal__welcome-subtitle">{t("authModal.signInSubtitle")}</p>
             </div>
-
-            <button type="button" className="auth-modal__google-btn" onClick={handleGoogleAuth}>
-              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                <path
-                  fill="#4285F4"
-                  d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"
-                />
-              </svg>
-              {t("authModal.googleSignIn")}
-            </button>
 
             <div className="auth-modal__divider">
               <span>{t("authModal.or")}</span>
             </div>
 
-            <form className="auth-modal__form" onSubmit={handleSignIn}>
+            <form className="auth-modal__form" onSubmit={handleSignIn} aria-busy={loading}>
+              <label className="sr-only" htmlFor={signInEmailId}>
+                {t("authModal.emailPlaceholder")}
+              </label>
               <input
+                id={signInEmailId}
                 type="email"
                 placeholder={t("authModal.emailPlaceholder")}
+                autoComplete="email"
                 required
                 value={signInForm.email}
                 onChange={(e) => setSignInForm({ ...signInForm, email: e.target.value })}
                 className="auth-modal__input"
               />
+              <label className="sr-only" htmlFor={signInPasswordId}>
+                {t("authModal.passwordPlaceholder")}
+              </label>
               <input
+                id={signInPasswordId}
                 type="password"
                 placeholder={t("authModal.passwordPlaceholder")}
+                autoComplete="current-password"
                 required
                 value={signInForm.password}
                 onChange={(e) => setSignInForm({ ...signInForm, password: e.target.value })}
@@ -199,85 +265,89 @@ export default function AuthModal({ mode, onClose }) {
                 {t("authModal.signUp")}
               </button>
             </p>
-          </>
+          </div>
         ) : (
-          <>
+          <div id={signUpPanelId} role="tabpanel" aria-labelledby={signUpTabId}>
             <div className="auth-modal__welcome">
-              <h2 className="auth-modal__welcome-title">{t("authModal.joinPetHaven")}</h2>
-              <p className="auth-modal__welcome-subtitle">
+              <h2 id={signUpTitleId} className="auth-modal__welcome-title">{t("authModal.joinPetHaven")}</h2>
+              <p id={signUpDescriptionId} className="auth-modal__welcome-subtitle" aria-live="polite">
                 {signupStep === 1 ? t("authModal.signUpSubtitleStep1") : t("authModal.signUpSubtitleStep2")}
               </p>
             </div>
 
-            <div className="auth-modal__steps">
+            <div className="auth-modal__steps" aria-hidden="true">
               <span className={`auth-modal__step-dot ${signupStep === 1 ? "auth-modal__step-dot--active" : ""}`} />
               <span className={`auth-modal__step-dot ${signupStep === 2 ? "auth-modal__step-dot--active" : ""}`} />
             </div>
 
             {signupStep === 1 ? (
               <>
-                <button type="button" className="auth-modal__google-btn" onClick={handleGoogleAuth}>
-                  <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                    <path
-                      fill="#4285F4"
-                      d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"
-                    />
-                    <path
-                      fill="#EA4335"
-                      d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"
-                    />
-                  </svg>
-                  {t("authModal.googleSignUp")}
-                </button>
-
                 <div className="auth-modal__divider">
                   <span>{t("authModal.or")}</span>
                 </div>
 
                 <form className="auth-modal__form" onSubmit={handleNextStep}>
+                  <label className="sr-only" htmlFor={fullNameId}>
+                    {t("authModal.fullNamePlaceholder")}
+                  </label>
                   <input
+                    ref={signupFirstInputRef}
+                    id={fullNameId}
                     type="text"
                     placeholder={t("authModal.fullNamePlaceholder")}
+                    autoComplete="name"
                     required
                     value={signUpForm.fullName}
                     onChange={(e) => setSignUpForm({ ...signUpForm, fullName: e.target.value })}
                     className="auth-modal__input"
                   />
+                  <label className="sr-only" htmlFor={userNameId}>
+                    {t("authModal.usernamePlaceholder")}
+                  </label>
                   <input
+                    id={userNameId}
                     type="text"
                     placeholder={t("authModal.usernamePlaceholder")}
+                    autoComplete="username"
                     required
                     value={signUpForm.userName}
                     onChange={(e) => setSignUpForm({ ...signUpForm, userName: e.target.value })}
                     className="auth-modal__input"
                   />
+                  <label className="sr-only" htmlFor={phoneId}>
+                    {t("authModal.phonePlaceholder")}
+                  </label>
                   <input
+                    id={phoneId}
                     type="tel"
                     placeholder={t("authModal.phonePlaceholder")}
+                    autoComplete="tel"
                     required
                     value={signUpForm.phoneNumber}
                     onChange={(e) => setSignUpForm({ ...signUpForm, phoneNumber: e.target.value })}
                     className="auth-modal__input"
                   />
+                  <label className="sr-only" htmlFor={signUpEmailId}>
+                    {t("authModal.emailPlaceholder")}
+                  </label>
                   <input
+                    id={signUpEmailId}
                     type="email"
                     placeholder={t("authModal.emailPlaceholder")}
+                    autoComplete="email"
                     required
                     value={signUpForm.email}
                     onChange={(e) => setSignUpForm({ ...signUpForm, email: e.target.value })}
                     className="auth-modal__input"
                   />
+                  <label className="sr-only" htmlFor={signUpPasswordId}>
+                    {t("authModal.passwordPlaceholder")}
+                  </label>
                   <input
+                    id={signUpPasswordId}
                     type="password"
                     placeholder={t("authModal.passwordPlaceholder")}
+                    autoComplete="new-password"
                     required
                     value={signUpForm.password}
                     onChange={(e) => setSignUpForm({ ...signUpForm, password: e.target.value })}
@@ -292,12 +362,28 @@ export default function AuthModal({ mode, onClose }) {
             ) : (
               <form className="auth-modal__form" onSubmit={handleSignUp}>
                 <div className="auth-modal__role-field">
-                  <span className="auth-modal__role-label">{t("authModal.iAmA")}</span>
-                  <div className="auth-modal__role-grid">
-                    {roleOptions.map((option) => (
+                  <span className="auth-modal__role-label" id={roleLabelId}>
+                    {t("authModal.iAmA")}
+                  </span>
+                  <div
+                    className="auth-modal__role-grid"
+                    role="radiogroup"
+                    aria-labelledby={roleLabelId}
+                    aria-describedby={roleError ? roleErrorId : undefined}
+                    aria-invalid={Boolean(roleError)}
+                  >
+                    {roleOptions.map((option, index) => (
                       <button
+                        ref={(element) => { roleRefs.current[index] = element; }}
                         type="button"
                         key={option.value}
+                        role="radio"
+                        aria-checked={signUpForm.role === option.value}
+                        tabIndex={
+                          signUpForm.role === option.value || (!signUpForm.role && index === 0)
+                            ? 0
+                            : -1
+                        }
                         className={`auth-modal__role-card ${
                           signUpForm.role === option.value ? "auth-modal__role-card--active" : ""
                         }`}
@@ -305,14 +391,19 @@ export default function AuthModal({ mode, onClose }) {
                           setSignUpForm({ ...signUpForm, role: option.value });
                           setRoleError("");
                         }}
+                        onKeyDown={(event) => handleRoleKeyDown(event, index)}
                       >
-                        <span className="auth-modal__role-icon">{option.icon}</span>
+                        <span className="auth-modal__role-icon" aria-hidden="true">{option.icon}</span>
                         <span className="auth-modal__role-name">{option.label}</span>
                         <span className="auth-modal__role-desc">{option.description}</span>
                       </button>
                     ))}
                   </div>
-                  {roleError && <p className="auth-modal__error">{roleError}</p>}
+                  {roleError && (
+                    <p className="auth-modal__error" id={roleErrorId} role="alert">
+                      {roleError}
+                    </p>
+                  )}
                 </div>
 
                 <div className="auth-modal__step-actions">
@@ -332,7 +423,7 @@ export default function AuthModal({ mode, onClose }) {
                 {t("authModal.signIn")}
               </button>
             </p>
-          </>
+          </div>
         )}
       </div>
     </div>

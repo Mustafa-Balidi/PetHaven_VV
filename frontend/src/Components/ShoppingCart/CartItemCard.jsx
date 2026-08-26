@@ -5,7 +5,7 @@ export default function CartItemCard({ item, onUpdateQty, onRemove }) {
   const { t } = useTranslation();
 
   return (
-    <div className="sc-card">
+    <article className="sc-card">
       <div className="sc-card__img-wrap">
         <img
           src={item.productImage || '/placeholder-product.png'}
@@ -28,12 +28,12 @@ export default function CartItemCard({ item, onUpdateQty, onRemove }) {
             onIncrease={() => onUpdateQty(item.cartItemId, 1)}
             onDecrease={() => onUpdateQty(item.cartItemId, -1)}
           />
-          <button className="sc-remove-btn" onClick={() => onRemove(item.cartItemId)}>
-            <span className="material-symbols-outlined">delete</span>
+          <button type="button" className="sc-remove-btn" onClick={() => onRemove(item.cartItemId)}>
+            <span className="material-symbols-outlined" aria-hidden="true">delete</span>
             {t('adopter.cart.remove')}
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

@@ -3,13 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import Icon from "../../Components/Icon.jsx";
 import "../../Styling/VetVerification.css";
 
 export default function VetProfessionalVerification() {
   const { t } = useTranslation();
+  useDocumentTitle(t("vetVerification.title"));
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const licenseInputRef = useRef(null);
+  const dropzoneRef = useRef(null);
 
   const [licenseNumber, setLicenseNumber] = useState("");
   const [issueDate, setIssueDate] = useState("");
@@ -40,10 +44,13 @@ export default function VetProfessionalVerification() {
     event.preventDefault();
     if (!licenseNumber.trim()) {
       setError(t("vetVerification.errors.licenseRequired"));
+      // Sighted users see the message; move the keyboard user to the field.
+      licenseInputRef.current?.focus();
       return;
     }
     if (!file) {
       setError(t("vetVerification.errors.fileRequired"));
+      dropzoneRef.current?.focus();
       return;
     }
     setError("");
@@ -54,7 +61,7 @@ export default function VetProfessionalVerification() {
     <div className="vet-verification-page">
       <VetHeader />
 
-      <main className="vet-verification-main">
+      <main id="main-content" tabIndex={-1} className="vet-verification-main">
         <form className="vet-verification-card" onSubmit={handleSubmit}>
           <div className="vet-verification-card__accent" />
 
@@ -66,29 +73,43 @@ export default function VetProfessionalVerification() {
             <p className="vet-verification-subtitle">{t("vetVerification.subtitle")}</p>
           </div>
 
+          {/* The real file input is display:none, so this stand-in is the
+              only way in. Without a label of its own its name would be the
+              whole subtree, hint and file chip included. */}
           <div
             className="vet-verification-upload"
+            ref={dropzoneRef}
             role="button"
             tabIndex={0}
+            aria-label={t("vetVerification.upload.dropzoneLabel")}
+            aria-describedby="vet-verification-upload-hint"
             onClick={handleChooseFile}
             onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") handleChooseFile();
+              if (event.key !== "Enter" && event.key !== " ") return;
+              // Space would otherwise scroll the page as well.
+              event.preventDefault();
+              handleChooseFile();
             }}
           >
             <div className="vet-verification-upload__icon">
               <Icon name="cloud_upload" />
             </div>
             <h3 className="vet-verification-upload__title">{t("vetVerification.upload.title")}</h3>
-            <p className="vet-verification-upload__hint">{t("vetVerification.upload.hint")}</p>
+            <p className="vet-verification-upload__hint" id="vet-verification-upload-hint">
+              {t("vetVerification.upload.hint")}
+            </p>
 
             {file && (
-              <div className="vet-verification-upload__file">
+              <div className="vet-verification-upload__file" role="status">
                 <Icon name="description" />
                 {t("vetVerification.upload.selected", { name: file.name })}
                 <button
                   type="button"
                   className="vet-verification-upload__file-remove"
                   onClick={handleRemoveFile}
+                  // Enter on Remove would otherwise bubble to the stand-in
+                  // button and reopen the file picker.
+                  onKeyDown={(event) => event.stopPropagation()}
                   aria-label={t("vetVerification.upload.remove")}
                 >
                   <Icon name="close" />
@@ -112,8 +133,16 @@ export default function VetProfessionalVerification() {
               </label>
               <input
                 id="license-number"
+                ref={licenseInputRef}
                 type="text"
                 className="vet-verification-input"
+                aria-required="true"
+                aria-invalid={error === t("vetVerification.errors.licenseRequired") || undefined}
+                aria-describedby={
+                  error === t("vetVerification.errors.licenseRequired")
+                    ? "vet-verification-error"
+                    : undefined
+                }
                 placeholder={t("vetVerification.form.licenseNumberPlaceholder")}
                 value={licenseNumber}
                 onChange={(event) => setLicenseNumber(event.target.value)}
@@ -135,7 +164,7 @@ export default function VetProfessionalVerification() {
           </div>
 
           {error && (
-            <p className="vet-verification-error" role="alert">
+            <p className="vet-verification-error" id="vet-verification-error" role="alert">
               {error}
             </p>
           )}

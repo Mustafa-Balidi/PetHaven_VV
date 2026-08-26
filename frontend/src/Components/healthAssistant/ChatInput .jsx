@@ -3,11 +3,14 @@ import { FaArrowUp } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "../../Styling/HealthAssistant.css";
 
-const ChatInput = ({ onSend }) => {
+const ChatInput = ({ onSend, isSending = false, disabled = false }) => {
   const { t } = useTranslation();
   const [value, setValue] = useState("");
 
+  const isBlocked = isSending || disabled;
+
   const handleSend = () => {
+    if (isBlocked) return;
     const trimmed = value.trim();
     if (!trimmed) return;
     onSend?.(trimmed);
@@ -17,6 +20,7 @@ const ChatInput = ({ onSend }) => {
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      // Shift+Enter still inserts a new line.
       handleSend();
     }
   };
@@ -32,13 +36,14 @@ const ChatInput = ({ onSend }) => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
+            disabled={isBlocked}
           />
           <button
             type="button"
             onClick={handleSend}
             className="chat-input__send"
             aria-label={t("adopter.health.send")}
-            disabled={!value.trim()}
+            disabled={isBlocked || !value.trim()}
           >
             <FaArrowUp size={15} />
           </button>

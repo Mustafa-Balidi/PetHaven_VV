@@ -235,7 +235,7 @@ function AdoptionHubPage() {
         />
       )}
 
-      <main className="adoption-hub-main">
+      <main id="main-content" tabIndex={-1} className="adoption-hub-main">
         <header className="adoption-hub-header">
           <div>
             <h1 className="adoption-hub-header__title">
@@ -254,7 +254,13 @@ function AdoptionHubPage() {
         />
 
         {activeTab === "catalog" && (
-          <section className="adoption-hub-section">
+          <section
+            id="adoption-panel-catalog"
+            className="adoption-hub-section"
+            role="tabpanel"
+            aria-labelledby="adoption-tab-catalog"
+            tabIndex={0}
+          >
             <CompatibilityQuizBanner onStartQuiz={handleStartQuiz} />
 
             {quizRecommendedPets.length > 0 && (
@@ -267,7 +273,7 @@ function AdoptionHubPage() {
 
             {isLoadingPets ? (
               <div className="pet-catalog__state" aria-live="polite">
-                <span className="material-symbols-outlined">progress_activity</span>
+                <span className="material-symbols-outlined" aria-hidden="true">progress_activity</span>
                 <p>{t("adopter.adoptionHub.loadingPets")}</p>
               </div>
             ) : petsError ? (
@@ -286,7 +292,13 @@ function AdoptionHubPage() {
         )}
 
         {activeTab === "requests" && (
-          <section className="adoption-hub-section">
+          <section
+            id="adoption-panel-requests"
+            className="adoption-hub-section"
+            role="tabpanel"
+            aria-labelledby="adoption-tab-requests"
+            tabIndex={0}
+          >
             <AdoptionRequests
               requests={adoptionRequests}
               loading={isLoadingRequests}

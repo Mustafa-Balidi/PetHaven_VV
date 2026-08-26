@@ -108,7 +108,7 @@ export default function AdopterProfile() {
         <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
 
-      <main className="adopter-profile-main">
+      <main id="main-content" tabIndex={-1} className="adopter-profile-main">
         <Link to="/adopter/dashboard" className="adopter-profile-back-link">
           <Icon name="arrow_back" />
           {t("adopter.profile.backToDashboard")}
@@ -120,9 +120,11 @@ export default function AdopterProfile() {
         </div>
 
         {loading ? (
-          <div className="adopter-profile-state">{t("adopter.profile.loading")}</div>
+          <div className="adopter-profile-state" role="status" aria-live="polite">
+            {t("adopter.profile.loading")}
+          </div>
         ) : loadFailed ? (
-          <div className="adopter-profile-state adopter-profile-state--error">
+          <div className="adopter-profile-state adopter-profile-state--error" role="alert">
             <p>{t("adopter.profile.loadError")}</p>
             <button
               type="button"
@@ -151,6 +153,7 @@ export default function AdopterProfile() {
                     id="adopter-full-name"
                     type="text"
                     required
+                    autoComplete="name"
                     className="adopter-profile-input"
                     placeholder={t("adopter.profile.personal.fullNamePlaceholder")}
                     value={form.fullName}
@@ -166,10 +169,12 @@ export default function AdopterProfile() {
                     id="adopter-email"
                     type="email"
                     readOnly
+                    autoComplete="email"
+                    aria-describedby="adopter-email-hint"
                     className="adopter-profile-input adopter-profile-input--readonly"
                     value={form.email}
                   />
-                  <p className="adopter-profile-hint">
+                  <p id="adopter-email-hint" className="adopter-profile-hint">
                     {t("adopter.profile.personal.emailHint")}
                   </p>
                 </div>
@@ -183,6 +188,7 @@ export default function AdopterProfile() {
                     <input
                       id="adopter-phone"
                       type="tel"
+                      autoComplete="tel"
                       className="adopter-profile-input adopter-profile-input--icon"
                       placeholder={t("adopter.profile.personal.phonePlaceholder")}
                       value={form.phoneNumber}
@@ -200,6 +206,7 @@ export default function AdopterProfile() {
                     <input
                       id="adopter-address"
                       type="text"
+                      autoComplete="street-address"
                       className="adopter-profile-input adopter-profile-input--icon"
                       placeholder={t("adopter.profile.personal.addressPlaceholder")}
                       value={form.address}
@@ -268,11 +275,13 @@ export default function AdopterProfile() {
                     type="number"
                     min="0"
                     max="24"
+                    inputMode="numeric"
+                    aria-describedby="adopter-free-hours-hint"
                     className="adopter-profile-input"
                     value={form.freeHoursPerDay}
                     onChange={(event) => updateField("freeHoursPerDay", event.target.value)}
                   />
-                  <p className="adopter-profile-hint">
+                  <p id="adopter-free-hours-hint" className="adopter-profile-hint">
                     {t("adopter.profile.preferences.freeHoursHint")}
                   </p>
                 </div>

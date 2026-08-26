@@ -11,7 +11,7 @@ export default function DeliveryInfoGrid({ delivery, shippingType, address }) {
   return (
     <div className="oc-info-grid">
       <div className="oc-info-card">
-        <span className="material-symbols-outlined oc-info-card__icon">local_shipping</span>
+        <span className="material-symbols-outlined oc-info-card__icon" aria-hidden="true">local_shipping</span>
         <div>
           <h3 className="oc-info-card__title">{t("adopter.orders.estimatedDelivery")}</h3>
           <p className="oc-info-card__text">
@@ -30,7 +30,7 @@ export default function DeliveryInfoGrid({ delivery, shippingType, address }) {
       </div>
 
       <div className="oc-info-card">
-        <span className="material-symbols-outlined oc-info-card__icon">home_pin</span>
+        <span className="material-symbols-outlined oc-info-card__icon" aria-hidden="true">home_pin</span>
         <div>
           <h3 className="oc-info-card__title">{t("adopter.orders.shippingAddress")}</h3>
           <p className="oc-info-card__text">

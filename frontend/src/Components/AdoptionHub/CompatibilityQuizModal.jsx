@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { FaTimes, FaPaw, FaCheckCircle, FaArrowLeft, FaArrowRight, FaCheck } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "../../Styling/AdoptionHub.css";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 const DEFAULT_ANSWERS = {
   housing_type: "apartment",
@@ -72,6 +73,13 @@ export default function CompatibilityQuizModal({
   const { t } = useTranslation();
   const [answers, setAnswers] = useState(DEFAULT_ANSWERS);
   const [step, setStep] = useState(0);
+  const titleId = useId();
+  const descriptionId = useId();
+  const dialogRef = useModalA11y({
+    open: isOpen,
+    onClose,
+    closeOnEscape: !isSubmitting,
+  });
 
   if (!isOpen) return null;
 
@@ -105,17 +113,26 @@ export default function CompatibilityQuizModal({
         type="button"
         className="compat-quiz-backdrop"
         onClick={handleClose}
-        aria-label={t("adopter.adoptionHub.quiz.closeQuiz")}
+        tabIndex={-1}
+        aria-hidden="true"
       />
 
-      <section className="compat-quiz-modal" role="dialog" aria-modal="true">
+      <section
+        className="compat-quiz-modal"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        tabIndex={-1}
+      >
         <header className="compat-quiz-header">
           <div>
             <span className="compat-quiz-kicker">
               {t("adopter.adoptionHub.quiz.kicker")}
             </span>
-            <h2>{t("adopter.adoptionHub.quiz.title")}</h2>
-            <p>{t("adopter.adoptionHub.quiz.description")}</p>
+            <h2 id={titleId}>{t("adopter.adoptionHub.quiz.title")}</h2>
+            <p id={descriptionId}>{t("adopter.adoptionHub.quiz.description")}</p>
           </div>
           <button
             type="button"
@@ -124,7 +141,7 @@ export default function CompatibilityQuizModal({
             disabled={isSubmitting}
             aria-label={t("adopter.adoptionHub.quiz.close")}
           >
-            <FaTimes />
+            <FaTimes aria-hidden="true" />
           </button>
         </header>
 
@@ -136,9 +153,10 @@ export default function CompatibilityQuizModal({
                 className={`compat-quiz-progress__step${
                   index === step ? " compat-quiz-progress__step--active" : ""
                 }${index < step ? " compat-quiz-progress__step--done" : ""}`}
+                aria-current={index === step ? "step" : undefined}
               >
                 <span className="compat-quiz-progress__dot">
-                  {index < step ? <FaCheck /> : index + 1}
+                  {index < step ? <FaCheck aria-hidden="true" /> : index + 1}
                 </span>
                 <span className="compat-quiz-progress__label">
                   {t(`adopter.adoptionHub.quiz.stepTitles.${s.id}`)}
@@ -150,7 +168,7 @@ export default function CompatibilityQuizModal({
 
         {result ? (
           <div className="compat-quiz-results">
-            <div className="compat-quiz-result-icon"><FaCheckCircle /></div>
+            <div className="compat-quiz-result-icon" aria-hidden="true"><FaCheckCircle /></div>
             <h3>
               {t("adopter.adoptionHub.quiz.recommendedType", {
                 animalType: result.animalType || t("adopter.adoptionHub.quiz.pet"),
@@ -162,7 +180,7 @@ export default function CompatibilityQuizModal({
               {(result.recommendations || []).map((item, index) => (
                 <div className="compat-quiz-result-row" key={`${item.breed}-${index}`}>
                   <div>
-                    <FaPaw />
+                    <FaPaw aria-hidden="true" />
                     <strong>{item.breed}</strong>
                   </div>
                   <span>
@@ -181,7 +199,7 @@ export default function CompatibilityQuizModal({
             </div>
           </div>
         ) : (
-          <form className="compat-quiz-form" onSubmit={isLastStep ? handleSubmit : handleNext}>
+          <form className="compat-quiz-form" onSubmit={isLastStep ? handleSubmit : handleNext} aria-busy={isSubmitting}>
             <h3 className="compat-quiz-step-title">
               <span className="compat-quiz-step-count">
                 {t("adopter.adoptionHub.quiz.stepOf", { current: step + 1, total: STEPS.length })}
@@ -207,7 +225,7 @@ export default function CompatibilityQuizModal({
               ))}
             </div>
 
-            {error && <p className="compat-quiz-error">{error}</p>}
+            {error && <p className="compat-quiz-error" role="alert">{error}</p>}
 
             <div className="compat-quiz-actions">
               {step === 0 ? (
@@ -216,7 +234,7 @@ export default function CompatibilityQuizModal({
                 </button>
               ) : (
                 <button type="button" className="compat-quiz-secondary" onClick={handleBack} disabled={isSubmitting}>
-                  <FaArrowLeft className="compat-quiz-icon" /> {t("adopter.adoptionHub.quiz.back")}
+                  <FaArrowLeft className="compat-quiz-icon" aria-hidden="true" /> {t("adopter.adoptionHub.quiz.back")}
                 </button>
               )}
 
@@ -228,7 +246,7 @@ export default function CompatibilityQuizModal({
                 </button>
               ) : (
                 <button type="submit" className="compat-quiz-primary">
-                  {t("adopter.adoptionHub.quiz.next")} <FaArrowRight className="compat-quiz-icon" />
+                  {t("adopter.adoptionHub.quiz.next")} <FaArrowRight className="compat-quiz-icon" aria-hidden="true" />
                 </button>
               )}
             </div>

@@ -1,4 +1,29 @@
 {
+  "a11y": {
+    "skipToContent": "تخطَّ إلى المحتوى الرئيسي",
+    "mainContent": "المحتوى الرئيسي",
+    "mainNavigation": "التنقل الرئيسي",
+    "sidebarNavigation": "التنقل الجانبي",
+    "loading": "جارٍ التحميل",
+    "required": "مطلوب",
+    "alt": {
+      "logo": "بيت هيفن",
+      "avatar": "الصورة الشخصية",
+      "userAvatar": "الصورة الشخصية لـ {{name}}",
+      "petPhoto": "صورة {{name}}",
+      "pet": "صورة الحيوان الأليف",
+      "productPhoto": "صورة {{name}}",
+      "product": "صورة المنتج",
+      "reportAttachment": "مرفق التقرير",
+      "appointmentPet": "صورة الحيوان الأليف الخاص بهذا الموعد"
+    },
+    "noValue": "غير متوفر",
+    "pageTitle": "{{page}} — بيت هيفن"
+  },
+  "theme": {
+    "switchToDark": "التبديل إلى الوضع الداكن",
+    "switchToLight": "التبديل إلى الوضع الفاتح"
+  },
   "header": {
     "nav": {
       "home": "الرئيسية",
@@ -12,7 +37,8 @@
     "signIn": "تسجيل الدخول",
     "signUp": "إنشاء حساب",
     "openMenu": "فتح القائمة",
-    "closeMenu": "إغلاق القائمة"
+    "closeMenu": "إغلاق القائمة",
+    "navigation": "التنقل الرئيسي"
   },
   "adopter": {
     "header": {
@@ -589,6 +615,7 @@
       "productCard": {
         "addToCart": "إضافة إلى السلة",
         "wishlist": "تبديل حالة قائمة الأمنيات",
+        "viewProduct": "عرض {{name}}",
         "save": "وفّر {{percent}}٪",
         "lowStock": "مخزون منخفض",
         "imageUnavailable": "الصورة غير متوفرة"
@@ -833,7 +860,11 @@
       "messages": {
         "1": "مرحبًا! أنا هنا لمساعدتك في الاطمئنان على ديزي. هل يمكنك وصف ما لاحظته بشأن عرجها؟",
         "2": "بدأت تعرج بساقها الخلفية اليمنى هذا الصباح بعد التنزه. ما زالت تأكل جيدًا وتبدو سعيدة فيما عدا ذلك."
-      }
+      },
+      "petsLoading": "جارٍ تحميل حيواناتك الأليفة...",
+      "petsError": "تعذر تحميل حيواناتك الأليفة حالياً.",
+      "noPets": "لا توجد حيوانات متبنّاة بعد. يمكنك طرح الأسئلة مع ذلك — اختيار أو تبنّي حيوان يعطيك إجابات أدق حسب نوع الحيوان.",
+      "chattingAbout": "المحادثة بشأن"
     },
     "vets": {
       "retry": "إعادة المحاولة",
@@ -1016,6 +1047,7 @@
     "description": "منصة شاملة لتبني الحيوانات الأليفة، ومستلزماتها، والرعاية البيطرية، ورؤى صحية مدعومة بالذكاء الاصطناعي. استمتع برحلة سلسة لك ولرفاقك الأليفين.",
     "ctaAdopt": "تبنَّ صديقاً",
     "ctaShop": "تسوّق المستلزمات",
+    "statsLabel": "أبرز إحصاءات التبني",
     "stats": [
       {
         "value": "+500",
@@ -1031,6 +1063,7 @@
     "badgeSubtitle": "آمن وصحي بنسبة 100%"
   },
   "impactStats": {
+    "regionLabel": "أثرنا بالأرقام",
     "items": [
       {
         "value": "+12,000",
@@ -1071,6 +1104,7 @@
     "title": "تعرّف على صديقك الجديد",
     "viewAll": "عرض كل الحيوانات ←",
     "cta": "عرض الملف الشخصي",
+    "ctaAria": "عرض الملف الشخصي لـ {{name}}",
     "pets": [
       {
         "name": "Buddy",
@@ -1099,6 +1133,7 @@
     "viewAll": "عرض كل المنتجات ←",
     "sale": "تخفيض",
     "addToCart": "أضف إلى السلة",
+    "addToCartAria": "أضف {{name}} إلى السلة",
     "products": [
       {
         "name": "كريات طعام فاخرة",
@@ -1138,6 +1173,7 @@
   "events": {
     "title": "فعاليات الحيوانات الأليفة القادمة",
     "viewAll": "عرض التقويم الكامل ←",
+    "ctaAria": "{{cta}}: {{title}}",
     "items": [
       {
         "title": "حملة التبني الكبرى",
@@ -1203,6 +1239,7 @@
     ]
   },
   "testimonials": {
+    "regionLabel": "آراء المتبنّين",
     "quote": "«كان تبني بيلا عبر بيت هافن أفضل قرار في حياتنا. كانت العملية سلسة للغاية، والقدرة على شراء كل مستلزماتها من نفس المكان وفّرت علينا الكثير من الوقت!»",
     "author": "سارة ج.",
     "role": "مالكة فخورة لبيلا"
@@ -1229,7 +1266,8 @@
   "productModal": {
     "description": "منتج مفضل لدى العملاء بـ {{reviews}} تقييماً. تم فحص جودته وهو جاهز للشحن إلى منزل أليفك الجديد.",
     "addToCart": "أضف إلى السلة",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "ratingLabel": "التقييم {{rating}} من 5"
   },
   "authModal": {
     "signIn": "تسجيل الدخول",
@@ -1273,7 +1311,8 @@
         "label": "مسؤول",
         "description": "أدر المنصة"
       }
-    ]
+    ],
+    "tabsLabel": "تسجيل الدخول أو إنشاء حساب"
   },
   "contactModal": {
     "title": "اتصل بنا",
@@ -1305,7 +1344,8 @@
       "profileLink": "الملف الشخصي",
       "logout": "تسجيل الخروج",
       "openMenu": "فتح القائمة",
-      "closeMenu": "إغلاق القائمة"
+      "closeMenu": "إغلاق القائمة",
+      "navigation": "تنقل مركز التبني"
     },
     "status": {
       "Available": "متاح",
@@ -1399,6 +1439,7 @@
       },
       "cancel": "إلغاء",
       "saveChanges": "حفظ التغييرات",
+      "saving": "جارٍ حفظ التغييرات",
       "saveSuccess": "تم تحديث ملف المركز بنجاح.",
       "saveError": "فشل حفظ التغييرات. يرجى المحاولة مرة أخرى."
     },
@@ -1447,6 +1488,7 @@
       "orders": {
         "title": "أحدث طلبات المتجر",
         "seeAll": "عرض الكل",
+        "tableLabel": "أحدث طلبات المتجر",
         "columns": {
           "orderId": "رقم الطلب",
           "customer": "العميل",
@@ -1469,12 +1511,16 @@
       },
       "overallRating": {
         "title": "متوسط التقييم",
-        "basedOn": "بناءً على {{count}} تقييم"
+        "basedOn": "بناءً على {{count}} تقييم",
+        "ratingLabel": "{{rating}} من 5 نجوم",
+        "barLabel": "{{stars}} نجوم: {{percent}}% من التقييمات"
       },
       "filters": {
         "allReviews": "كل التقييمات",
         "stars": "{{count}} نجوم",
-        "searchPlaceholder": "ابحث حسب المنتج أو اسم العميل أو التعليق..."
+        "searchPlaceholder": "ابحث حسب المنتج أو اسم العميل أو التعليق...",
+        "searchLabel": "البحث في تقييمات المنتجات",
+        "groupLabel": "تصفية التقييمات حسب النجوم"
       },
       "card": {
         "ratingOnly": "تقييم بدون تعليق"
@@ -1486,7 +1532,9 @@
         "showing": "عرض",
         "to": "إلى",
         "of": "من",
-        "reviewsWord": "تقييم"
+        "reviewsWord": "تقييم",
+        "label": "صفحات التقييمات",
+        "page": "الصفحة {{number}}"
       }
     },
     "inventory": {
@@ -1502,7 +1550,8 @@
       },
       "tabs": {
         "animals": "الحيوانات",
-        "products": "المنتجات"
+        "products": "المنتجات",
+        "groupLabel": "أقسام المخزون"
       },
       "pagination": {
         "showing": "عرض",
@@ -1868,6 +1917,8 @@
       },
       "blacklist": {
         "searchPlaceholder": "ابحث في قائمة المحظورين...",
+        "searchLabel": "البحث في قائمة المحظورين",
+        "tableLabel": "المتبنّون المحظورون",
         "loading": "جارٍ تحميل قائمة الحظر…",
         "empty": "لا يوجد متبنّون محظورون.",
         "retry": "إعادة المحاولة",
@@ -1881,13 +1932,15 @@
       },
       "toolbar": {
         "searchPlaceholder": "ابحث باسم المتقدّم أو الحيوان...",
+        "searchLabel": "البحث في الطلبات باسم المتقدّم أو الحيوان",
         "filter": "تصفية"
       },
       "tabs": {
         "all": "الكل",
         "pending": "قيد الانتظار",
         "approved": "مقبول",
-        "rejected": "مرفوض"
+        "rejected": "مرفوض",
+        "groupLabel": "تصفية الطلبات حسب الحالة"
       },
       "card": {
         "appliedLabel": "تاريخ التقديم",
@@ -1895,11 +1948,17 @@
         "reviewButton": "مراجعة الطلب",
         "rejectButton": "رفض",
         "viewRecordButton": "عرض السجل",
+        "applicantLabel": "المتقدّم",
+        "reviewButtonFor": "مراجعة طلب {{applicant}} لتبني {{pet}}",
+        "rejectButtonFor": "رفض طلب {{applicant}} لتبني {{pet}}",
+        "viewRecordButtonFor": "عرض سجل طلب {{applicant}} لتبني {{pet}}",
         "statusPending": "قيد الانتظار",
         "statusApproved": "مقبول",
         "statusRejected": "مرفوض"
       },
       "empty": "لا توجد طلبات تبني.",
+      "results": "{{count}} طلب تبني",
+      "results_other": "{{count}} طلب تبني",
       "review": {
         "titlePrefix": "مراجعة الطلب -",
         "pendingReviewBadge": "قيد المراجعة",
@@ -1952,13 +2011,16 @@
       "dismiss": "إغلاق",
       "processing": "جارٍ التنفيذ…",
       "actionFailed": "تعذر إتمام الطلب.",
-      "notProvided": "غير متوفر"
+      "notProvided": "غير متوفر",
+      "pageTitle": "{{page}} — لوحة مدير Pet Haven"
     },
     "navbar": {
       "workspace": "لوحة المدير",
       "switchLanguage": "تغيير اللغة",
       "profileTitle": "ملف المدير",
-      "profileError": "تعذر جلب الملف الشخصي"
+      "profileError": "تعذر جلب الملف الشخصي",
+      "switchToEnglish": "التبديل إلى الإنجليزية",
+      "switchToArabic": "التبديل إلى العربية"
     },
     "sidebar": {
       "logoAlt": "شعار Pet Haven",
@@ -1986,7 +2048,8 @@
         "subtitle": "حسابات أطباء بانتظار التحقق.",
         "manage": "مراجعة الطلبات",
         "awaiting": "بانتظار المراجعة",
-        "more": "ويوجد {{remaining}} إضافي في قائمة الانتظار."
+        "more": "ويوجد {{remaining}} إضافي في قائمة الانتظار.",
+        "listLabel": "أطباء بانتظار الموافقة"
       }
     },
     "vetApprovals": {
@@ -1996,6 +2059,9 @@
       "idLabel": "معرف الطبيب {{id}}",
       "empty": "لا يوجد أطباء بانتظار الموافقة.",
       "emptyHint": "تظهر الطلبات الجديدة هنا فور تسجيل أي طبيب.",
+      "listLabel": "الأطباء قيد الموافقة",
+      "verifyFor": "موافقة على {{name}}",
+      "rejectFor": "رفض {{name}}",
       "loadFailed": "تعذر تحميل قائمة الأطباء المعلقة.",
       "verify": "موافقة",
       "verifying": "جارٍ الموافقة…",
@@ -2074,7 +2140,8 @@
       "profile": "الملف الشخصي",
       "logout": "تسجيل الخروج",
       "openMenu": "فتح القائمة",
-      "closeMenu": "إغلاق القائمة"
+      "closeMenu": "إغلاق القائمة",
+      "navigation": "تنقل الطبيب البيطري"
     },
     "welcome": {
       "morning": "صباح الخير، {{name}}",
@@ -2103,7 +2170,9 @@
       "loading": "جارٍ تحميل نشاط العيادة...",
       "weekly": "أسبوعي",
       "monthly": "شهري",
-      "empty": "لا يوجد نشاط مواعيد لهذه الفترة بعد."
+      "empty": "لا يوجد نشاط مواعيد لهذه الفترة بعد.",
+      "periodLabel": "فترة النشاط",
+      "dataLabel": "عدد المواعيد لكل فترة"
     },
     "breakdown": {
       "title": "توزيع المواعيد",
@@ -2140,7 +2209,10 @@
         "breed": "السلالة/النوع",
         "lastVisit": "آخر زيارة",
         "action": "الإجراء"
-      }
+      },
+      "searchLabel": "البحث في المرضى الأخيرين",
+      "tableLabel": "المرضى الأخيرون",
+      "viewRecordsFor": "عرض سجلات {{name}}"
     }
   },
   "vetProfile": {
@@ -2186,12 +2258,15 @@
       "title": "التقييم العام",
       "empty": "لم تتلقَّ أي تقييمات بعد.",
       "basedOn": "بناءً على {{count}} تقييم",
-      "basedOn_other": "بناءً على {{count}} تقييم"
+      "basedOn_other": "بناءً على {{count}} تقييم",
+      "starsLabel": "{{count}} نجمة",
+      "starsLabel_other": "{{count}} نجوم"
     },
     "toolbar": {
       "searchPlaceholder": "ابحث عن تقييم بالاسم أو كلمة مفتاحية...",
       "all": "جميع التقييمات",
-      "ratingOnly": "تقييم بدون تعليق ({{count}})"
+      "ratingOnly": "تقييم بدون تعليق ({{count}})",
+      "searchLabel": "البحث في التقييمات"
     },
     "list": {
       "loading": "جارٍ تحميل التقييمات...",
@@ -2200,12 +2275,15 @@
     },
     "card": {
       "anonymous": "مجهول",
-      "noComment": "بدون تعليق مكتوب — تقييم بالنجوم فقط."
+      "noComment": "بدون تعليق مكتوب — تقييم بالنجوم فقط.",
+      "ratingLabel": "التقييم {{value}} من 5"
     },
     "pagination": {
       "showing": "عرض {{start}} إلى {{end}} من {{total}} تقييم",
       "previous": "الصفحة السابقة",
-      "next": "الصفحة التالية"
+      "next": "الصفحة التالية",
+      "label": "صفحات التقييمات",
+      "page": "الصفحة {{number}}"
     }
   },
   "vetPatients": {
@@ -2225,7 +2303,10 @@
         "dog": "كلاب",
         "cat": "قطط",
         "bird": "طيور"
-      }
+      },
+      "speciesGroupLabel": "التصفية حسب النوع",
+      "searchLabel": "البحث في المرضى",
+      "statusFilterLabel": "التصفية حسب الحالة"
     },
     "status": {
       "healthy": "سليم",
@@ -2237,16 +2318,21 @@
       "owner": "المالك",
       "lastVisit": "آخر زيارة",
       "visitCount": "عدد الزيارات",
-      "viewRecords": "عرض السجلات"
+      "viewRecords": "عرض السجلات",
+      "viewRecordsFor": "عرض سجلات {{name}}"
     },
     "list": {
       "loading": "جارٍ تحميل المرضى...",
       "empty": "لا يوجد مرضى بعد.",
-      "noMatches": "لا يوجد مرضى مطابقون لبحثك أو الفلاتر المحددة."
+      "noMatches": "لا يوجد مرضى مطابقون لبحثك أو الفلاتر المحددة.",
+      "results": "{{count}} مريض مطابق",
+      "results_other": "{{count}} مريض مطابق"
     },
     "pagination": {
       "previous": "الصفحة السابقة",
-      "next": "الصفحة التالية"
+      "next": "الصفحة التالية",
+      "label": "صفحات المرضى",
+      "page": "الصفحة {{number}}"
     },
     "modal": {
       "close": "إغلاق",
@@ -2256,7 +2342,8 @@
       "age": "العمر",
       "gender": "الجنس",
       "medicalHistory": "السجل الطبي",
-      "noMedicalHistory": "لا يوجد سجل طبي بعد."
+      "noMedicalHistory": "لا يوجد سجل طبي بعد.",
+      "title": "سجل المريض"
     }
   },
   "vetAppointments": {
@@ -2270,7 +2357,8 @@
       "previous": "اليوم السابق",
       "next": "اليوم التالي",
       "today": "اليوم",
-      "pickDate": "اختر تاريخاً"
+      "pickDate": "اختر تاريخاً",
+      "label": "اليوم المحدد"
     },
     "summary": {
       "loading": "جارٍ تحميل الإحصائيات...",
@@ -2315,7 +2403,11 @@
       "confirm": "قبول",
       "complete": "تعليم كمكتمل",
       "cancel": "إلغاء",
-      "reschedule": "إعادة جدولة"
+      "reschedule": "إعادة جدولة",
+      "confirmFor": "تأكيد موعد {{name}}",
+      "completeFor": "إنهاء موعد {{name}}",
+      "rescheduleFor": "إعادة جدولة موعد {{name}}",
+      "cancelFor": "إلغاء موعد {{name}}"
     },
     "cancelConfirm": {
       "message": "إلغاء هذا الموعد؟ لا يمكن التراجع عن هذا الإجراء.",
@@ -2342,10 +2434,13 @@
       "loading": "جارٍ تحميل التقويم...",
       "dayError": "فشل تحميل هذا اليوم.",
       "moreEvents": "+{{count}} أخرى",
-      "showLess": "عرض أقل"
+      "showLess": "عرض أقل",
+      "dayEvents": "{{count}} موعد",
+      "dayEvents_other": "{{count}} مواعيد"
     },
     "modal": {
-      "close": "إغلاق"
+      "close": "إغلاق",
+      "title": "تفاصيل الموعد"
     }
   },
   "vetVerification": {
@@ -2355,7 +2450,8 @@
       "title": "اضغط للرفع أو اسحب وأفلت",
       "hint": "PDF أو JPG أو PNG (بحد أقصى 10 ميغابايت)",
       "selected": "الملف المختار: {{name}}",
-      "remove": "إزالة"
+      "remove": "إزالة",
+      "dropzoneLabel": "اختر مستند الترخيص لرفعه"
     },
     "form": {
       "licenseNumber": "رقم الترخيص",

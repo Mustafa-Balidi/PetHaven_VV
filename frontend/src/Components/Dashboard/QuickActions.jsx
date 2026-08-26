@@ -19,7 +19,7 @@ export default function QuickActions({ items, onActionClick }) {
               iconWrapClass[action.colorVariant]
             }`}
           >
-            <span className="material-symbols-outlined">{action.icon}</span>
+            <span className="material-symbols-outlined" aria-hidden="true">{action.icon}</span>
           </div>
           <div>
             <h3 className="quick-action-title">{action.title}</h3>

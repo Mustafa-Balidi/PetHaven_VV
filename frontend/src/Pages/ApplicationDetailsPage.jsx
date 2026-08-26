@@ -89,7 +89,7 @@ export default function ApplicationDetailsPage() {
     <div className="application-details-page">
       <TopNavBar />
 
-      <main className="application-details-main">
+      <main id="main-content" tabIndex={-1} className="application-details-main">
         <BackLink href="/adopter/adoption-hub?tab=requests" />
 
         <div className="application-details__header">
@@ -145,7 +145,7 @@ export default function ApplicationDetailsPage() {
                 {request.description && <p className="application-details__description">{request.description}</p>}
                 <Link className="animal-summary-card__link" to={`/adopter/pet-profile/${request.petId}`}>
                   {t("adopter.applicationDetails.animal.viewProfile")}
-                  <span className="material-symbols-outlined">arrow_forward</span>
+                  <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                 </Link>
               </div>
             </section>

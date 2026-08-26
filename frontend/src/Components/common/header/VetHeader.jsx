@@ -3,6 +3,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Icon from "../../Icon.jsx";
 import { logoutUser } from "../../../api/authApi.js";
+import SkipLink from "../SkipLink.jsx";
+import ThemeToggle from "../../ThemeToggle.jsx";
 import "../../../Styling/VetDashboard.css";
 
 const LOGO =
@@ -26,6 +28,8 @@ export default function VetHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
   const langRef = useRef(null);
+  const langButtonRef = useRef(null);
+  const avatarButtonRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -39,6 +43,29 @@ export default function VetHeader() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Clicking outside was the only way to dismiss the pop-ups; a keyboard user
+  // who opened one had no way back. Escape closes and returns focus to the
+  // control that opened it.
+  useEffect(() => {
+    if (!langOpen && !dropdownOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key !== "Escape") return;
+
+      if (langOpen) {
+        setLangOpen(false);
+        langButtonRef.current?.focus();
+      }
+      if (dropdownOpen) {
+        setDropdownOpen(false);
+        avatarButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [langOpen, dropdownOpen]);
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -54,12 +81,13 @@ export default function VetHeader() {
 
   return (
     <header className="vet-dashboard-header">
+      <SkipLink />
       <div className="vet-dashboard-header__inner">
         <Link to="/vet/dashboard" className="vet-dashboard-header__logo-link">
           <img src={LOGO} alt={t("vetDashboard.header.logoAlt")} className="vet-dashboard-header__logo-img" />
         </Link>
 
-        <nav className="vet-dashboard-header__nav">
+        <nav className="vet-dashboard-header__nav" aria-label={t("vetDashboard.header.navigation")}>
           {NAV_ITEMS.map((item) =>
             item.to ? (
               <NavLink
@@ -84,9 +112,14 @@ export default function VetHeader() {
         </nav>
 
         <div className="vet-dashboard-header__actions">
+          <ThemeToggle />
           <div style={{ position: "relative" }} ref={langRef}>
             <button
+              type="button"
+              ref={langButtonRef}
               aria-label={t("vetDashboard.header.language")}
+              aria-expanded={langOpen}
+              aria-controls="vet-header-language-menu"
               className="vet-dashboard-header__icon-btn"
               onClick={() => setLangOpen((o) => !o)}
             >
@@ -94,11 +127,25 @@ export default function VetHeader() {
             </button>
 
             {langOpen && (
-              <div className="vet-dashboard-header__dropdown">
-                <button className="vet-dashboard-header__dropdown-item" onClick={() => changeLanguage("en")}>
+              <div className="vet-dashboard-header__dropdown" id="vet-header-language-menu">
+                {/* aria-current marks the active language: the leading tick is
+                    the only visual cue and it is not spoken. */}
+                <button
+                  type="button"
+                  className="vet-dashboard-header__dropdown-item"
+                  lang="en"
+                  aria-current={i18n.language === "en" ? "true" : undefined}
+                  onClick={() => changeLanguage("en")}
+                >
                   {i18n.language === "en" ? "✓ " : ""}English
                 </button>
-                <button className="vet-dashboard-header__dropdown-item" onClick={() => changeLanguage("ar")}>
+                <button
+                  type="button"
+                  className="vet-dashboard-header__dropdown-item"
+                  lang="ar"
+                  aria-current={i18n.language === "ar" ? "true" : undefined}
+                  onClick={() => changeLanguage("ar")}
+                >
                   {i18n.language === "ar" ? "✓ " : ""}العربية
                 </button>
               </div>
@@ -107,15 +154,19 @@ export default function VetHeader() {
 
           <div className="vet-dashboard-header__avatar-wrap" ref={dropdownRef}>
             <button
+              type="button"
+              ref={avatarButtonRef}
               aria-label={t("vetDashboard.header.userMenu")}
+              aria-expanded={dropdownOpen}
+              aria-controls="vet-header-user-menu"
               onClick={() => setDropdownOpen((o) => !o)}
-              className="vet-dashboard-header__avatar-btn"
+              className="vet-dashboard-header__avatar-btn user-menu-button"
             >
-              <Icon name="account_circle" className="vet-dashboard-header__avatar-icon" />
+              <Icon name="account_circle" className="vet-dashboard-header__avatar-icon user-menu-avatar user-menu-avatar--icon" />
             </button>
 
             {dropdownOpen && (
-              <div className="vet-dashboard-header__dropdown">
+              <div className="vet-dashboard-header__dropdown" id="vet-header-user-menu">
                 <Link
                   to="/vet/profile"
                   className="vet-dashboard-header__dropdown-item"
@@ -131,8 +182,11 @@ export default function VetHeader() {
           </div>
 
           <button
+            type="button"
             className="vet-dashboard-header__hamburger"
             aria-label={mobileOpen ? t("vetDashboard.header.closeMenu") : t("vetDashboard.header.openMenu")}
+            aria-expanded={mobileOpen}
+            aria-controls="vet-header-mobile-nav"
             onClick={() => setMobileOpen((o) => !o)}
           >
             <Icon name={mobileOpen ? "close" : "menu"} />
@@ -141,7 +195,11 @@ export default function VetHeader() {
       </div>
 
       {mobileOpen && (
-        <div className="vet-dashboard-header__mobile-panel">
+        <nav
+          id="vet-header-mobile-nav"
+          className="vet-dashboard-header__mobile-panel"
+          aria-label={t("vetDashboard.header.navigation")}
+        >
           {NAV_ITEMS.map((item) =>
             item.to ? (
               <NavLink
@@ -161,7 +219,7 @@ export default function VetHeader() {
               </span>
             )
           )}
-        </div>
+        </nav>
       )}
     </header>
   );

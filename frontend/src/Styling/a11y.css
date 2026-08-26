@@ -1,0 +1,136 @@
+/* ==========================================================================
+   Accessibility primitives — imported last in main.jsx so the focus ring
+   wins over the per-page `outline: none` declarations scattered across the
+   component stylesheets.
+   ========================================================================== */
+
+:root {
+  --a11y-focus-ring: #00685f;
+  --a11y-focus-ring-contrast: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Visible keyboard focus.
+   :focus-visible only matches keyboard / programmatic focus, so pointer users
+   never see the ring. `!important` is deliberate: 40+ existing rules zero the
+   outline out and every one of them would otherwise leave a focus trap.
+   -------------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[role="link"]:focus-visible,
+[contenteditable]:focus-visible {
+  outline: 3px solid var(--a11y-focus-ring) !important;
+  outline-offset: 2px !important;
+  /* Second ring keeps the indicator readable on dark or coloured surfaces. */
+  box-shadow: 0 0 0 5px var(--a11y-focus-ring-contrast) !important;
+}
+
+/* Dialog panels take focus programmatically; they should not draw a ring. */
+[role="dialog"]:focus-visible,
+[role="alertdialog"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+@media (forced-colors: active) {
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid Highlight !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Screen-reader-only text.
+   `.sr-only-focusable` reveals itself when focused — used by the skip link.
+   -------------------------------------------------------------------------- */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Skip link — first tab stop on every page.
+   Uses logical inline-start so it lands correctly in the Arabic RTL layout.
+   -------------------------------------------------------------------------- */
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  inset-inline-start: 0.5rem;
+  z-index: 10000;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  background: var(--a11y-focus-ring);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px var(--a11y-focus-ring) !important;
+}
+
+/* Programmatically focused landmarks (skip-link target) get no ring. */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   Motion preferences.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Minimum pointer target size for icon-only controls.
+   -------------------------------------------------------------------------- */
+.a11y-touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}

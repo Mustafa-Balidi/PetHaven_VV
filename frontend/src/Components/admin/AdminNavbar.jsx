@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { fetchMyProfile } from "../../api/profileApi";
+import ThemeToggle from "../ThemeToggle.jsx";
 
 function getInitials(name) {
   const parts = String(name ?? "")
@@ -39,8 +40,10 @@ export default function AdminNavbar() {
     };
   }, []);
 
+  const nextLanguage = i18n.language === "ar" ? "en" : "ar";
+
   const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language === "ar" ? "en" : "ar");
+    i18n.changeLanguage(nextLanguage);
   };
 
   const displayName = profile?.fullName || profile?.userName || profile?.username || "";
@@ -55,31 +58,45 @@ export default function AdminNavbar() {
       </div>
 
       <div className="admin-navbar__actions">
+        <ThemeToggle />
+        {/* The button label is written in the language it switches to, so it
+            carries its own `lang` for the speech synthesiser. */}
         <button
           className="admin-navbar__lang-btn"
           type="button"
-          aria-label={t("admin.navbar.switchLanguage")}
+          lang={nextLanguage}
+          aria-label={t(
+            nextLanguage === "en"
+              ? "admin.navbar.switchToEnglish"
+              : "admin.navbar.switchToArabic"
+          )}
           onClick={toggleLanguage}
         >
-          {i18n.language === "ar" ? "EN" : "عربي"}
+          {nextLanguage === "en" ? "EN" : "عربي"}
         </button>
 
         {profileError ? (
-          <span className="admin-navbar__profile-error" title={profileError}>
+          <span className="admin-navbar__profile-error" role="status">
             {t("admin.navbar.profileError")}
+            {/* The raw backend reason was reachable by hover only. */}
+            <span className="sr-only">{profileError}</span>
           </span>
         ) : null}
 
         {profile ? (
-          <div className="admin-navbar__profile">
+          <div className="admin-navbar__profile" role="group" aria-label={t("admin.navbar.profileTitle")}>
             {imageUrl ? (
               <img
-                className="admin-navbar__avatar"
+                className="admin-navbar__avatar user-menu-avatar user-menu-avatar--image"
                 src={imageUrl}
-                alt={displayName || t("admin.navbar.profileTitle")}
+                alt={
+                  displayName
+                    ? t("a11y.alt.userAvatar", { name: displayName })
+                    : t("a11y.alt.avatar")
+                }
               />
             ) : (
-              <span className="admin-navbar__avatar admin-navbar__avatar--initials" aria-hidden="true">
+              <span className="admin-navbar__avatar admin-navbar__avatar--initials user-menu-avatar" aria-hidden="true">
                 {initials || "A"}
               </span>
             )}

@@ -25,7 +25,7 @@ export default function KpiCards({ items }) {
               </p>
             </div>
             <div className={`kpi-icon-wrap ${iconWrapClass[kpi.colorVariant]}`}>
-              <span className="material-symbols-outlined">{kpi.icon}</span>
+              <span className="material-symbols-outlined" aria-hidden="true">{kpi.icon}</span>
             </div>
           </>
         );

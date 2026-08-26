@@ -1,10 +1,11 @@
 // React & Router
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useLocation,
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
@@ -100,6 +101,32 @@ function SessionExpiryHandler() {
   return null;
 }
 
+function RouteAccessibilityHandler() {
+  const { pathname } = useLocation();
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const main = document.getElementById("main-content");
+      const heading = main?.querySelector("h1");
+
+      if (heading?.textContent?.trim()) {
+        document.title = `${heading.textContent.trim()} | PetHaven`;
+      }
+
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+      } else {
+        main?.focus({ preventScroll: true });
+      }
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [pathname]);
+
+  return null;
+}
+
 function OrderConfirmedRoute() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -133,6 +160,7 @@ function App() {
   return (
     <Router>
       <SessionExpiryHandler />
+      <RouteAccessibilityHandler />
       <Routes>
         {/* PUBLIC */}
         <Route path="/" element={<PublicPage />} />

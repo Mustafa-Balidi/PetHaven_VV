@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 export default function MilestoneReportModal({ petName, submitting, error, onClose, onSubmit }) {
   const { t } = useTranslation();
   const [healthStatus, setHealthStatus] = useState("Healthy");
   const [notes, setNotes] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const titleId = useId();
+  const dialogRef = useModalA11y({ onClose, closeOnEscape: !submitting });
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -14,8 +17,16 @@ export default function MilestoneReportModal({ petName, submitting, error, onClo
   }
 
   return (
-    <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="milestone-report-title" onClick={onClose}>
-      <div className="modal-container" onClick={(event) => event.stopPropagation()}>
+    <div className="modal-backdrop" role="presentation" onClick={onClose}>
+      <div
+        className="modal-container"
+        onClick={(event) => event.stopPropagation()}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <button
           type="button"
           className="modal-close-btn"
@@ -34,7 +45,7 @@ export default function MilestoneReportModal({ petName, submitting, error, onClo
 
         <div className="modal-body">
           <div className="modal-intro">
-            <h2 className="modal-title" id="milestone-report-title">
+            <h2 className="modal-title" id={titleId}>
               {t("adopter.dashboard.milestoneModal.title")}
             </h2>
             <p className="modal-desc">

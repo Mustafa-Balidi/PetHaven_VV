@@ -38,10 +38,16 @@ export default function VetPatientsDirectory({
   return (
     <section className="vet-patients-directory">
       <div className="vet-patients-toolbar">
-        <div className="vet-patients-toolbar__chips">
+        {/* The selected chip was signalled by colour alone. */}
+        <div
+          className="vet-patients-toolbar__chips"
+          role="group"
+          aria-label={t("vetPatients.toolbar.speciesGroupLabel")}
+        >
           <button
             type="button"
             className={`vet-patients-chip${species === "" ? " vet-patients-chip--active" : ""}`}
+            aria-pressed={species === ""}
             onClick={() => onSpeciesChange("")}
           >
             {t("vetPatients.toolbar.allSpecies")}
@@ -51,6 +57,7 @@ export default function VetPatientsDirectory({
               key={option}
               type="button"
               className={`vet-patients-chip${species === option ? " vet-patients-chip--active" : ""}`}
+              aria-pressed={species === option}
               onClick={() => onSpeciesChange(option)}
             >
               {t(`vetPatients.toolbar.species.${option.toLowerCase()}`)}
@@ -64,6 +71,7 @@ export default function VetPatientsDirectory({
             <input
               type="text"
               className="vet-patients-search__input"
+              aria-label={t("vetPatients.toolbar.searchLabel")}
               placeholder={t("vetPatients.toolbar.searchPlaceholder")}
               value={search}
               onChange={onSearchChange}
@@ -74,6 +82,7 @@ export default function VetPatientsDirectory({
             <Icon name="filter_list" className="vet-patients-select__icon" />
             <select
               className="vet-patients-select__input"
+              aria-label={t("vetPatients.toolbar.statusFilterLabel")}
               value={status}
               onChange={(event) => onStatusChange(event.target.value)}
             >
@@ -89,13 +98,18 @@ export default function VetPatientsDirectory({
       </div>
 
       {loading ? (
-        <p className="vet-patients-empty">{t("vetPatients.list.loading")}</p>
+        <p className="vet-patients-empty" role="status">{t("vetPatients.list.loading")}</p>
       ) : error ? (
         <div className="vet-patients-alert" role="alert">
           <span>{error}</span>
         </div>
       ) : patients.length ? (
         <>
+          {/* Typing in the search box swaps the grid with no spoken
+              feedback; this reports the new result count. */}
+          <p className="sr-only" aria-live="polite">
+            {t("vetPatients.list.results", { count: totalCount })}
+          </p>
           <div className="vet-patients-grid">
             {patients.map((patient) => (
               <VetPatientCard key={patient.petId} patient={patient} onViewRecords={onViewRecords} />
@@ -103,7 +117,11 @@ export default function VetPatientsDirectory({
           </div>
 
           {totalPages > 1 && (
-            <div className="vet-patients-pagination">
+            <div
+              className="vet-patients-pagination"
+              role="navigation"
+              aria-label={t("vetPatients.pagination.label")}
+            >
               <button
                 type="button"
                 className="vet-patients-pagination__nav"
@@ -118,10 +136,16 @@ export default function VetPatientsDirectory({
                 const showGap = previous != null && number - previous > 1;
                 return (
                   <span key={number} style={{ display: "contents" }}>
-                    {showGap && <span className="vet-patients-pagination__ellipsis">…</span>}
+                    {showGap && (
+                      <span className="vet-patients-pagination__ellipsis" aria-hidden="true">
+                        …
+                      </span>
+                    )}
                     <button
                       type="button"
                       className={`vet-patients-pagination__page${number === page ? " vet-patients-pagination__page--active" : ""}`}
+                      aria-label={t("vetPatients.pagination.page", { number })}
+                      aria-current={number === page ? "page" : undefined}
                       onClick={() => onPageChange(number)}
                     >
                       {number}

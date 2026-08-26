@@ -1,15 +1,26 @@
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 export default function ReportDetailsModal({ report, onClose }) {
   const { t: translate } = useTranslation();
+  const titleId = useId();
+  const dialogRef = useModalA11y({ onClose });
   const td = translate("center.reports.details", { returnObjects: true });
   return (
     <div className="center-modal-overlay">
       <button type="button" aria-label={td.close} className="center-modal-backdrop" onClick={onClose} />
-      <div className="center-modal-panel center-modal-panel--xl">
+      <div
+        className="center-modal-panel center-modal-panel--xl"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <div className="center-modal-header">
-          <h2 className="center-modal-title">{td.title}</h2>
+          <h2 id={titleId} className="center-modal-title">{td.title}</h2>
           <button type="button" aria-label={td.close} className="center-modal-close-btn" onClick={onClose}>
             <Icon name="close" />
           </button>

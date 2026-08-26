@@ -27,14 +27,16 @@ export default function VetAppointmentBreakdown({ data }) {
 
   return (
     <section className="vet-dashboard-card">
-      <h3 className="vet-dashboard-card__title vet-dashboard-card__title--sm">
+      <h2 className="vet-dashboard-card__title vet-dashboard-card__title--sm">
         {t("vetDashboard.breakdown.title")}
-      </h3>
+      </h2>
 
       {total ? (
         <div className="vet-dashboard-donut">
           <div className="vet-dashboard-donut__chart">
-            <svg viewBox="0 0 36 36" className="vet-dashboard-donut__svg">
+            {/* Decorative: the legend beside it already states every
+                category and its share. */}
+            <svg viewBox="0 0 36 36" className="vet-dashboard-donut__svg" aria-hidden="true">
               <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#e2e8f0" strokeWidth="4" />
               {segments.map((segment) => (
                 <circle

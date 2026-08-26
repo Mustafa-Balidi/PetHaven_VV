@@ -35,7 +35,7 @@ export default function OrderConfirmed({ orderNumber, onContinueShopping, onView
     return (
       <div className="oc-page">
         <Navbar />
-        <main className="oc-main">
+        <main id="main-content" tabIndex={-1} className="oc-main">
           <p role={error ? "alert" : "status"}>{error || t("adopter.orders.loading")}</p>
         </main>
       </div>
@@ -46,7 +46,7 @@ export default function OrderConfirmed({ orderNumber, onContinueShopping, onView
     <div className="oc-page">
       <Navbar />
 
-      <main className="oc-main">
+      <main id="main-content" tabIndex={-1} className="oc-main">
         <div className="oc-card">
           <SuccessHeader orderNumber={order.number} customerName={order.customerName} />
 

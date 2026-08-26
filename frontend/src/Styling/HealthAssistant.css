@@ -453,3 +453,116 @@
     font-size: 0.86rem;
   }
 }
+
+/* Pet context bar (selected pet for the RAG conversation) */
+.pet-context {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-bottom: 1px solid var(--ha-border);
+  background: var(--ha-sidebar);
+}
+
+.pet-context__note {
+  margin: 0;
+  color: var(--ha-muted);
+  font-size: 0.78rem;
+}
+
+.pet-context__note--error {
+  color: #b4443a;
+}
+
+.pet-context__current {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--ha-muted);
+}
+
+.pet-context__name {
+  color: var(--ha-text);
+  font-weight: 650;
+}
+
+.pet-context__meta {
+  color: var(--ha-muted);
+}
+
+.pet-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+}
+
+.pet-selector__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  padding: 0.35rem 0.7rem 0.35rem 0.35rem;
+  border: 1px solid var(--ha-border);
+  border-radius: 999px;
+  background: var(--ha-white);
+  color: var(--ha-text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.pet-selector__item:hover {
+  border-color: var(--ha-primary);
+}
+
+.pet-selector__item--active {
+  border-color: var(--ha-primary);
+  background: rgba(8, 127, 114, 0.08);
+}
+
+.pet-selector__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.pet-selector__avatar--fallback {
+  display: grid;
+  place-items: center;
+  background: var(--ha-primary);
+  color: var(--ha-white);
+  font-size: 0.7rem;
+}
+
+.pet-selector__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+  text-align: start;
+}
+
+.pet-selector__name {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.pet-selector__breed {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--ha-muted);
+}
+
+.chat-input__textarea:disabled,
+.chat-input__send:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import Icon from "../../Components/Icon.jsx";
 import Toast from "../../Components/Toast.jsx";
 import VetProfileDetails from "../../Components/vet/VetProfileDetails.jsx";
@@ -83,6 +84,7 @@ function toNullableCoordinate(value) {
 
 export default function VetProfile() {
   const { t, i18n } = useTranslation();
+  useDocumentTitle(t("vetProfile.title"));
   const [profile, setProfile] = useState(null);
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -195,7 +197,7 @@ export default function VetProfile() {
     return (
       <div className="vet-profile-page">
         <VetHeader />
-        <div className="vet-profile-loading">{error || t("vetProfile.loading")}</div>
+        <div className="vet-profile-loading" role="status">{error || t("vetProfile.loading")}</div>
       </div>
     );
   }
@@ -206,7 +208,7 @@ export default function VetProfile() {
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <main className="vet-profile-main">
+      <main id="main-content" tabIndex={-1} className="vet-profile-main">
         <Link to="/vet/dashboard" className="vet-profile-back-link">
           <Icon name="arrow_back" />
           {t("vetProfile.backToDashboard")}
@@ -218,7 +220,7 @@ export default function VetProfile() {
         </div>
 
         {error && (
-          <div className="vet-profile-alert">
+          <div className="vet-profile-alert" role="alert">
             {error}
           </div>
         )}

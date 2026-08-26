@@ -39,6 +39,7 @@ export default function VetReviewsList({
           <input
             type="text"
             className="vet-reviews-search__input"
+            aria-label={t("vetReviews.toolbar.searchLabel")}
             placeholder={t("vetReviews.toolbar.searchPlaceholder")}
             value={search}
             onChange={onSearchChange}
@@ -48,6 +49,7 @@ export default function VetReviewsList({
           <button
             type="button"
             className={`vet-reviews-filter-btn${filter === "all" ? " vet-reviews-filter-btn--active" : ""}`}
+            aria-pressed={filter === "all"}
             onClick={() => onFilterChange("all")}
           >
             {t("vetReviews.toolbar.all")}
@@ -55,6 +57,7 @@ export default function VetReviewsList({
           <button
             type="button"
             className={`vet-reviews-filter-btn${filter === "unanswered" ? " vet-reviews-filter-btn--active" : ""}`}
+            aria-pressed={filter === "unanswered"}
             onClick={() => onFilterChange("unanswered")}
           >
             {t("vetReviews.toolbar.ratingOnly", { count: unansweredCount })}
@@ -63,7 +66,7 @@ export default function VetReviewsList({
       </div>
 
       {loading ? (
-        <p className="vet-reviews-empty">{t("vetReviews.list.loading")}</p>
+        <p className="vet-reviews-empty" role="status">{t("vetReviews.list.loading")}</p>
       ) : error ? (
         <div className="vet-reviews-alert" role="alert">
           <span>{error}</span>
@@ -77,10 +80,15 @@ export default function VetReviewsList({
           </div>
 
           <div className="vet-reviews-pagination">
-            <span className="vet-reviews-pagination__summary">
+            {/* Searching and paging swap the list silently otherwise. */}
+            <span className="vet-reviews-pagination__summary" aria-live="polite">
               {t("vetReviews.pagination.showing", { start: rangeStart, end: rangeEnd, total: totalItems })}
             </span>
-            <div className="vet-reviews-pagination__controls">
+            <div
+              className="vet-reviews-pagination__controls"
+              role="navigation"
+              aria-label={t("vetReviews.pagination.label")}
+            >
               <button
                 type="button"
                 className="vet-reviews-pagination__nav"
@@ -95,10 +103,16 @@ export default function VetReviewsList({
                 const showGap = previous != null && number - previous > 1;
                 return (
                   <span key={number} style={{ display: "contents" }}>
-                    {showGap && <span className="vet-reviews-pagination__ellipsis">…</span>}
+                    {showGap && (
+                      <span className="vet-reviews-pagination__ellipsis" aria-hidden="true">
+                        …
+                      </span>
+                    )}
                     <button
                       type="button"
                       className={`vet-reviews-pagination__page${number === page ? " vet-reviews-pagination__page--active" : ""}`}
+                      aria-label={t("vetReviews.pagination.page", { number })}
+                      aria-current={number === page ? "page" : undefined}
                       onClick={() => onPageChange(number)}
                     >
                       {number}

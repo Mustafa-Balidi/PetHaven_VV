@@ -4,6 +4,20 @@
   --color-secondary: #f59e0b;
   --color-secondary-alt: #fea619;
   --color-success: #22c55e;
+  /* Brand amber (2.0:1) and green (2.1:1) fail contrast as a foreground on
+     a light surface. These darker pairs clear 4.5:1 on white, on the 10%
+     tints and on --color-surface-alt; the originals stay for fills. */
+  --color-secondary-ink: #a15c07;
+  --color-success-ink: #137a3a;
+  /* Teal only clears the AAA 7:1 bar once it is a shade darker. Each of
+     these is the lightest value that passes for its pairing, so the brand
+     colour shifts as little as possible:
+       deep — foreground on white / --color-surface-alt / the teal tint
+       fill — behind white text
+       band — behind the --color-teal-tint labels */
+  --color-primary-deep: #005a53;
+  --color-primary-fill: #00635a;
+  --color-primary-band: #005049;
   --color-info: #4648d4;
   --color-danger-bg: #ffdad6;
   --color-danger-text: #93000a;
@@ -44,9 +58,9 @@ html {
   z-index: 50;
   width: 100%;
   backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid var(--color-outline);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--theme-header-bg);
+  border-bottom: 1px solid var(--theme-border);
+  box-shadow: var(--theme-shadow);
 }
 
 .public-header__inner {
@@ -189,6 +203,11 @@ html {
   object-fit: cover;
 }
 
+.public-header__avatar-icon {
+  color: inherit;
+  font-size: 32px;
+}
+
 .public-header__dropdown {
   position: absolute;
   top: 100%;
@@ -311,7 +330,7 @@ html {
   width: max-content;
   padding: 4px 12px;
   background-color: rgba(0, 131, 120, 0.1);
-  color: var(--color-primary);
+  color: var(--color-primary-deep);
   border-radius: 999px;
   font-size: 12px;
   font-weight: 500;
@@ -373,11 +392,12 @@ html {
 }
 
 .hero__btn--adopt {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-fill);
 }
 
 .hero__btn--shop {
   background-color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .hero__stats {
@@ -449,25 +469,29 @@ html {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--theme-text);
+  background-color: var(--theme-glass-bg);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--color-outline);
+  box-shadow: var(--theme-glass-shadow);
+  border: 1px solid var(--theme-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hero__media-badge-icon-wrap {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: rgba(34, 197, 94, 0.2);
+  background-color: var(--theme-success-soft);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .hero__media-badge-icon {
-  color: var(--color-success);
+  color: var(--color-success-ink);
 }
 
 .hero__media-badge-title {
@@ -513,7 +537,7 @@ html {
 /* === IMPACT STATS === */
 .impact-stats {
   width: 100%;
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-band);
   padding: 48px 0;
 }
 
@@ -603,6 +627,10 @@ html {
 }
 
 .categories__card {
+  position: relative;
+  width: 100%;
+  font: inherit;
+  color: inherit;
   background: var(--color-surface);
   padding: 24px;
   border-radius: var(--radius-xl);
@@ -614,6 +642,17 @@ html {
   text-align: center;
   cursor: pointer;
   transition: box-shadow 0.2s;
+}
+
+.categories__card-action {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
 }
 
 .categories__card:hover {
@@ -645,9 +684,9 @@ html {
 .categories__icon-wrap--success { background-color: rgba(34, 197, 94, 0.1); }
 
 .categories__icon--primary { color: var(--color-primary); }
-.categories__icon--secondary { color: var(--color-secondary); }
+.categories__icon--secondary { color: var(--color-secondary-ink); }
 .categories__icon--info { color: var(--color-info); }
-.categories__icon--success { color: var(--color-success); }
+.categories__icon--success { color: var(--color-success-ink); }
 
 .categories__card-title {
   font-size: 20px;
@@ -699,7 +738,7 @@ html {
 }
 
 .featured-pets__view-all {
-  color: var(--color-primary);
+  color: var(--color-primary-deep);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -776,7 +815,7 @@ html {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-primary);
   background: none;
-  color: var(--color-primary);
+  color: var(--color-primary-deep);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -784,7 +823,7 @@ html {
 }
 
 .featured-pets__cta:hover {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-fill);
   color: #fff;
 }
 
@@ -918,7 +957,7 @@ html {
 }
 
 .trending-products__star {
-  color: var(--color-secondary);
+  color: var(--color-secondary-ink);
   font-size: 14px;
 }
 
@@ -1108,6 +1147,11 @@ html {
 }
 
 .events__view-all {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
   color: var(--color-primary);
   font-size: 14px;
   font-weight: 600;
@@ -1177,7 +1221,7 @@ html {
 .events__date--primary .events__date-day,
 .events__date--primary .events__date-month { color: var(--color-primary); }
 .events__date--secondary .events__date-day,
-.events__date--secondary .events__date-month { color: var(--color-secondary); }
+.events__date--secondary .events__date-month { color: var(--color-secondary-ink); }
 .events__date--info .events__date-day,
 .events__date--info .events__date-month { color: var(--color-info); }
 
@@ -1331,7 +1375,7 @@ html {
 }
 
 .vet__feature-icon {
-  color: var(--color-success);
+  color: var(--color-success-ink);
   font-size: 16px;
 }
 
@@ -1347,7 +1391,7 @@ html {
 
 .vet__cta {
   background-color: var(--color-secondary);
-  color: #fff;
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 600;
   padding: 12px 24px;
@@ -1443,6 +1487,7 @@ html {
 }
 
 .blog__card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--color-surface);
@@ -1452,6 +1497,17 @@ html {
   border: 1px solid var(--color-border);
   text-decoration: none;
   transition: transform 0.3s;
+}
+
+.blog__card-action {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
 }
 
 .blog__card:hover {
@@ -1509,9 +1565,9 @@ html {
 }
 
 .blog__tag--primary { color: var(--color-primary); }
-.blog__tag--secondary { color: var(--color-secondary); }
+.blog__tag--secondary { color: var(--color-secondary-ink); }
 .blog__tag--info { color: var(--color-info); }
-.blog__tag--success { color: var(--color-success); }
+.blog__tag--success { color: var(--color-success-ink); }
 
 .blog__card-title {
   font-size: 18px;
@@ -1711,7 +1767,7 @@ html {
 
 .newsletter__submit {
   background-color: var(--color-secondary);
-  color: #fff;
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 600;
   padding: 12px 24px;
@@ -1769,7 +1825,7 @@ html {
 
   .newsletter__art-icon {
     font-size: 100px;
-    color: var(--color-secondary);
+    color: var(--color-secondary-ink);
   }
 }
 
@@ -1924,7 +1980,7 @@ html {
 }
 
 .product-modal__star {
-  color: var(--color-secondary);
+  color: var(--color-secondary-ink);
   font-size: 16px;
 }
 
@@ -2316,10 +2372,13 @@ html {
 
 /* === FOOTER === */
 .site-footer {
-  background: #ffffff;
-  border-top: 1px solid #e0e3e5;
+  background: var(--theme-footer-bg);
+  border-top: 1px solid var(--theme-border);
   padding: 32px 0;
   margin-top: auto;
+  color: var(--theme-text-muted);
+  box-shadow: 0 -1px 0 rgb(0 0 0 / 0.02);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .footer-inner {
@@ -2361,24 +2420,26 @@ html {
 
 .footer-copyright {
   font-size: 0.875rem;
-  color: #3d4947;
+  color: var(--theme-text-muted);
 }
 
 .footer-links {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 24px;
 }
 
 .footer-link {
   font-size: 0.875rem;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .footer-link:hover {
-  color: #00685f;
+  color: var(--theme-accent);
 }
 
 ::-webkit-scrollbar {
@@ -2386,16 +2447,16 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f2f4f6;
+  background: var(--theme-surface-2);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #bcc9c6;
+  background: var(--theme-border);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00685f;
+  background: var(--theme-accent);
 }
 
 .footer-link--button {

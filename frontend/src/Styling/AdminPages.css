@@ -117,7 +117,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 10px 32px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--theme-header-bg);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--admin-border-slate);
 }
@@ -377,6 +377,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
+  /* Rendered as a <ul> so screen readers announce how many counters there
+     are; the bullets and the UA padding are not wanted. */
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .admin-stat-grid--compact {
@@ -589,6 +594,9 @@
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 20px;
   align-items: start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .admin-vet-card {
@@ -784,6 +792,11 @@
   font-size: 14px;
 }
 
+/* The banner stays mounted so the live region exists before the text does. */
+.admin-feedback:empty {
+  display: none;
+}
+
 .admin-feedback .material-symbols-outlined {
   font-size: 20px;
   flex-shrink: 0;
@@ -800,8 +813,14 @@
   border: none;
   cursor: pointer;
   color: inherit;
-  padding: 0;
+  /* WCAG 2.5.8: keep the hit area at the 24px minimum. */
+  min-width: 24px;
+  min-height: 24px;
+  padding: 2px;
+  border-radius: 999px;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0.7;
 }
 
@@ -987,8 +1006,18 @@
     --admin-sidebar-width: 76px;
   }
 
+  /* Clipped, not `display: none` — the icon is aria-hidden, so removing the
+     label would leave the link with no accessible name at all. */
   .admin-sidebar__label {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .admin-sidebar__logo img {

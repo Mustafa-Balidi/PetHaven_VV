@@ -46,7 +46,7 @@ function PetProfilePage() {
     <div className="pet-profile-page">
       <TopNavBar />
 
-      <main className="pet-profile-page__main">
+      <main id="main-content" tabIndex={-1} className="pet-profile-page__main">
         <div className="pet-profile-page__left pet-profile-page__left--full">
           <button type="button" className="pet-profile-page__back-btn" onClick={() => navigate("/adopter/adoption-hub")}>
             <FaArrowLeft size={14} />

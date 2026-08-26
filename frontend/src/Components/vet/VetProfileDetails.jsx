@@ -13,7 +13,9 @@ export default function VetProfileDetails({ profile }) {
 
   return (
     <section className="vet-profile-identity">
-      <div className="vet-profile-identity__avatar">{initials || <Icon name="person" />}</div>
+      <div className="vet-profile-identity__avatar" aria-hidden="true">
+        {initials || <Icon name="person" />}
+      </div>
       <div className="vet-profile-identity__body">
         <div className="vet-profile-identity__name-row">
           <h2 className="vet-profile-identity__name">{profile.fullName || t("vetProfile.identity.unnamed")}</h2>

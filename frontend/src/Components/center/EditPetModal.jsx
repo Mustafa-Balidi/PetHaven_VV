@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useId, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
 import CenterImage from "./CenterImage.jsx";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 const SPECIES = ["Dog", "Cat", "Bird", "Small Mammal", "Other"];
 const SIZES = ["Small (Under 25 lbs)", "Medium (25-60 lbs)", "Large (61-100 lbs)", "Extra Large (Over 100 lbs)"];
@@ -10,6 +11,7 @@ const AVAILABILITY = ["Available", "Pending", "Adopted"];
 
 export default function EditPetModal({ pet, onSave, onClose }) {
   const { t: translate } = useTranslation();
+  const titleId = useId();
   const t = translate("center.modals", { returnObjects: true });
   const te = t.editPet;
   const opt = translate("center.petOptions", { returnObjects: true });
@@ -24,7 +26,9 @@ export default function EditPetModal({ pet, onSave, onClose }) {
   const [availability, setAvailability] = useState(pet.status);
   const [description, setDescription] = useState(pet.description || "");
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [saving, setSaving] = useState(false);
+  const dialogRef = useModalA11y({ onClose, closeOnEscape: !saving });
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef(null);
 
@@ -39,6 +43,9 @@ export default function EditPetModal({ pet, onSave, onClose }) {
     const nextPreviewUrl = URL.createObjectURL(file);
     previewUrlRef.current = nextPreviewUrl;
     setPreviewUrl(nextPreviewUrl);
+    const reader = new FileReader();
+    reader.onload = () => setImageUrl(reader.result);
+    reader.readAsDataURL(file);
   }
 
   async function handleSave() {
@@ -54,6 +61,7 @@ export default function EditPetModal({ pet, onSave, onClose }) {
         healthStatus,
         status: availability,
         description,
+        imageUrl,
       });
     } finally {
       setSaving(false);
@@ -63,9 +71,16 @@ export default function EditPetModal({ pet, onSave, onClose }) {
   return (
     <div className="center-modal-overlay">
       <button type="button" aria-label={t.close} className="center-modal-backdrop" onClick={onClose} />
-      <div className="center-modal-panel center-modal-panel--lg">
+      <div
+        className="center-modal-panel center-modal-panel--lg"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <div className="center-modal-header">
-          <h2 className="center-modal-title">{te.title}</h2>
+          <h2 id={titleId} className="center-modal-title">{te.title}</h2>
           <button type="button" aria-label={t.close} className="center-modal-close-btn" onClick={onClose}>
             <Icon name="close" />
           </button>
@@ -101,13 +116,17 @@ export default function EditPetModal({ pet, onSave, onClose }) {
             <h3 className="center-modal-section__title">{te.basicInfo}</h3>
             <div className="center-modal-grid">
               <div className="center-modal-field">
-                <label className="center-modal-label">{te.nameLabel}</label>
-                <input type="text" className="center-modal-input" value={name} onChange={(e) => setName(e.target.value)} />
+                <label htmlFor="edit-pet-modal-name" className="center-modal-label">{te.nameLabel}</label>
+                <input
+                  id="edit-pet-modal-name"
+                  type="text" className="center-modal-input" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{te.speciesLabel}</label>
+                <label htmlFor="edit-pet-modal-species" className="center-modal-label">{te.speciesLabel}</label>
                 <div className="center-modal-select-wrap">
-                  <select className="center-modal-select" value={species} onChange={(e) => setSpecies(e.target.value)}>
+                  <select
+                    id="edit-pet-modal-species"
+                    className="center-modal-select" value={species} onChange={(e) => setSpecies(e.target.value)}>
                     {SPECIES.map((s) => (
                       <option key={s} value={s}>
                         {opt.species[s]}
@@ -118,12 +137,16 @@ export default function EditPetModal({ pet, onSave, onClose }) {
                 </div>
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{te.breedLabel}</label>
-                <input type="text" className="center-modal-input" value={breed} onChange={(e) => setBreed(e.target.value)} />
+                <label htmlFor="edit-pet-modal-breed" className="center-modal-label">{te.breedLabel}</label>
+                <input
+                  id="edit-pet-modal-breed"
+                  type="text" className="center-modal-input" value={breed} onChange={(e) => setBreed(e.target.value)} />
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{te.ageLabel}</label>
-                <input type="text" className="center-modal-input" value={pet.age} readOnly />
+                <label htmlFor="edit-pet-modal-pet" className="center-modal-label">{te.ageLabel}</label>
+                <input
+                  id="edit-pet-modal-pet"
+                  type="text" className="center-modal-input" value={pet.age} readOnly />
               </div>
               <div className="center-modal-field">
                 <label className="center-modal-label">{te.genderLabel}</label>
@@ -143,9 +166,11 @@ export default function EditPetModal({ pet, onSave, onClose }) {
                 </div>
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{te.sizeLabel}</label>
+                <label htmlFor="edit-pet-modal-size" className="center-modal-label">{te.sizeLabel}</label>
                 <div className="center-modal-select-wrap">
-                  <select className="center-modal-select" value={size} onChange={(e) => setSize(e.target.value)}>
+                  <select
+                    id="edit-pet-modal-size"
+                    className="center-modal-select" value={size} onChange={(e) => setSize(e.target.value)}>
                     {SIZES.map((s) => (
                       <option key={s} value={s}>
                         {opt.sizes[s]}
@@ -156,8 +181,10 @@ export default function EditPetModal({ pet, onSave, onClose }) {
                 </div>
               </div>
               <div className="center-modal-field center-modal-field--full">
-                <label className="center-modal-label">{te.colorLabel}</label>
-                <input type="text" className="center-modal-input" value={color} onChange={(e) => setColor(e.target.value)} />
+                <label htmlFor="edit-pet-modal-color" className="center-modal-label">{te.colorLabel}</label>
+                <input
+                  id="edit-pet-modal-color"
+                  type="text" className="center-modal-input" value={color} onChange={(e) => setColor(e.target.value)} />
               </div>
             </div>
           </section>
@@ -168,9 +195,10 @@ export default function EditPetModal({ pet, onSave, onClose }) {
             <section className="center-modal-section">
               <h3 className="center-modal-section__title">{te.medical}</h3>
               <div className="center-modal-field">
-                <label className="center-modal-label">{te.healthStatusLabel}</label>
+                <label htmlFor="edit-pet-modal-health-status" className="center-modal-label">{te.healthStatusLabel}</label>
                 <div className="center-modal-select-wrap">
                   <select
+                    id="edit-pet-modal-health-status"
                     className="center-modal-select"
                     value={healthStatus}
                     onChange={(e) => setHealthStatus(e.target.value)}
@@ -189,9 +217,10 @@ export default function EditPetModal({ pet, onSave, onClose }) {
             <section className="center-modal-section">
               <h3 className="center-modal-section__title">{te.adoptionDetails}</h3>
               <div className="center-modal-field">
-                <label className="center-modal-label">{te.availabilityLabel}</label>
+                <label htmlFor="edit-pet-modal-availability" className="center-modal-label">{te.availabilityLabel}</label>
                 <div className="center-modal-select-wrap">
                   <select
+                    id="edit-pet-modal-availability"
                     className="center-modal-select"
                     value={availability}
                     onChange={(e) => setAvailability(e.target.value)}
@@ -213,8 +242,9 @@ export default function EditPetModal({ pet, onSave, onClose }) {
           <section className="center-modal-section">
             <h3 className="center-modal-section__title">{te.character}</h3>
             <div className="center-modal-field">
-              <label className="center-modal-label">{te.characterLabel}</label>
+              <label htmlFor="edit-pet-modal-description" className="center-modal-label">{te.characterLabel}</label>
               <textarea
+                id="edit-pet-modal-description"
                 className="center-modal-textarea"
                 placeholder={te.characterPlaceholder}
                 rows={4}

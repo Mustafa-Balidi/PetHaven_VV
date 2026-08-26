@@ -28,7 +28,9 @@ export default function VetCalendarGrid({ year, month, eventsByDate, dayState, t
 
   return (
     <div className="vet-calendar-grid">
-      <div className="vet-calendar-grid__weekdays">
+      {/* Each cell now carries its own full date, so the strip is a
+          duplicate for assistive tech. */}
+      <div className="vet-calendar-grid__weekdays" aria-hidden="true">
         {weekdayLabels.map((label, index) => (
           <div key={`${label}-${index}`} className="vet-calendar-grid__weekday">
             {label}
@@ -42,6 +44,7 @@ export default function VetCalendarGrid({ year, month, eventsByDate, dayState, t
           return (
             <VetCalendarDay
               key={key}
+              date={date}
               dayNumber={date.getDate()}
               inCurrentMonth={inCurrentMonth}
               isToday={key === todayKey}

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useId, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 const SPECIES = ["Dog", "Cat", "Bird", "Small Mammal", "Other"];
 const SIZES = ["Small (Under 25 lbs)", "Medium (25-60 lbs)", "Large (61-100 lbs)", "Extra Large (Over 100 lbs)"];
@@ -9,6 +10,7 @@ const AVAILABILITY = ["Available", "Pending", "Adopted"];
 
 export default function AddPetModal({ onSave, onClose }) {
   const { t: translate } = useTranslation();
+  const titleId = useId();
   const t = translate("center.modals", { returnObjects: true });
   const ta = t.addPet;
   const opt = translate("center.petOptions", { returnObjects: true });
@@ -25,7 +27,9 @@ export default function AddPetModal({ onSave, onClose }) {
   const [availability, setAvailability] = useState("Available");
   const [description, setDescription] = useState("");
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [saving, setSaving] = useState(false);
+  const dialogRef = useModalA11y({ onClose, closeOnEscape: !saving });
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef(null);
 
@@ -40,6 +44,9 @@ export default function AddPetModal({ onSave, onClose }) {
     const nextPreviewUrl = URL.createObjectURL(file);
     previewUrlRef.current = nextPreviewUrl;
     setPreviewUrl(nextPreviewUrl);
+    const reader = new FileReader();
+    reader.onload = () => setImageUrl(reader.result);
+    reader.readAsDataURL(file);
   }
 
   async function handleSave() {
@@ -56,6 +63,7 @@ export default function AddPetModal({ onSave, onClose }) {
         healthStatus,
         status: availability,
         description,
+        imageUrl,
       });
     } finally {
       setSaving(false);
@@ -65,9 +73,16 @@ export default function AddPetModal({ onSave, onClose }) {
   return (
     <div className="center-modal-overlay">
       <button type="button" aria-label={t.close} className="center-modal-backdrop" onClick={onClose} />
-      <div className="center-modal-panel center-modal-panel--lg">
+      <div
+        className="center-modal-panel center-modal-panel--lg"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <div className="center-modal-header">
-          <h2 className="center-modal-title">{ta.title}</h2>
+          <h2 id={titleId} className="center-modal-title">{ta.title}</h2>
           <button type="button" aria-label={t.close} className="center-modal-close-btn" onClick={onClose}>
             <Icon name="close" />
           </button>
@@ -108,8 +123,9 @@ export default function AddPetModal({ onSave, onClose }) {
             </div>
             <div className="center-modal-grid">
               <div className="center-modal-field center-modal-field--full">
-                <label className="center-modal-label">{ta.nameLabel}</label>
+                <label htmlFor="add-pet-modal-name" className="center-modal-label">{ta.nameLabel}</label>
                 <input
+                  id="add-pet-modal-name"
                   type="text"
                   className="center-modal-input"
                   placeholder={ta.namePlaceholder}
@@ -118,9 +134,10 @@ export default function AddPetModal({ onSave, onClose }) {
                 />
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{ta.speciesLabel}</label>
+                <label htmlFor="add-pet-modal-species" className="center-modal-label">{ta.speciesLabel}</label>
                 <div className="center-modal-select-wrap">
                   <select
+                    id="add-pet-modal-species"
                     className="center-modal-select"
                     value={species}
                     onChange={(e) => setSpecies(e.target.value)}
@@ -138,8 +155,9 @@ export default function AddPetModal({ onSave, onClose }) {
                 </div>
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{ta.breedLabel}</label>
+                <label htmlFor="add-pet-modal-breed" className="center-modal-label">{ta.breedLabel}</label>
                 <input
+                  id="add-pet-modal-breed"
                   type="text"
                   className="center-modal-input"
                   placeholder={ta.breedPlaceholder}
@@ -149,8 +167,9 @@ export default function AddPetModal({ onSave, onClose }) {
               </div>
               <div className="center-modal-age-group">
                 <div className="center-modal-field">
-                  <label className="center-modal-label">{ta.ageLabel}</label>
+                  <label htmlFor="add-pet-modal-age-number" className="center-modal-label">{ta.ageLabel}</label>
                   <input
+                    id="add-pet-modal-age-number"
                     type="number"
                     min="0"
                     className="center-modal-input"
@@ -186,9 +205,11 @@ export default function AddPetModal({ onSave, onClose }) {
                 </div>
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{ta.sizeLabel}</label>
+                <label htmlFor="add-pet-modal-size" className="center-modal-label">{ta.sizeLabel}</label>
                 <div className="center-modal-select-wrap">
-                  <select className="center-modal-select" value={size} onChange={(e) => setSize(e.target.value)}>
+                  <select
+                    id="add-pet-modal-size"
+                    className="center-modal-select" value={size} onChange={(e) => setSize(e.target.value)}>
                     <option value="" disabled>
                       {ta.sizePlaceholder}
                     </option>
@@ -202,8 +223,9 @@ export default function AddPetModal({ onSave, onClose }) {
                 </div>
               </div>
               <div className="center-modal-field">
-                <label className="center-modal-label">{ta.colorLabel}</label>
+                <label htmlFor="add-pet-modal-color" className="center-modal-label">{ta.colorLabel}</label>
                 <input
+                  id="add-pet-modal-color"
                   type="text"
                   className="center-modal-input"
                   placeholder={ta.colorPlaceholder}
@@ -223,9 +245,10 @@ export default function AddPetModal({ onSave, onClose }) {
             </div>
             <div className="center-modal-grid">
               <div className="center-modal-field">
-                <label className="center-modal-label">{ta.healthStatusLabel}</label>
+                <label htmlFor="add-pet-modal-health-status" className="center-modal-label">{ta.healthStatusLabel}</label>
                 <div className="center-modal-select-wrap">
                   <select
+                    id="add-pet-modal-health-status"
                     className="center-modal-select"
                     value={healthStatus}
                     onChange={(e) => setHealthStatus(e.target.value)}
@@ -251,9 +274,10 @@ export default function AddPetModal({ onSave, onClose }) {
             </div>
             <div className="center-modal-grid">
               <div className="center-modal-field">
-                <label className="center-modal-label">{ta.availabilityLabel}</label>
+                <label htmlFor="add-pet-modal-availability" className="center-modal-label">{ta.availabilityLabel}</label>
                 <div className="center-modal-select-wrap">
                   <select
+                    id="add-pet-modal-availability"
                     className="center-modal-select"
                     value={availability}
                     onChange={(e) => setAvailability(e.target.value)}
@@ -278,8 +302,9 @@ export default function AddPetModal({ onSave, onClose }) {
               {ta.characterNotes}
             </div>
             <div className="center-modal-field">
-              <label className="center-modal-label">{ta.characterLabel}</label>
+              <label htmlFor="add-pet-modal-description" className="center-modal-label">{ta.characterLabel}</label>
               <textarea
+                id="add-pet-modal-description"
                 className="center-modal-textarea"
                 placeholder={ta.characterPlaceholder}
                 rows={4}

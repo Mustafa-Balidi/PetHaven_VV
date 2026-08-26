@@ -1,0 +1,108 @@
+.app-footer {
+  margin-top: auto;
+  padding: 32px 0;
+  color: var(--theme-text-muted);
+  background-color: var(--theme-footer-bg);
+  border-top: 1px solid var(--theme-border);
+  box-shadow: 0 -1px 0 rgb(0 0 0 / 0.02);
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.app-footer__brand,
+.app-footer__links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-footer__brand {
+  gap: 8px;
+}
+
+.app-footer__links {
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.app-footer__logo {
+  width: auto;
+  height: 24px;
+  filter: grayscale(1);
+  opacity: 0.72;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.app-footer__logo:hover {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+.app-footer__copyright,
+.app-footer__link {
+  color: var(--theme-text-muted);
+  font-size: 0.875rem;
+}
+
+.app-footer__link {
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: default;
+  transition: color 0.2s ease;
+}
+
+button.app-footer__link {
+  cursor: pointer;
+}
+
+.app-footer__link:hover {
+  color: var(--theme-accent);
+}
+
+html[data-theme="dark"] .app-footer {
+  color: var(--theme-text-muted);
+  background-color: var(--theme-footer-bg);
+  border-top-color: var(--theme-border);
+  box-shadow: 0 -1px 0 rgb(255 255 255 / 0.03);
+}
+
+html[data-theme="dark"] .app-footer__logo {
+  filter: grayscale(1) brightness(0) invert(1);
+  opacity: 0.88;
+}
+
+html[data-theme="dark"] .app-footer__logo:hover {
+  filter: grayscale(0) brightness(1.15);
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .app-footer__inner {
+    flex-direction: row;
+    padding: 0 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-footer,
+  .app-footer__logo,
+  .app-footer__link {
+    transition: none;
+  }
+}
+

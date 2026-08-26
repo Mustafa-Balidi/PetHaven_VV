@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
 import VetCalendarEvent from "./VetCalendarEvent.jsx";
+import { formatLocalizedDate } from "../../utils/localization.js";
 
 const MAX_VISIBLE = 3;
 
 export default function VetCalendarDay({
+  date,
   dayNumber,
   inCurrentMonth,
   isToday,
@@ -14,11 +16,17 @@ export default function VetCalendarDay({
   error,
   onEventClick,
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   const visible = expanded ? events : events.slice(0, MAX_VISIBLE);
   const overflow = events.length - MAX_VISIBLE;
+  const fullDate = formatLocalizedDate(date, i18n.language, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <div
@@ -27,16 +35,21 @@ export default function VetCalendarDay({
       }`}
     >
       <div className="vet-calendar-day__head">
+        {/* Out of the grid's visual context a lone "14" says nothing, so the
+            cell states its own date and how much is booked on it. */}
         <span className={`vet-calendar-day__number${isToday ? " vet-calendar-day__number--today" : ""}`}>
-          {dayNumber}
+          <span aria-hidden="true">{dayNumber}</span>
+          <span className="sr-only">
+            {fullDate}
+            {inCurrentMonth && events.length
+              ? `, ${t("vetCalendar.grid.dayEvents", { count: events.length })}`
+              : ""}
+          </span>
         </span>
         {inCurrentMonth && loading && <span className="vet-calendar-day__spinner" aria-hidden="true" />}
         {inCurrentMonth && !loading && error && (
-          <span
-            className="vet-calendar-day__error"
-            title={t("vetCalendar.grid.dayError")}
-          >
-            <Icon name="error" />
+          <span className="vet-calendar-day__error" title={t("vetCalendar.grid.dayError")}>
+            <Icon name="error" label={t("vetCalendar.grid.dayError")} />
           </span>
         )}
       </div>
@@ -51,7 +64,12 @@ export default function VetCalendarDay({
             />
           ))}
           {overflow > 0 && (
-            <button type="button" className="vet-calendar-day__more" onClick={() => setExpanded((v) => !v)}>
+            <button
+              type="button"
+              className="vet-calendar-day__more"
+              aria-expanded={expanded}
+              onClick={() => setExpanded((v) => !v)}
+            >
               {expanded ? t("vetCalendar.grid.showLess") : t("vetCalendar.grid.moreEvents", { count: overflow })}
             </button>
           )}

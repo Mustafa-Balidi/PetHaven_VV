@@ -5,10 +5,10 @@ export default function OrderActions({ onContinueShopping, onViewOrderHistory })
 
   return (
     <div className="oc-actions">
-      <button className="oc-btn oc-btn--primary" onClick={onContinueShopping}>
+      <button type="button" className="oc-btn oc-btn--primary" onClick={onContinueShopping}>
         {t("adopter.orders.continueShopping")}
       </button>
-      <button className="oc-btn oc-btn--outline" onClick={onViewOrderHistory}>
+      <button type="button" className="oc-btn oc-btn--outline" onClick={onViewOrderHistory}>
         {t("adopter.orders.viewHistory")}
       </button>
     </div>

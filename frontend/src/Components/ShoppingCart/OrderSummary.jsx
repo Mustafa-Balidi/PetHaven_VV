@@ -43,14 +43,14 @@ export default function OrderSummary({ subtotal, shipping, tax, total, isLoggedI
         </div>
         <Link to="/adopter/checkout" className="sc-checkout-btn">
           {t('adopter.cart.checkout')}
-          <span className="material-symbols-outlined">arrow_forward</span>
+          <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
         </Link>
         <br />
-        <button className="sc-checkout-btn" onClick={onClearCart}>
+        <button type="button" className="sc-checkout-btn" onClick={onClearCart}>
           {t('adopter.cart.clear')}
         </button>
         <div className="sc-trust">
-          <span className="material-symbols-outlined">lock</span>
+          <span className="material-symbols-outlined" aria-hidden="true">lock</span>
           <span>{t('adopter.cart.secure')}</span>
         </div>
       </div>

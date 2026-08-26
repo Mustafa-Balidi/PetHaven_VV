@@ -55,6 +55,7 @@ export default function VetPatients() {
           <input
             type="text"
             className="vet-dashboard-patients__search-input"
+            aria-label={t("vetDashboard.patients.searchLabel")}
             placeholder={t("vetDashboard.patients.searchPlaceholder")}
             value={search}
             onChange={handleSearchChange}
@@ -63,20 +64,23 @@ export default function VetPatients() {
       </div>
 
       {loading ? (
-        <p className="vet-dashboard-empty">{t("vetDashboard.patients.loading")}</p>
+        <p className="vet-dashboard-empty" role="status">{t("vetDashboard.patients.loading")}</p>
       ) : error ? (
         <div className="vet-dashboard-alert" role="alert">
           <span>{error}</span>
         </div>
       ) : patients.length ? (
         <div className="vet-dashboard-patients__table-wrap">
-          <table className="vet-dashboard-patients__table">
+          <table
+            className="vet-dashboard-patients__table"
+            aria-label={t("vetDashboard.patients.tableLabel")}
+          >
             <thead>
               <tr>
-                <th>{t("vetDashboard.patients.columns.patient")}</th>
-                <th>{t("vetDashboard.patients.columns.breed")}</th>
-                <th>{t("vetDashboard.patients.columns.lastVisit")}</th>
-                <th className="vet-dashboard-patients__col-action">
+                <th scope="col">{t("vetDashboard.patients.columns.patient")}</th>
+                <th scope="col">{t("vetDashboard.patients.columns.breed")}</th>
+                <th scope="col">{t("vetDashboard.patients.columns.lastVisit")}</th>
+                <th scope="col" className="vet-dashboard-patients__col-action">
                   {t("vetDashboard.patients.columns.action")}
                 </th>
               </tr>
@@ -101,16 +105,27 @@ export default function VetPatients() {
                   </td>
                   <td>{patient.breed || patient.species}</td>
                   <td>
-                    {patient.lastVisitDate
-                      ? formatLocalizedDate(patient.lastVisitDate, i18n.language, {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })
-                      : "—"}
+                    {patient.lastVisitDate ? (
+                      formatLocalizedDate(patient.lastVisitDate, i18n.language, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })
+                    ) : (
+                      // A bare dash is read out as punctuation or skipped.
+                      <>
+                        <span aria-hidden="true">—</span>
+                        <span className="sr-only">{t("a11y.noValue")}</span>
+                      </>
+                    )}
                   </td>
                   <td className="vet-dashboard-patients__col-action">
-                    <Link to="/vet/patients" className="vet-dashboard-patients__view-btn">
+                    {/* Every row repeats the same link text. */}
+                    <Link
+                      to="/vet/patients"
+                      className="vet-dashboard-patients__view-btn"
+                      aria-label={t("vetDashboard.patients.viewRecordsFor", { name: patient.petName })}
+                    >
                       {t("vetDashboard.patients.viewRecords")}
                     </Link>
                   </td>

@@ -5,11 +5,11 @@ export default function ImpactStats() {
   const stats = t("impactStats.items", { returnObjects: true });
 
   return (
-    <section className="impact-stats">
+    <section className="impact-stats" aria-label={t("impactStats.regionLabel")}>
       <div className="impact-stats__inner">
-        <div className="impact-stats__grid">
+        <div className="impact-stats__grid" role="list">
           {stats.map((stat) => (
-            <div key={stat.label} className="impact-stats__item">
+            <div key={stat.label} className="impact-stats__item" role="listitem">
               <span className="impact-stats__value">{stat.value}</span>
               <p className="impact-stats__label">{stat.label}</p>
             </div>

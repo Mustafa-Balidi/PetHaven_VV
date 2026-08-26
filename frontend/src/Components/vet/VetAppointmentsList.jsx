@@ -27,8 +27,14 @@ export default function VetAppointmentsList({
           {t("vetAppointments.list.title")}
         </h2>
         <div className="vet-appointments-list__filter">
-          <span>{t("vetAppointments.toolbar.filterLabel")}</span>
-          <select value={statusFilter} onChange={(event) => onStatusFilterChange(event.target.value)}>
+          {/* The visible caption sits next to the control but was never tied
+              to it, so the select had no accessible name. */}
+          <span id="vet-appointments-filter-label">{t("vetAppointments.toolbar.filterLabel")}</span>
+          <select
+            aria-labelledby="vet-appointments-filter-label"
+            value={statusFilter}
+            onChange={(event) => onStatusFilterChange(event.target.value)}
+          >
             <option value="">{t("vetAppointments.toolbar.allStatuses")}</option>
             {STATUS_OPTIONS.map((option) => (
               <option key={option} value={option}>
@@ -40,7 +46,7 @@ export default function VetAppointmentsList({
       </div>
 
       {loading ? (
-        <p className="vet-appointments-empty">{t("vetAppointments.list.loading")}</p>
+        <p className="vet-appointments-empty" role="status">{t("vetAppointments.list.loading")}</p>
       ) : error ? (
         <div className="vet-appointments-alert" role="alert">
           <span>{error}</span>

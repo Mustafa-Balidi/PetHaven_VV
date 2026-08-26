@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AdminLayout from "../../Components/admin/AdminLayout.jsx";
@@ -10,6 +10,7 @@ import { formatAdminDate } from "../../Components/admin/adminFormat.js";
 
 export default function AdminDashboard() {
   const { t, i18n } = useTranslation();
+  const pendingHeadingId = useId();
   const {
     stats,
     dashboardLoading,
@@ -54,18 +55,17 @@ export default function AdminDashboard() {
           className="admin-btn admin-btn--ghost"
           onClick={refreshAll}
           disabled={busy}
+          aria-busy={busy || undefined}
         >
           <Icon name="refresh" />
           {busy ? t("admin.common.refreshing") : t("admin.common.refresh")}
         </button>
       }
     >
-      {dashboardError ? (
-        <AdminFeedback type="error" message={dashboardError} />
-      ) : null}
+      <AdminFeedback type="error" message={dashboardError} />
 
       {!stats && dashboardLoading ? (
-        <div className="admin-state admin-state--loading">
+        <div className="admin-state admin-state--loading" role="status">
           <span className="admin-spinner" aria-hidden="true" />
           <p>{t("admin.common.loading")}</p>
         </div>
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
 
       {stats ? (
         <section className="admin-section" aria-label={t("admin.dashboard.statsSection")}>
-          <div className="admin-stat-grid">
+          <ul className="admin-stat-grid">
             {statCards.map((card) => (
               <AdminStatCard
                 key={card.key}
@@ -93,15 +93,15 @@ export default function AdminDashboard() {
                 tone={card.tone}
               />
             ))}
-          </div>
+          </ul>
         </section>
       ) : null}
 
-      <section className="admin-section">
+      <section className="admin-section" aria-labelledby={pendingHeadingId}>
         <div className="admin-panel admin-panel--pending">
           <div className="admin-panel__header">
             <div className="admin-panel__heading">
-              <h2 className="admin-panel__title">
+              <h2 className="admin-panel__title" id={pendingHeadingId}>
                 <Icon name="pending_actions" />
                 {t("admin.dashboard.pendingVets.title")}
               </h2>
@@ -115,12 +115,10 @@ export default function AdminDashboard() {
             </Link>
           </div>
 
-          {pendingVetsError ? (
-            <AdminFeedback type="error" message={pendingVetsError} />
-          ) : null}
+          <AdminFeedback type="error" message={pendingVetsError} />
 
           {pendingVetsLoading && !pendingVets.length ? (
-            <div className="admin-state admin-state--inline">
+            <div className="admin-state admin-state--inline" role="status">
               <span className="admin-spinner" aria-hidden="true" />
               <p>{t("admin.common.loading")}</p>
             </div>
@@ -141,20 +139,35 @@ export default function AdminDashboard() {
                   {t("admin.dashboard.pendingVets.awaiting")}
                 </span>
               </p>
-              <ul className="admin-mini-list">
-                {pendingVets.slice(0, 5).map((vet) => (
-                  <li className="admin-mini-list__item" key={vet.vetId}>
-                    <span className="admin-mini-list__main">
-                      <span className="admin-mini-list__name">{vet.fullName || vet.email}</span>
-                      {vet.specialization ? (
-                        <span className="admin-mini-list__meta">{vet.specialization}</span>
+              <ul
+                className="admin-mini-list"
+                aria-label={t("admin.dashboard.pendingVets.listLabel")}
+              >
+                {pendingVets.slice(0, 5).map((vet) => {
+                  const submittedOn = formatAdminDate(vet.createdAt, i18n.language);
+
+                  return (
+                    <li className="admin-mini-list__item" key={vet.vetId}>
+                      <span className="admin-mini-list__main">
+                        <span className="admin-mini-list__name">
+                          {vet.fullName || vet.email}
+                        </span>
+                        {vet.specialization ? (
+                          <span className="admin-mini-list__meta">{vet.specialization}</span>
+                        ) : null}
+                      </span>
+                      {submittedOn ? (
+                        <span className="admin-mini-list__date">
+                          {/* The bare date reads as a stray number without it. */}
+                          <span className="sr-only">
+                            {t("admin.vetApprovals.fields.createdAt")}{": "}
+                          </span>
+                          <time dateTime={vet.createdAt}>{submittedOn}</time>
+                        </span>
                       ) : null}
-                    </span>
-                    <span className="admin-mini-list__date">
-                      {formatAdminDate(vet.createdAt, i18n.language)}
-                    </span>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
               {pendingVets.length > 5 ? (
                 <p className="admin-panel__more">

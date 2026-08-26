@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { isAuthenticated } from "../../api/authApi.js";
 import PublicHeader from "../../Components/common/header/PublicHeader.jsx";
 import AuthModal from "../../Components/common/AuthModal.jsx";
 import ContactModal from "../../Components/common/ContactModal.jsx";
@@ -26,17 +25,16 @@ export default function PublicPage() {
   const [contactOpen, setContactOpen] = useState(false);
 
   const requireAuth = () => {
-    if (!isAuthenticated()) {
-      setAuthModal("signin");
-      return false;
-    }
-    return true;
+    setSelectedPet(null);
+    setSelectedProduct(null);
+    setAuthModal("signin");
+    return false;
   };
 
   return (
     <>
       <PublicHeader onSignIn={() => setAuthModal("signin")} onSignUp={() => setAuthModal("signup")} />
-      <main className="public-page">
+      <main id="main-content" tabIndex={-1} className="public-page">
         <Hero requireAuth={requireAuth} />
         <ImpactStats />
         <CategoriesGrid requireAuth={requireAuth} />
@@ -58,8 +56,16 @@ export default function PublicPage() {
         <BlogArticles />
         <Testimonials />
         <Newsletter requireAuth={requireAuth} />
-        <PetModal pet={selectedPet} onClose={() => setSelectedPet(null)} />
-        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+        <PetModal
+          pet={selectedPet}
+          onClose={() => setSelectedPet(null)}
+          onRequireAuth={requireAuth}
+        />
+        <ProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onRequireAuth={requireAuth}
+        />
       </main>
       <Footer onContactClick={() => setContactOpen(true)} />
       {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} />}

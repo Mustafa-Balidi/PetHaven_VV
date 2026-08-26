@@ -19,7 +19,7 @@ export default function OrderMetaGrid({ id, date, status }) {
     <div className="odm-meta-grid">
       <div className="odm-meta-card">
         <div className="odm-meta-label">
-          <span className="material-symbols-outlined">receipt_long</span>
+          <span className="material-symbols-outlined" aria-hidden="true">receipt_long</span>
           <span>{t('adopter.orders.orderId')}</span>
         </div>
         <p className="odm-meta-val">{id}</p>
@@ -28,13 +28,13 @@ export default function OrderMetaGrid({ id, date, status }) {
         <div className="odm-meta-row">
           <div>
             <div className="odm-meta-label">
-              <span className="material-symbols-outlined">calendar_today</span>
+              <span className="material-symbols-outlined" aria-hidden="true">calendar_today</span>
               <span>{t('adopter.orders.datePlaced')}</span>
             </div>
             <p className="odm-meta-val">{displayDate}</p>
           </div>
           <div className="odm-status-badge">
-            <span className="material-symbols-outlined odm-status-icon">check_circle</span>
+            <span className="material-symbols-outlined odm-status-icon" aria-hidden="true">check_circle</span>
             <span>{t(`adopter.orders.statuses.${status}`, { defaultValue: status })}</span>
           </div>
         </div>

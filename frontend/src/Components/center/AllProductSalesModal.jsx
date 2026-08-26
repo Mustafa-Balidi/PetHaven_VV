@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 export default function AllProductSalesModal({ sales, loading, onClose }) {
   const { t: translate } = useTranslation();
+  const titleId = useId();
+  const dialogRef = useModalA11y({ onClose });
   const t = translate("center.modals", { returnObjects: true });
   const tv = t.viewSales;
   const [search, setSearch] = useState("");
@@ -19,9 +22,16 @@ export default function AllProductSalesModal({ sales, loading, onClose }) {
   return (
     <div className="center-modal-overlay">
       <button type="button" aria-label={t.close} className="center-modal-backdrop" onClick={onClose} />
-      <div className="center-modal-panel center-modal-panel--md">
+      <div
+        className="center-modal-panel center-modal-panel--md"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <div className="center-modal-header">
-          <h2 className="center-modal-title">{tv.title}</h2>
+          <h2 id={titleId} className="center-modal-title">{tv.title}</h2>
           <button type="button" aria-label={t.close} className="center-modal-close-btn" onClick={onClose}>
             <Icon name="close" />
           </button>

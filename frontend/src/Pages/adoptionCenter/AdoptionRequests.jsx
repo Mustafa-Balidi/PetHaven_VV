@@ -4,6 +4,7 @@ import CenterHeader from "../../Components/common/header/CenterHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
 import Icon from "../../Components/Icon.jsx";
 import { useCenterContext } from "../../context/centerContextBase.js";
+import NoValue from "../../Components/common/NoValue.jsx";
 import AdoptionApplicationReview from "../../Components/center/AdoptionApplicationReview.jsx";
 import RejectApplication from "../../Components/center/RejectApplication.jsx";
 import "../../Styling/CenterPages.css";
@@ -88,7 +89,11 @@ export default function AdoptionRequests() {
     return (
       <div className="center-requests-page">
         <CenterHeader />
-        <div className="center-requests-loading">{requestsError || t.loading}</div>
+        {/* The header's skip link needs a target on every branch, and the
+            loading / error text has to be announced when it swaps in. */}
+        <main id="main-content" tabIndex={-1} className="center-requests-loading">
+          <span role={requestsError ? "alert" : "status"}>{requestsError || t.loading}</span>
+        </main>
       </div>
     );
   }
@@ -97,7 +102,7 @@ export default function AdoptionRequests() {
     <div className="center-requests-page">
       <CenterHeader />
 
-      <div className="center-requests-body">
+      <main id="main-content" tabIndex={-1} className="center-requests-body">
         <div className="center-requests-header">
           <div>
             <h1 className="center-requests-header__title">{t.header.title}</h1>
@@ -109,6 +114,9 @@ export default function AdoptionRequests() {
               <input
                 type="text"
                 className="center-requests-search__input"
+                aria-label={activeView === "applications"
+                  ? t.toolbar.searchLabel
+                  : t.blacklist.searchLabel}
                 placeholder={activeView === "applications"
                   ? t.toolbar.searchPlaceholder
                   : t.blacklist.searchPlaceholder}
@@ -124,7 +132,7 @@ export default function AdoptionRequests() {
           </div>
         </div>
 
-        <div className="center-requests-view-tabs" aria-label={t.viewTabs.label}>
+        <div className="center-requests-view-tabs" role="group" aria-label={t.viewTabs.label}>
           {["applications", "blacklist"].map((view) => (
             <button
               key={view}
@@ -132,6 +140,7 @@ export default function AdoptionRequests() {
               className={`center-requests-view-tabs__item ${
                 activeView === view ? "center-requests-view-tabs__item--active" : ""
               }`}
+              aria-pressed={activeView === view}
               onClick={() => {
                 setActiveView(view);
                 setSearch("");
@@ -144,7 +153,7 @@ export default function AdoptionRequests() {
 
         {activeView === "applications" ? (
           <>
-            <div className="center-requests-tabs">
+            <div className="center-requests-tabs" role="group" aria-label={t.tabs.groupLabel}>
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
@@ -152,6 +161,7 @@ export default function AdoptionRequests() {
                   className={`center-requests-tabs__item ${
                     activeTab === tab.key ? "center-requests-tabs__item--active" : ""
                   }`}
+                  aria-pressed={activeTab === tab.key}
                   onClick={() => setActiveTab(tab.key)}
                 >
                   {tab.label}
@@ -159,8 +169,14 @@ export default function AdoptionRequests() {
               ))}
             </div>
 
+            {/* Filtering or searching replaces the grid with no spoken
+                feedback; this reports the new result count. */}
+            <p className="sr-only" aria-live="polite">
+              {translate("center.adoptionRequests.results", { count: filteredRequests.length })}
+            </p>
+
             {filteredRequests.length === 0 ? (
-              <div className="center-requests-empty">{t.empty}</div>
+              <div className="center-requests-empty" role="status">{t.empty}</div>
             ) : (
               <div className="center-requests-grid">
                 {filteredRequests.map((req) => {
@@ -173,17 +189,19 @@ export default function AdoptionRequests() {
                 >
                   <div className="center-requests-card__top">
                     <div className="center-requests-card__pet">
+                      {/* The pet name is spoken by the heading beside the thumbnail. */}
                       {req.pet.image ? (
-                        <img src={req.pet.image} alt={req.pet.name} className="center-requests-card__thumb" />
+                        <img src={req.pet.image} alt="" className="center-requests-card__thumb" />
                       ) : (
                         <div className="center-requests-card__thumb center-requests-card__thumb--placeholder">
                           <Icon name="pets" />
                         </div>
                       )}
                       <div>
-                        <h3 className="center-requests-card__name">{req.pet.name}</h3>
+                        <h2 className="center-requests-card__name">{req.pet.name}</h2>
                         <p className="center-requests-card__applicant">
                           <Icon name="person" />
+                          <span className="sr-only">{t.card.applicantLabel}</span>
                           {req.applicant.name}
                         </p>
                       </div>
@@ -210,6 +228,10 @@ export default function AdoptionRequests() {
                         <button
                           type="button"
                           className="center-requests-card__review-btn"
+                          aria-label={translate("center.adoptionRequests.card.reviewButtonFor", {
+                            pet: req.pet.name,
+                            applicant: req.applicant.name,
+                          })}
                           onClick={() => setReviewing(req)}
                         >
                           {t.card.reviewButton}
@@ -217,13 +239,25 @@ export default function AdoptionRequests() {
                         <button
                           type="button"
                           className="center-requests-card__reject-btn"
+                          aria-label={translate("center.adoptionRequests.card.rejectButtonFor", {
+                            pet: req.pet.name,
+                            applicant: req.applicant.name,
+                          })}
                           onClick={() => setRejecting(req)}
                         >
                           {t.card.rejectButton}
                         </button>
                       </>
                     ) : (
-                      <button type="button" className="center-requests-card__view-btn" disabled>
+                      <button
+                        type="button"
+                        className="center-requests-card__view-btn"
+                        aria-label={translate("center.adoptionRequests.card.viewRecordButtonFor", {
+                          pet: req.pet.name,
+                          applicant: req.applicant.name,
+                        })}
+                        disabled
+                      >
                         {t.card.viewRecordButton}
                       </button>
                     )}
@@ -235,41 +269,41 @@ export default function AdoptionRequests() {
             )}
           </>
         ) : blacklistLoading ? (
-          <div className="center-requests-empty">{t.blacklist.loading}</div>
+          <div className="center-requests-empty" role="status">{t.blacklist.loading}</div>
         ) : blacklistError ? (
           <div className="center-requests-empty center-blacklist-error" role="alert">
             <p>{blacklistError}</p>
             <button type="button" onClick={() => fetchBlacklist().catch(() => {})}>{t.blacklist.retry}</button>
           </div>
         ) : filteredBlacklist.length === 0 ? (
-          <div className="center-requests-empty">{t.blacklist.empty}</div>
+          <div className="center-requests-empty" role="status">{t.blacklist.empty}</div>
         ) : (
           <div className="center-blacklist-table-wrap">
-            <table className="center-blacklist-table">
+            <table className="center-blacklist-table" aria-label={t.blacklist.tableLabel}>
               <thead>
                 <tr>
-                  <th>{t.blacklist.columns.adopter}</th>
-                  <th>{t.blacklist.columns.reason}</th>
-                  <th>{t.blacklist.columns.date}</th>
-                  <th>{t.blacklist.columns.status}</th>
+                  <th scope="col">{t.blacklist.columns.adopter}</th>
+                  <th scope="col">{t.blacklist.columns.reason}</th>
+                  <th scope="col">{t.blacklist.columns.date}</th>
+                  <th scope="col">{t.blacklist.columns.status}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredBlacklist.map((entry) => (
                   <tr key={entry.id}>
-                    <td>{entry.adopterName || "—"}</td>
-                    <td>{entry.reason || "—"}</td>
+                    <td>{entry.adopterName || <NoValue />}</td>
+                    <td>{entry.reason || <NoValue />}</td>
                     <td>{entry.banDate
                       ? new Intl.DateTimeFormat(i18n.language, { dateStyle: "medium" }).format(new Date(entry.banDate))
-                      : "—"}</td>
-                    <td><span className="center-blacklist-status">{entry.isActive ? t.blacklist.active : "—"}</span></td>
+                      : <NoValue />}</td>
+                    <td><span className="center-blacklist-status">{entry.isActive ? t.blacklist.active : <NoValue />}</span></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-      </div>
+      </main>
 
       <Footer />
 

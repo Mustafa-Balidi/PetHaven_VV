@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
 import { speciesIcon } from "../../utils/petIcons.js";
@@ -30,11 +30,43 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
   const [newTime, setNewTime] = useState("");
   const [formError, setFormError] = useState("");
 
+  const petHeadingId = useId();
+  const rescheduleBtnRef = useRef(null);
+  const cancelBtnRef = useRef(null);
+  const confirmYesRef = useRef(null);
+  const rescheduleDateRef = useRef(null);
+  // Which action button the inline panel was opened from, so focus can go back
+  // there when the panel closes.
+  const returnToRef = useRef(null);
+
   const cls = statusClass(appointment.status);
   const isReadOnly = appointment.status === "Completed" || appointment.status === "Cancelled";
   const isDimmed = appointment.status === "Completed";
   const reasonCategory = classifyReason(appointment.reason);
   const [timeValue, timePeriod] = (appointment.timeDisplay || "").split(" ");
+
+  // Opening a panel unmounts the action buttons and closing it unmounts the
+  // panel; without this the keyboard user is dropped back onto <body>.
+  useEffect(() => {
+    if (mode === "cancelConfirm") {
+      confirmYesRef.current?.focus();
+      return;
+    }
+    if (mode === "reschedule") {
+      rescheduleDateRef.current?.focus();
+      return;
+    }
+    if (!returnToRef.current) return;
+
+    const target = returnToRef.current === "reschedule" ? rescheduleBtnRef : cancelBtnRef;
+    returnToRef.current = null;
+    target.current?.focus();
+  }, [mode]);
+
+  function openMode(next) {
+    returnToRef.current = next;
+    setMode(next);
+  }
 
   function closeForms() {
     setMode("");
@@ -61,7 +93,11 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
   }
 
   return (
-    <article className={`vet-appointments-card vet-appointments-card--${cls}${isDimmed ? " vet-appointments-card--dimmed" : ""}`}>
+    <article
+      className={`vet-appointments-card vet-appointments-card--${cls}${isDimmed ? " vet-appointments-card--dimmed" : ""}`}
+      aria-labelledby={petHeadingId}
+      aria-busy={busy || undefined}
+    >
       <div className="vet-appointments-card__time">
         <span className={`vet-appointments-card__time-value${isDimmed ? " vet-appointments-card__time-value--struck" : ""}`}>
           {timeValue}
@@ -78,10 +114,10 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
           )}
         </span>
         <div>
-          <h4 className="vet-appointments-card__pet">
+          <h3 className="vet-appointments-card__pet" id={petHeadingId}>
             {appointment.petName}
             {appointment.breed && <span className="vet-appointments-card__breed"> ({appointment.breed})</span>}
-          </h4>
+          </h3>
           <p className="vet-appointments-card__owner">{t("vetAppointments.card.owner", { name: appointment.ownerName })}</p>
         </div>
       </div>
@@ -108,6 +144,9 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
           {t(`vetAppointments.status.${appointment.status}`, { defaultValue: appointment.status })}
         </span>
 
+        {/* The icon buttons repeat on every card, so the accessible name has to
+            name the appointment they act on; `title` alone also never reaches
+            a touch-screen user. */}
         {!isReadOnly && mode === "" && (
           <div className="vet-appointments-card__actions">
             {appointment.status === "Pending" && (
@@ -115,6 +154,7 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
                 type="button"
                 className="vet-appointments-card__icon-btn vet-appointments-card__icon-btn--confirm"
                 title={t("vetAppointments.actions.confirm")}
+                aria-label={t("vetAppointments.actions.confirmFor", { name: appointment.petName })}
                 disabled={busy}
                 onClick={onConfirm}
               >
@@ -126,6 +166,7 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
                 type="button"
                 className="vet-appointments-card__icon-btn vet-appointments-card__icon-btn--confirm"
                 title={t("vetAppointments.actions.complete")}
+                aria-label={t("vetAppointments.actions.completeFor", { name: appointment.petName })}
                 disabled={busy}
                 onClick={onComplete}
               >
@@ -134,19 +175,23 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
             )}
             <button
               type="button"
+              ref={rescheduleBtnRef}
               className="vet-appointments-card__icon-btn vet-appointments-card__icon-btn--reschedule"
               title={t("vetAppointments.actions.reschedule")}
+              aria-label={t("vetAppointments.actions.rescheduleFor", { name: appointment.petName })}
               disabled={busy}
-              onClick={() => setMode("reschedule")}
+              onClick={() => openMode("reschedule")}
             >
               <Icon name="schedule" />
             </button>
             <button
               type="button"
+              ref={cancelBtnRef}
               className="vet-appointments-card__icon-btn vet-appointments-card__icon-btn--cancel"
               title={t("vetAppointments.actions.cancel")}
+              aria-label={t("vetAppointments.actions.cancelFor", { name: appointment.petName })}
               disabled={busy}
-              onClick={() => setMode("cancelConfirm")}
+              onClick={() => openMode("cancelConfirm")}
             >
               <Icon name="close" />
             </button>
@@ -160,6 +205,7 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
           <div className="vet-appointments-card__confirm-actions">
             <button
               type="button"
+              ref={confirmYesRef}
               className="vet-appointments-card__btn vet-appointments-card__btn--danger"
               disabled={busy}
               onClick={async () => {
@@ -182,6 +228,7 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
             <span>{t("vetAppointments.reschedule.dateLabel")}</span>
             <input
               type="date"
+              ref={rescheduleDateRef}
               min={todayInputValue()}
               value={newDate}
               onChange={(event) => setNewDate(event.target.value)}
@@ -193,14 +240,23 @@ export default function VetAppointmentCard({ appointment, busy, error, onConfirm
             <input type="time" value={newTime} onChange={(event) => setNewTime(event.target.value)} required />
           </label>
           <div className="vet-appointments-card__confirm-actions">
-            <button type="submit" className="vet-appointments-card__btn vet-appointments-card__btn--primary" disabled={busy || !newTime}>
+            <button
+              type="submit"
+              className="vet-appointments-card__btn vet-appointments-card__btn--primary"
+              disabled={busy || !newTime}
+              aria-busy={busy || undefined}
+            >
               {busy ? t("vetAppointments.reschedule.saving") : t("vetAppointments.reschedule.save")}
             </button>
             <button type="button" className="vet-appointments-card__btn" onClick={closeForms} disabled={busy}>
               {t("vetAppointments.reschedule.cancel")}
             </button>
           </div>
-          {formError && <p className="vet-appointments-card__form-error">{formError}</p>}
+          {formError && (
+            <p className="vet-appointments-card__form-error" role="alert">
+              {formError}
+            </p>
+          )}
         </form>
       )}
 

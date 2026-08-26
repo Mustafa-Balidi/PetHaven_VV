@@ -10,9 +10,9 @@ html:has(.adopter-header) {
   z-index: 50;
   width: 100%;
   backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid #e0e3e5;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--theme-header-bg);
+  border-bottom: 1px solid var(--theme-border);
+  box-shadow: var(--theme-shadow);
 }
 
 .adopter-header__inner {
@@ -68,7 +68,7 @@ html:has(.adopter-header) {
 .adopter-header__nav-link {
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.025em;
@@ -77,12 +77,12 @@ html:has(.adopter-header) {
 }
 
 .adopter-header__nav-link:hover {
-  color: #00685f;
+  color: var(--theme-accent);
 }
 
 .adopter-header__nav-link--active {
-  color: #00685f;
-  border-bottom-color: #00685f;
+  color: var(--theme-accent);
+  border-bottom-color: var(--theme-accent);
 }
 
 .adopter-header__actions {
@@ -102,15 +102,15 @@ html:has(.adopter-header) {
   padding: 8px;
   border: none;
   border-radius: 9999px;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   background: none;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .adopter-header__lang-btn:hover {
-  color: #00685f;
-  background-color: #e0e3e5;
+  color: var(--theme-accent);
+  background-color: var(--theme-icon-bg);
 }
 
 .adopter-header__icon-btn {
@@ -120,15 +120,15 @@ html:has(.adopter-header) {
   padding: 8px;
   border: none;
   border-radius: 9999px;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   background: none;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .adopter-header__icon-btn:hover {
-  color: #00685f;
-  background-color: #e0e3e5;
+  color: var(--theme-accent);
+  background-color: var(--theme-icon-bg);
 }
 
 .adopter-header__icon-btn:disabled {
@@ -142,7 +142,7 @@ html:has(.adopter-header) {
   align-items: center;
   margin-inline-start: 8px;
   padding-inline-start: 16px;
-  border-inline-start: 1px solid #e0e3e5;
+  border-inline-start: 1px solid var(--theme-border);
 }
 
 .adopter-header__avatar-btn {
@@ -167,7 +167,7 @@ html:has(.adopter-header) {
 .adopter-header__avatar-img {
   width: 32px;
   height: 32px;
-  border: 2px solid #e6e8ea;
+  border: 2px solid var(--theme-border);
   border-radius: 9999px;
   object-fit: cover;
 }
@@ -184,10 +184,10 @@ html:has(.adopter-header) {
   width: 160px;
   margin-top: 8px;
   overflow: hidden;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--theme-border);
   border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  background: var(--theme-surface);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.2);
   animation: adopter-dropdown-open 0.15s ease;
 }
 
@@ -210,7 +210,7 @@ html:has(.adopter-header) {
   width: 100%;
   padding: 10px 16px;
   border: none;
-  color: #191c1e;
+  color: var(--theme-text);
   background: none;
   font-family: inherit;
   font-size: 14px;
@@ -221,7 +221,7 @@ html:has(.adopter-header) {
 }
 
 .adopter-header__dropdown-item:hover {
-  background-color: #f2f4f6;
+  background-color: var(--theme-surface-2);
 }
 
 .adopter-header__dropdown-icon {
@@ -234,7 +234,7 @@ html:has(.adopter-header) {
 
 .adopter-header__dropdown-empty {
   padding: 14px 16px;
-  color: #5f6368;
+  color: var(--theme-text-muted);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -247,28 +247,28 @@ html:has(.adopter-header) {
   margin-inline-start: 8px;
   border: none;
   border-radius: 50%;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   background: none;
   cursor: pointer;
 }
 
 .adopter-header__hamburger:hover {
-  color: #00685f;
-  background-color: #f2f4f6;
+  color: var(--theme-accent);
+  background-color: var(--theme-surface-2);
 }
 
 .adopter-header__mobile-panel {
   display: flex;
   flex-direction: column;
   padding: 8px 16px 16px;
-  border-top: 1px solid #e0e3e5;
-  background-color: #ffffff;
+  border-top: 1px solid var(--theme-border);
+  background-color: var(--theme-surface);
 }
 
 .adopter-header__mobile-link {
   padding: 12px 4px;
-  border-bottom: 1px solid #eceef0;
-  color: #3d4947;
+  border-bottom: 1px solid var(--theme-border);
+  color: var(--theme-text-muted);
   font-size: 14px;
   font-weight: 500;
   text-align: start;
@@ -278,7 +278,7 @@ html:has(.adopter-header) {
 
 .adopter-header__mobile-link:hover,
 .adopter-header__mobile-link--active {
-  color: #00685f;
+  color: var(--theme-accent);
 }
 
 @media (min-width: 1024px) {

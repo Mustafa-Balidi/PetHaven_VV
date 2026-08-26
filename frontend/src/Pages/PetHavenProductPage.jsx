@@ -64,7 +64,7 @@ export default function PetHavenProductPage() {
     <div className="page-root">
       <TopNavBar />
 
-      <main className="main-content">
+      <main id="main-content" tabIndex={-1} className="main-content">
         <div className="breadcrumb">
           <Link to="/adopter/store" className="back-link">
             <Icon name="arrow_back" className="icon-24" />

@@ -45,7 +45,8 @@ export default function CheckoutPage() {
   const taxes = 0;
   const total = subtotal;
 
-  const handlePayNow = async () => {
+  const handlePayNow = async (event) => {
+    event?.preventDefault();
     if (paying) return;
 
     if (!pendingOrderId && items.length === 0) {
@@ -91,8 +92,8 @@ export default function CheckoutPage() {
     return (
       <div className="checkout-page">
         <TopNavBar />
-        <main className="checkout-main">
-          <p>{t("adopter.checkout.loading")}</p>
+        <main id="main-content" tabIndex={-1} className="checkout-main">
+          <p role="status" aria-live="polite">{t("adopter.checkout.loading")}</p>
         </main>
       </div>
     );
@@ -102,7 +103,7 @@ export default function CheckoutPage() {
     <div className="checkout-page">
       <TopNavBar />
 
-      <main className="checkout-main">
+      <main id="main-content" tabIndex={-1} className="checkout-main">
         <div className="checkout-header">
           <h1 className="checkout-header__title">
             <button
@@ -111,31 +112,35 @@ export default function CheckoutPage() {
               aria-label={t("adopter.checkout.goBack")}
               onClick={() => navigate(-1)}
             >
-              <span className="material-symbols-outlined">arrow_back</span>
+              <span className="material-symbols-outlined" aria-hidden="true">arrow_back</span>
             </button>
             {t("adopter.checkout.title")}
           </h1>
           <p className="checkout-header__subtitle">
-            <span className="material-symbols-outlined checkout-header__lock-icon">
+            <span className="material-symbols-outlined checkout-header__lock-icon" aria-hidden="true">
               lock
             </span>
             {t("adopter.checkout.encryption")}
           </p>
         </div>
 
-        {error && <p className="checkout-error">{error}</p>}
+        {error && <p className="checkout-error" role="alert">{error}</p>}
 
-        <div className="checkout-grid">
+        <form className="checkout-grid" onSubmit={handlePayNow}>
           <div className="checkout-grid__left">
             <section className="checkout-card">
-              <h2 className="checkout-card__title">
-                <span className="material-symbols-outlined checkout-card__title-icon">
+              <h2 id="checkout-payment-heading" className="checkout-card__title">
+                <span className="material-symbols-outlined checkout-card__title-icon" aria-hidden="true">
                   payment
                 </span>
                 {t("adopter.checkout.paymentMethod")}
               </h2>
 
-              <div className="payment-options">
+              <div
+                className="payment-options"
+                role="radiogroup"
+                aria-labelledby="checkout-payment-heading"
+              >
                 <label
                   className={`payment-option ${
                     paymentMethod === "stripe" ? "payment-option--selected" : ""
@@ -149,7 +154,7 @@ export default function CheckoutPage() {
                     onChange={() => setPaymentMethod("stripe")}
                     className="payment-option__input"
                   />
-                  <span className="material-symbols-outlined payment-option__icon">
+                  <span className="material-symbols-outlined payment-option__icon" aria-hidden="true">
                     credit_card
                   </span>
                   <span className="payment-option__label">Stripe</span>
@@ -158,6 +163,7 @@ export default function CheckoutPage() {
                       <span
                         className="material-symbols-outlined"
                         style={{ fontVariationSettings: "'FILL' 1" }}
+                        aria-hidden="true"
                       >
                         check_circle
                       </span>
@@ -200,12 +206,15 @@ export default function CheckoutPage() {
                       {t("adopter.checkout.cardNumber")}
                     </label>
                     <div className="card-form__input-wrap">
-                      <span className="material-symbols-outlined card-form__input-icon-left">
+                      <span className="material-symbols-outlined card-form__input-icon-left" aria-hidden="true">
                         credit_card
                       </span>
                       <input
                         id="cardNumber"
                         type="text"
+                        required
+                        inputMode="numeric"
+                        autoComplete="cc-number"
                         placeholder="0000 0000 0000 0000"
                         value={cardNumber}
                         onChange={(e) => setCardNumber(e.target.value)}
@@ -222,6 +231,9 @@ export default function CheckoutPage() {
                       <input
                         id="expiry"
                         type="text"
+                        required
+                        inputMode="numeric"
+                        autoComplete="cc-exp"
                         placeholder={t("adopter.checkout.expiryPlaceholder")}
                         value={expiry}
                         onChange={(e) => setExpiry(e.target.value)}
@@ -239,6 +251,9 @@ export default function CheckoutPage() {
                       <input
                         id="cvv"
                         type="text"
+                        required
+                        inputMode="numeric"
+                        autoComplete="cc-csc"
                         maxLength={4}
                         placeholder="123"
                         value={cvv}
@@ -255,6 +270,8 @@ export default function CheckoutPage() {
                     <input
                       id="nameOnCard"
                       type="text"
+                      required
+                      autoComplete="cc-name"
                       placeholder={t("adopter.checkout.namePlaceholder")}
                       value={nameOnCard}
                       onChange={(e) => setNameOnCard(e.target.value)}
@@ -273,7 +290,7 @@ export default function CheckoutPage() {
               {items.map((item) => (
                 <div className="order-summary__item" key={item.cartItemId}>
                   <div className="order-summary__item-icon">
-                    <span className="material-symbols-outlined">inventory_2</span>
+                    <span className="material-symbols-outlined" aria-hidden="true">inventory_2</span>
                   </div>
                   <div className="order-summary__item-info">
                     <h3 className="order-summary__item-name">{item.productName}</h3>
@@ -316,12 +333,11 @@ export default function CheckoutPage() {
               </div>
 
               <button
-                type="button"
+                type="submit"
                 className="order-summary__pay-btn"
-                onClick={handlePayNow}
                 disabled={paying || (!pendingOrderId && items.length === 0)}
               >
-                <span className="material-symbols-outlined">lock</span>
+                <span className="material-symbols-outlined" aria-hidden="true">lock</span>
                 {paying
                   ? t("adopter.checkout.processing")
                   : pendingOrderId
@@ -331,7 +347,7 @@ export default function CheckoutPage() {
 
               <div className="order-summary__trust">
                 <div className="order-summary__trust-row">
-                  <span className="material-symbols-outlined order-summary__trust-icon">
+                  <span className="material-symbols-outlined order-summary__trust-icon" aria-hidden="true">
                     verified_user
                   </span>
                   <span>{t("adopter.checkout.secure")}</span>
@@ -342,7 +358,7 @@ export default function CheckoutPage() {
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </main>
     </div>
   );

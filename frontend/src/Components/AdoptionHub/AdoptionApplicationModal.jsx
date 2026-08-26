@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FaHome, FaTimes } from "react-icons/fa";
 import "../../Styling/AdoptionHub.css";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 const initialFormState = {
   housingType: "",
@@ -20,6 +21,13 @@ function AdoptionApplicationModal({
 }) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState(initialFormState);
+  const titleId = useId();
+  const descriptionId = useId();
+  const dialogRef = useModalA11y({
+    open: isOpen,
+    onClose,
+    closeOnEscape: !isSubmitting,
+  });
 
   if (!isOpen) return null;
 
@@ -49,14 +57,27 @@ function AdoptionApplicationModal({
         type="button"
         className="adoption-modal-backdrop"
         onClick={handleClose}
-        aria-label={t("adopter.adoptionHub.application.close")}
+        tabIndex={-1}
+        aria-hidden="true"
       />
 
-      <form className="adoption-modal" onSubmit={handleSubmit}>
+      <form
+        className="adoption-modal"
+        onSubmit={handleSubmit}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        aria-busy={isSubmitting}
+        tabIndex={-1}
+      >
         <div className="adoption-modal__header">
           <div>
-            <h2 className="adoption-modal__title">{t("adopter.adoptionHub.application.title")}</h2>
-            <p className="adoption-modal__subtitle">
+            <h2 id={titleId} className="adoption-modal__title">
+              {t("adopter.adoptionHub.application.title")}
+            </h2>
+            <p id={descriptionId} className="adoption-modal__subtitle">
               {petName
                 ? t("adopter.adoptionHub.application.subtitleWithPet", { petName })
                 : t("adopter.adoptionHub.application.subtitle")}
@@ -69,14 +90,14 @@ function AdoptionApplicationModal({
             disabled={isSubmitting}
             aria-label={t("adopter.adoptionHub.application.close")}
           >
-            <FaTimes size={18} />
+            <FaTimes size={18} aria-hidden="true" />
           </button>
         </div>
 
         <div className="adoption-modal__body">
           <section className="adoption-modal__section">
             <h3 className="adoption-modal__section-title">
-              <FaHome size={16} />
+              <FaHome size={16} aria-hidden="true" />
               <span>{t("adopter.adoptionHub.application.adopterProfile")}</span>
             </h3>
 

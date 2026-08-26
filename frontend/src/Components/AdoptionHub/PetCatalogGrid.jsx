@@ -75,7 +75,7 @@ function PetCatalogGrid({ pets, onViewProfile, onAdoptNow }) {
       <div className="pet-catalog__toolbar">
         <div>
           <h2 className="pet-catalog__title">{t("adopter.adoptionHub.catalog.title")}</h2>
-          <p className="pet-catalog__count">
+          <p className="pet-catalog__count" role="status" aria-live="polite">
             {t("adopter.adoptionHub.catalog.results", { count: filteredPets.length })}
           </p>
         </div>
@@ -100,6 +100,7 @@ function PetCatalogGrid({ pets, onViewProfile, onAdoptNow }) {
             type="button"
             className="pet-catalog__filter-btn"
             aria-expanded={showFilters}
+            aria-controls="pet-catalog-filters"
             onClick={() => setShowFilters((visible) => !visible)}
           >
             <FaSlidersH size={16} />
@@ -109,7 +110,7 @@ function PetCatalogGrid({ pets, onViewProfile, onAdoptNow }) {
       </div>
 
       {showFilters && (
-        <div className="pet-catalog__filters">
+        <div id="pet-catalog-filters" className="pet-catalog__filters">
           <label>
             <span>{t("adopter.adoptionHub.catalog.species")}</span>
             <select value={species} onChange={(event) => { setSpecies(event.target.value); setPage(1); }}>

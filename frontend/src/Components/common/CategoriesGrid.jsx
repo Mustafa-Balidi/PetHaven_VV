@@ -16,21 +16,27 @@ export default function CategoriesGrid({ requireAuth }) {
   }
 
   return (
-    <section id="adoption" className="categories">
-      <h2 className="categories__title">{t("categories.title")}</h2>
+    <section id="adoption" className="categories" aria-labelledby="public-categories-title">
+      <h2 id="public-categories-title" className="categories__title">{t("categories.title")}</h2>
       <div className="categories__grid">
         {CATEGORIES.map((category, i) => (
-          <div
+          <article
             key={category.title}
-            onClick={() => handleCategoryClick(i)}
             className="categories__card"
           >
+            <button
+              type="button"
+              className="categories__card-action"
+              aria-labelledby={`public-category-title-${i}`}
+              aria-describedby={`public-category-description-${i}`}
+              onClick={() => handleCategoryClick(i)}
+            />
             <div className={`categories__icon-wrap categories__icon-wrap--${category.accent}`}>
               <Icon name={category.icon} className={`categories__icon categories__icon--${category.accent}`} />
             </div>
-            <h3 className="categories__card-title">{items[i].title}</h3>
-            <p className="categories__card-desc">{items[i].description}</p>
-          </div>
+            <h3 id={`public-category-title-${i}`} className="categories__card-title">{items[i].title}</h3>
+            <p id={`public-category-description-${i}`} className="categories__card-desc">{items[i].description}</p>
+          </article>
         ))}
       </div>
     </section>

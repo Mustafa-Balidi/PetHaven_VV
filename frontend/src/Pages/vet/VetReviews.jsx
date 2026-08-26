@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import VetReviewsSummary from "../../Components/vet/VetReviewsSummary.jsx";
 import VetReviewsList from "../../Components/vet/VetReviewsList.jsx";
 import { getClientReviews } from "../../api/vetReviewsApi.js";
@@ -11,6 +12,7 @@ const PAGE_SIZE = 10;
 
 export default function VetReviews() {
   const { t } = useTranslation();
+  useDocumentTitle(t("vetReviews.title"));
   const [data, setData] = useState(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -66,7 +68,7 @@ export default function VetReviews() {
     return (
       <div className="vet-reviews-page">
         <VetHeader />
-        <div className="vet-reviews-loading">{t("vetReviews.loading")}</div>
+        <div className="vet-reviews-loading" role="status">{t("vetReviews.loading")}</div>
       </div>
     );
   }
@@ -88,7 +90,7 @@ export default function VetReviews() {
     <div className="vet-reviews-page">
       <VetHeader />
 
-      <main className="vet-reviews-main">
+      <main id="main-content" tabIndex={-1} className="vet-reviews-main">
         <header className="vet-reviews-heading">
           <h1 className="vet-reviews-title">{t("vetReviews.title")}</h1>
           <p className="vet-reviews-subtitle">{t("vetReviews.subtitle")}</p>

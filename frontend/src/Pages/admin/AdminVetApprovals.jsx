@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AdminLayout from "../../Components/admin/AdminLayout.jsx";
 import AdminFeedback from "../../Components/admin/AdminFeedback.jsx";
@@ -35,14 +35,27 @@ export default function AdminVetApprovals() {
 
   const [feedback, setFeedback] = useState(null);
   const [vetToReject, setVetToReject] = useState(null);
+  // A verified or rejected card unmounts together with the button that was
+  // focused, which would drop focus on <body>; park it on the result banner.
+  const feedbackRef = useRef(null);
+  const focusFeedbackRef = useRef(false);
 
   useEffect(() => {
     fetchPendingVets();
   }, [fetchPendingVets]);
 
+  useEffect(() => {
+    if (!focusFeedbackRef.current) return;
+
+    focusFeedbackRef.current = false;
+    // Runs after the dialog's own cleanup, which skips the unmounted trigger.
+    feedbackRef.current?.focus();
+  }, [feedback]);
+
   const handleVerify = async (vet) => {
     setFeedback(null);
     const result = await verifyVet(vet.vetId);
+    focusFeedbackRef.current = result.success;
     setFeedback({
       type: result.success ? "success" : "error",
       message:
@@ -58,6 +71,7 @@ export default function AdminVetApprovals() {
 
     setFeedback(null);
     const result = await rejectVet(vetToReject.vetId);
+    focusFeedbackRef.current = result.success;
     setVetToReject(null);
     setFeedback({
       type: result.success ? "success" : "error",
@@ -82,22 +96,22 @@ export default function AdminVetApprovals() {
           className="admin-btn admin-btn--ghost"
           onClick={fetchPendingVets}
           disabled={pendingVetsLoading}
+          aria-busy={pendingVetsLoading || undefined}
         >
           <Icon name="refresh" />
           {pendingVetsLoading ? t("admin.common.refreshing") : t("admin.common.refresh")}
         </button>
       }
     >
-      {feedback ? (
-        <AdminFeedback
-          type={feedback.type}
-          message={feedback.message}
-          onDismiss={() => setFeedback(null)}
-          dismissLabel={t("admin.common.dismiss")}
-        />
-      ) : null}
+      <AdminFeedback
+        ref={feedbackRef}
+        type={feedback?.type ?? "info"}
+        message={feedback?.message}
+        onDismiss={feedback ? () => setFeedback(null) : undefined}
+        dismissLabel={t("admin.common.dismiss")}
+      />
 
-      {pendingVetsError ? <AdminFeedback type="error" message={pendingVetsError} /> : null}
+      <AdminFeedback type="error" message={pendingVetsError} />
 
       {pendingVets.length ? (
         <div className="admin-toolbar">
@@ -109,7 +123,7 @@ export default function AdminVetApprovals() {
       ) : null}
 
       {pendingVetsLoading && !pendingVets.length ? (
-        <div className="admin-state admin-state--loading">
+        <div className="admin-state admin-state--loading" role="status">
           <span className="admin-spinner" aria-hidden="true" />
           <p>{t("admin.common.loading")}</p>
         </div>
@@ -134,16 +148,18 @@ export default function AdminVetApprovals() {
       ) : null}
 
       {pendingVets.length ? (
-        <div className="admin-vet-grid">
+        <ul className="admin-vet-grid" aria-label={t("admin.vetApprovals.listLabel")}>
           {pendingVets.map((vet) => {
             const verifying = actionLoading === `verify-${vet.vetId}`;
             const rejecting = actionLoading === `reject-${vet.vetId}`;
             // Any in-flight admin action locks every card, so a second request
             // can never be fired before the first one resolves.
             const disabled = Boolean(actionLoading);
+            const name = vet.fullName || vet.email || t("admin.common.notProvided");
+            const submittedOn = formatAdminDate(vet.createdAt, i18n.language);
 
             return (
-              <article className="admin-vet-card" key={vet.vetId}>
+              <li className="admin-vet-card" key={vet.vetId}>
                 <header className="admin-vet-card__header">
                   <div className="admin-vet-card__identity">
                     <span className="admin-vet-card__avatar" aria-hidden="true">
@@ -194,16 +210,22 @@ export default function AdminVetApprovals() {
                   <VetDetail
                     icon="event"
                     label={t("admin.vetApprovals.fields.createdAt")}
-                    value={formatAdminDate(vet.createdAt, i18n.language)}
+                    value={
+                      submittedOn ? <time dateTime={vet.createdAt}>{submittedOn}</time> : ""
+                    }
                   />
                 </div>
 
+                {/* Every card repeats the same two verbs, so the accessible
+                    name has to carry the vet it acts on. */}
                 <footer className="admin-vet-card__actions">
                   <button
                     type="button"
                     className="admin-btn admin-btn--danger-outline"
                     onClick={() => setVetToReject(vet)}
                     disabled={disabled}
+                    aria-busy={rejecting || undefined}
+                    aria-label={t("admin.vetApprovals.rejectFor", { name })}
                   >
                     <Icon name="delete_forever" />
                     {rejecting ? t("admin.vetApprovals.rejecting") : t("admin.vetApprovals.reject")}
@@ -213,15 +235,17 @@ export default function AdminVetApprovals() {
                     className="admin-btn admin-btn--primary"
                     onClick={() => handleVerify(vet)}
                     disabled={disabled}
+                    aria-busy={verifying || undefined}
+                    aria-label={t("admin.vetApprovals.verifyFor", { name })}
                   >
                     <Icon name="verified" />
                     {verifying ? t("admin.vetApprovals.verifying") : t("admin.vetApprovals.verify")}
                   </button>
                 </footer>
-              </article>
+              </li>
             );
           })}
-        </div>
+        </ul>
       ) : null}
 
       <AdminConfirmDialog

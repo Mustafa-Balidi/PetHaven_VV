@@ -6,7 +6,7 @@ export default function MilestoneBanner({ title, text, onOpen, disabled, resolvi
     <section className="milestone-banner">
       <div className="milestone-content">
         <div className="milestone-icon-wrap">
-          <span className="material-symbols-outlined milestone-icon">
+          <span className="material-symbols-outlined milestone-icon" aria-hidden="true">
             celebration
           </span>
         </div>
@@ -23,7 +23,7 @@ export default function MilestoneBanner({ title, text, onOpen, disabled, resolvi
           onClick={onOpen}
           title={disabled ? unavailableMessage : undefined}
         >
-          <span className="material-symbols-outlined btn-icon">
+          <span className="material-symbols-outlined btn-icon" aria-hidden="true">
             add_a_photo
           </span>
           {resolving

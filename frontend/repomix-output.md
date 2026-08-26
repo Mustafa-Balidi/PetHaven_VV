@@ -1,10 +1,10 @@
-This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
-The content has been processed where comments have been removed, empty lines have been removed.
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+The content has been processed where empty lines have been removed.
 
 # File Summary
 
 ## Purpose
-This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 
@@ -29,15 +29,30 @@ The content is organized as follows:
 ## Notes
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Files matching these patterns are excluded: node_modules/**
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
-- Code comments have been removed from supported file types
 - Empty lines have been removed from all files
 - Files are sorted by Git change count (files with more changes are at the bottom)
 
 # Directory Structure
 ```
+backup/
+  before_rag_frontend_integration_2026-08-22/
+    src/
+      api/
+        healthAssistantApi.js
+      Components/
+        healthAssistant/
+          ChatInput .jsx
+          PetSelector.jsx
+      i18n/
+        locales/
+          ar.json
+          en.json
+      Pages/
+        PetHavenHealthAssistant.jsx
+      Styling/
+        HealthAssistant.css
 src/
   api/
     adminApi.js
@@ -68,8 +83,13 @@ src/
     favicon.png
   Components/
     admin/
+      AdminConfirmDialog.jsx
+      AdminFeedback.jsx
+      adminFormat.js
+      AdminLayout.jsx
       AdminNavbar.jsx
       AdminSidebar.jsx
+      AdminStatCard.jsx
     AdoptionHub/
       AdoptedPets.jsx
       AdoptionApplicationModal.jsx
@@ -218,9 +238,9 @@ src/
     index.js
   Pages/
     admin/
-      AdminClinicApprovals.jsx
       AdminDashboard.jsx
       AdminUsers.jsx
+      AdminVetApprovals.jsx
     adoptionCenter/
       AdoptionProfile.jsx
       AdoptionRequests.jsx
@@ -292,6 +312,7 @@ src/
   App.jsx
   index.css
   main.jsx
+.env.example
 .gitignore
 CLAUDE.md
 eslint.config.js
@@ -303,210 +324,5569 @@ vite.config.js
 
 # Files
 
+## File: backup/before_rag_frontend_integration_2026-08-22/src/api/healthAssistantApi.js
+```javascript
+const RAG_BASE_URL =
+  import.meta.env.VITE_RAG_BASE_URL ?? "http://127.0.0.1:8000";
+export async function askHealthAssistant({
+  question,
+  animal = null,
+  conversationId = null,
+  language = "en",
+}) {
+  const response = await fetch(`${RAG_BASE_URL}/ask`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      question,
+      animal,
+      conversation_id: conversationId,
+      language,
+    }),
+  });
+  if (!response.ok) {
+    let message = "Health Assistant service is unavailable.";
+    try {
+      const errorData = await response.json();
+      if (errorData?.detail) {
+        message = errorData.detail;
+      }
+    } catch {
+      // Keep default error message
+    }
+    throw new Error(message);
+  }
+  return response.json();
+}
+```
+
+## File: backup/before_rag_frontend_integration_2026-08-22/src/Components/healthAssistant/ChatInput .jsx
+```javascript
+import { useState } from "react";
+import { FaArrowUp } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import "../../Styling/HealthAssistant.css";
+const ChatInput = ({ onSend }) => {
+  const { t } = useTranslation();
+  const [value, setValue] = useState("");
+  const handleSend = () => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    onSend?.(trimmed);
+    setValue("");
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+  return (
+    <div className="chat-input">
+      <div className="chat-input__inner">
+        <div className="chat-input__box">
+          <textarea
+            className="chat-input__textarea"
+            placeholder={t("adopter.health.placeholder")}
+            rows={1}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <button
+            type="button"
+            onClick={handleSend}
+            className="chat-input__send"
+            aria-label={t("adopter.health.send")}
+            disabled={!value.trim()}
+          >
+            <FaArrowUp size={15} />
+          </button>
+        </div>
+        <p className="chat-input__disclaimer">
+          {t("adopter.health.disclaimer")}
+        </p>
+      </div>
+    </div>
+  );
+};
+export default ChatInput;
+```
+
+## File: backup/before_rag_frontend_integration_2026-08-22/src/Components/healthAssistant/PetSelector.jsx
+```javascript
+import "../../Styling/HealthAssistant.css";
+const PetSelector = ({ pets = [], activePetId, onSelectPet }) => {
+  return (
+    <div className="pet-selector">
+      {pets.map((pet) => {
+        const isActive = pet.id === activePetId;
+        return (
+          <button
+            key={pet.id}
+            onClick={() => onSelectPet?.(pet.id)}
+            className={`pet-selector__item ${isActive ? "pet-selector__item--active" : ""}`}
+          >
+            <img alt={pet.name} className="pet-selector__avatar" src={pet.avatar} />
+            <div className="pet-selector__info">
+              <p className="pet-selector__name">{pet.name}</p>
+              <p className="pet-selector__breed">{pet.breed}</p>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+export default PetSelector;
+```
+
+## File: backup/before_rag_frontend_integration_2026-08-22/src/i18n/locales/ar.json
+```json
+{
+  "header": {
+    "nav": {
+      "home": "الرئيسية",
+      "adoption": "التبني",
+      "shop": "المتجر",
+      "vets": "الأطباء البيطريون",
+      "aiChecker": "فاحص الذكاء الاصطناعي"
+    },
+    "switchLanguage": "تبديل اللغة",
+    "userMenu": "قائمة المستخدم",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
+  },
+  "adopter": {
+    "header": {
+      "logoAlt": "شعار بيت هافن",
+      "navigation": "تنقل المتبنّي",
+      "nav": {
+        "dashboard": "لوحة التحكم",
+        "store": "المتجر",
+        "adoption": "التبني",
+        "health": "الصحة",
+        "vets": "الأطباء البيطريون"
+      },
+      "language": "اللغة",
+      "languages": {
+        "english": "الإنجليزية",
+        "arabic": "العربية"
+      },
+      "userMenu": "قائمة المستخدم",
+      "avatarAlt": "الصورة الشخصية لـ {{name}}",
+      "defaultUser": "متبنّي حيوانات",
+      "profile": "الملف الشخصي",
+      "logout": "تسجيل الخروج",
+      "cart": "السلة",
+      "notifications": "الإشعارات",
+      "notificationsUnavailable": "الإشعارات غير متاحة لأن الخادم لا يوفرها حاليًا",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "common": {
+      "close": "إغلاق",
+      "pet": "حيوان أليف",
+      "ageYears": "{{count}} سنة",
+      "ageYears_zero": "أقل من سنة",
+      "ageYears_one": "سنة واحدة",
+      "ageYears_two": "سنتان",
+      "ageYears_few": "{{count}} سنوات",
+      "ageYears_many": "{{count}} سنة",
+      "ageYears_other": "{{count}} سنة",
+      "genders": {
+        "female": "أنثى",
+        "male": "ذكر"
+      },
+      "stages": {
+        "puppy": "صغير",
+        "adult": "بالغ",
+        "young": "يافع",
+        "senior": "كبير السن"
+      },
+      "healthStatuses": {
+        "healthy": "بصحة جيدة",
+        "good": "جيدة",
+        "excellent": "ممتازة",
+        "needs_attention": "يحتاج إلى متابعة",
+        "under_treatment": "قيد العلاج",
+        "warning": "يحتاج إلى متابعة"
+      },
+      "petTraits": {
+        "available": "متاح",
+        "healthy": "بصحة جيدة",
+        "good": "جيد",
+        "dog": "كلب",
+        "cat": "قط"
+      }
+    },
+    "profile": {
+      "loading": "جارٍ تحميل ملفك الشخصي…",
+      "loadError": "تعذّر تحميل ملفك الشخصي.",
+      "retry": "إعادة المحاولة",
+      "backToDashboard": "العودة إلى لوحة التحكم",
+      "title": "ملفي الشخصي",
+      "subtitle": "إدارة معلوماتك الشخصية وتفضيلات التبني.",
+      "photo": {
+        "title": "الصورة الشخصية",
+        "upload": "رفع صورة",
+        "change": "تغيير الصورة",
+        "hint": "صيغة JPG أو PNG. تُعرض المعاينة خلال هذه الجلسة فقط إلى أن تتوفر خدمة رفع الصور."
+      },
+      "personal": {
+        "title": "المعلومات الشخصية",
+        "fullName": "الاسم الكامل",
+        "fullNamePlaceholder": "أدخل اسمك الكامل",
+        "email": "البريد الإلكتروني",
+        "emailHint": "لا يمكن تغيير البريد الإلكتروني من هنا.",
+        "phone": "رقم الهاتف",
+        "phonePlaceholder": "أدخل رقم هاتفك",
+        "address": "العنوان",
+        "addressPlaceholder": "أدخل عنوانك"
+      },
+      "preferences": {
+        "title": "تفضيلات التبني",
+        "housingType": "نوع السكن",
+        "selectHousing": "اختر نوع السكن",
+        "housingOptions": {
+          "Apartment": "شقة",
+          "Department": "قسم سكني",
+          "House": "منزل",
+          "Villa": "فيلا"
+        },
+        "experienceLevel": "مستوى الخبرة",
+        "selectExperience": "اختر مستوى الخبرة",
+        "experienceOptions": {
+          "Beginner": "مبتدئ",
+          "Intermediate": "متوسط",
+          "Expert": "خبير"
+        },
+        "freeHours": "الساعات المتاحة يوميًا",
+        "freeHoursHint": "كم ساعة يمكنك تخصيصها لرعاية الحيوان الأليف يوميًا؟"
+      },
+      "cancel": "إلغاء",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ…",
+      "saveSuccess": "تم تحديث ملفك الشخصي بنجاح.",
+      "saveError": "تعذّر تحديث ملفك الشخصي. يرجى المحاولة مجددًا."
+    },
+    "dashboard": {
+      "loading": "جارٍ تحميل لوحة التحكم…",
+      "loadError": "تعذّر تحميل لوحة التحكم: {{message}}",
+      "retry": "إعادة المحاولة",
+      "profileLoading": "جارٍ تحميل ملفك الشخصي…",
+      "profileUnavailable": "اسم ملفك الشخصي غير متاح مؤقتًا.",
+      "welcomeGeneric": "مرحبًا بعودتك!",
+      "welcome": "مرحبًا بعودتك، {{name}}!",
+      "kpis": {
+        "pendingAdoptions": "طلبات التبني المعلقة",
+        "adoptedPets": "الحيوانات المتبنّاة",
+        "recentOrders": "طلبات المتجر"
+      },
+      "wallet": {
+        "title": "محفظتي",
+        "balanceLabel": "الرصيد المتاح",
+        "description": "استخدم رصيد محفظتك للشراء من متجر بيت هيفن.",
+        "loading": "جارٍ تحميل الرصيد…",
+        "unavailable": "غير متوفر",
+        "loadError": "تعذّر تحميل رصيد محفظتك.",
+        "shopNow": "تسوّق الآن"
+      },
+      "milestone": {
+        "title": "محطة في رحلة التبني",
+        "text": "مرّ {{days}} يومًا منذ تبنّيت {{petName}}. شارك صورة حديثة لطمأنة المركز.",
+        "uploadNow": "رفع تحديث الآن",
+        "resolvingRequest": "جارٍ تجهيز التقرير…",
+        "dismiss": "إغلاق",
+        "missingRequest": "تعذّر العثور على طلب التبني المرتبط بهذا الحيوان.",
+        "requestLookupError": "تعذّر التحقق من طلب التبني المرتبط بهذا الحيوان.",
+        "reportSuccess": "تم إرسال تحديث الحيوان بنجاح.",
+        "reportError": "تعذّر إرسال تحديث الحيوان."
+      },
+      "quickActions": {
+        "browseAnimals": {
+          "title": "تصفح الحيوانات",
+          "description": "اعثر على صديقك الجديد."
+        },
+        "aiDiagnosis": {
+          "title": "التشخيص الذكي",
+          "description": "نفّذ فحصًا صحيًا سريعًا لحيوانك."
+        },
+        "bookVet": {
+          "title": "حجز زيارة بيطرية",
+          "description": "احجز استشارة مع مختص."
+        }
+      },
+      "calendar": {
+        "careTitle": "تقويم رعاية الحيوانات",
+        "loading": "جارٍ تحميل المواعيد القادمة…",
+        "loadError": "تعذّر تحميل المواعيد: {{message}}",
+        "emptyTitle": "لا توجد مواعيد قادمة",
+        "emptyText": "ستظهر زيارات الطبيب البيطري المجدولة هنا.",
+        "unknownVet": "طبيب بيطري",
+        "unknownStatus": "مجدول",
+        "noReason": "لم يُذكر سبب للموعد",
+        "bookVisit": "احجز زيارة بيطرية"
+      },
+      "pets": {
+        "title": "حيواناتي",
+        "count": "حيوان واحد",
+        "count_zero": "لا حيوانات",
+        "count_two": "حيوانان",
+        "count_few": "{{count}} حيوانات",
+        "count_many": "{{count}} حيوانًا",
+        "count_other": "{{count}} حيوان",
+        "loading": "جارٍ تحميل الحيوانات…",
+        "loadError": "تعذّر تحميل الحيوانات: {{message}}",
+        "emptyTitle": "لم تتبنَّ أي حيوان بعد",
+        "emptyText": "عندما تتبنّى حيوانًا سيظهر هنا لتتمكن من متابعة رعايته ولقاحاته والمزيد.",
+        "browse": "تصفح الحيوانات المتاحة للتبني ←",
+        "adoptedFrom": "تم التبنّي من {{center}}",
+        "details": "عرض",
+        "viewProfile": "عرض ملف {{name}}"
+      },
+      "wishlist": {
+        "title": "قائمة الأمنيات",
+        "count": "عنصر واحد",
+        "count_zero": "لا عناصر",
+        "count_two": "عنصران",
+        "count_few": "{{count}} عناصر",
+        "count_many": "{{count}} عنصرًا",
+        "count_other": "{{count}} عنصر",
+        "loading": "جارٍ تحميل قائمة الأمنيات…",
+        "loadError": "تعذّر تحميل قائمة الأمنيات: {{message}}",
+        "emptyTitle": "قائمة أمنياتك فارغة",
+        "emptyText": "ستظهر العناصر التي تحفظها هنا لتتمكن من العثور عليها بسهولة لاحقًا.",
+        "explore": "استكشف المتجر",
+        "browseStore": "تصفح المزيد من المنتجات ←",
+        "priceUnavailable": "السعر غير متاح",
+        "viewProduct": "عرض {{name}}"
+      },
+      "milestoneModal": {
+        "close": "إغلاق النافذة",
+        "title": "شارك صورة لمحطة مميزة",
+        "description": "ساعدنا في الاحتفال بذكرى تبنّي {{petName}} عبر مشاركة تحديث سريع مع المركز.",
+        "healthStatus": "الحالة الصحية",
+        "healthOptions": {
+          "healthy": "بصحة جيدة",
+          "good": "جيدة",
+          "needsAttention": "يحتاج إلى متابعة"
+        },
+        "imageUrl": "رابط الصورة",
+        "imageUrlPlaceholder": "https://example.com/pet-update.jpg",
+        "imageUrlHint": "أدخل رابطًا مباشرًا للصورة. رفع الملفات غير متاح لعدم وجود واجهة رفع في الخادم.",
+        "note": "أضف ملاحظة سريعة",
+        "optional": "اختياري",
+        "notePlaceholder": "كيف تسير الحياة مع حيوانك الأليف؟",
+        "cancel": "إلغاء",
+        "sending": "جارٍ الإرسال…",
+        "send": "إرسال التحديث"
+      }
+    },
+    "adoptionHub": {
+      "title": "مركز التبني",
+      "subtitle": "اعثر على رفيقك المثالي أو أدر طلبات التبني وقصص النجاح الخاصة بك.",
+      "tabs": {
+        "catalog": "دليل الحيوانات",
+        "requests": "طلباتي"
+      },
+      "loadingPets": "جارٍ تحميل الحيوانات…",
+      "petsError": "تعذّر تحميل الحيوانات. يرجى المحاولة مجددًا.",
+      "retry": "إعادة المحاولة",
+      "noQuizMatches": "حصلنا على توصيات، لكن لا تتوفر حاليًا حيوانات من السلالات المقترحة.",
+      "quizError": "تعذّر الحصول على توصيات الاختبار.",
+      "applicationSuccess": "تم إرسال طلب التبني بنجاح!",
+      "applicationError": "تعذّر إرسال طلب التبني. يرجى المحاولة مجددًا.",
+      "ageYears": "سنة واحدة",
+      "ageYears_two": "سنتان",
+      "ageYears_few": "{{count}} سنوات",
+      "ageYears_many": "{{count}} سنة",
+      "ageYears_other": "{{count}} سنة",
+      "available": "متاح",
+      "banner": {
+        "badge": "اختبار التوافق",
+        "title": "اعثر على رفيقك المثالي",
+        "text": "أجرِ اختبار التوافق خلال دقيقتين لاكتشاف الحيوانات المناسبة لنمط حياتك ومنزلك.",
+        "start": "ابدأ الاختبار"
+      },
+      "catalog": {
+        "title": "كل الحيوانات المتاحة",
+        "search": "ابحث بالاسم أو السلالة…",
+        "searchLabel": "البحث في الحيوانات المتاحة",
+        "filters": "الفلاتر",
+        "results": "{{count}} حيوان",
+        "species": "النوع",
+        "gender": "الجنس",
+        "healthStatus": "الحالة الصحية",
+        "center": "مركز التبني",
+        "allSpecies": "كل الأنواع",
+        "allGenders": "كل الأجناس",
+        "allHealthStatuses": "كل الحالات الصحية",
+        "sortBy": "الترتيب حسب",
+        "sortNameAsc": "الاسم: أ–ي",
+        "sortNameDesc": "الاسم: ي–أ",
+        "sortAgeAsc": "العمر: الأصغر أولاً",
+        "sortAgeDesc": "العمر: الأكبر أولاً",
+        "paginationLabel": "صفحات دليل الحيوانات",
+        "previous": "السابق",
+        "next": "التالي",
+        "page": "الصفحة {{page}} من {{pageCount}}",
+        "empty": "لم تُرجع الواجهة الخلفية أي حيوانات متاحة.",
+        "noMatches": "لا توجد حيوانات تطابق البحث والفلاتر.",
+        "clearFilters": "مسح الفلاتر",
+        "notProvided": "غير متوفر",
+        "viewProfile": "عرض التفاصيل",
+        "adoptNow": "تبنَّ الآن"
+      },
+      "recommended": {
+        "title": "موصى بها لك",
+        "match": "توافق {{percent}}٪",
+        "viewProfile": "عرض الملف",
+        "adoptNow": "تبنَّ الآن"
+      },
+      "requests": {
+        "title": "حالة طلبات التبني",
+        "loading": "جارٍ تحميل طلبات التبني…",
+        "loadError": "تعذّر تحميل طلبات التبني.",
+        "empty": "لم ترسل أي طلب تبنٍّ بعد.",
+        "requestedOn": "تم الطلب في {{date}}",
+        "dateUnavailable": "التاريخ غير متاح",
+        "score": "درجة الطلب: {{score}}",
+        "centerNotes": "ملاحظات المركز: {{notes}}",
+        "statuses": {
+          "pending": "قيد المراجعة",
+          "approved": "مقبول",
+          "rejected": "مرفوض"
+        },
+        "actions": {
+          "viewDetails": "عرض التفاصيل",
+          "feedback": "الملاحظات"
+        }
+      },
+      "adoptedPets": {
+        "title": "حيواناتي المتبنّاة",
+        "loading": "جارٍ تحميل الحيوانات المتبنّاة…",
+        "loadError": "تعذّر تحميل الحيوانات المتبنّاة.",
+        "empty": "ليس لديك حيوانات متبنّاة بعد.",
+        "viewDetails": "عرض تفاصيل الحيوان"
+      },
+      "quiz": {
+        "closeQuiz": "إغلاق الاختبار",
+        "close": "إغلاق",
+        "kicker": "اختبار التوافق",
+        "title": "اعثر على رفيقك المثالي",
+        "description": "أجب عن أسئلة نمط الحياة وسيجد بيت هافن السلالات المناسبة عبر خدمة التوصيات.",
+        "questions": {
+          "housing_type": "ما نوع المنزل الذي تعيش فيه؟",
+          "outdoor_space": "ما مساحة المكان الخارجي المتوفر لديك؟",
+          "family_type": "من يعيش في منزلك؟",
+          "hours_available": "كم من الوقت يمكنك قضاؤه مع الحيوان يوميًا؟",
+          "weekend_time": "كم وقت الفراغ المتاح لديك عادة في العطلة؟",
+          "experience_level": "ما مستوى خبرتك في رعاية الحيوانات؟",
+          "training_ability": "ما مقدار التدريب الذي يمكنك تقديمه؟",
+          "activity_level": "ما مدى نشاط نمط حياتك؟",
+          "noise_tolerance": "ما مدى تقبلك لأصوات الحيوانات؟",
+          "budget_level": "ما مستوى الميزانية التي يمكنك تخصيصها للرعاية؟",
+          "maintenance_tolerance": "ما مقدار العناية اليومية المناسب لك؟",
+          "size_preference": "ما حجم الحيوان الذي تفضله؟",
+          "grooming_tolerance": "ما مقدار العناية بالمظهر التي يمكنك تقديمها؟",
+          "energy_preference": "ما مستوى الطاقة الذي تفضله في الحيوان؟",
+          "affection_preference": "ما مقدار الألفة التي تفضلها في حيوانك؟"
+        },
+        "options": {
+          "apartment": "شقة",
+          "house": "منزل",
+          "condo": "شقة تمليك",
+          "farm": "مزرعة",
+          "none": "لا يوجد",
+          "small": "صغير",
+          "medium": "متوسط",
+          "large": "كبير",
+          "single": "فرد واحد",
+          "couple": "زوجان",
+          "family_with_children": "عائلة مع أطفال",
+          "low": "منخفض",
+          "high": "مرتفع",
+          "beginner": "مبتدئ",
+          "intermediate": "متوسط",
+          "expert": "خبير",
+          "independent": "مستقل",
+          "balanced": "متوازن",
+          "very_affectionate": "ودود جدًا"
+        },
+        "stepTitles": {
+          "home": "منزلك",
+          "lifestyle": "نمط حياتك",
+          "preferences": "تفضيلات الحيوان"
+        },
+        "stepOf": "الخطوة {{current}} من {{total}}",
+        "back": "رجوع",
+        "next": "التالي",
+        "recommendedType": "نوع الحيوان الموصى به: {{animalType}}",
+        "pet": "حيوان أليف",
+        "resultSource": "جاءت هذه التوصيات مباشرة من خدمة التوصيات.",
+        "match": "توافق {{percent}}٪",
+        "viewMatches": "عرض الحيوانات المتوافقة",
+        "cancel": "إلغاء",
+        "finding": "جارٍ إيجاد النتائج…",
+        "getMatches": "اعرض نتائج التوافق"
+      },
+      "application": {
+        "title": "طلب تبنٍّ",
+        "subtitleWithPet": "أصبحت على بُعد خطوة من اصطحاب {{petName}} إلى منزلك.",
+        "subtitle": "أصبحت على بُعد خطوة من العثور على رفيق مدى الحياة.",
+        "close": "إغلاق",
+        "adopterProfile": "ملف التبني",
+        "housingType": "نوع السكن",
+        "selectHousingType": "اختر نوع السكن",
+        "house": "منزل",
+        "apartment": "شقة",
+        "otherHousing": "أخرى",
+        "experienceLevel": "الخبرة في رعاية الحيوانات",
+        "selectExperience": "اختر مستوى الخبرة",
+        "beginner": "مبتدئ",
+        "intermediate": "متوسط",
+        "expert": "خبير",
+        "freeHours": "ساعات الفراغ يوميًا",
+        "hasPetBefore": "سبق لي رعاية حيوان أليف",
+        "basicInfo": "المعلومات الأساسية",
+        "fullName": "الاسم الكامل",
+        "fullNamePlaceholder": "الاسم الكامل",
+        "phone": "رقم الهاتف",
+        "phonePlaceholder": "+1 (555) 000-0000",
+        "email": "البريد الإلكتروني",
+        "emailPlaceholder": "name@example.com",
+        "dob": "تاريخ الميلاد",
+        "previousExperience": "هل لديك خبرة سابقة في التبني؟",
+        "identity": "إثبات الهوية",
+        "identityUpload": "انقر أو اسحب صورة الهوية أو جواز السفر للرفع",
+        "identityHint": "PDF أو JPG أو PNG (بحد أقصى 5MB)",
+        "references": "المراجع الشخصية",
+        "reference": "المرجع {{number}}",
+        "namePlaceholder": "الاسم",
+        "referencePhonePlaceholder": "الهاتف",
+        "notes": "ملاحظات إضافية (اختياري)",
+        "notesPlaceholder": "أخبرنا لماذا ترغب في تبني هذا الحيوان أو عن أي متطلبات خاصة…",
+        "consents": "الموافقات الإلزامية",
+        "termsConsent": "أوافق على شروط التبني وسياسة الخصوصية.",
+        "careConsent": "ألتزم برعاية هذا الحيوان ورفاهيته طوال حياته.",
+        "visitConsent": "أوافق على زيارة منزلية من فريق بيت هافن قبل التسليم النهائي.",
+        "followUpConsent": "ألتزم برفع تقرير عن صحة الحيوان ورفاهيته كل 6 أشهر ضمن برنامج المتابعة بعد التبني.",
+        "cancel": "إلغاء",
+        "submitting": "جارٍ الإرسال…",
+        "submit": "إرسال الطلب"
+      }
+    },
+    "applicationDetails": {
+      "back": "العودة إلى طلباتي",
+      "title": "تفاصيل الطلب",
+      "reference": "المرجع رقم {{id}}",
+      "loading": "جارٍ تحميل تفاصيل الطلب…",
+      "retry": "إعادة المحاولة",
+      "loadErrorTitle": "تعذّر تحميل الطلب",
+      "loadError": "تعذّر تحميل طلب التبني.",
+      "notFoundTitle": "الطلب غير موجود",
+      "notFound": "طلب التبني هذا غير موجود.",
+      "forbiddenTitle": "الوصول مرفوض",
+      "forbidden": "طلب التبني هذا يخص متبنّيًا آخر.",
+      "notProvided": "غير متوفر",
+      "invalidRequestTitle": "طلب غير صالح",
+      "invalidRequest": "رابط تفاصيل الطلب هذا لا يحتوي على معرّف طلب صالح.",
+      "statuses": {
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "fields": {
+        "species": "النوع",
+        "breed": "السلالة",
+        "age": "العمر",
+        "gender": "الجنس",
+        "healthStatus": "الحالة الصحية",
+        "center": "مركز التبني"
+      },
+      "request": {
+        "title": "معلومات الطلب",
+        "submittedAt": "تاريخ الإرسال",
+        "score": "درجة الطلب",
+        "status": "حالة الخادم",
+        "centerNotes": "ملاحظات المركز"
+      },
+      "animal": {
+        "match": "توافق {{percent}}٪",
+        "yearsOld": "العمر {{count}} سنة",
+        "viewProfile": "عرض الملف",
+        "imageAlt": "{{name}} من سلالة {{breed}}"
+      },
+      "bottomNav": {
+        "home": "الرئيسية",
+        "adopt": "التبني",
+        "shop": "المتجر",
+        "health": "الصحة الذكية"
+      }
+    },
+    "petProfile": {
+      "back": "رجوع",
+      "backToCatalog": "العودة إلى دليل الحيوانات",
+      "loading": "جارٍ تحميل تفاصيل الحيوان…",
+      "loadError": "تعذّر تحميل تفاصيل هذا الحيوان.",
+      "missingId": "لم يتم اختيار حيوان.",
+      "notFound": "تعذّر العثور على هذا الحيوان.",
+      "browsePets": "تصفح الحيوانات المتاحة",
+      "notProvided": "غير متوفر",
+      "adopt": "تبنَّ الآن",
+      "center": "مركز التبني",
+      "description": "عن هذا الحيوان",
+      "imageAlt": "{{name}} من سلالة {{breed}}",
+      "tabs": {
+        "medical": "التاريخ الطبي",
+        "vaccinations": "اللقاحات"
+      },
+      "noVaccinations": "لا توجد سجلات لقاحات بعد.",
+      "vaccinationsPlaceholder": "ستظهر سجلات اللقاحات هنا.",
+      "editProfile": "تعديل الملف",
+      "age": "العمر",
+      "weight": "الوزن",
+      "weightValue": "{{value}} كغ",
+      "sex": "الجنس",
+      "medicalTimeline": "السجل الطبي",
+      "upcoming": "المواعيد القادمة",
+      "addAppointment": "إضافة موعد",
+      "health": {
+        "Healthy": "بصحة جيدة"
+      },
+      "medicalEntries": {
+        "annualTitle": "الفحص السنوي",
+        "annualDate": "12 أكتوبر 2023",
+        "annualDescription": "فحص صحي عام. الوزن مستقر وصحة الأسنان جيدة، ويوصى بالاستمرار على النظام الغذائي الحالي.",
+        "earTitle": "التهاب بسيط في الأذن",
+        "earDate": "4 يوليو 2023",
+        "earDescription": "وُصفت قطرات أوتوماكس لمدة 7 أيام وأكدت المتابعة التعافي."
+      },
+      "appointment": {
+        "title": "تنظيف الأسنان",
+        "month": "نوفمبر",
+        "location": "عيادة بيت هافن"
+      }
+    },
+    "store": {
+      "hero": {
+        "tag": "تخفيضات الربيع",
+        "title": "أساسيات رعاية الحيوانات",
+        "description": "تسوّق الأغذية الممتازة والألعاب الممتعة ومنتجات العناية، واستمتع بخصم يصل إلى 30٪ على علامات مختارة.",
+        "cta": "تسوّق الآن",
+        "imageAlt": "مجموعة حيوانات أليفة سعيدة"
+      },
+      "trust": {
+        "shipping": {
+          "title": "توصيل سريع ومجاني",
+          "description": "للطلبات التي تتجاوز 50 دولارًا"
+        },
+        "vet": {
+          "title": "معتمد بيطريًا",
+          "description": "تشكيلة منتقاة بعناية من الخبراء"
+        },
+        "returns": {
+          "title": "إرجاع سهل",
+          "description": "ضمان استرداد المال خلال 30 يومًا"
+        }
+      },
+      "categories": {
+        "title": "تسوّق حسب الفئة",
+        "clear": "مسح الفلتر"
+      },
+      "messages": {
+        "loginRequired": "يجب تسجيل الدخول أولًا.",
+        "addedToCart": "تمت الإضافة إلى السلة بنجاح.",
+        "cartError": "تعذّرت إضافة المنتج. يرجى المحاولة لاحقًا.",
+        "addedToWishlist": "تمت الإضافة إلى قائمة الأمنيات بنجاح.",
+        "removedFromWishlist": "تمت الإزالة من قائمة الأمنيات بنجاح.",
+        "wishlistError": "تعذّر تحديث قائمة الأمنيات."
+      },
+      "loadingProducts": "جارٍ تحميل المنتجات…",
+      "productsError": "تعذّر تحميل المنتجات. يرجى المحاولة مجددًا.",
+      "emptyProducts": "لا توجد منتجات تطابق الفلاتر المحددة.",
+      "results": "عرض {{from}}-{{to}} من أصل {{total}} منتج",
+      "sort": {
+        "label": "الترتيب حسب:",
+        "popular": "الأكثر شيوعًا",
+        "priceAsc": "السعر: من الأقل إلى الأعلى",
+        "priceDesc": "السعر: من الأعلى إلى الأقل",
+        "rating": "الأعلى تقييمًا",
+        "newest": "الأحدث"
+      },
+      "sidebar": {
+        "filters": "الفلاتر",
+        "openFilters": "فتح الفلاتر",
+        "closeFilters": "إغلاق الفلاتر",
+        "clearAll": "مسح الكل",
+        "categories": "الفئات",
+        "priceRange": "نطاق السعر",
+        "min": "الأدنى",
+        "max": "الأعلى",
+        "minPrice": "الحد الأدنى للسعر",
+        "maxPrice": "الحد الأعلى للسعر",
+        "brands": "العلامات التجارية",
+        "orders": "طلباتي"
+      },
+      "productCard": {
+        "addToCart": "إضافة إلى السلة",
+        "wishlist": "تبديل حالة قائمة الأمنيات",
+        "save": "وفّر {{percent}}٪",
+        "lowStock": "مخزون منخفض",
+        "imageUnavailable": "الصورة غير متوفرة"
+      },
+      "order": {
+        "imageAlt": "عنصر الطلب",
+        "statuses": {
+          "Pending": "قيد الانتظار",
+          "Processing": "قيد المعالجة",
+          "Shipped": "تم الشحن",
+          "Completed": "مكتمل",
+          "Cancelled": "ملغي",
+          "Delivered": "تم التوصيل"
+        }
+      }
+    },
+    "product": {
+      "backToStore": "العودة إلى المتجر",
+      "detailsTitle": "تفاصيل المنتج",
+      "loading": "جارٍ تحميل المنتج…",
+      "loadError": "تعذّر تحميل تفاصيل المنتج.",
+      "reviews": "{{rating}} من 5 ({{count}} تقييمًا)",
+      "loginRequired": "يرجى تسجيل الدخول قبل إضافة منتج إلى السلة.",
+      "addError": "حدث خطأ. يرجى المحاولة مجددًا.",
+      "adding": "جارٍ الإضافة…",
+      "addToCart": "إضافة إلى السلة",
+      "addSuccess": "تمت إضافة المنتج إلى سلتك.",
+      "noDescription": "لا يوجد وصف متاح لهذا المنتج.",
+      "imageUnavailable": "صورة المنتج غير متوفرة",
+      "inStock": "متوفر في المخزون: {{count}}",
+      "outOfStock": "غير متوفر في المخزون",
+      "decreaseQuantity": "تقليل الكمية",
+      "increaseQuantity": "زيادة الكمية",
+      "vetApproved": "معتمد بيطريًا",
+      "galleryLoading": "جارٍ تحميل الصور…",
+      "galleryError": "تعذّر تحميل صور المنتج.",
+      "imageAlt": "صورة المنتج",
+      "bestseller": "الأكثر مبيعًا",
+      "thumbnailAlt": "صورة مصغرة للمنتج {{number}}",
+      "review": {
+        "title": "التقييمات والمراجعات",
+        "subtitle": "شارك تجربتك وساعد المتبنين الآخرين على الاختيار بثقة.",
+        "reviewCount": "تقييم واحد",
+        "reviewCount_zero": "لا تقييمات",
+        "reviewCount_two": "تقييمان",
+        "reviewCount_few": "{{count}} تقييمات",
+        "reviewCount_many": "{{count}} تقييمًا",
+        "reviewCount_other": "{{count}} تقييم",
+        "formTitle": "اكتب مراجعة",
+        "selectRating": "اختر تقييمك",
+        "starLabel": "نجمة واحدة",
+        "starLabel_two": "نجمتان",
+        "starLabel_few": "{{count}} نجوم",
+        "starLabel_many": "{{count}} نجمة",
+        "starLabel_other": "{{count}} نجمة",
+        "commentLabel": "تعليقك",
+        "optional": "اختياري",
+        "commentPlaceholder": "ما الذي أعجبك أو لم يعجبك في هذا المنتج؟",
+        "characterCount": "{{count}}/{{max}} حرف",
+        "submit": "إرسال المراجعة",
+        "submitting": "جارٍ الإرسال…",
+        "success": "تم إرسال مراجعتك بنجاح.",
+        "ratingRequired": "يرجى اختيار عدد النجوم.",
+        "loginRequired": "يرجى تسجيل الدخول بحساب متبنٍ لإرسال مراجعة.",
+        "alreadyRated": "لقد قيّمت هذا المنتج مسبقًا.",
+        "submitError": "تعذّر إرسال مراجعتك. يرجى المحاولة مجددًا.",
+        "loading": "جارٍ تحميل المراجعات…",
+        "loadError": "تعذّر تحميل المراجعات.",
+        "empty": "لا توجد مراجعات بعد. كن أول من يقيّم هذا المنتج.",
+        "anonymous": "متبنّي حيوان"
+      },
+      "accordion": {
+        "ingredients-nutrition": {
+          "title": "المكونات والقيم الغذائية",
+          "description": "مصنوع من سمك السلمون الحقيقي عالي الجودة كمكوّن أول، ويوفر هذا الطعام الخالي من الحبوب الأحماض الأمينية الضرورية للعضلات. كما توفر البطاطا الحلوة والبازلاء طاقة سهلة الهضم إلى جانب الفيتامينات والمعادن ومضادات الأكسدة.",
+          "facts": [
+            {
+              "label": "البروتين الخام (الحد الأدنى)",
+              "value": "30٪"
+            },
+            {
+              "label": "الدهون الخام (الحد الأدنى)",
+              "value": "15٪"
+            },
+            {
+              "label": "الألياف الخام (الحد الأقصى)",
+              "value": "4.5٪"
+            },
+            {
+              "label": "الرطوبة (الحد الأقصى)",
+              "value": "10٪"
+            }
+          ]
+        },
+        "feeding-guide": {
+          "title": "دليل التغذية",
+          "description": "اضبط كميات الطعام للحفاظ على وزن مثالي واستشر الطبيب البيطري عند الحاجة. انتقل إلى الطعام الجديد خلال 7 أيام بزيادة كميته تدريجيًا وتقليل الطعام القديم."
+        },
+        "storage-instructions": {
+          "title": "تعليمات التخزين",
+          "description": "يُحفظ في مكان بارد وجاف، مع إغلاق العبوة بإحكام بعد الفتح للحفاظ على النضارة وحمايتها من الآفات."
+        }
+      }
+    },
+    "cart": {
+      "loading": "جارٍ تحميل سلتك…",
+      "retry": "حاول مجددًا",
+      "empty": "سلتك فارغة.",
+      "emptyDescription": "لم تضف أي منتجات بعد. تصفح المتجر للعثور على ما سيحبه حيوانك الأليف.",
+      "browseStore": "تصفح المتجر",
+      "backToStore": "العودة إلى المتجر",
+      "title": "سلة التسوق",
+      "itemCount": "{{count}} عناصر",
+      "remove": "إزالة",
+      "decrease": "تقليل الكمية",
+      "increase": "زيادة الكمية",
+      "loginRequired": "يرجى تسجيل الدخول لعرض سلتك.",
+      "signIn": "تسجيل الدخول",
+      "summary": "ملخص الطلب",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن التقديري",
+      "tax": "الضريبة التقديرية",
+      "total": "الإجمالي",
+      "checkout": "المتابعة إلى الدفع",
+      "clear": "إفراغ السلة",
+      "secure": "دفع آمن ومشفّر عبر SSL"
+    },
+    "checkout": {
+      "loading": "جارٍ تحميل صفحة الدفع…",
+      "cartEmpty": "سلتك فارغة.",
+      "paymentFailed": "تم إنشاء الطلب رقم {{orderId}}، لكن عملية الدفع فشلت: {{message}}",
+      "goBack": "العودة",
+      "title": "دفع آمن",
+      "encryption": "تشفير SSL بمستوى 256 بت.",
+      "paymentMethod": "طريقة الدفع",
+      "shamCashLogo": "شعار شام كاش",
+      "cardNumber": "رقم البطاقة",
+      "expiryDate": "تاريخ الانتهاء",
+      "expiryPlaceholder": "شهر / سنة",
+      "cvv": "رمز CVV",
+      "nameOnCard": "الاسم على البطاقة",
+      "namePlaceholder": "الاسم الكامل",
+      "summary": "ملخص الطلب",
+      "quantity": "الكمية: {{count}}",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "taxes": "الضرائب",
+      "total": "الإجمالي",
+      "processing": "جارٍ التنفيذ…",
+      "retryPayment": "إعادة محاولة الدفع",
+      "payNow": "ادفع الآن",
+      "secure": "دفع آمن ومشفّر عبر SSL",
+      "terms": "بالنقر على «ادفع الآن»، فإنك توافق على شروط الخدمة وسياسة الخصوصية."
+    },
+    "orders": {
+      "loading": "جارٍ تحميل الطلب…",
+      "loadError": "تعذّر تحميل هذا الطلب.",
+      "summary": "ملخص الطلب",
+      "confirmed": "تم تأكيد الطلب!",
+      "thankYou": "شكرًا لطلبك، {{name}}!",
+      "thankYouGeneric": "شكرًا لطلبك!",
+      "number": "الطلب رقم {{number}}",
+      "copyNumber": "نسخ رقم الطلب",
+      "estimatedDelivery": "موعد التوصيل المتوقع",
+      "deliveryPending": "موعد التوصيل قيد التحديد",
+      "shippingAddress": "عنوان الشحن",
+      "addressUnavailable": "عنوان الشحن غير متوفر",
+      "size": "الحجم: {{value}}",
+      "color": "اللون: {{value}}",
+      "quantity": "الكمية: {{count}}",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "taxes": "الضرائب",
+      "total": "الإجمالي",
+      "continueShopping": "متابعة التسوق",
+      "viewHistory": "عرض سجل الطلبات",
+      "details": "تفاصيل الطلب",
+      "close": "إغلاق تفاصيل الطلب",
+      "orderId": "معرّف الطلب",
+      "datePlaced": "تاريخ الطلب",
+      "itemsTitle": "العناصر في هذا الطلب",
+      "itemCount": "{{count}} عناصر",
+      "downloadInvoice": "تنزيل الفاتورة",
+      "buyAgain": "الشراء مجددًا",
+      "statuses": {
+        "Pending": "قيد الانتظار",
+        "Processing": "قيد المعالجة",
+        "Shipped": "تم الشحن",
+        "Completed": "مكتمل",
+        "Cancelled": "ملغي",
+        "Delivered": "تم التوصيل"
+      },
+      "shippingTypes": {
+        "standard_shipping": "شحن عادي",
+        "express_shipping": "شحن سريع",
+        "free_shipping": "شحن مجاني"
+      }
+    },
+    "health": {
+      "historyTitle": "جلسات المحادثة",
+      "sessionsTitle": "جلسات المحادثة",
+      "newChat": "محادثة جديدة",
+      "recentChats": "المحادثات الأخيرة",
+      "noSessions": "لا توجد جلسات محادثة بعد.",
+      "now": "الآن",
+      "moreOptions": "خيارات إضافية",
+      "attach": "إرفاق ملف",
+      "placeholder": "اسأل عن صحة حيوانك الأليف…",
+      "send": "إرسال الرسالة",
+      "disclaimer": "هذا المساعد لا يغني عن الرعاية البيطرية المتخصصة.",
+      "emptyTitle": "كيف يمكنني مساعدتك بشأن حيوانك اليوم؟",
+      "emptyDescription": "صف الأعراض أو السلوك أو المشكلة الصحية لبدء المحادثة.",
+      "assistant": {
+        "name": "المساعد الصحي",
+        "status": "متصل"
+      },
+      "history": {
+        "1": {
+          "title": "عرج ديزي",
+          "type": "فحص بالذكاء الاصطناعي",
+          "date": "12 أكتوبر"
+        },
+        "2": {
+          "title": "عطاس لونا",
+          "type": "زيارة بيطرية",
+          "date": "5 سبتمبر"
+        },
+        "3": {
+          "title": "الجرعات التنشيطية السنوية",
+          "type": "رعاية دورية",
+          "date": "20 أغسطس"
+        }
+      },
+      "pets": {
+        "daisy": {
+          "breed": "بيغل"
+        },
+        "luna": {
+          "breed": "قطة مختلطة"
+        }
+      },
+      "messages": {
+        "1": "مرحبًا! أنا هنا لمساعدتك في الاطمئنان على ديزي. هل يمكنك وصف ما لاحظته بشأن عرجها؟",
+        "2": "بدأت تعرج بساقها الخلفية اليمنى هذا الصباح بعد التنزه. ما زالت تأكل جيدًا وتبدو سعيدة فيما عدا ذلك."
+      }
+    },
+    "vets": {
+      "retry": "إعادة المحاولة",
+      "tabs": {
+        "book": "حجز موعد",
+        "visits": "زياراتي"
+      },
+      "hub": {
+        "eyebrow": "الرعاية البيطرية",
+        "title": "ابحث عن طبيب بيطري",
+        "subtitle": "اكتشف رعاية بيطرية موثوقة بالقرب منك واحجز موعدًا لدى عيادة معتمدة.",
+        "searchPlaceholder": "ابحث باسم الطبيب أو العيادة أو العنوان أو الاختصاص...",
+        "useLocation": "استخدام موقعي",
+        "locating": "جارٍ تحديد الموقع…",
+        "locationReady": "تم تحديد الموقع",
+        "locationUnsupported": "تحديد الموقع غير مدعوم في هذا المتصفح.",
+        "locationDenied": "تم رفض إذن الموقع. لا يزال بإمكانك البحث والترتيب دون المسافة.",
+        "locationUnavailable": "تعذّر تحديد موقعك. يرجى المحاولة مجددًا.",
+        "locationPlaceholder": "الموقع، مثال: المزة",
+        "search": "بحث",
+        "all": "الكل",
+        "availableToday": "متاح اليوم",
+        "myAppointments": "مواعيدي",
+        "sortBy": "الترتيب حسب:",
+        "highestRated": "الأعلى تقييمًا",
+        "nearest": "الأقرب",
+        "experienced": "الأكثر خبرة",
+        "loading": "جارٍ تحميل الأطباء البيطريين…",
+        "empty": "لا يوجد أطباء بيطريون مطابقون لبحثك.",
+        "whyTitle": "لماذا تختار أطباءنا؟",
+        "values": {
+          "verified": {
+            "title": "مختصون موثّقون",
+            "text": "تتم مراجعة ترخيص كل طبيب بيطري وجاهزية عيادته."
+          },
+          "facilities": {
+            "title": "مرافق حديثة",
+            "text": "تقدم العيادات الشريكة الرعاية الدورية والتشخيص ووضع خطط العلاج."
+          },
+          "ai": {
+            "title": "تشخيص مدعوم بالذكاء الاصطناعي",
+            "text": "يمكن دعم سير العمل السريري بتحليل ذكي للأعراض عند توفره."
+          }
+        },
+        "storiesTitle": "أحدث قصص النجاح",
+        "storyText": "حجز سريع وتعليمات رعاية واضحة وتجربة هادئة داخل العيادة."
+      },
+      "card": {
+        "verified": "موثّق",
+        "notRated": "غير مقيّم",
+        "experience": "خبرة {{years}} سنوات",
+        "license": "الترخيص {{license}}",
+        "clinicUnavailable": "معلومات العيادة غير متوفرة",
+        "addressUnavailable": "عنوان العيادة غير متوفر",
+        "specializationUnavailable": "الاختصاص غير متوفر",
+        "away": "يبعد {{distance}} كم",
+        "requestAppointment": "طلب موعد"
+      },
+      "visits": {
+        "title": "زياراتي",
+        "subtitle": "الوصول إلى مواعيد حساب المتبنّي.",
+        "loading": "جارٍ تحميل الزيارات…",
+        "upcoming": "المواعيد القادمة",
+        "cancelledSuccess": "تم إلغاء الموعد بنجاح.",
+        "booked": "تم إرسال طلب الموعد رقم {{id}} بنجاح.",
+        "cancelLatest": "إلغاء طلب الموعد هذا",
+        "cancelling": "جارٍ الإلغاء…",
+        "backToVets": "تصفح الأطباء البيطريين",
+        "history": "سجل الزيارات",
+        "showLess": "عرض أقل",
+        "viewRecords": "عرض السجلات كاملة",
+        "empty": "لا توجد زيارات. احجز موعدك الأول من صفحة الأطباء.",
+        "veterinarian": "الطبيب البيطري",
+        "dateTime": "التاريخ والوقت",
+        "reschedule": "إعادة الجدولة",
+        "cancel": "إلغاء",
+        "cancelled": "ملغي",
+        "completed": "مكتمل",
+        "withVet": "{{date}} مع {{vet}}",
+        "noUpcoming": "لا توجد لديك مواعيد قادمة.",
+        "noHistory": "لا توجد لديك مواعيد مكتملة أو ملغاة.",
+        "details": "التفاصيل",
+        "loadingDetails": "جارٍ تحميل تفاصيل الموعد…",
+        "appointmentId": "معرّف الموعد",
+        "pet": "الحيوان",
+        "reason": "السبب",
+        "rescheduling": "جارٍ إعادة الجدولة…",
+        "saveSchedule": "حفظ الموعد الجديد",
+        "rescheduledSuccess": "تمت إعادة جدولة الموعد بنجاح.",
+        "rateVet": "تقييم الطبيب",
+        "rating": "التقييم",
+        "stars_zero": "{{count}} نجوم",
+        "stars_one": "نجمة واحدة",
+        "stars_two": "نجمتان",
+        "stars_few": "{{count}} نجوم",
+        "stars_many": "{{count}} نجمة",
+        "stars_other": "{{count}} نجمة",
+        "review": "المراجعة (اختيارية)",
+        "submitRating": "إرسال التقييم",
+        "submittingRating": "جارٍ الإرسال…",
+        "ratingSuccess": "تم إرسال تقييم الطبيب بنجاح."
+      },
+      "booking": {
+        "loading": "جارٍ تحميل الموعد…",
+        "back": "العودة إلى حجز موعد",
+        "petService": "1. الحيوان والخدمة",
+        "done": "تم",
+        "edit": "تعديل",
+        "selectedPet": "الحيوان المحدد",
+        "petOption": "{{name}}، {{breed}}",
+        "selectedService": "الخدمة المحددة",
+        "dateTime": "2. اختر التاريخ والوقت",
+        "summary": "ملخص الجدولة",
+        "veterinarian": "الطبيب البيطري",
+        "service": "الخدمة",
+        "date": "التاريخ",
+        "time": "الوقت",
+        "ratingNote": "تتاح التقييمات والملاحظات بعد إتمام الزيارة فقط.",
+        "availabilityLoading": "جارٍ تحميل الأوقات المتاحة…",
+        "availabilityEmpty": "لا توجد مواعيد متاحة في هذا التاريخ.",
+        "availabilityError": "تعذّر تحميل الأوقات المتاحة.",
+        "noPets": "لا توجد حيوانات متبناة متاحة للحجز",
+        "confirm": "تأكيد الحجز",
+        "protected": "بياناتك محمية وآمنة.",
+        "steps": {
+          "service": "الخدمة",
+          "date": "التاريخ",
+          "confirm": "التأكيد"
+        },
+        "services": {
+          "general": "استشارة عامة",
+          "annual": "فحص سنوي وتطعيمات",
+          "dental": "العناية بالأسنان",
+          "emergency": "مراجعة طارئة"
+        },
+        "previousDates": "التواريخ السابقة",
+        "nextDates": "التواريخ التالية",
+        "weekdays": [
+          "أح",
+          "اث",
+          "ثل",
+          "أر",
+          "خم",
+          "جم",
+          "سب"
+        ],
+        "availableTimes": "الأوقات المتاحة",
+        "onDate": "في {{date}}"
+      },
+      "confirm": {
+        "missing": "تفاصيل الموعد غير موجودة. يرجى اختيار الطبيب والموعد مجددًا.",
+        "back": "العودة إلى حجز موعد",
+        "title": "المراجعة والتأكيد",
+        "subtitle": "يرجى مراجعة التفاصيل أدناه قبل تثبيت موعدك.",
+        "when": "الموعد",
+        "where": "المكان",
+        "patientService": "الحيوان والخدمة",
+        "patientMeta": "{{breed}} - {{gender}} - {{age}}",
+        "requestedService": "الخدمة المطلوبة",
+        "policyTitle": "سياسة الإلغاء",
+        "policyText": "يمكنك إلغاء هذا الموعد أو إعادة جدولته في أي وقت من صفحة زياراتي. لا تحدد العيادة مهلة زمنية للإلغاء، لذا يرجى التواصل معها مباشرة لأي تغييرات عاجلة في الموعد.",
+        "confirming": "جارٍ التأكيد…",
+        "action": "تأكيد الموعد"
+      },
+      "statuses": {
+        "Pending": "قيد الانتظار",
+        "Confirmed": "مؤكد",
+        "Accepted": "مقبول",
+        "Rejected": "مرفوض",
+        "Completed": "مكتمل",
+        "Cancelled": "ملغي"
+      },
+      "notScheduled": "غير مجدول"
+    }
+  },
+  "hero": {
+    "badge": "أفضل حياة لأليفك تبدأ من هنا",
+    "titlePrefix": "كل حيوان أليف يستحق ",
+    "titleHighlight": "ملاذاً سعيداً.",
+    "description": "منصة شاملة لتبني الحيوانات الأليفة، ومستلزماتها، والرعاية البيطرية، ورؤى صحية مدعومة بالذكاء الاصطناعي. استمتع برحلة سلسة لك ولرفاقك الأليفين.",
+    "ctaAdopt": "تبنَّ صديقاً",
+    "ctaShop": "تسوّق المستلزمات",
+    "stats": [
+      {
+        "value": "+500",
+        "label": "حيوان تم تبنيه"
+      },
+      {
+        "value": "4.9/5",
+        "label": "أطباء بيطريون الأعلى تقييماً"
+      }
+    ],
+    "imageAlt": "كلب غولدن ريتريفر سعيد يركض في حديقة خضراء مشمسة.",
+    "badgeTitle": "تم فحصه صحياً بالذكاء الاصطناعي",
+    "badgeSubtitle": "آمن وصحي بنسبة 100%"
+  },
+  "impactStats": {
+    "items": [
+      {
+        "value": "+12,000",
+        "label": "حيوان تم إنقاذه"
+      },
+      {
+        "value": "+2,500",
+        "label": "طبيب بيطري موثّق"
+      },
+      {
+        "value": "98%",
+        "label": "نسبة رضا عن إعادة التوطين"
+      }
+    ]
+  },
+  "categories": {
+    "title": "كل ما تحتاجه",
+    "items": [
+      {
+        "title": "تبنَّ حيواناً أليفاً",
+        "description": "اعثر على الرفيق المثالي من الملاجئ المحلية."
+      },
+      {
+        "title": "مستلزمات الحيوانات الأليفة",
+        "description": "طعام وألعاب وإكسسوارات عالية الجودة لأليفك."
+      },
+      {
+        "title": "استشارات بيطرية",
+        "description": "احجز مواعيد مع أفضل الأطباء البيطريين المحليين."
+      },
+      {
+        "title": "فاحص الصحة بالذكاء الاصطناعي",
+        "description": "احصل على رؤى صحية فورية مدعومة بالذكاء الاصطناعي لراحة بالك."
+      }
+    ]
+  },
+  "featuredPets": {
+    "title": "تعرّف على صديقك الجديد",
+    "viewAll": "عرض كل الحيوانات ←",
+    "cta": "عرض الملف الشخصي",
+    "pets": [
+      {
+        "name": "Buddy",
+        "meta": "سنتان • بيغل مختلط",
+        "alt": "جرو بيغل"
+      },
+      {
+        "name": "Luna",
+        "meta": "سنة واحدة • قط منزلي قصير الشعر",
+        "alt": "قطة تابي برتقالية"
+      },
+      {
+        "name": "Charlie",
+        "meta": "3 أشهر • غولدن ريتريفر",
+        "alt": "جرو غولدن ريتريفر"
+      },
+      {
+        "name": "Milo",
+        "meta": "4 سنوات • مين كون",
+        "alt": "قطة مين كون"
+      }
+    ]
+  },
+  "trendingProducts": {
+    "title": "الأكثر رواجاً في المتجر",
+    "viewAll": "عرض كل المنتجات ←",
+    "sale": "تخفيض",
+    "addToCart": "أضف إلى السلة",
+    "products": [
+      {
+        "name": "كريات طعام فاخرة",
+        "alt": "طعام حيوانات أليفة فاخر"
+      },
+      {
+        "name": "عظمة مضغ متينة",
+        "alt": "لعبة كلب تفاعلية"
+      },
+      {
+        "name": "طوق تتبع GPS",
+        "alt": "طوق ذكي للحيوانات الأليفة"
+      },
+      {
+        "name": "برج قطط فاخر",
+        "alt": "شجرة قطط"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "كيف تعمل",
+    "steps": [
+      {
+        "title": "ابحث",
+        "description": "تصفح مئات الحيوانات الموثقة الباحثة عن منزل."
+      },
+      {
+        "title": "تواصل",
+        "description": "تواصل مع الملاجئ ورتب لقاء تعارف."
+      },
+      {
+        "title": "خذه إلى المنزل",
+        "description": "أكمل عملية التبني ورحّب برفيقك الجديد."
+      }
+    ]
+  },
+  "events": {
+    "title": "فعاليات الحيوانات الأليفة القادمة",
+    "viewAll": "عرض التقويم الكامل ←",
+    "items": [
+      {
+        "title": "حملة التبني الكبرى",
+        "time": "10:00 صباحاً - 4:00 مساءً",
+        "location": "جناح سنترال بارك",
+        "cta": "اعرف المزيد"
+      },
+      {
+        "title": "ورشة تدريب الجراء",
+        "time": "1:00 - 3:00 مساءً",
+        "location": "مركز بيت هافن",
+        "cta": "سجّل الآن"
+      },
+      {
+        "title": "ندوة رعاية الحيوانات المسنّة",
+        "time": "6:00 - 7:30 مساءً",
+        "location": "ندوة عبر الإنترنت",
+        "cta": "أكّد حضورك"
+      }
+    ]
+  },
+  "vet": {
+    "badge": "رعاية معتمدة",
+    "titlePrefix": "تعرّف على ",
+    "titleHighlight": "خبرائنا البيطريين المعتمدين.",
+    "description": "صحة أليفك بأيدٍ أمينة. كل طبيب بيطري على منصتنا معتمد بدقة لأن مؤهلاته تم التحقق منها بعناية لضمان رعاية عالية الجودة.",
+    "features": [
+      "تم التحقق من الخلفية",
+      "ترخيص موثّق",
+      "منشآت الأعلى تقييماً"
+    ],
+    "cta": "ابحث عن طبيب بيطري قريب منك",
+    "imageAlt": "طبيبة بيطرية محترفة في عيادة حديثة"
+  },
+  "blog": {
+    "title": "نصائح الصحة والرعاية",
+    "viewAll": "اقرأ المزيد من المقالات ←",
+    "readArticle": "اقرأ المقال",
+    "articles": [
+      {
+        "tag": "الرعاية الموسمية",
+        "title": "رعاية الحيوانات الأليفة في الصيف: حافظ على برودة صديقك الفروي",
+        "description": "نصائح أساسية للوقاية من ضربة الشمس وضمان راحة أليفك خلال أشهر الصيف الحارة.",
+        "alt": "كلب يلهث في الصيف"
+      },
+      {
+        "tag": "السلوك",
+        "title": "فهم لغة جسد قطتك",
+        "description": "فك رموز ما تحاول قطتك إخبارك به من خلال حركات الذيل ووضعية الأذنين والوقفة.",
+        "alt": "قطة تنظر بفضول"
+      },
+      {
+        "tag": "الصحة",
+        "title": "متى تستخدم فاحص الصحة بالذكاء الاصطناعي مقابل زيارة الطبيب البيطري",
+        "description": "دليل عملي لاستخدام أدواتنا الذكية للمخاوف البسيطة والتعرف على الحالات الطارئة التي تتطلب رعاية فورية.",
+        "alt": "طبيب بيطري يفحص كلباً"
+      },
+      {
+        "tag": "مساعد الذكاء الاصطناعي",
+        "title": "رعاية شخصية عبر الدردشة الذكية",
+        "description": "تحدث مع مساعدنا الذكي للحصول على نصائح فورية حول التغذية والتدريب وعادات العافية اليومية المخصصة لأليفك."
+      }
+    ]
+  },
+  "testimonials": {
+    "quote": "«كان تبني بيلا عبر بيت هافن أفضل قرار في حياتنا. كانت العملية سلسة للغاية، والقدرة على شراء كل مستلزماتها من نفس المكان وفّرت علينا الكثير من الوقت!»",
+    "author": "سارة ج.",
+    "role": "مالكة فخورة لبيلا"
+  },
+  "newsletter": {
+    "title": "انضم إلى مجتمع هافن",
+    "description": "احصل على نصائح أسبوعية لرعاية الحيوانات الأليفة، وخصومات حصرية على المتجر، وقصص تبني ملهمة تصل مباشرة إلى بريدك الإلكتروني.",
+    "placeholder": "أدخل بريدك الإلكتروني",
+    "cta": "اشترك",
+    "privacy": "نحترم خصوصيتك. لا رسائل مزعجة أبداً."
+  },
+  "footer": {
+    "logoAlt": "شعار بيت هافن",
+    "copyright": "© 2024 بيت هافن. جميع الحقوق محفوظة.",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsOfService": "شروط الخدمة",
+    "contactUs": "اتصل بنا"
+  },
+  "petModal": {
+    "description": "{{name}} يبحث عن منزل دائم مليء بالحب. تواصل معنا لمعرفة المزيد عن خطوات التبني والسجلات الصحية وكيفية تحديد موعد للقاء تعارف.",
+    "viewFullProfile": "عرض الملف الكامل",
+    "close": "إغلاق"
+  },
+  "productModal": {
+    "description": "منتج مفضل لدى العملاء بـ {{reviews}} تقييماً. تم فحص جودته وهو جاهز للشحن إلى منزل أليفك الجديد.",
+    "addToCart": "أضف إلى السلة",
+    "close": "إغلاق"
+  },
+  "authModal": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "welcomeBack": "مرحباً بعودتك",
+    "signInSubtitle": "سجّل الدخول للمتابعة إلى بيت هافن",
+    "joinPetHaven": "انضم إلى بيت هافن",
+    "signUpSubtitleStep1": "أنشئ حسابك وابدأ رحلتك",
+    "signUpSubtitleStep2": "خطوة أخيرة — اختر دورك",
+    "googleSignIn": "تسجيل الدخول عبر جوجل",
+    "googleSignUp": "إنشاء حساب عبر جوجل",
+    "or": "أو",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "passwordPlaceholder": "كلمة المرور",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "fullNamePlaceholder": "الاسم الكامل",
+    "usernamePlaceholder": "اسم المستخدم",
+    "phonePlaceholder": "رقم الهاتف",
+    "next": "التالي",
+    "signingUp": "جارٍ إنشاء الحساب...",
+    "iAmA": "أنا...",
+    "back": "رجوع",
+    "selectRoleError": "يرجى اختيار دورك",
+    "close": "إغلاق",
+    "roles": [
+      {
+        "label": "متبنّي حيوان أليف",
+        "description": "ابحث عن حيوان أليف وتبنَّه"
+      },
+      {
+        "label": "مركز تبني",
+        "description": "أدرج حيوانات للتبني"
+      },
+      {
+        "label": "طبيب بيطري",
+        "description": "قدّم خدمات بيطرية"
+      },
+      {
+        "label": "مسؤول",
+        "description": "أدر المنصة"
+      }
+    ]
+  },
+  "contactModal": {
+    "title": "اتصل بنا",
+    "successMessage": "تم إرسال الرسالة!",
+    "namePlaceholder": "الاسم",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "subjectPlaceholder": "الموضوع",
+    "messagePlaceholder": "الرسالة",
+    "send": "إرسال",
+    "close": "إغلاق"
+  },
+  "articleModal": {
+    "close": "إغلاق"
+  },
+  "center": {
+    "header": {
+      "logoAlt": "شعار بيت هافن",
+      "nav": {
+        "dashboard": "لوحة التحكم",
+        "adoptions": "التبني",
+        "inventory": "المخزون",
+        "vaccinations": "التقارير",
+        "reviews": "التقييمات"
+      },
+      "language": "تبديل اللغة",
+      "notifications": "الإشعارات",
+      "userMenu": "قائمة المستخدم",
+      "avatarAlt": "صورة المستخدم",
+      "profileLink": "الملف الشخصي",
+      "logout": "تسجيل الخروج",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "status": {
+      "Available": "متاح",
+      "Pending": "قيد الانتظار",
+      "Adopted": "تم تبنيه",
+      "Active": "نشط",
+      "Inactive": "غير نشط",
+      "Approved": "مقبول",
+      "Rejected": "مرفوض",
+      "Completed": "مكتمل",
+      "Processing": "قيد المعالجة",
+      "Due Soon": "يستحق قريباً",
+      "Overdue": "متأخر"
+    },
+    "petOptions": {
+      "species": {
+        "Dog": "كلب",
+        "Cat": "قطة",
+        "Bird": "طائر",
+        "Small Mammal": "ثديي صغير",
+        "Other": "أخرى"
+      },
+      "sizes": {
+        "Small (Under 25 lbs)": "صغير (أقل من 25 رطلاً)",
+        "Medium (25-60 lbs)": "متوسط (25-60 رطلاً)",
+        "Large (61-100 lbs)": "كبير (61-100 رطل)",
+        "Extra Large (Over 100 lbs)": "كبير جداً (أكثر من 100 رطل)"
+      },
+      "healthStatuses": {
+        "Healthy": "سليم",
+        "Minor Issues": "مشاكل بسيطة",
+        "Requires Treatment": "يحتاج علاجاً",
+        "Critical": "حالة حرجة"
+      },
+      "genders": {
+        "Male": "ذكر",
+        "Female": "أنثى",
+        "Unknown": "غير معروف"
+      },
+      "ageUnits": {
+        "years": "سنوات",
+        "months": "أشهر",
+        "weeks": "أسابيع"
+      },
+      "vaccines": {
+        "Rabies": "داء الكلب",
+        "DHPP": "DHPP",
+        "Bordetella": "بورديتيلا"
+      }
+    },
+    "productCategories": {
+      "Food": "طعام",
+      "Toys": "ألعاب",
+      "Bedding": "فراش",
+      "Medical": "مستلزمات طبية"
+    },
+    "profile": {
+      "loading": "جارٍ تحميل ملف المركز…",
+      "backToDashboard": "العودة إلى لوحة التحكم",
+      "title": "ملف المركز",
+      "subtitle": "أدر معلومات مركز التبني العامة وساعات العمل والتفاصيل التشغيلية.",
+      "basicInfo": {
+        "title": "المعلومات الأساسية",
+        "centerName": "اسم المركز",
+        "centerNamePlaceholder": "اسم مركز التبني الخاص بك",
+        "licenseNumber": "رقم الترخيص",
+        "licenseNumberPlaceholder": "رقم الترخيص الرسمي لمركزك",
+        "phoneNumber": "رقم الهاتف",
+        "phoneNumberPlaceholder": "رقم هاتف التواصل مع المتبنّين",
+        "physicalAddress": "العنوان الفعلي",
+        "addressPlaceholder": "الشارع، المدينة، والمحافظة",
+        "useGps": "استخدام GPS",
+        "locating": "جارٍ تحديد الموقع...",
+        "gpsUnsupported": "خدمات تحديد الموقع غير مدعومة في متصفحك.",
+        "gpsError": "تعذّر تحديد عنوانك. يرجى إدخاله يدوياً."
+      },
+      "security": {
+        "title": "الأمان",
+        "password": "كلمة المرور",
+        "passwordPlaceholder": "أدخل كلمة مرور جديدة",
+        "passwordHint": "حافظ على أمان حسابك بكلمة مرور قوية."
+      },
+      "mission": {
+        "title": "الرسالة والخلفية",
+        "description": "وصف المركز",
+        "descriptionHint": "صف رسالة مركزك باختصار. 500 حرف كحد أقصى."
+      },
+      "workingHours": {
+        "title": "ساعات العمل",
+        "closed": "مغلق"
+      },
+      "cancel": "إلغاء",
+      "saveChanges": "حفظ التغييرات",
+      "saveSuccess": "تم تحديث ملف المركز بنجاح.",
+      "saveError": "فشل حفظ التغييرات. يرجى المحاولة مرة أخرى."
+    },
+    "dashboard": {
+      "loading": "جارٍ تحميل لوحة التحكم…",
+      "welcome": {
+        "titlePrefix": "مرحباً بعودتك، ",
+        "defaultName": "مدير هافن",
+        "subtitle": "إليك ما يحدث في مركز التبني اليوم."
+      },
+      "actions": {
+        "exportReport": "تصدير التقرير",
+        "addNewPet": "إضافة حيوان جديد"
+      },
+      "kpi": {
+        "availablePets": "الحيوانات المتاحة",
+        "pendingRequests": "الطلبات قيد الانتظار",
+        "successfulAdoptions": "حالات التبني الناجحة",
+        "storeSales": "مبيعات المتجر (اليوم)"
+      },
+      "alerts": {
+        "title": "التنبيهات والمتابعات",
+        "subtitle": "تتطلب انتباهاً إدارياً فورياً لصحة الحيوانات والامتثال.",
+        "vaccinationsDue": "تطعيمات مستحقة",
+        "overdueReports": "تقارير متأخرة",
+        "contact": "تواصل",
+        "sendReminder": "إرسال تذكير"
+      },
+      "activity": {
+        "title": "النشاط الأخير",
+        "viewAll": "عرض كل الطلبات",
+        "match": "تطابق"
+      },
+      "wallet": {
+        "title": "المحفظة",
+        "balanceLabel": "الرصيد المتاح",
+        "viewAll": "عرض كل المعاملات",
+        "noTransactions": "لا توجد معاملات بعد.",
+        "credit": "إيداع",
+        "debit": "سحب"
+      },
+      "obligations": {
+        "title": "الالتزامات المكتملة",
+        "viewAll": "عرض كل الالتزامات"
+      },
+      "orders": {
+        "title": "أحدث طلبات المتجر",
+        "seeAll": "عرض الكل",
+        "columns": {
+          "orderId": "رقم الطلب",
+          "customer": "العميل",
+          "items": "العناصر",
+          "total": "الإجمالي",
+          "status": "الحالة"
+        }
+      },
+      "export": {
+        "metric": "المقياس",
+        "value": "القيمة",
+        "trend": "الاتجاه"
+      }
+    },
+    "reviews": {
+      "loading": "جارٍ تحميل تقييمات المنتجات…",
+      "header": {
+        "title": "تقييمات المنتجات",
+        "subtitle": "آراء العملاء حول منتجات المركز"
+      },
+      "overallRating": {
+        "title": "متوسط التقييم",
+        "basedOn": "بناءً على {{count}} تقييم"
+      },
+      "filters": {
+        "allReviews": "كل التقييمات",
+        "stars": "{{count}} نجوم",
+        "searchPlaceholder": "ابحث حسب المنتج أو اسم العميل أو التعليق..."
+      },
+      "card": {
+        "ratingOnly": "تقييم بدون تعليق"
+      },
+      "empty": "لا توجد تقييمات للمنتجات حتى الآن.",
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "showing": "عرض",
+        "to": "إلى",
+        "of": "من",
+        "reviewsWord": "تقييم"
+      }
+    },
+    "inventory": {
+      "loading": "جارٍ تحميل المخزون…",
+      "title": "إدارة المخزون",
+      "subtitle": {
+        "animals": "أشرف على نزلاء الملجأ ومستلزمات البيع.",
+        "products": "أدر مستلزمات وبضائع مركز التبني."
+      },
+      "addButton": {
+        "animals": "إضافة سجل جديد",
+        "products": "إضافة منتج جديد"
+      },
+      "tabs": {
+        "animals": "الحيوانات",
+        "products": "المنتجات"
+      },
+      "pagination": {
+        "showing": "عرض",
+        "to": "إلى",
+        "of": "من",
+        "entries": "إدخالات",
+        "prev": "السابق",
+        "next": "التالي"
+      },
+      "edit": "تعديل",
+      "delete": "حذف",
+      "product": {
+        "quickStats": {
+          "title": "إحصائيات سريعة",
+          "totalStockValue": "إجمالي قيمة المخزون",
+          "lowStockItems": "عناصر منخفضة المخزون",
+          "totalSalesToday": "إجمالي المبيعات (اليوم)"
+        },
+        "categories": {
+          "title": "الفئات"
+        },
+        "recentSales": {
+          "title": "أحدث مبيعات المنتجات",
+          "viewAll": "عرض كل المبيعات"
+        },
+        "toolbar": {
+          "searchPlaceholder": "ابحث عن منتجات...",
+          "categoryAll": "كل الفئات",
+          "ratingAll": "كل التقييمات",
+          "rating4": "4 نجوم فأكثر",
+          "rating3": "3 نجوم فأكثر",
+          "rating2": "2 نجوم فأكثر"
+        },
+        "columns": {
+          "name": "اسم المنتج",
+          "category": "الفئة",
+          "inStock": "المخزون",
+          "price": "السعر",
+          "rating": "التقييم",
+          "actions": "إجراءات"
+        },
+        "low": "(منخفض)",
+        "empty": "لا توجد منتجات."
+      },
+      "adoption": {
+        "quickStats": {
+          "title": "إحصائيات سريعة",
+          "totalAnimals": "إجمالي الحيوانات",
+          "lowStockAlerts": "تنبيهات المخزون المنخفض",
+          "pendingAdoptions": "طلبات تبني قيد الانتظار"
+        },
+        "activeRequests": {
+          "title": "الطلبات النشطة"
+        },
+        "recentAdoptions": {
+          "title": "حالات التبني الأخيرة",
+          "viewAll": "عرض كل حالات التبني",
+          "adoptedOnPrefix": "تم التبني في"
+        },
+        "toolbar": {
+          "searchPlaceholder": "ابحث عن حيوانات بالاسم أو السلالة...",
+          "statusAll": "كل الحالات",
+          "ageAll": "كل الأعمار",
+          "ageBaby": "صغير (أقل من سنة)",
+          "ageYoung": "يافع (1-3 سنوات)",
+          "ageAdult": "بالغ (3-7 سنوات)",
+          "ageSenior": "كبير السن (7+ سنوات)"
+        },
+        "columns": {
+          "name": "اسم الحيوان",
+          "breed": "السلالة",
+          "age": "العمر",
+          "arrivalDate": "تاريخ الوصول",
+          "status": "الحالة",
+          "action": "إجراء"
+        },
+        "changeStatus": "تغيير الحالة",
+        "viewRecord": "عرض السجل",
+        "modal": {
+          "title": "كل حالات التبني الأخيرة",
+          "searchPlaceholder": "ابحث باسم الحيوان أو المتبنّي...",
+          "filter": "تصفية",
+          "columns": {
+            "pet": "الحيوان",
+            "breed": "السلالة",
+            "date": "تاريخ التبني",
+            "adopter": "المتبنّي"
+          },
+          "close": "إغلاق"
+        }
+      }
+    },
+    "vaccinations": {
+      "loading": "جارٍ تحميل التطعيمات…",
+      "header": {
+        "title": "التطعيمات والتقارير",
+        "subtitle": "أدر التطعيمات وأنشئ التقارير الصحية."
+      },
+      "tabs": {
+        "vaccinations": "التطعيمات",
+        "reports": "تقارير الستة أشهر"
+      },
+      "toolbar": {
+        "searchPlaceholder": "ابحث عن حيوان أو مالك...",
+        "statusAll": "كل الحالات",
+        "statusCompleted": "مكتمل",
+        "statusDueSoon": "يستحق قريباً",
+        "statusOverdue": "متأخر",
+        "exportPdf": "تصدير PDF",
+        "recordVaccine": "تسجيل تطعيم"
+      },
+      "columns": {
+        "pet": "ملف الحيوان",
+        "vaccineType": "نوع التطعيم",
+        "dueDate": "تاريخ الاستحقاق",
+        "status": "الحالة",
+        "actions": "إجراءات"
+      },
+      "editRecord": "تعديل السجل",
+      "viewHistory": "عرض السجل التاريخي",
+      "pagination": {
+        "showing": "عرض",
+        "to": "إلى",
+        "of": "من",
+        "entries": "إدخالات",
+        "prev": "السابق",
+        "next": "التالي"
+      },
+      "modal": {
+        "title": "تسجيل تطعيم جديد",
+        "patientInfoLabel": "معلومات المريض",
+        "nameLabel": "الاسم",
+        "namePlaceholder": "مثال: بارنابي",
+        "speciesBreedLabel": "النوع / السلالة",
+        "speciesBreedPlaceholder": "مثال: كلب - بيغل مختلط",
+        "vaccineTypeLabel": "نوع التطعيم",
+        "vaccineTypePlaceholder": "اختر التطعيم",
+        "adminDateLabel": "تاريخ إعطاء الجرعة",
+        "nextDoseLabel": "الجرعة التالية مستحقة في",
+        "nextDoseBadge": "محسوبة تلقائياً",
+        "nextDoseHint": "بروتوكول +سنة واحدة",
+        "batchNumberLabel": "رقم الدفعة / التشغيلة",
+        "batchNumberPlaceholder": "مثال: LOT-8492",
+        "cancel": "إلغاء",
+        "saveButton": "حفظ السجل",
+        "vaccineOptions": [
+          {
+            "value": "Rabies",
+            "label": "داء الكلب",
+            "subtype": "جرعة معززة سنوية"
+          },
+          {
+            "value": "DHPP",
+            "label": "DHPP (الديستمبر، التهاب الكبد، نظير الإنفلونزا، البارفو)",
+            "subtype": "تطعيم أساسي"
+          },
+          {
+            "value": "Bordetella",
+            "label": "بورديتيلا (سعال الكلاب)",
+            "subtype": "سعال الكلاب"
+          },
+          {
+            "value": "Leptospirosis",
+            "label": "داء البريميات",
+            "subtype": "تطعيم أساسي"
+          },
+          {
+            "value": "Lyme Disease",
+            "label": "داء لايم",
+            "subtype": "تطعيم أساسي"
+          }
+        ]
+      }
+    },
+    "reports": {
+      "loading": "جارٍ تحميل التقارير…",
+      "submitted": {
+        "title": "التقارير المُرسلة",
+        "empty": "لا توجد تقارير مُرسلة.",
+        "submittedLabel": "أُرسل في:",
+        "healthConditionLabel": "الحالة الصحية:",
+        "requestClarification": "طلب توضيح",
+        "reportToManagement": "حظر",
+        "adopterOf": "متبنّي",
+        "viewDetails": "عرض التفاصيل"
+      },
+      "block": {
+        "title": "حظر المتبنّي",
+        "confirmation": "هل تريد حظر هذا المتبنّي؟",
+        "reasonLabel": "السبب",
+        "reasonPlaceholder": "أدخل سبب حظر هذا المتبنّي...",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد الحظر",
+        "blocking": "جارٍ الحظر…",
+        "invalidAdopter": "لا يحتوي هذا التقرير على معرّف متبنٍ صالح.",
+        "success": "تمت إضافة المتبنّي إلى قائمة الحظر."
+      },
+      "dueForReport": {
+        "title": "بانتظار التقرير",
+        "columns": {
+          "animalName": "اسم الحيوان",
+          "adopter": "المتبنّي",
+          "adoptionDate": "تاريخ التبني",
+          "status": "الحالة"
+        }
+      },
+      "details": {
+        "title": "تفاصيل تقرير الستة أشهر",
+        "adopterOfPrefix": "متبنّي",
+        "submittedLabel": "أُرسل في:",
+        "healthAssessmentTitle": "التقييم الصحي",
+        "milestoneTitle": "تحديث الإنجاز",
+        "close": "إغلاق"
+      }
+    },
+    "modals": {
+      "close": "إغلاق",
+      "cancel": "إلغاء",
+      "deleteProduct": {
+        "title": "حذف المنتج",
+        "confirmPrefix": "هل أنت متأكد من حذف",
+        "confirmSuffix": "لا يمكن التراجع عن هذا الإجراء، وسيتم إزالة العنصر من المخزون وكتالوج المتجر.",
+        "confirmButton": "حذف المنتج",
+        "deleting": "جارٍ الحذف…",
+        "deleteError": "تعذّر حذف المنتج. يرجى المحاولة مجددًا."
+      },
+      "deletePet": {
+        "title": "حذف الحيوان",
+        "confirmPrefix": "هل أنت متأكد من حذف",
+        "confirmSuffix": "لا يمكن التراجع عن هذا الإجراء، وستتم إزالة الحيوان من مخزون التبني.",
+        "confirmButton": "حذف الحيوان"
+      },
+      "editProduct": {
+        "title": "تعديل المنتج",
+        "changePhoto": "تغيير",
+        "nameLabel": "اسم المنتج",
+        "namePlaceholder": "أدخل اسم المنتج",
+        "categoryLabel": "الفئة",
+        "stockLabel": "المخزون",
+        "priceLabel": "السعر",
+        "statusLabel": "حالة المخزون",
+        "activeListing": "معروض نشط",
+        "inactiveListing": "معروض غير نشط",
+        "descriptionLabel": "الوصف",
+        "descriptionPlaceholder": "أضف وصفاً تفصيلياً للمنتج وفوائده...",
+        "discountLabel": "الخصم (٪)",
+        "saveError": "تعذّر حفظ المنتج. يرجى المحاولة مجددًا.",
+        "saving": "جارٍ الحفظ…",
+        "saveButton": "حفظ التغييرات"
+      },
+      "addProduct": {
+        "title": "إضافة منتج جديد",
+        "changePhoto": "رفع صورة",
+        "uploadPrompt": "اضغط لرفع صورة",
+        "nameLabel": "اسم المنتج",
+        "namePlaceholder": "أدخل اسم المنتج",
+        "categoryLabel": "الفئة",
+        "stockLabel": "المخزون",
+        "priceLabel": "السعر",
+        "statusLabel": "حالة المخزون",
+        "activeListing": "معروض نشط",
+        "inactiveListing": "معروض غير نشط",
+        "descriptionLabel": "الوصف",
+        "descriptionPlaceholder": "أضف وصفاً تفصيلياً للمنتج وفوائده...",
+        "discountLabel": "الخصم (٪)",
+        "saveError": "تعذّرت إضافة المنتج. يرجى المحاولة مجددًا.",
+        "saving": "جارٍ الإضافة…",
+        "saveButton": "إضافة المنتج"
+      },
+      "addPet": {
+        "title": "إضافة حيوان جديد",
+        "media": "الوسائط",
+        "uploadPhoto": "اختيار صورة",
+        "photoHint": "معاينة محلية فقط. يتطلب الحفظ الدائم دعم رفع الملفات من الخادم.",
+        "basicInfo": "المعلومات الأساسية",
+        "nameLabel": "اسم الحيوان *",
+        "namePlaceholder": "مثال: بيلا",
+        "speciesLabel": "النوع *",
+        "speciesPlaceholder": "اختر النوع",
+        "breedLabel": "السلالة الأساسية",
+        "breedPlaceholder": "مثال: غولدن ريتريفر",
+        "ageLabel": "العمر",
+        "genderLabel": "الجنس *",
+        "sizeLabel": "الحجم التقريبي",
+        "sizePlaceholder": "اختر الحجم",
+        "colorLabel": "اللون الأساسي / العلامات",
+        "colorPlaceholder": "مثال: أسود بصدر أبيض",
+        "medicalRecords": "السجلات الطبية",
+        "healthStatusLabel": "الحالة الصحية الحالية",
+        "vaccinationsLabel": "التطعيمات",
+        "adoptionDetails": "تفاصيل التبني",
+        "availabilityLabel": "حالة التوفر",
+        "characterNotes": "الطباع والملاحظات",
+        "characterLabel": "السمات الشخصية والملاحظات السلوكية",
+        "characterPlaceholder": "صف طبع الحيوان، ما يحب ويكره، وأي اعتبارات سلوكية...",
+        "saveButton": "إضافة الحيوان"
+      },
+      "editPet": {
+        "title": "تعديل ملف الحيوان",
+        "media": "الوسائط",
+        "changePhoto": "تغيير الصورة",
+        "photoHint": "الحجم الموصى به: 800×800 بكسل (JPG أو PNG)",
+        "basicInfo": "المعلومات الأساسية",
+        "nameLabel": "الاسم",
+        "speciesLabel": "النوع",
+        "breedLabel": "السلالة",
+        "ageLabel": "العمر (بالسنوات)",
+        "genderLabel": "الجنس",
+        "sizeLabel": "الحجم",
+        "colorLabel": "اللون والعلامات",
+        "medical": "الطب",
+        "healthStatusLabel": "الحالة الصحية",
+        "vaccinationsLabel": "التطعيمات",
+        "adoptionDetails": "تفاصيل التبني",
+        "availabilityLabel": "حالة التوفر",
+        "character": "الطباع",
+        "characterLabel": "السمات الشخصية والملاحظات",
+        "characterPlaceholder": "صف سلوك الحيوان، ما يحب ويكره، والبيئة المنزلية المثالية...",
+        "saveButton": "حفظ التغييرات"
+      },
+      "viewSales": {
+        "title": "أحدث مبيعات المنتجات",
+        "searchPlaceholder": "ابحث في المبيعات...",
+        "columns": {
+          "product": "المنتج",
+          "date": "التاريخ",
+          "customer": "العميل",
+          "price": "السعر"
+        },
+        "empty": "لا توجد مبيعات."
+      },
+      "viewPetRecord": {
+        "title": "سجل الحيوان",
+        "basicInfo": "المعلومات الأساسية",
+        "nameLabel": "الاسم",
+        "speciesLabel": "النوع",
+        "breedLabel": "السلالة",
+        "ageLabel": "العمر",
+        "genderLabel": "الجنس",
+        "sizeLabel": "الحجم",
+        "colorLabel": "اللون والعلامات",
+        "medical": "الطب",
+        "healthStatusLabel": "الحالة الصحية",
+        "vaccinationsLabel": "التطعيمات",
+        "noneRecorded": "لا يوجد تسجيل",
+        "adoptionDetails": "تفاصيل التبني",
+        "statusLabel": "الحالة",
+        "arrivalDateLabel": "تاريخ الوصول",
+        "character": "الطباع",
+        "characterLabel": "السمات الشخصية والملاحظات"
+      }
+    },
+    "adoptionRequests": {
+      "loading": "جارٍ تحميل طلبات التبني…",
+      "header": {
+        "title": "طلبات التبني",
+        "subtitle": "أدر الطلبات الواردة وراجع التطابقات المحتملة."
+      },
+      "viewTabs": {
+        "label": "أقسام طلبات التبني",
+        "applications": "الطلبات",
+        "blacklist": "قائمة الحظر"
+      },
+      "blacklist": {
+        "searchPlaceholder": "ابحث في قائمة المحظورين...",
+        "loading": "جارٍ تحميل قائمة الحظر…",
+        "empty": "لا يوجد متبنّون محظورون.",
+        "retry": "إعادة المحاولة",
+        "active": "نشط",
+        "columns": {
+          "adopter": "اسم المتبنّي",
+          "reason": "السبب",
+          "date": "تاريخ الحظر",
+          "status": "الحالة"
+        }
+      },
+      "toolbar": {
+        "searchPlaceholder": "ابحث باسم المتقدّم أو الحيوان...",
+        "filter": "تصفية"
+      },
+      "tabs": {
+        "all": "الكل",
+        "pending": "قيد الانتظار",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "card": {
+        "appliedLabel": "تاريخ التقديم",
+        "housingLabel": "السكن والخبرة",
+        "reviewButton": "مراجعة الطلب",
+        "rejectButton": "رفض",
+        "viewRecordButton": "عرض السجل",
+        "statusPending": "قيد الانتظار",
+        "statusApproved": "مقبول",
+        "statusRejected": "مرفوض"
+      },
+      "empty": "لا توجد طلبات تبني.",
+      "review": {
+        "titlePrefix": "مراجعة الطلب -",
+        "pendingReviewBadge": "قيد المراجعة",
+        "approvedBadge": "مقبول",
+        "rejectedBadge": "مرفوض",
+        "petProfileLink": "عرض ملف الحيوان",
+        "appliedLabel": "تاريخ التقديم",
+        "motivationTitle": "دافع التبني",
+        "detailsTitle": "تفاصيل الطلب",
+        "proofOfIdentity": "إثبات الهوية",
+        "adoptionExperience": "خبرة التبني السابقة",
+        "dateOfBirth": "تاريخ الميلاد",
+        "ageVerifiedPrefix": "العمر موثّق:",
+        "yearsSuffix": "سنة",
+        "reference1": "المرجع الشخصي 1",
+        "reference2": "المرجع الشخصي 2",
+        "consentsTitle": "الموافقات الإلزامية",
+        "consentTerms": "موافقة على الشروط وسياسة الخصوصية",
+        "consentCare": "التزام بالرعاية مدى الحياة",
+        "consentHomeVisit": "موافقة على زيارة منزلية",
+        "consentFollowUp": "تقارير متابعة كل 6 أشهر",
+        "requestMoreInfo": "طلب مزيد من المعلومات",
+        "rejectButton": "رفض الطلب",
+        "approveButton": "قبول للمقابلة"
+      },
+      "reject": {
+        "title": "سبب الرفض",
+        "description": "يرجى تحديد سبب عدم إمكانية قبول طلب التبني هذا. سيتم إرسال هذه الملاحظات مباشرة إلى المتقدّم عبر البريد الإلكتروني لمساعدته على فهم القرار.",
+        "reasonLabel": "سبب مفصّل",
+        "reasonPlaceholder": "يرجى كتابة سبب مفصّل للمتقدّم (سيتم مشاركته معه)...",
+        "charCountSuffix": "حرف",
+        "quickInsertLabel": "إدراج سريع:",
+        "quickReasons": [
+          "قيود السكن",
+          "سياج غير مكتمل",
+          "عدم توافق مع الحيوان"
+        ],
+        "cancel": "إلغاء",
+        "confirmButton": "تأكيد الرفض"
+      }
+    }
+  },
+  "admin": {
+    "common": {
+      "loading": "جارٍ التحميل…",
+      "refresh": "تحديث",
+      "refreshing": "جارٍ التحديث…",
+      "retry": "إعادة المحاولة",
+      "cancel": "إلغاء",
+      "dismiss": "إغلاق",
+      "processing": "جارٍ التنفيذ…",
+      "actionFailed": "تعذر إتمام الطلب.",
+      "notProvided": "غير متوفر"
+    },
+    "navbar": {
+      "workspace": "لوحة المدير",
+      "switchLanguage": "تغيير اللغة",
+      "profileTitle": "ملف المدير",
+      "profileError": "تعذر جلب الملف الشخصي"
+    },
+    "sidebar": {
+      "logoAlt": "شعار Pet Haven",
+      "navLabel": "تنقل المدير",
+      "dashboard": "لوحة التحكم",
+      "vetApprovals": "موافقات الأطباء",
+      "userManagement": "إدارة المستخدمين"
+    },
+    "dashboard": {
+      "title": "لوحة تحكم المدير",
+      "subtitle": "إحصاءات مباشرة من خوادم Pet Haven.",
+      "statsSection": "إحصاءات المنصة",
+      "statsUnavailable": "تعذر تحميل الإحصاءات.",
+      "stats": {
+        "totalUsers": "إجمالي المستخدمين",
+        "adopters": "المتبنون",
+        "centers": "مراكز التبني",
+        "vets": "الأطباء البيطريون",
+        "admins": "المدراء",
+        "totalPets": "إجمالي الحيوانات",
+        "bannedUsers": "المستخدمون المحظورون"
+      },
+      "pendingVets": {
+        "title": "طلبات موافقة الأطباء",
+        "subtitle": "حسابات أطباء بانتظار التحقق.",
+        "manage": "مراجعة الطلبات",
+        "awaiting": "بانتظار المراجعة",
+        "more": "ويوجد {{remaining}} إضافي في قائمة الانتظار."
+      }
+    },
+    "vetApprovals": {
+      "title": "موافقات الأطباء",
+      "subtitle": "الموافقة على حسابات الأطباء البيطريين أو رفضها.",
+      "pendingCount": "{{total}} بانتظار المراجعة",
+      "idLabel": "معرف الطبيب {{id}}",
+      "empty": "لا يوجد أطباء بانتظار الموافقة.",
+      "emptyHint": "تظهر الطلبات الجديدة هنا فور تسجيل أي طبيب.",
+      "loadFailed": "تعذر تحميل قائمة الأطباء المعلقة.",
+      "verify": "موافقة",
+      "verifying": "جارٍ الموافقة…",
+      "verifySuccess": "تمت الموافقة على {{name}}.",
+      "reject": "رفض",
+      "rejecting": "جارٍ الرفض…",
+      "rejectSuccess": "تم رفض {{name}}.",
+      "yearsValue": "{{years}} سنوات خبرة",
+      "fields": {
+        "specialization": "التخصص",
+        "clinicName": "اسم العيادة",
+        "clinicAddress": "عنوان العيادة",
+        "licenseNumber": "رقم الترخيص",
+        "experienceYears": "الخبرة",
+        "createdAt": "تاريخ التسجيل"
+      },
+      "rejectConfirm": {
+        "title": "رفض هذا الطبيب؟",
+        "message": "أنت على وشك رفض {{name}}.",
+        "warning": "سيؤدي ذلك إلى حذف حساب الطبيب نهائياً من المنصة، ولا يمكن التراجع عن ذلك.",
+        "confirm": "رفض وحذف"
+      }
+    },
+    "users": {
+      "title": "إدارة المستخدمين",
+      "subtitle": "حظر حسابات المستخدمين أو فك الحظر عنها.",
+      "notice": {
+        "title": "تتم العمليات باستخدام معرف المستخدم",
+        "text": "يوفر الخادم واجهتي الحظر وفك الحظر فقط، ولا توجد واجهة لجلب قائمة المستخدمين، لذلك يتم تحديد الحساب عبر معرفه الرقمي. لا يمكن حظر حسابات المدراء."
+      },
+      "fields": {
+        "userId": "معرف المستخدم",
+        "userIdPlaceholder": "مثال: 42",
+        "reason": "السبب",
+        "reasonPlaceholder": "اذكر سبب حظر هذا الحساب",
+        "reasonHint": "يُرسل إلى الخادم مع طلب الحظر."
+      },
+      "errors": {
+        "invalidUserId": "أدخل معرف مستخدم رقمياً صحيحاً."
+      },
+      "ban": {
+        "title": "حظر مستخدم",
+        "subtitle": "يمنع الحساب من تسجيل الدخول إلى Pet Haven.",
+        "submit": "حظر المستخدم",
+        "submitting": "جارٍ الحظر…",
+        "success": "تم حظر المستخدم {{userId}}.",
+        "confirmTitle": "حظر هذا المستخدم؟",
+        "confirmMessage": "سيفقد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
+      },
+      "unban": {
+        "title": "فك الحظر",
+        "subtitle": "يعيد الوصول لحساب محظور سابقاً.",
+        "submit": "فك الحظر",
+        "submitting": "جارٍ فك الحظر…",
+        "success": "تم فك الحظر عن المستخدم {{userId}}.",
+        "confirmTitle": "فك الحظر عن هذا المستخدم؟",
+        "confirmMessage": "سيستعيد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
+      }
+    }
+  },
+  "vetDashboard": {
+    "loading": "جارٍ تحميل لوحة التحكم...",
+    "comingSoon": "قريباً",
+    "header": {
+      "logoAlt": "شعار بيت هافن",
+      "nav": {
+        "dashboard": "لوحة التحكم",
+        "patients": "المرضى",
+        "appointments": "المواعيد",
+        "reviews": "التقييمات"
+      },
+      "language": "تغيير اللغة",
+      "notifications": "الإشعارات",
+      "userMenu": "قائمة المستخدم",
+      "avatarAlt": "صورة المستخدم",
+      "profile": "الملف الشخصي",
+      "logout": "تسجيل الخروج",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "welcome": {
+      "morning": "صباح الخير، {{name}}",
+      "afternoon": "مساء الخير، {{name}}",
+      "evening": "مساء الخير، {{name}}",
+      "subtitle": "إليك آخر مستجدات عيادتك اليوم.",
+      "doctorPrefix": "د. {{name}}",
+      "defaultDoctor": "الطبيب"
+    },
+    "stats": {
+      "totalPatients": {
+        "label": "إجمالي المرضى",
+        "hint": "منذ البداية"
+      },
+      "appointmentsToday": {
+        "label": "مواعيد اليوم",
+        "hint": "{{count}} متبقية"
+      },
+      "reviews": {
+        "label": "إجمالي التقييمات",
+        "hint": "إجمالي التقييمات المستلمة"
+      }
+    },
+    "activity": {
+      "title": "نشاط العيادة",
+      "loading": "جارٍ تحميل نشاط العيادة...",
+      "weekly": "أسبوعي",
+      "monthly": "شهري",
+      "empty": "لا يوجد نشاط مواعيد لهذه الفترة بعد."
+    },
+    "breakdown": {
+      "title": "توزيع المواعيد",
+      "empty": "لا توجد مواعيد مصنّفة بعد.",
+      "categories": {
+        "checkups": "فحوصات",
+        "vaccinations": "تطعيمات",
+        "surgeries": "عمليات جراحية",
+        "other": "أخرى"
+      }
+    },
+    "breeds": {
+      "title": "أكثر السلالات تردداً",
+      "empty": "لا توجد بيانات سلالات بعد."
+    },
+    "schedule": {
+      "title": "جدول اليوم",
+      "viewCalendar": "عرض التقويم",
+      "empty": "لا توجد مواعيد مجدولة اليوم.",
+      "owner": "المالك: {{name}}",
+      "status": {
+        "Completed": "مكتمل",
+        "Cancelled": "ملغى"
+      }
+    },
+    "patients": {
+      "title": "المرضى الأخيرون",
+      "searchPlaceholder": "ابحث عن مريض...",
+      "loading": "جارٍ تحميل المرضى...",
+      "empty": "لا يوجد مرضى حديثون.",
+      "viewRecords": "عرض السجلات",
+      "columns": {
+        "patient": "المريض",
+        "breed": "السلالة/النوع",
+        "lastVisit": "آخر زيارة",
+        "action": "الإجراء"
+      }
+    }
+  },
+  "vetProfile": {
+    "loading": "جارٍ تحميل ملفك الشخصي...",
+    "backToDashboard": "العودة للوحة التحكم",
+    "title": "الملف الشخصي للطبيب",
+    "subtitle": "إدارة ملفك الشخصي ومعلومات التواصل.",
+    "identity": {
+      "unnamed": "طبيب بيطري بدون اسم",
+      "verified": "موثّق",
+      "pendingVerification": "بانتظار التوثيق",
+      "noEmail": "لا يوجد بريد إلكتروني مسجّل"
+    },
+    "basicInfo": {
+      "title": "المعلومات الأساسية",
+      "fullName": "اسم الطبيب",
+      "email": "البريد الإلكتروني",
+      "phoneNumber": "رقم الهاتف",
+      "address": "عنوان العيادة",
+      "addressPlaceholder": "استخدم GPS أو أدخل عنوان العيادة",
+      "useGps": "استخدام GPS",
+      "locating": "جارٍ تحديد الموقع…",
+      "gpsHint": "يملأ GPS العنوان ويحفظ إحداثيات العيادة لاستخدامها في البحث القريب.",
+      "gpsSuccess": "تم تحديد موقع العيادة. احفظ التغييرات لتحديث ملفك.",
+      "gpsUnsupported": "خدمات تحديد الموقع غير مدعومة في هذا المتصفح.",
+      "gpsError": "تعذّر تحديد عنوان العيادة. تحقق من إذن الموقع أو أدخله يدويًا.",
+      "experienceYears": "سنوات الخبرة",
+      "specialization": "التخصص",
+      "clinicName": "اسم العيادة",
+      "licenseNumber": "رقم الترخيص"
+    },
+    "cancel": "إلغاء",
+    "saving": "جارٍ الحفظ...",
+    "saveChanges": "حفظ التغييرات",
+    "saveSuccess": "تم تحديث الملف الشخصي بنجاح.",
+    "saveError": "فشل حفظ التغييرات. حاول مرة أخرى."
+  },
+  "vetReviews": {
+    "loading": "جارٍ تحميل التقييمات...",
+    "title": "تقييمات العملاء",
+    "subtitle": "اطّلع على آراء أصحاب الحيوانات الأليفة حول رعايتك.",
+    "summary": {
+      "title": "التقييم العام",
+      "empty": "لم تتلقَّ أي تقييمات بعد.",
+      "basedOn": "بناءً على {{count}} تقييم",
+      "basedOn_other": "بناءً على {{count}} تقييم"
+    },
+    "toolbar": {
+      "searchPlaceholder": "ابحث عن تقييم بالاسم أو كلمة مفتاحية...",
+      "all": "جميع التقييمات",
+      "ratingOnly": "تقييم بدون تعليق ({{count}})"
+    },
+    "list": {
+      "loading": "جارٍ تحميل التقييمات...",
+      "empty": "لا توجد تقييمات بعد.",
+      "noMatches": "لا توجد تقييمات مطابقة لبحثك."
+    },
+    "card": {
+      "anonymous": "مجهول",
+      "noComment": "بدون تعليق مكتوب — تقييم بالنجوم فقط."
+    },
+    "pagination": {
+      "showing": "عرض {{start}} إلى {{end}} من {{total}} تقييم",
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية"
+    }
+  },
+  "vetPatients": {
+    "title": "دليل المرضى",
+    "subtitle": "إدارة السجلات الطبية والمواعيد والحالة الصحية العامة.",
+    "summary": {
+      "loading": "جارٍ تحميل الإحصائيات...",
+      "totalPatients": "إجمالي المرضى",
+      "activeCases": "الحالات النشطة",
+      "recentlyAdded": "أُضيفوا حديثاً (30 يوم)"
+    },
+    "toolbar": {
+      "searchPlaceholder": "ابحث بالاسم أو السلالة أو النوع...",
+      "allSpecies": "كل الأنواع",
+      "allStatus": "الحالة: الكل",
+      "species": {
+        "dog": "كلاب",
+        "cat": "قطط",
+        "bird": "طيور"
+      }
+    },
+    "status": {
+      "healthy": "سليم",
+      "followup": "يحتاج متابعة",
+      "vaccine": "تطعيم قادم",
+      "default": "غير معروف"
+    },
+    "card": {
+      "owner": "المالك",
+      "lastVisit": "آخر زيارة",
+      "visitCount": "عدد الزيارات",
+      "viewRecords": "عرض السجلات"
+    },
+    "list": {
+      "loading": "جارٍ تحميل المرضى...",
+      "empty": "لا يوجد مرضى بعد.",
+      "noMatches": "لا يوجد مرضى مطابقون لبحثك أو الفلاتر المحددة."
+    },
+    "pagination": {
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية"
+    },
+    "modal": {
+      "close": "إغلاق",
+      "loading": "جارٍ تحميل سجل المريض...",
+      "recordSections": "أقسام سجل المريض",
+      "overview": "نظرة عامة",
+      "age": "العمر",
+      "gender": "الجنس",
+      "medicalHistory": "السجل الطبي",
+      "noMedicalHistory": "لا يوجد سجل طبي بعد."
+    }
+  },
+  "vetAppointments": {
+    "title": "مواعيد العيادة",
+    "subtitle": "إدارة جدولك ومواعيد المرضى القادمة.",
+    "viewToggle": {
+      "list": "عرض القائمة",
+      "calendar": "التقويم"
+    },
+    "dateNav": {
+      "previous": "اليوم السابق",
+      "next": "اليوم التالي",
+      "today": "اليوم",
+      "pickDate": "اختر تاريخاً"
+    },
+    "summary": {
+      "loading": "جارٍ تحميل الإحصائيات...",
+      "total": {
+        "label": "إجمالي مواعيد اليوم",
+        "caption": "لليوم المحدد"
+      },
+      "confirmed": {
+        "label": "مؤكدة",
+        "caption": "مجدولة"
+      },
+      "pending": {
+        "label": "طلبات قيد الانتظار",
+        "caption": "تحتاج إجراء"
+      },
+      "cancelled": {
+        "label": "الإلغاءات",
+        "caption": "لليوم المحدد"
+      }
+    },
+    "toolbar": {
+      "filterLabel": "تصفية:",
+      "allStatuses": "كل الحالات"
+    },
+    "status": {
+      "Pending": "قيد الانتظار",
+      "Confirmed": "مؤكد",
+      "Completed": "مكتمل",
+      "Cancelled": "ملغي"
+    },
+    "list": {
+      "title": "جدول اليوم",
+      "loading": "جارٍ تحميل المواعيد...",
+      "empty": "لا توجد مواعيد مجدولة لهذا اليوم.",
+      "noMatches": "لا توجد مواعيد مطابقة لهذا الفلتر."
+    },
+    "card": {
+      "owner": "المالك: {{name}}",
+      "noReason": "لم يُذكر سبب."
+    },
+    "actions": {
+      "confirm": "قبول",
+      "complete": "تعليم كمكتمل",
+      "cancel": "إلغاء",
+      "reschedule": "إعادة جدولة"
+    },
+    "cancelConfirm": {
+      "message": "إلغاء هذا الموعد؟ لا يمكن التراجع عن هذا الإجراء.",
+      "yes": "نعم، ألغِ",
+      "no": "لا"
+    },
+    "reschedule": {
+      "dateLabel": "التاريخ الجديد",
+      "timeLabel": "الوقت الجديد",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ...",
+      "cancel": "إلغاء",
+      "pastDate": "الرجاء اختيار تاريخ ووقت في المستقبل."
+    }
+  },
+  "vetCalendar": {
+    "title": "تقويم العيادة",
+    "subtitle": "إدارة مواعيد وجداول العيادة البيطرية.",
+    "toolbar": {
+      "previousMonth": "الشهر السابق",
+      "nextMonth": "الشهر التالي"
+    },
+    "grid": {
+      "loading": "جارٍ تحميل التقويم...",
+      "dayError": "فشل تحميل هذا اليوم.",
+      "moreEvents": "+{{count}} أخرى",
+      "showLess": "عرض أقل"
+    },
+    "modal": {
+      "close": "إغلاق"
+    }
+  },
+  "vetVerification": {
+    "title": "التحقق المهني",
+    "subtitle": "ارفع رخصتك البيطرية أو شهادة المجلس لإكمال ملفك الشخصي والوصول إلى أدوات العيادة.",
+    "upload": {
+      "title": "اضغط للرفع أو اسحب وأفلت",
+      "hint": "PDF أو JPG أو PNG (بحد أقصى 10 ميغابايت)",
+      "selected": "الملف المختار: {{name}}",
+      "remove": "إزالة"
+    },
+    "form": {
+      "licenseNumber": "رقم الترخيص",
+      "licenseNumberPlaceholder": "مثال: VET-987654321",
+      "issueDate": "تاريخ الإصدار"
+    },
+    "errors": {
+      "licenseRequired": "رقم الترخيص مطلوب.",
+      "fileRequired": "الرجاء رفع مستند الترخيص أو الشهادة."
+    },
+    "actions": {
+      "saveForLater": "الحفظ لوقت لاحق",
+      "submit": "إرسال التحقق"
+    }
+  },
+  "vetPendingApproval": {
+    "title": "الحساب قيد المراجعة",
+    "message": "حسابك المهني قيد المراجعة حالياً للتحقق من الترخيص.",
+    "note": "لا يمكنك إدارة عيادتك أو استقبال الحجوزات حتى تتم موافقة الإدارة. سنُعلمك عبر البريد الإلكتروني عند تحديث حالتك.",
+    "logOut": "تسجيل الخروج",
+    "contactSupport": "تواصل مع الدعم",
+    "applicationIdLabel": "رقم الطلب:"
+  }
+}
+```
+
+## File: backup/before_rag_frontend_integration_2026-08-22/src/i18n/locales/en.json
+```json
+{
+  "header": {
+    "nav": {
+      "home": "Home",
+      "adoption": "Adoption",
+      "shop": "Shop",
+      "vets": "Vets",
+      "aiChecker": "AI Checker"
+    },
+    "switchLanguage": "Switch Language",
+    "userMenu": "User Menu",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "adopter": {
+    "header": {
+      "logoAlt": "Pet Haven Logo",
+      "navigation": "Pet adopter navigation",
+      "nav": {
+        "dashboard": "Dashboard",
+        "store": "Store",
+        "adoption": "Adoption",
+        "health": "Health",
+        "vets": "Vets"
+      },
+      "language": "Language",
+      "languages": {
+        "english": "English",
+        "arabic": "Arabic"
+      },
+      "userMenu": "User Menu",
+      "avatarAlt": "{{name}} profile picture",
+      "defaultUser": "Pet Adopter",
+      "profile": "Profile",
+      "logout": "Log out",
+      "cart": "Cart",
+      "notifications": "Notifications",
+      "notificationsUnavailable": "Notifications are unavailable because the backend does not provide them yet",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "common": {
+      "close": "Close",
+      "pet": "Pet",
+      "ageYears": "{{count}} year",
+      "ageYears_other": "{{count}} years",
+      "genders": {
+        "female": "Female",
+        "male": "Male"
+      },
+      "stages": {
+        "puppy": "Puppy",
+        "adult": "Adult",
+        "young": "Young",
+        "senior": "Senior"
+      },
+      "healthStatuses": {
+        "healthy": "Healthy",
+        "good": "Good",
+        "excellent": "Excellent",
+        "needs_attention": "Needs Attention",
+        "under_treatment": "Under Treatment",
+        "warning": "Needs Attention"
+      },
+      "petTraits": {
+        "available": "Available",
+        "healthy": "Healthy",
+        "good": "Good",
+        "dog": "Dog",
+        "cat": "Cat"
+      }
+    },
+    "profile": {
+      "loading": "Loading your profile…",
+      "loadError": "We couldn't load your profile.",
+      "retry": "Try Again",
+      "backToDashboard": "Back to Dashboard",
+      "title": "My Profile",
+      "subtitle": "Manage your personal information and adoption preferences.",
+      "photo": {
+        "title": "Profile Photo",
+        "upload": "Upload Photo",
+        "change": "Change Photo",
+        "hint": "JPG or PNG. The preview is stored only for this session until photo upload is supported."
+      },
+      "personal": {
+        "title": "Personal Information",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "Enter your full name",
+        "email": "Email",
+        "emailHint": "Email cannot be changed here.",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter your phone number",
+        "address": "Address",
+        "addressPlaceholder": "Enter your address"
+      },
+      "preferences": {
+        "title": "Adoption Preferences",
+        "housingType": "Housing Type",
+        "selectHousing": "Select housing type",
+        "housingOptions": {
+          "Apartment": "Apartment",
+          "Department": "Department",
+          "House": "House",
+          "Villa": "Villa"
+        },
+        "experienceLevel": "Experience Level",
+        "selectExperience": "Select experience level",
+        "experienceOptions": {
+          "Beginner": "Beginner",
+          "Intermediate": "Intermediate",
+          "Expert": "Expert"
+        },
+        "freeHours": "Free Hours Per Day",
+        "freeHoursHint": "How many hours can you dedicate to pet care each day?"
+      },
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "saving": "Saving…",
+      "saveSuccess": "Your profile was updated successfully.",
+      "saveError": "We couldn't update your profile. Please try again."
+    },
+    "dashboard": {
+      "loading": "Loading your dashboard…",
+      "loadError": "Unable to load the dashboard: {{message}}",
+      "retry": "Try again",
+      "profileLoading": "Loading your profile…",
+      "profileUnavailable": "Your profile name is temporarily unavailable.",
+      "welcomeGeneric": "Welcome back!",
+      "welcome": "Welcome back, {{name}}!",
+      "kpis": {
+        "pendingAdoptions": "Pending Adoptions",
+        "adoptedPets": "Adopted Pets",
+        "recentOrders": "Store Orders"
+      },
+      "wallet": {
+        "title": "My Wallet",
+        "balanceLabel": "Available balance",
+        "description": "Use your wallet balance for Pet Haven store purchases.",
+        "loading": "Loading balance…",
+        "unavailable": "Unavailable",
+        "loadError": "We couldn't load your wallet balance.",
+        "shopNow": "Shop now"
+      },
+      "milestone": {
+        "title": "Adoption Milestone",
+        "text": "It's been {{days}} days since you adopted {{petName}}. Please share an update photo to reassure the center.",
+        "uploadNow": "Upload Update Now",
+        "resolvingRequest": "Preparing report…",
+        "dismiss": "Dismiss",
+        "missingRequest": "We couldn't find the adoption request linked to this pet.",
+        "requestLookupError": "We couldn't verify the adoption request for this pet.",
+        "reportSuccess": "Your pet update was sent successfully.",
+        "reportError": "We couldn't send the pet update."
+      },
+      "quickActions": {
+        "browseAnimals": {
+          "title": "Browse Animals",
+          "description": "Find your new best friend."
+        },
+        "aiDiagnosis": {
+          "title": "Smart AI Diagnosis",
+          "description": "Run a quick health check for your pet."
+        },
+        "bookVet": {
+          "title": "Book a Vet Visit",
+          "description": "Schedule a professional consultation."
+        }
+      },
+      "calendar": {
+        "careTitle": "Pet Care Calendar",
+        "loading": "Loading upcoming appointments…",
+        "loadError": "Unable to load appointments: {{message}}",
+        "emptyTitle": "No upcoming appointments",
+        "emptyText": "Your scheduled vet visits will appear here.",
+        "unknownVet": "Veterinarian",
+        "unknownStatus": "Scheduled",
+        "noReason": "No reason provided",
+        "bookVisit": "Book a vet visit"
+      },
+      "pets": {
+        "title": "My Pets",
+        "count": "{{count}} pet",
+        "count_other": "{{count}} pets",
+        "loading": "Loading pets…",
+        "loadError": "Unable to load pets: {{message}}",
+        "emptyTitle": "You haven't adopted any pets yet",
+        "emptyText": "Once you adopt a pet, it will appear here so you can track its care, vaccines, and more.",
+        "browse": "Browse pets available for adoption →",
+        "adoptedFrom": "Adopted from {{center}}",
+        "details": "View",
+        "viewProfile": "View {{name}}'s profile"
+      },
+      "wishlist": {
+        "title": "Wishlist",
+        "count": "{{count}} item",
+        "count_other": "{{count}} items",
+        "loading": "Loading your wishlist…",
+        "loadError": "Unable to load your wishlist: {{message}}",
+        "emptyTitle": "Your wishlist is empty",
+        "emptyText": "Items you save will appear here so you can find them easily later.",
+        "explore": "Explore the store",
+        "browseStore": "Browse more products →",
+        "priceUnavailable": "Price unavailable",
+        "viewProduct": "View {{name}}"
+      },
+      "milestoneModal": {
+        "close": "Close modal",
+        "title": "Share a Milestone Photo",
+        "description": "Help us celebrate {{petName}}'s adoption anniversary by sharing a quick update with the center.",
+        "healthStatus": "Health status",
+        "healthOptions": {
+          "healthy": "Healthy",
+          "good": "Good",
+          "needsAttention": "Needs attention"
+        },
+        "imageUrl": "Photo URL",
+        "imageUrlPlaceholder": "https://example.com/pet-update.jpg",
+        "imageUrlHint": "Enter a direct image URL. File upload is not available because there is no upload endpoint.",
+        "note": "Add a quick note",
+        "optional": "Optional",
+        "notePlaceholder": "How has life been with your pet?",
+        "cancel": "Cancel",
+        "sending": "Sending…",
+        "send": "Send Update"
+      }
+    },
+    "adoptionHub": {
+      "title": "Adoption Hub",
+      "subtitle": "Find your perfect companion or manage your adoption requests and success stories.",
+      "tabs": {
+        "catalog": "Pet Catalog",
+        "requests": "My Requests"
+      },
+      "loadingPets": "Loading pets…",
+      "petsError": "Unable to load pets. Please try again.",
+      "retry": "Try again",
+      "noQuizMatches": "We found recommendations, but no pets from the suggested breeds are currently available.",
+      "quizError": "Unable to get quiz recommendations.",
+      "applicationSuccess": "Your adoption application was sent successfully!",
+      "applicationError": "Unable to send your adoption application. Please try again.",
+      "ageYears": "{{count}} year",
+      "ageYears_other": "{{count}} years",
+      "available": "Available",
+      "banner": {
+        "badge": "Compatibility Quiz",
+        "title": "Find Your Perfect Match",
+        "text": "Take our 2-minute compatibility quiz to discover pets that fit your lifestyle and home.",
+        "start": "Start Quiz"
+      },
+      "catalog": {
+        "title": "All Available Pets",
+        "search": "Search breeds or names…",
+        "searchLabel": "Search available pets",
+        "filters": "Filters",
+        "results": "{{count}} pet",
+        "results_other": "{{count}} pets",
+        "species": "Species",
+        "gender": "Gender",
+        "healthStatus": "Health status",
+        "center": "Adoption center",
+        "allSpecies": "All species",
+        "allGenders": "All genders",
+        "allHealthStatuses": "All health statuses",
+        "sortBy": "Sort by",
+        "sortNameAsc": "Name: A–Z",
+        "sortNameDesc": "Name: Z–A",
+        "sortAgeAsc": "Age: youngest first",
+        "sortAgeDesc": "Age: oldest first",
+        "paginationLabel": "Pet catalog pages",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} of {{pageCount}}",
+        "empty": "No available pets were returned by the backend.",
+        "noMatches": "No pets match your search and filters.",
+        "clearFilters": "Clear filters",
+        "notProvided": "Not provided",
+        "viewProfile": "View Details",
+        "adoptNow": "Adopt Now"
+      },
+      "recommended": {
+        "title": "Recommended for You",
+        "match": "{{percent}}% Match",
+        "viewProfile": "View Profile",
+        "adoptNow": "Adopt Now"
+      },
+      "requests": {
+        "title": "Adoption Request Status",
+        "loading": "Loading your adoption requests…",
+        "loadError": "Unable to load your adoption requests.",
+        "empty": "You have not submitted any adoption requests.",
+        "requestedOn": "Requested on {{date}}",
+        "dateUnavailable": "Date unavailable",
+        "score": "Application score: {{score}}",
+        "centerNotes": "Center notes: {{notes}}",
+        "statuses": {
+          "pending": "Pending Review",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "actions": {
+          "viewDetails": "View Details",
+          "feedback": "Feedback"
+        }
+      },
+      "adoptedPets": {
+        "title": "My Adopted Pets",
+        "loading": "Loading adopted pets…",
+        "loadError": "Unable to load adopted pets.",
+        "empty": "You do not have any adopted pets yet.",
+        "viewDetails": "View Pet Details"
+      },
+      "quiz": {
+        "closeQuiz": "Close quiz",
+        "close": "Close",
+        "kicker": "Compatibility Quiz",
+        "title": "Find Your Perfect Match",
+        "description": "Answer these lifestyle questions and Pet Haven will find suitable breeds using the recommendation service.",
+        "questions": {
+          "housing_type": "What type of home do you live in?",
+          "outdoor_space": "How much outdoor space do you have?",
+          "family_type": "Who lives in your household?",
+          "hours_available": "How much time can you spend with a pet each day?",
+          "weekend_time": "How much free time do you usually have on weekends?",
+          "experience_level": "What is your pet-care experience level?",
+          "training_ability": "How much training can you provide?",
+          "activity_level": "How active is your lifestyle?",
+          "noise_tolerance": "What is your tolerance for pet noise?",
+          "budget_level": "What budget level can you dedicate to pet care?",
+          "maintenance_tolerance": "How much daily maintenance are you comfortable with?",
+          "size_preference": "What pet size do you prefer?",
+          "grooming_tolerance": "How much grooming are you comfortable doing?",
+          "energy_preference": "What energy level do you prefer in a pet?",
+          "affection_preference": "How affectionate would you like your pet to be?"
+        },
+        "options": {
+          "apartment": "Apartment",
+          "house": "House",
+          "condo": "Condo",
+          "farm": "Farm",
+          "none": "None",
+          "small": "Small",
+          "medium": "Medium",
+          "large": "Large",
+          "single": "Single",
+          "couple": "Couple",
+          "family_with_children": "Family with children",
+          "low": "Low",
+          "high": "High",
+          "beginner": "Beginner",
+          "intermediate": "Intermediate",
+          "expert": "Expert",
+          "independent": "Independent",
+          "balanced": "Balanced",
+          "very_affectionate": "Very affectionate"
+        },
+        "stepTitles": {
+          "home": "Your Home",
+          "lifestyle": "Your Lifestyle",
+          "preferences": "Pet Preferences"
+        },
+        "stepOf": "Step {{current}} of {{total}}",
+        "back": "Back",
+        "next": "Next",
+        "recommendedType": "Your recommended pet type: {{animalType}}",
+        "pet": "Pet",
+        "resultSource": "These recommendations came directly from the recommendation service.",
+        "match": "{{percent}}% match",
+        "viewMatches": "View Matching Pets",
+        "cancel": "Cancel",
+        "finding": "Finding Matches…",
+        "getMatches": "Get My Matches"
+      },
+      "application": {
+        "title": "Adoption Application",
+        "subtitleWithPet": "You're one step closer to bringing {{petName}} home.",
+        "subtitle": "You're one step closer to finding a lifelong companion.",
+        "close": "Close",
+        "adopterProfile": "Adoption Profile",
+        "housingType": "Housing type",
+        "selectHousingType": "Select housing type",
+        "house": "House",
+        "apartment": "Apartment",
+        "otherHousing": "Other",
+        "experienceLevel": "Pet-care experience",
+        "selectExperience": "Select experience level",
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "expert": "Expert",
+        "freeHours": "Free hours per day",
+        "hasPetBefore": "I have cared for a pet before",
+        "basicInfo": "Basic Information",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "John Doe",
+        "phone": "Phone Number",
+        "phonePlaceholder": "+1 (555) 000-0000",
+        "email": "Email Address",
+        "emailPlaceholder": "john@example.com",
+        "dob": "Date of Birth",
+        "previousExperience": "Do you have previous experience with adoption?",
+        "identity": "Proof of Identity",
+        "identityUpload": "Click or drag a photo ID or passport to upload",
+        "identityHint": "PDF, JPG, or PNG (max. 5MB)",
+        "references": "Personal References",
+        "reference": "Reference {{number}}",
+        "namePlaceholder": "Name",
+        "referencePhonePlaceholder": "Phone",
+        "notes": "Additional Notes (Optional)",
+        "notesPlaceholder": "Tell us why you want to adopt this pet or about any special requirements…",
+        "consents": "Mandatory Consents",
+        "termsConsent": "I agree to the adoption terms and privacy policy.",
+        "careConsent": "I commit to the lifelong care and well-being of this animal.",
+        "visitConsent": "I consent to a home visit by Pet Haven staff before final delivery.",
+        "followUpConsent": "I commit to uploading a health and well-being report every 6 months as part of the post-adoption follow-up program.",
+        "cancel": "Cancel",
+        "submitting": "Submitting…",
+        "submit": "Submit Application"
+      }
+    },
+    "applicationDetails": {
+      "back": "Back to My Requests",
+      "title": "Application Details",
+      "reference": "Reference #{{id}}",
+      "loading": "Loading application details…",
+      "retry": "Try again",
+      "loadErrorTitle": "Unable to load this request",
+      "loadError": "The request could not be loaded.",
+      "notFoundTitle": "Request not found",
+      "notFound": "This adoption request does not exist.",
+      "forbiddenTitle": "Access denied",
+      "forbidden": "This adoption request belongs to another adopter.",
+      "notProvided": "Not provided",
+      "invalidRequestTitle": "Invalid request",
+      "invalidRequest": "This application-details link does not contain a valid request ID.",
+      "statuses": {
+        "pending": "Pending Review",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "fields": {
+        "species": "Species",
+        "breed": "Breed",
+        "age": "Age",
+        "gender": "Gender",
+        "healthStatus": "Health status",
+        "center": "Adoption center"
+      },
+      "request": {
+        "title": "Request information",
+        "submittedAt": "Submitted at",
+        "score": "Application score",
+        "status": "Backend status",
+        "centerNotes": "Center notes"
+      },
+      "animal": {
+        "match": "{{percent}}% Match",
+        "yearsOld": "{{count}} Years Old",
+        "viewProfile": "View Profile",
+        "imageAlt": "{{name}}, a {{breed}}"
+      },
+      "bottomNav": {
+        "home": "Home",
+        "adopt": "Adopt",
+        "shop": "Shop",
+        "health": "AI Health"
+      }
+    },
+    "petProfile": {
+      "back": "Back",
+      "backToCatalog": "Back to Pet Catalog",
+      "loading": "Loading pet details…",
+      "loadError": "Unable to load this pet's details.",
+      "missingId": "No pet was selected.",
+      "notFound": "This pet could not be found.",
+      "browsePets": "Browse available pets",
+      "notProvided": "Not provided",
+      "adopt": "Adopt Now",
+      "center": "Adoption Center",
+      "description": "About this pet",
+      "imageAlt": "{{name}}, a {{breed}}",
+      "tabs": {
+        "medical": "Medical History",
+        "vaccinations": "Vaccinations"
+      },
+      "noVaccinations": "No vaccination records yet.",
+      "vaccinationsPlaceholder": "Vaccination records will appear here.",
+      "editProfile": "Edit Profile",
+      "age": "Age",
+      "weight": "Weight",
+      "weightValue": "{{value}} kg",
+      "sex": "Sex",
+      "medicalTimeline": "Medical Timeline",
+      "upcoming": "Upcoming",
+      "addAppointment": "Add appointment",
+      "health": {
+        "Healthy": "Healthy"
+      },
+      "medicalEntries": {
+        "annualTitle": "Annual Checkup",
+        "annualDate": "Oct 12, 2023",
+        "annualDescription": "General wellness exam. Weight is stable. Dental health is good; continuing the current diet was recommended.",
+        "earTitle": "Minor Ear Infection",
+        "earDate": "Jul 04, 2023",
+        "earDescription": "Otomax drops were prescribed for 7 days. Follow-up confirmed recovery."
+      },
+      "appointment": {
+        "title": "Dental Cleaning",
+        "month": "Nov",
+        "location": "Pet Haven Clinic"
+      }
+    },
+    "store": {
+      "hero": {
+        "tag": "Spring Sale Event",
+        "title": "Pet Care Essentials",
+        "description": "Stock up on premium nutrition, engaging toys, and wellness products. Enjoy up to 30% off selected brands.",
+        "cta": "Shop Now",
+        "imageAlt": "Happy pets together"
+      },
+      "trust": {
+        "shipping": {
+          "title": "Fast, Free Delivery",
+          "description": "On orders over $50"
+        },
+        "vet": {
+          "title": "Vet-Approved",
+          "description": "Expertly curated selection"
+        },
+        "returns": {
+          "title": "Easy Returns",
+          "description": "30-day money-back guarantee"
+        }
+      },
+      "categories": {
+        "title": "Shop by Category",
+        "clear": "Clear filter"
+      },
+      "messages": {
+        "loginRequired": "You must be logged in.",
+        "addedToCart": "Added to cart successfully.",
+        "cartError": "Unable to add the product. Please try again later.",
+        "addedToWishlist": "Added to your wishlist successfully.",
+        "removedFromWishlist": "Removed from your wishlist successfully.",
+        "wishlistError": "Unable to update your wishlist."
+      },
+      "loadingProducts": "Loading products…",
+      "productsError": "We couldn't load the products. Please try again.",
+      "emptyProducts": "No products match the selected filters.",
+      "results": "Showing {{from}}-{{to}} of {{total}} products",
+      "sort": {
+        "label": "Sort by:",
+        "popular": "Most Popular",
+        "priceAsc": "Price: Low to High",
+        "priceDesc": "Price: High to Low",
+        "rating": "Highest Rated",
+        "newest": "Newest Arrivals"
+      },
+      "sidebar": {
+        "filters": "Filters",
+        "openFilters": "Open filters",
+        "closeFilters": "Close filters",
+        "clearAll": "Clear All",
+        "categories": "Categories",
+        "priceRange": "Price Range",
+        "min": "Min",
+        "max": "Max",
+        "minPrice": "Minimum price",
+        "maxPrice": "Maximum price",
+        "brands": "Brands",
+        "orders": "My Orders"
+      },
+      "productCard": {
+        "addToCart": "Add to cart",
+        "wishlist": "Toggle wishlist",
+        "save": "Save {{percent}}%",
+        "lowStock": "Low Stock",
+        "imageUnavailable": "Image unavailable"
+      },
+      "order": {
+        "imageAlt": "Order item",
+        "statuses": {
+          "Pending": "Pending",
+          "Processing": "Processing",
+          "Shipped": "Shipped",
+          "Completed": "Completed",
+          "Cancelled": "Cancelled",
+          "Delivered": "Delivered"
+        }
+      }
+    },
+    "product": {
+      "backToStore": "Back to Store",
+      "detailsTitle": "Product Details",
+      "loading": "Loading product…",
+      "loadError": "Couldn't load product details.",
+      "reviews": "{{rating}}/5 ({{count}} reviews)",
+      "loginRequired": "Please sign in before adding a product to your cart.",
+      "addError": "Something went wrong. Please try again.",
+      "adding": "Adding…",
+      "addToCart": "Add to Cart",
+      "addSuccess": "Product added to your cart.",
+      "noDescription": "No description is available for this product.",
+      "imageUnavailable": "Product image unavailable",
+      "inStock": "{{count}} in stock",
+      "outOfStock": "Out of stock",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "vetApproved": "Vet-Approved",
+      "galleryLoading": "Loading gallery…",
+      "galleryError": "Couldn't load product images.",
+      "imageAlt": "Product image",
+      "bestseller": "Bestseller",
+      "thumbnailAlt": "Product thumbnail {{number}}",
+      "review": {
+        "title": "Ratings & Reviews",
+        "subtitle": "Share your experience and help other pet adopters choose confidently.",
+        "reviewCount": "{{count}} review",
+        "reviewCount_other": "{{count}} reviews",
+        "formTitle": "Write a review",
+        "selectRating": "Select your rating",
+        "starLabel": "{{count}} star",
+        "starLabel_other": "{{count}} stars",
+        "commentLabel": "Your comment",
+        "optional": "Optional",
+        "commentPlaceholder": "What did you like or dislike about this product?",
+        "characterCount": "{{count}}/{{max}} characters",
+        "submit": "Submit review",
+        "submitting": "Submitting…",
+        "success": "Your review was submitted successfully.",
+        "ratingRequired": "Please select a star rating.",
+        "loginRequired": "Please sign in with an adopter account to submit a review.",
+        "alreadyRated": "You have already reviewed this product.",
+        "submitError": "We couldn't submit your review. Please try again.",
+        "loading": "Loading reviews…",
+        "loadError": "We couldn't load the reviews.",
+        "empty": "No reviews yet. Be the first to review this product.",
+        "anonymous": "Pet Adopter"
+      },
+      "accordion": {
+        "ingredients-nutrition": {
+          "title": "Ingredients & Nutrition",
+          "description": "Made with high-quality real salmon as the first ingredient, this grain-free kibble provides essential amino acids for strong muscles. Sweet potatoes and peas provide digestible energy alongside vitamins, minerals, and antioxidants.",
+          "facts": [
+            {
+              "label": "Crude Protein (min)",
+              "value": "30%"
+            },
+            {
+              "label": "Crude Fat (min)",
+              "value": "15%"
+            },
+            {
+              "label": "Crude Fiber (max)",
+              "value": "4.5%"
+            },
+            {
+              "label": "Moisture (max)",
+              "value": "10%"
+            }
+          ]
+        },
+        "feeding-guide": {
+          "title": "Feeding Guide",
+          "description": "Adjust feeding amounts to maintain an optimal weight. Ask your veterinarian if you are unsure. Transition over 7 days by gradually increasing the new food and decreasing the old food."
+        },
+        "storage-instructions": {
+          "title": "Storage Instructions",
+          "description": "Store in a cool, dry place. Keep the bag securely sealed after opening to maintain freshness and protect it from pests."
+        }
+      }
+    },
+    "cart": {
+      "loading": "Loading your cart…",
+      "retry": "Try again",
+      "empty": "Your cart is empty.",
+      "emptyDescription": "You haven't added any products yet. Browse the store to find something your pet will love.",
+      "browseStore": "Browse Store",
+      "backToStore": "Back to store",
+      "title": "Your Cart",
+      "itemCount": "{{count}} items",
+      "remove": "Remove",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity",
+      "loginRequired": "Please sign in to view your cart.",
+      "signIn": "Sign in",
+      "summary": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Estimated Shipping",
+      "tax": "Estimated Tax",
+      "total": "Total",
+      "checkout": "Proceed to Checkout",
+      "clear": "Clear cart",
+      "secure": "Secure SSL Encrypted Checkout"
+    },
+    "checkout": {
+      "loading": "Loading checkout…",
+      "cartEmpty": "Your cart is empty.",
+      "paymentFailed": "Order #{{orderId}} was created, but payment failed: {{message}}",
+      "goBack": "Go back",
+      "title": "Secure Checkout",
+      "encryption": "256-bit SSL encryption applied.",
+      "paymentMethod": "Payment Method",
+      "shamCashLogo": "ShamCash logo",
+      "cardNumber": "Card Number",
+      "expiryDate": "Expiry Date",
+      "expiryPlaceholder": "MM / YY",
+      "cvv": "CVV",
+      "nameOnCard": "Name on Card",
+      "namePlaceholder": "John Doe",
+      "summary": "Order Summary",
+      "quantity": "Qty: {{count}}",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "taxes": "Taxes",
+      "total": "Total",
+      "processing": "Processing…",
+      "retryPayment": "Retry Payment",
+      "payNow": "Pay Now",
+      "secure": "Secure SSL Encrypted Checkout",
+      "terms": "By clicking “Pay Now”, you agree to our Terms of Service and Privacy Policy."
+    },
+    "orders": {
+      "loading": "Loading order…",
+      "loadError": "Unable to load this order.",
+      "summary": "Order Summary",
+      "confirmed": "Order Confirmed!",
+      "thankYou": "Thank you for your order, {{name}}!",
+      "thankYouGeneric": "Thank you for your order!",
+      "number": "Order #{{number}}",
+      "copyNumber": "Copy order number",
+      "estimatedDelivery": "Estimated Delivery",
+      "deliveryPending": "Delivery estimate pending",
+      "shippingAddress": "Shipping Address",
+      "addressUnavailable": "Shipping address unavailable",
+      "size": "Size: {{value}}",
+      "color": "Color: {{value}}",
+      "quantity": "Qty: {{count}}",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "taxes": "Taxes",
+      "total": "Total",
+      "continueShopping": "Continue Shopping",
+      "viewHistory": "View Order History",
+      "details": "Order Details",
+      "close": "Close order details",
+      "orderId": "Order ID",
+      "datePlaced": "Date Placed",
+      "itemsTitle": "Items in this Order",
+      "itemCount": "{{count}} items",
+      "downloadInvoice": "Download Invoice",
+      "buyAgain": "Buy Again",
+      "statuses": {
+        "Pending": "Pending",
+        "Processing": "Processing",
+        "Shipped": "Shipped",
+        "Completed": "Completed",
+        "Cancelled": "Cancelled",
+        "Delivered": "Delivered"
+      },
+      "shippingTypes": {
+        "standard_shipping": "Standard Shipping",
+        "express_shipping": "Express Shipping",
+        "free_shipping": "Free Shipping"
+      }
+    },
+    "health": {
+      "historyTitle": "Chat sessions",
+      "sessionsTitle": "Chat sessions",
+      "newChat": "New chat",
+      "recentChats": "Recent chats",
+      "noSessions": "No chat sessions yet.",
+      "now": "Now",
+      "moreOptions": "More options",
+      "attach": "Attach a file",
+      "placeholder": "Ask about your pet's health…",
+      "send": "Send message",
+      "disclaimer": "This assistant does not replace professional veterinary care.",
+      "emptyTitle": "How can I help with your pet today?",
+      "emptyDescription": "Describe a symptom, behavior, or health concern to start a conversation.",
+      "assistant": {
+        "name": "Health Assistant",
+        "status": "Online"
+      },
+      "history": {
+        "1": {
+          "title": "Daisy's Limp",
+          "type": "AI Check",
+          "date": "Oct 12"
+        },
+        "2": {
+          "title": "Luna's Sneezing",
+          "type": "Vet Visit",
+          "date": "Sep 5"
+        },
+        "3": {
+          "title": "Annual Boosters",
+          "type": "Routine",
+          "date": "Aug 20"
+        }
+      },
+      "pets": {
+        "daisy": {
+          "breed": "Beagle"
+        },
+        "luna": {
+          "breed": "Mixed Cat"
+        }
+      },
+      "messages": {
+        "1": "Hi! I'm here to help you check on Daisy. Can you describe what you've noticed about her limp?",
+        "2": "She started limping on her back right leg this morning after her walk. She still eats fine and seems happy otherwise."
+      }
+    },
+    "vets": {
+      "retry": "Try again",
+      "tabs": {
+        "book": "Book an Appointment",
+        "visits": "My Visits"
+      },
+      "hub": {
+        "eyebrow": "Veterinary care",
+        "title": "Find a Veterinarian",
+        "subtitle": "Discover trusted professional veterinary care near you and book an appointment with a verified clinic.",
+        "searchPlaceholder": "Search by vet, clinic, address, or specialization...",
+        "useLocation": "Use my location",
+        "locating": "Locating…",
+        "locationReady": "Location ready",
+        "locationUnsupported": "Location is not supported by this browser.",
+        "locationDenied": "Location permission was denied. You can still search and sort without distance.",
+        "locationUnavailable": "Your location could not be determined. Please try again.",
+        "locationPlaceholder": "Location e.g. Mezzeh",
+        "search": "Search",
+        "all": "All",
+        "availableToday": "Available Today",
+        "myAppointments": "My Appointments",
+        "sortBy": "Sort by:",
+        "highestRated": "Highest Rated",
+        "nearest": "Nearest",
+        "experienced": "Most Experienced",
+        "loading": "Loading veterinarians…",
+        "empty": "No veterinarians match your search.",
+        "whyTitle": "Why Choose Our Vets",
+        "values": {
+          "verified": {
+            "title": "Verified Professionals",
+            "text": "Every veterinarian is reviewed for licensing and clinic readiness."
+          },
+          "facilities": {
+            "title": "Modern Facilities",
+            "text": "Partner clinics provide routine care, diagnostics, and treatment planning."
+          },
+          "ai": {
+            "title": "AI-Powered Diagnostics",
+            "text": "Clinical workflows can pair with smart symptom insights where available."
+          }
+        },
+        "storiesTitle": "Recent Success Stories",
+        "storyText": "Fast scheduling, clear care instructions, and a calm clinic experience."
+      },
+      "card": {
+        "verified": "Verified",
+        "notRated": "Not rated",
+        "experience": "{{years}} years experience",
+        "license": "License {{license}}",
+        "clinicUnavailable": "Clinic information not provided",
+        "addressUnavailable": "Clinic address not provided",
+        "specializationUnavailable": "Specialization not provided",
+        "away": "{{distance}} km away",
+        "requestAppointment": "Request Appointment"
+      },
+      "visits": {
+        "title": "My Visits",
+        "subtitle": "Appointment access for your adopter account.",
+        "loading": "Loading visits…",
+        "upcoming": "Upcoming Appointments",
+        "cancelledSuccess": "Appointment cancelled successfully.",
+        "booked": "Appointment request #{{id}} was submitted successfully.",
+        "cancelLatest": "Cancel this appointment request",
+        "cancelling": "Cancelling…",
+        "backToVets": "Browse Veterinarians",
+        "history": "Visit History",
+        "showLess": "Show Less",
+        "viewRecords": "View Full Records",
+        "empty": "No visits found. Book your first appointment from the Vet page.",
+        "veterinarian": "Veterinarian",
+        "dateTime": "Date & Time",
+        "reschedule": "Reschedule",
+        "cancel": "Cancel",
+        "cancelled": "Cancelled",
+        "completed": "Completed",
+        "withVet": "{{date}} with {{vet}}",
+        "noUpcoming": "You have no upcoming appointments.",
+        "noHistory": "You have no completed or cancelled appointments.",
+        "details": "Details",
+        "loadingDetails": "Loading appointment details…",
+        "appointmentId": "Appointment ID",
+        "pet": "Pet",
+        "reason": "Reason",
+        "rescheduling": "Rescheduling…",
+        "saveSchedule": "Save new time",
+        "rescheduledSuccess": "Appointment rescheduled successfully.",
+        "rateVet": "Rate Vet",
+        "rating": "Rating",
+        "stars_one": "{{count}} star",
+        "stars_other": "{{count}} stars",
+        "review": "Review (optional)",
+        "submitRating": "Submit review",
+        "submittingRating": "Submitting…",
+        "ratingSuccess": "Your Vet review was submitted successfully."
+      },
+      "booking": {
+        "loading": "Loading appointment…",
+        "back": "Back to Book an Appointment",
+        "petService": "1. Pet & Service",
+        "done": "Done",
+        "edit": "Edit",
+        "selectedPet": "Selected Pet",
+        "petOption": "{{name}} the {{breed}}",
+        "selectedService": "Selected Service",
+        "dateTime": "2. Choose Date & Time",
+        "summary": "Scheduling Summary",
+        "veterinarian": "Veterinarian",
+        "service": "Service",
+        "date": "Date",
+        "time": "Time",
+        "ratingNote": "Ratings and feedback are unlocked only after a completed visit.",
+        "availabilityLoading": "Loading available times…",
+        "availabilityEmpty": "No available appointments on this date.",
+        "availabilityError": "Unable to load available times.",
+        "noPets": "No adopted pets are available for booking",
+        "confirm": "Confirm Booking",
+        "protected": "Your data is protected and secure.",
+        "steps": {
+          "service": "Service",
+          "date": "Date",
+          "confirm": "Confirm"
+        },
+        "services": {
+          "general": "General Consultation",
+          "annual": "Annual Check-up & Vaccinations",
+          "dental": "Dental Care",
+          "emergency": "Emergency Review"
+        },
+        "previousDates": "Previous dates",
+        "nextDates": "Next dates",
+        "weekdays": [
+          "Su",
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr",
+          "Sa"
+        ],
+        "availableTimes": "Available Times",
+        "onDate": "on {{date}}"
+      },
+      "confirm": {
+        "missing": "Appointment details are missing. Please choose a veterinarian and booking time again.",
+        "back": "Back to Book an Appointment",
+        "title": "Review & Confirm",
+        "subtitle": "Please review the details below before finalizing your appointment.",
+        "when": "When",
+        "where": "Where",
+        "patientService": "Patient & Service",
+        "patientMeta": "{{breed}} - {{gender}} - {{age}}",
+        "requestedService": "Requested service",
+        "policyTitle": "Cancellation Policy",
+        "policyText": "You can cancel or reschedule this appointment anytime from My Visits. The clinic does not publish a cancellation deadline, so contact them directly for urgent schedule changes.",
+        "confirming": "Confirming…",
+        "action": "Confirm Appointment"
+      },
+      "statuses": {
+        "Pending": "Pending",
+        "Confirmed": "Confirmed",
+        "Accepted": "Accepted",
+        "Rejected": "Rejected",
+        "Completed": "Completed",
+        "Cancelled": "Cancelled"
+      },
+      "notScheduled": "Not scheduled"
+    }
+  },
+  "hero": {
+    "badge": "Your Pet's Best Life Starts Here",
+    "titlePrefix": "Every Paw Deserves a ",
+    "titleHighlight": "Happy Haven.",
+    "description": "The all-in-one platform for pet adoption, supplies, veterinary care, and AI-powered health insights. Experience a seamless journey for you and your furry companions.",
+    "ctaAdopt": "Adopt a Friend",
+    "ctaShop": "Shop Supplies",
+    "stats": [
+      {
+        "value": "500+",
+        "label": "Pets Adopted"
+      },
+      {
+        "value": "4.9/5",
+        "label": "Top Rated Vets"
+      }
+    ],
+    "imageAlt": "A happy golden retriever running through a sunny green park.",
+    "badgeTitle": "AI Health Checked",
+    "badgeSubtitle": "100% Safe & Healthy"
+  },
+  "impactStats": {
+    "items": [
+      {
+        "value": "12,000+",
+        "label": "Pets Rescued"
+      },
+      {
+        "value": "2,500+",
+        "label": "Verified Vets"
+      },
+      {
+        "value": "98%",
+        "label": "Happy Rehoming"
+      }
+    ]
+  },
+  "categories": {
+    "title": "Everything You Need",
+    "items": [
+      {
+        "title": "Adopt a Pet",
+        "description": "Find your perfect companion from local shelters."
+      },
+      {
+        "title": "Pet Supplies",
+        "description": "High-quality food, toys, and accessories for your pet."
+      },
+      {
+        "title": "Vet Consults",
+        "description": "Book appointments with top-rated local veterinarians."
+      },
+      {
+        "title": "AI Health Checker",
+        "description": "Get instant AI-powered health insights for peace of mind."
+      }
+    ]
+  },
+  "featuredPets": {
+    "title": "Meet Your New Best Friend",
+    "viewAll": "View all pets →",
+    "cta": "View Profile",
+    "pets": [
+      {
+        "name": "Buddy",
+        "meta": "2 yrs • Beagle Mix",
+        "alt": "Beagle puppy"
+      },
+      {
+        "name": "Luna",
+        "meta": "1 yr • Domestic Shorthair",
+        "alt": "Orange tabby cat"
+      },
+      {
+        "name": "Charlie",
+        "meta": "3 mos • Golden Retriever",
+        "alt": "Golden Retriever puppy"
+      },
+      {
+        "name": "Milo",
+        "meta": "4 yrs • Maine Coon",
+        "alt": "Maine Coon cat"
+      }
+    ]
+  },
+  "trendingProducts": {
+    "title": "Trending in Shop",
+    "viewAll": "View all products →",
+    "sale": "Sale",
+    "addToCart": "Add to cart",
+    "products": [
+      {
+        "name": "Premium Kibble",
+        "alt": "Premium Pet Food"
+      },
+      {
+        "name": "Tough Chew Bone",
+        "alt": "Interactive Dog Toy"
+      },
+      {
+        "name": "GPS Tracker Collar",
+        "alt": "Smart Pet Collar"
+      },
+      {
+        "name": "Luxury Cat Tower",
+        "alt": "Cat Tree"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "steps": [
+      {
+        "title": "Search",
+        "description": "Browse through hundreds of verified pets looking for a home."
+      },
+      {
+        "title": "Connect",
+        "description": "Reach out to shelters and arrange a meet-and-greet."
+      },
+      {
+        "title": "Bring Home",
+        "description": "Complete the adoption process and welcome your new friend."
+      }
+    ]
+  },
+  "events": {
+    "title": "Upcoming Pet Events",
+    "viewAll": "View full calendar →",
+    "items": [
+      {
+        "title": "Mega Adoption Drive",
+        "time": "10:00 AM - 4:00 PM",
+        "location": "Central Park Pavilion",
+        "cta": "Learn more"
+      },
+      {
+        "title": "Puppy Training Workshop",
+        "time": "1:00 PM - 3:00 PM",
+        "location": "Pet Haven Center",
+        "cta": "Register now"
+      },
+      {
+        "title": "Senior Pet Care Seminar",
+        "time": "6:00 PM - 7:30 PM",
+        "location": "Online Webinar",
+        "cta": "RSVP"
+      }
+    ]
+  },
+  "vet": {
+    "badge": "Certified Care",
+    "titlePrefix": "Meet Our ",
+    "titleHighlight": "Certified Veterinary Experts.",
+    "description": "Your pet's health is in safe hands. Every veterinarian on our platform is strictly certified because their qualifications have been meticulously verified for high-quality care.",
+    "features": [
+      "Background Checked",
+      "License Verified",
+      "Top-Rated Facilities"
+    ],
+    "cta": "Find a Vet Near You",
+    "imageAlt": "Professional female veterinarian in a modern clinic"
+  },
+  "blog": {
+    "title": "Health & Care Tips",
+    "viewAll": "Read more articles →",
+    "readArticle": "Read article",
+    "articles": [
+      {
+        "tag": "Seasonal Care",
+        "title": "Summer Pet Care: Keeping Your Furry Friend Cool",
+        "description": "Essential tips to prevent heatstroke and ensure your pet stays comfortable during the hot summer months.",
+        "alt": "Dog panting in summer"
+      },
+      {
+        "tag": "Behavior",
+        "title": "Understanding Your Cat's Body Language",
+        "description": "Decode what your feline friend is trying to tell you through their tail movements, ear positions, and posture.",
+        "alt": "Cat looking curiously"
+      },
+      {
+        "tag": "Health",
+        "title": "When to Use the AI Health Checker vs. Visiting a Vet",
+        "description": "A practical guide on utilizing our AI tools for minor concerns and recognizing emergencies that require immediate care.",
+        "alt": "Vet examining dog"
+      },
+      {
+        "tag": "AI Assistant",
+        "title": "Personalized Care with AI Chat",
+        "description": "Chat with our intelligent assistant for instant advice on nutrition, training, and daily wellness habits tailored to your pet."
+      }
+    ]
+  },
+  "testimonials": {
+    "quote": "\"Adopting Bella through Pet Haven was the best decision of our lives. The process was incredibly smooth, and being able to buy all her supplies in the same place saved us so much time!\"",
+    "author": "Sarah J.",
+    "role": "Proud owner of Bella"
+  },
+  "newsletter": {
+    "title": "Join the Haven Community",
+    "description": "Get weekly pet care tips, exclusive shop discounts, and inspiring adoption stories delivered right to your inbox.",
+    "placeholder": "Enter your email address",
+    "cta": "Subscribe",
+    "privacy": "We respect your privacy. No spam, ever."
+  },
+  "footer": {
+    "logoAlt": "Pet Haven Logo",
+    "copyright": "© 2024 Pet Haven. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "contactUs": "Contact Us"
+  },
+  "petModal": {
+    "description": "{{name}} is looking for a loving forever home. Reach out to learn more about adoption steps, health records, and how to schedule a meet-and-greet.",
+    "viewFullProfile": "View Full Profile",
+    "close": "Close"
+  },
+  "productModal": {
+    "description": "A customer favorite with {{reviews}} reviews. Quality checked and ready to ship to your pet's new home.",
+    "addToCart": "Add to Cart",
+    "close": "Close"
+  },
+  "authModal": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "welcomeBack": "Welcome Back",
+    "signInSubtitle": "Sign in to continue to Pet Haven",
+    "joinPetHaven": "Join Pet Haven",
+    "signUpSubtitleStep1": "Create your account and start your journey",
+    "signUpSubtitleStep2": "One last step — pick your role",
+    "googleSignIn": "Sign in with Google",
+    "googleSignUp": "Sign up with Google",
+    "or": "or",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "signingIn": "Signing In...",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "fullNamePlaceholder": "Full Name",
+    "usernamePlaceholder": "Username",
+    "phonePlaceholder": "Phone Number",
+    "next": "Next",
+    "signingUp": "Signing Up...",
+    "iAmA": "I am a...",
+    "back": "Back",
+    "selectRoleError": "Please select your role",
+    "close": "Close",
+    "roles": [
+      {
+        "label": "Pet Adopter",
+        "description": "Find and adopt a pet"
+      },
+      {
+        "label": "Adoption Center",
+        "description": "List pets for adoption"
+      },
+      {
+        "label": "Vet",
+        "description": "Offer veterinary services"
+      },
+      {
+        "label": "Admin",
+        "description": "Manage the platform"
+      }
+    ]
+  },
+  "contactModal": {
+    "title": "Contact Us",
+    "successMessage": "Message sent!",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "Email",
+    "subjectPlaceholder": "Subject",
+    "messagePlaceholder": "Message",
+    "send": "Send",
+    "close": "Close"
+  },
+  "articleModal": {
+    "close": "Close"
+  },
+  "center": {
+    "header": {
+      "logoAlt": "Pet Haven Logo",
+      "nav": {
+        "dashboard": "Dashboard",
+        "adoptions": "Adoptions",
+        "inventory": "Inventory",
+        "vaccinations": "Reports",
+        "reviews": "Reviews"
+      },
+      "language": "Change Language",
+      "notifications": "Notifications",
+      "userMenu": "User Menu",
+      "avatarAlt": "User Avatar",
+      "profileLink": "Profile",
+      "logout": "Logout",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "status": {
+      "Available": "Available",
+      "Pending": "Pending",
+      "Adopted": "Adopted",
+      "Active": "Active",
+      "Inactive": "Inactive",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "Completed": "Completed",
+      "Processing": "Processing",
+      "Due Soon": "Due Soon",
+      "Overdue": "Overdue"
+    },
+    "petOptions": {
+      "species": {
+        "Dog": "Dog",
+        "Cat": "Cat",
+        "Bird": "Bird",
+        "Small Mammal": "Small Mammal",
+        "Other": "Other"
+      },
+      "sizes": {
+        "Small (Under 25 lbs)": "Small (Under 25 lbs)",
+        "Medium (25-60 lbs)": "Medium (25-60 lbs)",
+        "Large (61-100 lbs)": "Large (61-100 lbs)",
+        "Extra Large (Over 100 lbs)": "Extra Large (Over 100 lbs)"
+      },
+      "healthStatuses": {
+        "Healthy": "Healthy",
+        "Minor Issues": "Minor Issues",
+        "Requires Treatment": "Requires Treatment",
+        "Critical": "Critical"
+      },
+      "genders": {
+        "Male": "Male",
+        "Female": "Female",
+        "Unknown": "Unknown"
+      },
+      "ageUnits": {
+        "years": "Years",
+        "months": "Months",
+        "weeks": "Weeks"
+      },
+      "vaccines": {
+        "Rabies": "Rabies",
+        "DHPP": "DHPP",
+        "Bordetella": "Bordetella"
+      }
+    },
+    "productCategories": {
+      "Food": "Food",
+      "Toys": "Toys",
+      "Bedding": "Bedding",
+      "Medical": "Medical"
+    },
+    "profile": {
+      "loading": "Loading center profile…",
+      "backToDashboard": "Back to Dashboard",
+      "title": "Center Profile",
+      "subtitle": "Manage your adoption center's public information, working hours, and operational details.",
+      "basicInfo": {
+        "title": "Basic Information",
+        "centerName": "Center Name",
+        "centerNamePlaceholder": "Your adoption center's name",
+        "licenseNumber": "License Number",
+        "licenseNumberPlaceholder": "Your center's official license number",
+        "phoneNumber": "Phone Number",
+        "phoneNumberPlaceholder": "Contact phone number for adopters",
+        "physicalAddress": "Physical Address",
+        "addressPlaceholder": "Street address, city, and state",
+        "useGps": "Use GPS",
+        "locating": "Locating...",
+        "gpsUnsupported": "Location services are not supported by your browser.",
+        "gpsError": "Could not detect your address. Please enter it manually."
+      },
+      "security": {
+        "title": "Security",
+        "password": "Password",
+        "passwordPlaceholder": "Enter new password",
+        "passwordHint": "Keep your account secure with a strong password."
+      },
+      "mission": {
+        "title": "Mission & Background",
+        "description": "Center Description",
+        "descriptionHint": "Briefly describe your center's mission. Max 500 characters."
+      },
+      "workingHours": {
+        "title": "Working Hours",
+        "closed": "Closed"
+      },
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "saveSuccess": "Center profile updated successfully.",
+      "saveError": "Failed to save changes. Please try again."
+    },
+    "dashboard": {
+      "loading": "Loading dashboard…",
+      "welcome": {
+        "titlePrefix": "Welcome back, ",
+        "defaultName": "Haven Manager",
+        "subtitle": "Here's what's happening at the adoption center today."
+      },
+      "actions": {
+        "exportReport": "Export Report",
+        "addNewPet": "Add New Pet"
+      },
+      "kpi": {
+        "availablePets": "Available Pets",
+        "pendingRequests": "Pending Requests",
+        "successfulAdoptions": "Successful Adoptions",
+        "storeSales": "Store Sales (Today)"
+      },
+      "alerts": {
+        "title": "Alerts & Follow-ups",
+        "subtitle": "Immediate administrative attention required for pet health and compliance.",
+        "vaccinationsDue": "Vaccinations Due",
+        "overdueReports": "Overdue Reports",
+        "contact": "Contact",
+        "sendReminder": "Send Reminder"
+      },
+      "activity": {
+        "title": "Recent Activity",
+        "viewAll": "View all applications",
+        "match": "Match"
+      },
+      "wallet": {
+        "title": "Wallet",
+        "balanceLabel": "Available Balance",
+        "viewAll": "View All Transactions",
+        "noTransactions": "No transactions yet.",
+        "credit": "Credit",
+        "debit": "Debit"
+      },
+      "obligations": {
+        "title": "Completed Obligations",
+        "viewAll": "View All Obligations"
+      },
+      "orders": {
+        "title": "Latest Store Orders",
+        "seeAll": "See all",
+        "columns": {
+          "orderId": "Order ID",
+          "customer": "Customer",
+          "items": "Items",
+          "total": "Total",
+          "status": "Status"
+        }
+      },
+      "export": {
+        "metric": "Metric",
+        "value": "Value",
+        "trend": "Trend"
+      }
+    },
+    "reviews": {
+      "loading": "Loading product reviews…",
+      "header": {
+        "title": "Product Reviews",
+        "subtitle": "Customer feedback on your products"
+      },
+      "overallRating": {
+        "title": "Overall Rating",
+        "basedOn": "Based on {{count}} reviews"
+      },
+      "filters": {
+        "allReviews": "All Reviews",
+        "stars": "{{count}} stars",
+        "searchPlaceholder": "Search by product, reviewer, or comment..."
+      },
+      "card": {
+        "ratingOnly": "Rating only"
+      },
+      "empty": "No product reviews yet.",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "reviewsWord": "reviews"
+      }
+    },
+    "inventory": {
+      "loading": "Loading inventory…",
+      "title": "Inventory Management",
+      "subtitle": {
+        "animals": "Oversee shelter residents and retail supplies.",
+        "products": "Manage adoption center supplies and merchandise."
+      },
+      "addButton": {
+        "animals": "Add New Record",
+        "products": "Add New Product"
+      },
+      "tabs": {
+        "animals": "Animals",
+        "products": "Products"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "entries": "entries",
+        "prev": "Prev",
+        "next": "Next"
+      },
+      "edit": "Edit",
+      "delete": "Delete",
+      "product": {
+        "quickStats": {
+          "title": "Quick Stats",
+          "totalStockValue": "Total Stock Value",
+          "lowStockItems": "Low Stock Items",
+          "totalSalesToday": "Total Sales (Today)"
+        },
+        "categories": {
+          "title": "Categories"
+        },
+        "recentSales": {
+          "title": "Recent Product Sales",
+          "viewAll": "View All Sales"
+        },
+        "toolbar": {
+          "searchPlaceholder": "Search products...",
+          "categoryAll": "All Categories",
+          "ratingAll": "All Ratings",
+          "rating4": "4 Stars & Up",
+          "rating3": "3 Stars & Up",
+          "rating2": "2 Stars & Up"
+        },
+        "columns": {
+          "name": "Product Name",
+          "category": "Category",
+          "inStock": "In Stock",
+          "price": "Price",
+          "rating": "Rating",
+          "actions": "Actions"
+        },
+        "low": "(Low)",
+        "empty": "No products found."
+      },
+      "adoption": {
+        "quickStats": {
+          "title": "Quick Stats",
+          "totalAnimals": "Total Animals",
+          "lowStockAlerts": "Low Stock Alerts",
+          "pendingAdoptions": "Pending Adoptions"
+        },
+        "activeRequests": {
+          "title": "Active Requests"
+        },
+        "recentAdoptions": {
+          "title": "Recent Adoptions",
+          "viewAll": "View All Adoptions",
+          "adoptedOnPrefix": "Adopted"
+        },
+        "toolbar": {
+          "searchPlaceholder": "Search animals by name or breed...",
+          "statusAll": "All Statuses",
+          "ageAll": "All Ages",
+          "ageBaby": "Baby (Under 1 yr)",
+          "ageYoung": "Young (1-3 yrs)",
+          "ageAdult": "Adult (3-7 yrs)",
+          "ageSenior": "Senior (7+ yrs)"
+        },
+        "columns": {
+          "name": "Pet Name",
+          "breed": "Breed",
+          "age": "Age",
+          "arrivalDate": "Arrival Date",
+          "status": "Status",
+          "action": "Action"
+        },
+        "changeStatus": "Change Status",
+        "viewRecord": "View Record",
+        "modal": {
+          "title": "All Recent Adoptions",
+          "searchPlaceholder": "Search by pet or adopter name...",
+          "filter": "Filter",
+          "columns": {
+            "pet": "Pet",
+            "breed": "Breed",
+            "date": "Adoption Date",
+            "adopter": "Adopter"
+          },
+          "close": "Close"
+        }
+      }
+    },
+    "vaccinations": {
+      "loading": "Loading vaccinations…",
+      "header": {
+        "title": "Vaccination & Reports",
+        "subtitle": "Manage immunizations and generate health reports."
+      },
+      "tabs": {
+        "vaccinations": "Vaccinations",
+        "reports": "6-Month Reports"
+      },
+      "toolbar": {
+        "searchPlaceholder": "Search pet or owner...",
+        "statusAll": "All Statuses",
+        "statusCompleted": "Completed",
+        "statusDueSoon": "Due Soon",
+        "statusOverdue": "Overdue",
+        "exportPdf": "Export PDF",
+        "recordVaccine": "Record Vaccine"
+      },
+      "columns": {
+        "pet": "Pet Profile",
+        "vaccineType": "Vaccine Type",
+        "dueDate": "Due Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "editRecord": "Edit Record",
+      "viewHistory": "View History",
+      "pagination": {
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "entries": "entries",
+        "prev": "Prev",
+        "next": "Next"
+      },
+      "modal": {
+        "title": "Record New Vaccination",
+        "patientInfoLabel": "Patient Information",
+        "nameLabel": "Name",
+        "namePlaceholder": "e.g. Barnaby",
+        "speciesBreedLabel": "Species / Breed",
+        "speciesBreedPlaceholder": "e.g. Dog - Beagle Mix",
+        "vaccineTypeLabel": "Vaccine Type",
+        "vaccineTypePlaceholder": "Select vaccine",
+        "adminDateLabel": "Date Administered",
+        "nextDoseLabel": "Next Dose Due",
+        "nextDoseBadge": "Calculated",
+        "nextDoseHint": "+1 year protocol",
+        "batchNumberLabel": "Batch / Lot Number",
+        "batchNumberPlaceholder": "e.g. LOT-8492",
+        "cancel": "Cancel",
+        "saveButton": "Save Record",
+        "vaccineOptions": [
+          {
+            "value": "Rabies",
+            "label": "Rabies",
+            "subtype": "Annual Booster"
+          },
+          {
+            "value": "DHPP",
+            "label": "DHPP (Distemper, Hepatitis, Parainfluenza, Parvovirus)",
+            "subtype": "Core Vaccine"
+          },
+          {
+            "value": "Bordetella",
+            "label": "Bordetella (Kennel Cough)",
+            "subtype": "Kennel Cough"
+          },
+          {
+            "value": "Leptospirosis",
+            "label": "Leptospirosis",
+            "subtype": "Core Vaccine"
+          },
+          {
+            "value": "Lyme Disease",
+            "label": "Lyme Disease",
+            "subtype": "Core Vaccine"
+          }
+        ]
+      }
+    },
+    "reports": {
+      "loading": "Loading reports…",
+      "submitted": {
+        "title": "Reports Submitted",
+        "empty": "No reports submitted.",
+        "submittedLabel": "Submitted:",
+        "healthConditionLabel": "Health Condition:",
+        "requestClarification": "Request Clarification",
+        "reportToManagement": "Block",
+        "adopterOf": "Adopter of",
+        "viewDetails": "View Details"
+      },
+      "block": {
+        "title": "Block adopter",
+        "confirmation": "Block this adopter?",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Enter the reason for blocking this adopter...",
+        "cancel": "Cancel",
+        "confirm": "Confirm Block",
+        "blocking": "Blocking…",
+        "invalidAdopter": "This report does not contain a valid adopter identifier.",
+        "success": "Adopter added to the blacklist."
+      },
+      "dueForReport": {
+        "title": "Due for Report",
+        "columns": {
+          "animalName": "Animal Name",
+          "adopter": "Adopter",
+          "adoptionDate": "Adoption Date",
+          "status": "Status"
+        }
+      },
+      "details": {
+        "title": "6-Month Report Details",
+        "adopterOfPrefix": "Adopter of",
+        "submittedLabel": "Submitted:",
+        "healthAssessmentTitle": "Health Assessment",
+        "milestoneTitle": "Milestone Update",
+        "close": "Close"
+      }
+    },
+    "modals": {
+      "close": "Close",
+      "cancel": "Cancel",
+      "deleteProduct": {
+        "title": "Delete Product",
+        "confirmPrefix": "Are you sure you want to delete",
+        "confirmSuffix": "This action cannot be undone and will remove the item from both the inventory and the store catalog.",
+        "confirmButton": "Delete Product",
+        "deleting": "Deleting…",
+        "deleteError": "Couldn't delete the product. Please try again."
+      },
+      "deletePet": {
+        "title": "Delete Pet",
+        "confirmPrefix": "Are you sure you want to delete",
+        "confirmSuffix": "This action cannot be undone and will remove the pet from the adoption inventory.",
+        "confirmButton": "Delete Pet"
+      },
+      "editProduct": {
+        "title": "Edit Product",
+        "changePhoto": "Change",
+        "nameLabel": "Product Name",
+        "namePlaceholder": "Enter product name",
+        "categoryLabel": "Category",
+        "stockLabel": "In Stock",
+        "priceLabel": "Price",
+        "statusLabel": "Stock Status",
+        "activeListing": "Active Listing",
+        "inactiveListing": "Inactive Listing",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Provide a detailed description of the product and its benefits...",
+        "discountLabel": "Discount (%)",
+        "saveError": "Couldn't save the product. Please try again.",
+        "saving": "Saving…",
+        "saveButton": "Save Changes"
+      },
+      "addProduct": {
+        "title": "Add New Product",
+        "changePhoto": "Upload Photo",
+        "uploadPrompt": "Click to upload photo",
+        "nameLabel": "Product Name",
+        "namePlaceholder": "Enter product name",
+        "categoryLabel": "Category",
+        "stockLabel": "In Stock",
+        "priceLabel": "Price",
+        "statusLabel": "Stock Status",
+        "activeListing": "Active Listing",
+        "inactiveListing": "Inactive Listing",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Provide a detailed description of the product and its benefits...",
+        "discountLabel": "Discount (%)",
+        "saveError": "Couldn't add the product. Please try again.",
+        "saving": "Adding…",
+        "saveButton": "Add Product"
+      },
+      "addPet": {
+        "title": "Add New Pet",
+        "media": "Media",
+        "uploadPhoto": "Choose Photo",
+        "photoHint": "Local preview only. Persistent uploads require backend file storage.",
+        "basicInfo": "Basic Information",
+        "nameLabel": "Pet Name *",
+        "namePlaceholder": "e.g. Bella",
+        "speciesLabel": "Species *",
+        "speciesPlaceholder": "Select species",
+        "breedLabel": "Primary Breed",
+        "breedPlaceholder": "e.g. Golden Retriever",
+        "ageLabel": "Age",
+        "genderLabel": "Gender *",
+        "sizeLabel": "Estimated Size",
+        "sizePlaceholder": "Select size",
+        "colorLabel": "Primary Color / Markings",
+        "colorPlaceholder": "e.g. Black with white chest",
+        "medicalRecords": "Medical Records",
+        "healthStatusLabel": "Current Health Status",
+        "vaccinationsLabel": "Vaccinations",
+        "adoptionDetails": "Adoption Details",
+        "availabilityLabel": "Availability Status",
+        "characterNotes": "Character & Notes",
+        "characterLabel": "Personality Traits & Behavioral Notes",
+        "characterPlaceholder": "Describe the pet's temperament, likes/dislikes, and any behavioral considerations...",
+        "saveButton": "Add Pet"
+      },
+      "editPet": {
+        "title": "Edit Pet Profile",
+        "media": "Media",
+        "changePhoto": "Change Photo",
+        "photoHint": "Recommended size: 800x800px (JPG or PNG)",
+        "basicInfo": "Basic Information",
+        "nameLabel": "Name",
+        "speciesLabel": "Species",
+        "breedLabel": "Breed",
+        "ageLabel": "Age (Years)",
+        "genderLabel": "Gender",
+        "sizeLabel": "Size",
+        "colorLabel": "Color & Markings",
+        "medical": "Medical",
+        "healthStatusLabel": "Health Status",
+        "vaccinationsLabel": "Vaccinations",
+        "adoptionDetails": "Adoption Details",
+        "availabilityLabel": "Availability Status",
+        "character": "Character",
+        "characterLabel": "Personality Traits & Notes",
+        "characterPlaceholder": "Describe the pet's behavior, likes, dislikes, and ideal home environment...",
+        "saveButton": "Save Changes"
+      },
+      "viewSales": {
+        "title": "Recent Product Sales",
+        "searchPlaceholder": "Search sales...",
+        "columns": {
+          "product": "Product",
+          "date": "Date",
+          "customer": "Customer",
+          "price": "Price"
+        },
+        "empty": "No sales found."
+      },
+      "viewPetRecord": {
+        "title": "Pet Record",
+        "basicInfo": "Basic Information",
+        "nameLabel": "Name",
+        "speciesLabel": "Species",
+        "breedLabel": "Breed",
+        "ageLabel": "Age",
+        "genderLabel": "Gender",
+        "sizeLabel": "Size",
+        "colorLabel": "Color & Markings",
+        "medical": "Medical",
+        "healthStatusLabel": "Health Status",
+        "vaccinationsLabel": "Vaccinations",
+        "noneRecorded": "None recorded",
+        "adoptionDetails": "Adoption Details",
+        "statusLabel": "Status",
+        "arrivalDateLabel": "Arrival Date",
+        "character": "Character",
+        "characterLabel": "Personality Traits & Notes"
+      }
+    },
+    "adoptionRequests": {
+      "loading": "Loading adoption requests…",
+      "header": {
+        "title": "Adoption Requests",
+        "subtitle": "Manage incoming applications and review potential matches."
+      },
+      "viewTabs": {
+        "label": "Adoption request sections",
+        "applications": "Applications",
+        "blacklist": "Blacklist"
+      },
+      "blacklist": {
+        "searchPlaceholder": "Search blacklisted adopters...",
+        "loading": "Loading blacklist…",
+        "empty": "No blacklisted adopters.",
+        "retry": "Try again",
+        "active": "Active",
+        "columns": {
+          "adopter": "Adopter name",
+          "reason": "Reason",
+          "date": "Date blocked",
+          "status": "Status"
+        }
+      },
+      "toolbar": {
+        "searchPlaceholder": "Search applicant or pet name...",
+        "filter": "Filter"
+      },
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "card": {
+        "appliedLabel": "Applied",
+        "housingLabel": "Housing & Experience",
+        "reviewButton": "Review Application",
+        "rejectButton": "Reject",
+        "viewRecordButton": "View Record",
+        "statusPending": "Pending",
+        "statusApproved": "Approved",
+        "statusRejected": "Rejected"
+      },
+      "empty": "No adoption requests found.",
+      "review": {
+        "titlePrefix": "Review Application -",
+        "pendingReviewBadge": "Pending Review",
+        "approvedBadge": "Approved",
+        "rejectedBadge": "Rejected",
+        "petProfileLink": "View Pet Profile",
+        "appliedLabel": "Applied",
+        "motivationTitle": "Adoption Motivation",
+        "detailsTitle": "Application Details",
+        "proofOfIdentity": "Proof of Identity",
+        "adoptionExperience": "Adoption Experience",
+        "dateOfBirth": "Date of Birth",
+        "ageVerifiedPrefix": "Age verified:",
+        "yearsSuffix": "years",
+        "reference1": "Personal Reference 1",
+        "reference2": "Personal Reference 2",
+        "consentsTitle": "Mandatory Consents",
+        "consentTerms": "Agreed to Terms & Privacy Policy",
+        "consentCare": "Commitment to Lifelong Care",
+        "consentHomeVisit": "Agreement to Home Visit",
+        "consentFollowUp": "6-month Follow-up Reports",
+        "requestMoreInfo": "Request More Info",
+        "rejectButton": "Reject Application",
+        "approveButton": "Approve for Interview"
+      },
+      "reject": {
+        "title": "Reason for Rejection",
+        "description": "Please specify why this adoption application cannot be approved. This feedback will be emailed directly to the applicant to help them understand the decision.",
+        "reasonLabel": "Detailed Reason",
+        "reasonPlaceholder": "Please provide a detailed reason for the applicant (this will be shared with them)...",
+        "charCountSuffix": "characters",
+        "quickInsertLabel": "Quick Insert:",
+        "quickReasons": [
+          "Housing Restrictions",
+          "Incomplete Fencing",
+          "Pet Incompatibility"
+        ],
+        "cancel": "Cancel",
+        "confirmButton": "Confirm Rejection"
+      }
+    }
+  },
+  "admin": {
+    "common": {
+      "loading": "Loading…",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing…",
+      "retry": "Try again",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss",
+      "processing": "Processing…",
+      "actionFailed": "The request could not be completed.",
+      "notProvided": "Not provided"
+    },
+    "navbar": {
+      "workspace": "Admin Workspace",
+      "switchLanguage": "Switch language",
+      "profileTitle": "Admin profile",
+      "profileError": "Profile unavailable"
+    },
+    "sidebar": {
+      "logoAlt": "Pet Haven Logo",
+      "navLabel": "Admin navigation",
+      "dashboard": "Dashboard",
+      "vetApprovals": "Vet Approvals",
+      "userManagement": "User Management"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "subtitle": "Live platform counters served by the Pet Haven backend.",
+      "statsSection": "Platform statistics",
+      "statsUnavailable": "Statistics could not be loaded.",
+      "stats": {
+        "totalUsers": "Total Users",
+        "adopters": "Adopters",
+        "centers": "Adoption Centers",
+        "vets": "Veterinarians",
+        "admins": "Admins",
+        "totalPets": "Total Pets",
+        "bannedUsers": "Banned Users"
+      },
+      "pendingVets": {
+        "title": "Pending Vet Approvals",
+        "subtitle": "Veterinarian accounts waiting for verification.",
+        "manage": "Review approvals",
+        "awaiting": "awaiting review",
+        "more": "+{{remaining}} more waiting in the approvals queue."
+      }
+    },
+    "vetApprovals": {
+      "title": "Vet Approvals",
+      "subtitle": "Verify or reject veterinarian accounts submitted for review.",
+      "pendingCount": "{{total}} pending",
+      "idLabel": "Vet ID {{id}}",
+      "empty": "No veterinarians are waiting for approval.",
+      "emptyHint": "New submissions appear here as soon as a veterinarian registers.",
+      "loadFailed": "The pending veterinarians list could not be loaded.",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "verifySuccess": "{{name}} has been verified.",
+      "reject": "Reject",
+      "rejecting": "Rejecting…",
+      "rejectSuccess": "{{name}} has been rejected.",
+      "yearsValue": "{{years}} years of experience",
+      "fields": {
+        "specialization": "Specialization",
+        "clinicName": "Clinic name",
+        "clinicAddress": "Clinic address",
+        "licenseNumber": "License number",
+        "experienceYears": "Experience",
+        "createdAt": "Submitted on"
+      },
+      "rejectConfirm": {
+        "title": "Reject this veterinarian?",
+        "message": "You are about to reject {{name}}.",
+        "warning": "This permanently deletes the veterinarian account from the platform. The action cannot be undone.",
+        "confirm": "Reject and delete"
+      }
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Ban or unban platform accounts.",
+      "notice": {
+        "title": "Actions are performed by User ID",
+        "text": "The backend exposes ban and unban endpoints only — there is no user listing endpoint — so accounts are targeted by their numeric User ID. Admin accounts cannot be banned."
+      },
+      "fields": {
+        "userId": "User ID",
+        "userIdPlaceholder": "e.g. 42",
+        "reason": "Reason",
+        "reasonPlaceholder": "Describe why this account is being banned",
+        "reasonHint": "Sent to the backend together with the ban request."
+      },
+      "errors": {
+        "invalidUserId": "Enter a valid numeric User ID."
+      },
+      "ban": {
+        "title": "Ban User",
+        "subtitle": "Blocks the account from signing in to Pet Haven.",
+        "submit": "Ban user",
+        "submitting": "Banning…",
+        "success": "User {{userId}} has been banned.",
+        "confirmTitle": "Ban this user?",
+        "confirmMessage": "User ID {{userId}} will lose access to the platform."
+      },
+      "unban": {
+        "title": "Unban User",
+        "subtitle": "Restores access for a previously banned account.",
+        "submit": "Unban user",
+        "submitting": "Unbanning…",
+        "success": "User {{userId}} has been unbanned.",
+        "confirmTitle": "Unban this user?",
+        "confirmMessage": "User ID {{userId}} will regain access to the platform."
+      }
+    }
+  },
+  "vetDashboard": {
+    "loading": "Loading your dashboard...",
+    "comingSoon": "Coming soon",
+    "header": {
+      "logoAlt": "Pet Haven Logo",
+      "nav": {
+        "dashboard": "Dashboard",
+        "patients": "Patients",
+        "appointments": "Appointments",
+        "reviews": "Reviews"
+      },
+      "language": "Change Language",
+      "notifications": "Notifications",
+      "userMenu": "User Menu",
+      "avatarAlt": "User Avatar",
+      "profile": "Profile",
+      "logout": "Logout",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "welcome": {
+      "morning": "Good morning, {{name}}",
+      "afternoon": "Good afternoon, {{name}}",
+      "evening": "Good evening, {{name}}",
+      "subtitle": "Here is what's happening at your clinic today.",
+      "doctorPrefix": "Dr. {{name}}",
+      "defaultDoctor": "Doctor"
+    },
+    "stats": {
+      "totalPatients": {
+        "label": "Total Patients",
+        "hint": "All-time patients"
+      },
+      "appointmentsToday": {
+        "label": "Appointments Today",
+        "hint": "{{count}} remaining"
+      },
+      "reviews": {
+        "label": "Total Reviews",
+        "hint": "Total reviews received"
+      }
+    },
+    "activity": {
+      "title": "Clinic Activity",
+      "loading": "Loading clinic activity...",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "empty": "No appointment activity for this period yet."
+    },
+    "breakdown": {
+      "title": "Appointment Breakdown",
+      "empty": "No categorized appointments yet.",
+      "categories": {
+        "checkups": "Check-ups",
+        "vaccinations": "Vaccinations",
+        "surgeries": "Surgeries",
+        "other": "Other"
+      }
+    },
+    "breeds": {
+      "title": "Top Pet Breeds",
+      "empty": "No patient breed data yet."
+    },
+    "schedule": {
+      "title": "Today's Schedule",
+      "viewCalendar": "View Calendar",
+      "empty": "No appointments scheduled for today.",
+      "owner": "Owner: {{name}}",
+      "status": {
+        "Completed": "Completed",
+        "Cancelled": "Cancelled"
+      }
+    },
+    "patients": {
+      "title": "Recent Patients",
+      "searchPlaceholder": "Search patients...",
+      "loading": "Loading patients...",
+      "empty": "No recent patients found.",
+      "viewRecords": "View Records",
+      "columns": {
+        "patient": "Patient",
+        "breed": "Breed/Species",
+        "lastVisit": "Last Visit",
+        "action": "Action"
+      }
+    }
+  },
+  "vetProfile": {
+    "loading": "Loading your profile...",
+    "backToDashboard": "Back to Dashboard",
+    "title": "Vet Profile",
+    "subtitle": "Manage your profile and contact information.",
+    "identity": {
+      "unnamed": "Unnamed Veterinarian",
+      "verified": "Verified",
+      "pendingVerification": "Pending Verification",
+      "noEmail": "No email on file"
+    },
+    "basicInfo": {
+      "title": "Basic Information",
+      "fullName": "Vet Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "address": "Clinic Address",
+      "addressPlaceholder": "Use GPS or enter the clinic address",
+      "useGps": "Use GPS",
+      "locating": "Locating…",
+      "gpsHint": "GPS fills the address and saves the clinic coordinates for nearby searches.",
+      "gpsSuccess": "Clinic location detected. Save changes to update your profile.",
+      "gpsUnsupported": "Location services are not supported by this browser.",
+      "gpsError": "Unable to detect the clinic address. Check location permission or enter it manually.",
+      "experienceYears": "Years of Experience",
+      "specialization": "Specialization",
+      "clinicName": "Clinic Name",
+      "licenseNumber": "License Number"
+    },
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "saveSuccess": "Profile updated successfully.",
+    "saveError": "Failed to save changes. Please try again."
+  },
+  "vetReviews": {
+    "loading": "Loading your reviews...",
+    "title": "Client Reviews",
+    "subtitle": "See what pet owners are saying about your care.",
+    "summary": {
+      "title": "Overall Rating",
+      "empty": "You haven't received any reviews yet.",
+      "basedOn": "Based on {{count}} review",
+      "basedOn_other": "Based on {{count}} reviews"
+    },
+    "toolbar": {
+      "searchPlaceholder": "Search reviews by name or keyword...",
+      "all": "All Reviews",
+      "ratingOnly": "Rating Only ({{count}})"
+    },
+    "list": {
+      "loading": "Loading reviews...",
+      "empty": "No reviews yet.",
+      "noMatches": "No reviews match your search."
+    },
+    "card": {
+      "anonymous": "Anonymous",
+      "noComment": "No written comment — rating only."
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} reviews",
+      "previous": "Previous page",
+      "next": "Next page"
+    }
+  },
+  "vetPatients": {
+    "title": "Patient Directory",
+    "subtitle": "Manage medical records, appointments, and general health status.",
+    "summary": {
+      "loading": "Loading stats...",
+      "totalPatients": "Total Patients",
+      "activeCases": "Active Cases",
+      "recentlyAdded": "Recently Added (30d)"
+    },
+    "toolbar": {
+      "searchPlaceholder": "Search by name, breed, or species...",
+      "allSpecies": "All Species",
+      "allStatus": "Status: All",
+      "species": {
+        "dog": "Dogs",
+        "cat": "Cats",
+        "bird": "Birds"
+      }
+    },
+    "status": {
+      "healthy": "Healthy",
+      "followup": "Requires Follow-up",
+      "vaccine": "Upcoming Vaccine",
+      "default": "Unknown"
+    },
+    "card": {
+      "owner": "Owner",
+      "lastVisit": "Last Visit",
+      "visitCount": "Visits",
+      "viewRecords": "View Records"
+    },
+    "list": {
+      "loading": "Loading patients...",
+      "empty": "No patients found yet.",
+      "noMatches": "No patients match your search or filters."
+    },
+    "pagination": {
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "modal": {
+      "close": "Close",
+      "loading": "Loading patient record...",
+      "recordSections": "Patient record sections",
+      "overview": "Overview",
+      "age": "Age",
+      "gender": "Gender",
+      "medicalHistory": "Medical History",
+      "noMedicalHistory": "No medical history recorded yet."
+    }
+  },
+  "vetAppointments": {
+    "title": "Clinic Appointments",
+    "subtitle": "Manage your schedule and upcoming patient visits.",
+    "viewToggle": {
+      "list": "List View",
+      "calendar": "Calendar"
+    },
+    "dateNav": {
+      "previous": "Previous day",
+      "next": "Next day",
+      "today": "Today",
+      "pickDate": "Pick a date"
+    },
+    "summary": {
+      "loading": "Loading stats...",
+      "total": {
+        "label": "Total Appointments Today",
+        "caption": "For the selected day"
+      },
+      "confirmed": {
+        "label": "Confirmed",
+        "caption": "Scheduled"
+      },
+      "pending": {
+        "label": "Pending Requests",
+        "caption": "Requires action"
+      },
+      "cancelled": {
+        "label": "Cancellations",
+        "caption": "For the selected day"
+      }
+    },
+    "toolbar": {
+      "filterLabel": "Filter:",
+      "allStatuses": "All Statuses"
+    },
+    "status": {
+      "Pending": "Pending",
+      "Confirmed": "Confirmed",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled"
+    },
+    "list": {
+      "title": "Today's Schedule",
+      "loading": "Loading appointments...",
+      "empty": "No appointments scheduled for this day.",
+      "noMatches": "No appointments match this filter."
+    },
+    "card": {
+      "owner": "Owner: {{name}}",
+      "noReason": "No reason provided."
+    },
+    "actions": {
+      "confirm": "Accept",
+      "complete": "Mark as completed",
+      "cancel": "Cancel",
+      "reschedule": "Reschedule"
+    },
+    "cancelConfirm": {
+      "message": "Cancel this appointment? This cannot be undone.",
+      "yes": "Yes, cancel",
+      "no": "No"
+    },
+    "reschedule": {
+      "dateLabel": "New date",
+      "timeLabel": "New time",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "pastDate": "Please choose a date and time in the future."
+    }
+  },
+  "vetCalendar": {
+    "title": "Clinic Calendar",
+    "subtitle": "Manage veterinary appointments and schedules.",
+    "toolbar": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month"
+    },
+    "grid": {
+      "loading": "Loading calendar...",
+      "dayError": "Failed to load this day.",
+      "moreEvents": "+{{count}} more",
+      "showLess": "Show less"
+    },
+    "modal": {
+      "close": "Close"
+    }
+  },
+  "vetVerification": {
+    "title": "Professional Verification",
+    "subtitle": "Upload your veterinary license or board certification to complete your profile and access clinic tools.",
+    "upload": {
+      "title": "Click to upload or drag and drop",
+      "hint": "PDF, JPG, or PNG (Max 10MB)",
+      "selected": "Selected: {{name}}",
+      "remove": "Remove"
+    },
+    "form": {
+      "licenseNumber": "License Number",
+      "licenseNumberPlaceholder": "e.g. VET-987654321",
+      "issueDate": "Issue Date"
+    },
+    "errors": {
+      "licenseRequired": "License number is required.",
+      "fileRequired": "Please upload your license or certification document."
+    },
+    "actions": {
+      "saveForLater": "Save for Later",
+      "submit": "Submit Verification"
+    }
+  },
+  "vetPendingApproval": {
+    "title": "Account Under Review",
+    "message": "Your professional account is currently under review for license verification.",
+    "note": "You cannot manage your clinic or receive bookings until Admin approval. We will notify you via email once your status is updated.",
+    "logOut": "Log Out",
+    "contactSupport": "Contact Support",
+    "applicationIdLabel": "Application ID:"
+  }
+}
+```
+
+## File: backup/before_rag_frontend_integration_2026-08-22/src/Pages/PetHavenHealthAssistant.jsx
+```javascript
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import TopNavBar from "../Components/TopNavBar";
+import Footer from "../Components/Footer";
+import HealthHistorySidebar from "../Components/healthAssistant/HealthHistorySidebar";
+import ChatHeader from "../Components/healthAssistant/ChatHeader ";
+import ChatMessages from "../Components/healthAssistant/ChatMessages ";
+import ChatInput from "../Components/healthAssistant/ChatInput ";
+import { askHealthAssistant } from "../api/healthAssistantApi";
+import "../Styling/HealthAssistant.css";
+const createConversationId = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+  return `conversation-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}`;
+};
+const PetHavenHealthAssistant = () => {
+  // =====================================================
+  // Translation / Current Language
+  // =====================================================
+  const { t, i18n } = useTranslation();
+  const currentLanguage =
+    i18n.resolvedLanguage?.startsWith("ar") ? "ar" : "en";
+  // =====================================================
+  // Chat State
+  // =====================================================
+  const [sessions, setSessions] = useState([]);
+  const [activeSessionId, setActiveSessionId] =
+    useState(null);
+  const [messagesBySession, setMessagesBySession] =
+    useState({});
+  // =====================================================
+  // Current Messages
+  // =====================================================
+  const messages =
+    activeSessionId == null
+      ? []
+      : messagesBySession[activeSessionId] ?? [];
+  // =====================================================
+  // Send Message
+  // =====================================================
+  const handleSendMessage = async (text) => {
+    const trimmedText = text.trim();
+    if (!trimmedText) {
+      return;
+    }
+    let targetSessionId = activeSessionId;
+    // ===================================================
+    // Create a new conversation if needed
+    // ===================================================
+    if (targetSessionId == null) {
+      targetSessionId = createConversationId();
+      setSessions((current) => [
+        {
+          id: targetSessionId,
+          title:
+            trimmedText.length > 42
+              ? `${trimmedText.slice(0, 42)}…`
+              : trimmedText,
+          date: t("adopter.health.now"),
+          isUserCreated: true,
+        },
+        ...current,
+      ]);
+      setActiveSessionId(targetSessionId);
+    }
+    // ===================================================
+    // Add User Message
+    // ===================================================
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      sender: "user",
+      type: "text",
+      text: trimmedText,
+    };
+    // ===================================================
+    // Typing Indicator
+    // ===================================================
+    const typingMessage = {
+      id: `typing-${Date.now()}`,
+      sender: "ai",
+      type: "typing",
+      text: "",
+    };
+    setMessagesBySession((current) => ({
+      ...current,
+      [targetSessionId]: [
+        ...(current[targetSessionId] ?? []),
+        userMessage,
+        typingMessage,
+      ],
+    }));
+    try {
+      // =================================================
+      // Call FastAPI / RAG
+      // =================================================
+      const result = await askHealthAssistant({
+        question: trimmedText,
+        animal: null,
+        conversationId: targetSessionId,
+        // IMPORTANT:
+        // Send current platform language to FastAPI.
+        language: currentLanguage,
+      });
+      // =================================================
+      // AI Response
+      // =================================================
+      const assistantMessage = {
+        id: `assistant-${Date.now()}`,
+        sender: "ai",
+        type: "text",
+        text:
+          result?.answer ||
+          (currentLanguage === "ar"
+            ? "لم يتم إرجاع إجابة."
+            : "No answer was returned."),
+      };
+      // =================================================
+      // Remove Typing + Add AI Answer
+      // =================================================
+      setMessagesBySession((current) => ({
+        ...current,
+        [targetSessionId]: [
+          ...(current[targetSessionId] ?? []).filter(
+            (message) =>
+              message.id !== typingMessage.id
+          ),
+          assistantMessage,
+        ],
+      }));
+    } catch (error) {
+      console.error(
+        "Health Assistant request failed:",
+        error
+      );
+      // =================================================
+      // Error Message
+      // =================================================
+      const errorMessage = {
+        id: `error-${Date.now()}`,
+        sender: "ai",
+        type: "text",
+        text:
+          error?.message ||
+          (currentLanguage === "ar"
+            ? "خدمة المساعد الصحي غير متاحة حالياً."
+            : "Health Assistant service is currently unavailable."),
+      };
+      // =================================================
+      // Remove Typing + Show Error
+      // =================================================
+      setMessagesBySession((current) => ({
+        ...current,
+        [targetSessionId]: [
+          ...(current[targetSessionId] ?? []).filter(
+            (message) =>
+              message.id !== typingMessage.id
+          ),
+          errorMessage,
+        ],
+      }));
+    }
+  };
+  // =====================================================
+  // New Chat
+  // =====================================================
+  const handleNewChat = () => {
+    setActiveSessionId(null);
+  };
+  // =====================================================
+  // Render
+  // =====================================================
+  return (
+    <div className="pet-haven-health-assistant">
+      <TopNavBar />
+      <main className="pet-haven-health-assistant__main">
+        <HealthHistorySidebar
+          sessions={sessions}
+          activeSessionId={activeSessionId}
+          onSelectSession={(session) =>
+            setActiveSessionId(session.id)
+          }
+          onNewChat={handleNewChat}
+        />
+        <section className="pet-haven-health-assistant__chat-panel">
+          <ChatHeader
+            onNewChat={handleNewChat}
+          />
+          <ChatMessages
+            messages={messages}
+          />
+          <ChatInput
+            onSend={handleSendMessage}
+          />
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+export default PetHavenHealthAssistant;
+```
+
+## File: backup/before_rag_frontend_integration_2026-08-22/src/Styling/HealthAssistant.css
+```css
+:root {
+  --ha-primary: #087f72;
+  --ha-primary-dark: #06685e;
+  --ha-text: #18211f;
+  --ha-muted: #66736f;
+  --ha-border: #e4e9e7;
+  --ha-sidebar: #f6f8f7;
+  --ha-assistant-row: #f8faf9;
+  --ha-white: #ffffff;
+}
+.pet-haven-health-assistant {
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ha-white);
+  color: var(--ha-text);
+  font-family: "Inter", sans-serif;
+}
+.pet-haven-health-assistant__main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-block: 1px solid var(--ha-border);
+}
+.pet-haven-health-assistant__chat-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--ha-white);
+}
+/* Chat sessions */
+.health-sidebar {
+  width: 260px;
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--ha-sidebar);
+  border-inline-end: 1px solid var(--ha-border);
+}
+.health-sidebar__header {
+  padding: 1rem 0.875rem 0.75rem;
+}
+.health-sidebar__title {
+  margin: 0 0 0.875rem;
+  padding-inline: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--ha-text);
+}
+.health-sidebar__new-chat {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.625rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #ccd6d3;
+  border-radius: 0.65rem;
+  background: var(--ha-white);
+  color: var(--ha-text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.health-sidebar__new-chat:hover {
+  border-color: var(--ha-primary);
+  background: #f0f8f6;
+}
+.health-sidebar__section-label {
+  margin: 0;
+  padding: 0.55rem 1.15rem 0.35rem;
+  color: var(--ha-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.health-sidebar__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.25rem 0.65rem 1rem;
+}
+.health-sidebar__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.7rem;
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: var(--ha-text);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.health-sidebar__item:hover,
+.health-sidebar__item--active {
+  background: #e8efed;
+}
+.health-sidebar__item-icon {
+  flex: 0 0 auto;
+  color: var(--ha-muted);
+  font-size: 0.85rem;
+}
+.health-sidebar__text {
+  min-width: 0;
+  flex: 1;
+}
+.health-sidebar__item-title,
+.health-sidebar__item-meta,
+.health-sidebar__empty {
+  margin: 0;
+}
+.health-sidebar__item-title {
+  overflow: hidden;
+  color: var(--ha-text);
+  font-size: 0.78rem;
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.health-sidebar__item-meta {
+  margin-top: 0.15rem;
+  color: var(--ha-muted);
+  font-size: 0.66rem;
+}
+.health-sidebar__empty {
+  padding: 0.75rem 0.5rem;
+  color: var(--ha-muted);
+  font-size: 0.75rem;
+}
+/* Conversation header */
+.chat-header {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.25rem;
+  border-bottom: 1px solid var(--ha-border);
+  background: rgba(255, 255, 255, 0.96);
+}
+.chat-header__info {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.chat-header__avatar,
+.chat-empty-state__icon {
+  display: grid;
+  place-items: center;
+  background: var(--ha-primary);
+  color: var(--ha-white);
+}
+.chat-header__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.55rem;
+  font-size: 0.9rem;
+}
+.chat-header__name {
+  margin: 0;
+  color: var(--ha-text);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+.chat-header__new-chat {
+  width: 34px;
+  height: 34px;
+  display: none;
+  place-items: center;
+  border: 1px solid var(--ha-border);
+  border-radius: 0.55rem;
+  background: var(--ha-white);
+  color: var(--ha-text);
+  cursor: pointer;
+}
+/* Conversation */
+.chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--ha-white);
+}
+.chat-messages__row {
+  width: 100%;
+  border-bottom: 1px solid #eef1f0;
+}
+.chat-messages__row--assistant {
+  background: var(--ha-assistant-row);
+}
+.chat-messages__content {
+  width: min(100%, 820px);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin: 0 auto;
+  padding: 1.45rem 1.5rem;
+  box-sizing: border-box;
+}
+.chat-messages__avatar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 0.45rem;
+  color: var(--ha-white);
+  font-size: 0.75rem;
+}
+.chat-messages__avatar--assistant {
+  background: var(--ha-primary);
+}
+.chat-messages__avatar--user {
+  background: #53615d;
+}
+.chat-messages__text {
+  margin: 0.25rem 0 0;
+  color: var(--ha-text);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.chat-messages--empty {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+.chat-empty-state {
+  max-width: 420px;
+  text-align: center;
+}
+.chat-empty-state__icon {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 1rem;
+  border-radius: 0.8rem;
+  font-size: 1.15rem;
+}
+.chat-empty-state h2 {
+  margin: 0;
+  color: var(--ha-text);
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+.chat-empty-state p {
+  margin: 0.55rem 0 0;
+  color: var(--ha-muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+/* Typing indicator */
+.typing-indicator {
+  width: min(100%, 820px);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 auto;
+  padding: 1.2rem 1.5rem;
+  box-sizing: border-box;
+}
+.typing-indicator__bubble {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.typing-indicator__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ha-primary);
+  animation: ha-bounce 1s infinite;
+}
+.typing-indicator__dot:nth-child(1) { animation-delay: -0.3s; }
+.typing-indicator__dot:nth-child(2) { animation-delay: -0.15s; }
+@keyframes ha-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.45; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+/* Composer */
+.chat-input {
+  flex: 0 0 auto;
+  padding: 0.85rem 1.25rem 0.7rem;
+  background: var(--ha-white);
+}
+.chat-input__inner {
+  width: min(100%, 820px);
+  margin: 0 auto;
+}
+.chat-input__box {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  padding: 0.55rem 0.55rem 0.55rem 0.9rem;
+  border: 1px solid #cdd6d3;
+  border-radius: 0.9rem;
+  background: var(--ha-white);
+  box-shadow: 0 3px 14px rgba(26, 43, 39, 0.08);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.chat-input__box:focus-within {
+  border-color: var(--ha-primary);
+  box-shadow: 0 0 0 2px rgba(8, 127, 114, 0.1);
+}
+.chat-input__textarea {
+  width: 100%;
+  min-height: 28px;
+  max-height: 140px;
+  padding: 0.25rem 0;
+  border: 0;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  color: var(--ha-text);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.chat-input__textarea::placeholder {
+  color: #85908d;
+}
+.chat-input__send {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0.65rem;
+  background: var(--ha-primary);
+  color: var(--ha-white);
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+.chat-input__send:hover:not(:disabled) {
+  background: var(--ha-primary-dark);
+}
+.chat-input__send:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+.chat-input__disclaimer {
+  margin: 0.5rem 0 0;
+  color: var(--ha-muted);
+  font-size: 0.66rem;
+  line-height: 1.35;
+  text-align: center;
+}
+@media (max-width: 820px) {
+  .health-sidebar {
+    display: none;
+  }
+  .chat-header {
+    padding-inline: 1rem;
+  }
+  .chat-header__new-chat {
+    display: grid;
+  }
+  .chat-messages__content {
+    padding: 1.2rem 1rem;
+  }
+  .chat-input {
+    padding-inline: 0.75rem;
+  }
+}
+@media (max-width: 520px) {
+  .chat-header {
+    min-height: 52px;
+  }
+  .chat-messages__content {
+    gap: 0.7rem;
+  }
+  .chat-messages__avatar {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+  .chat-messages__text {
+    font-size: 0.86rem;
+  }
+}
+```
+
 ## File: src/api/adminApi.js
 ```javascript
-const delay = (min = 200, max = 400) =>
-  new Promise((resolve) => setTimeout(resolve, Math.random() * (max - min) + min));
-export async function getAdminKpis() {
-  await delay();
+import { apiRequest } from "./apiClient";
+/**
+ * Admin API — bound 1:1 to the endpoints exposed by backend AdminController.
+ * Available endpoints (READ ONLY contract, do not extend without backend support):
+ *   GET    /api/Admin/stats
+ *   GET    /api/Admin/vets/pending
+ *   PUT    /api/Admin/vets/{id}/verify
+ *   DELETE /api/Admin/vets/{id}/reject
+ *   PUT    /api/Admin/users/{id}/ban      body: { reason }
+ *   PUT    /api/Admin/users/{id}/unban
+ */
+function pick(source, ...keys) {
+  if (!source) return undefined;
+  for (const key of keys) {
+    const value = source[key];
+    if (value !== undefined && value !== null) return value;
+  }
+  return undefined;
+}
+function toCount(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+function toText(value) {
+  const text = typeof value === "string" ? value.trim() : value == null ? "" : String(value);
+  return text;
+}
+function normalizeStats(raw) {
   return {
-    activeUsers: {
-      value: 12450,
-      changePercent: 5.2,
-      changeLabel: "+640 from last month",
-      breakdown: [
-        { label: "Adopters", value: "8,240", trend: "up" },
-        { label: "Vets", value: "1,120", trend: "up" },
-        { label: "Centers", value: "3,090", trend: "flat" },
-      ],
-    },
-    totalRevenue: {
-      value: 45200,
-      changePercent: 12.8,
-      breakdown: [
-        { label: "Store Sales", value: "$32,400" },
-        { label: "Service Fees", value: "$12,800" },
-      ],
-    },
-    pendingApprovals: {
-      value: 28,
-      priority: "High Priority",
-      subtitle: "Pending Clinic Approvals",
-      note: "License verification required",
-    },
+    totalUsers: toCount(pick(raw, "totalUsers", "TotalUsers")),
+    adopters: toCount(pick(raw, "adopters", "Adopters")),
+    centers: toCount(pick(raw, "centers", "Centers")),
+    vets: toCount(pick(raw, "vets", "Vets")),
+    admins: toCount(pick(raw, "admins", "Admins")),
+    totalPets: toCount(pick(raw, "totalPets", "TotalPets")),
+    bannedUsers: toCount(pick(raw, "bannedUsers", "BannedUsers")),
   };
 }
-export async function getPlatformHealth() {
-  await delay();
+function normalizePendingVet(raw) {
+  const experienceYears = pick(raw, "experienceYears", "ExperienceYears");
   return {
-    status: "Operational",
-    apiResponseTime: { value: "240ms", percent: 85 },
-    serverLoad: { value: "42%", percent: 42 },
-    uptimeLast24h: "99.98%",
-    loadHistory: [8, 12, 10, 14, 16, 12, 9],
+    vetId: toCount(pick(raw, "vetId", "VetId")),
+    fullName: toText(pick(raw, "fullName", "FullName")),
+    email: toText(pick(raw, "email", "Email")),
+    specialization: toText(pick(raw, "specialization", "Specialization")),
+    clinicName: toText(pick(raw, "clinicName", "ClinicName")),
+    clinicAddress: toText(pick(raw, "clinicAddress", "ClinicAddress")),
+    licenseNumber: toText(pick(raw, "licenseNumber", "LicenseNumber")),
+    experienceYears:
+      experienceYears === undefined || experienceYears === null
+        ? null
+        : toCount(experienceYears),
+    createdAt: pick(raw, "createdAt", "CreatedAt") ?? null,
   };
 }
-export async function getClinicPerformance() {
-  await delay();
-  return [
-    { id: 1, name: "Downtown Pet Clinic", location: "New York, NY", orders: 142, growthPercent: 12, lastActive: "2 hours ago", status: "Active" },
-    { id: 2, name: "Westside Veterinary", location: "Los Angeles, CA", orders: 89, growthPercent: 5, lastActive: "5 hours ago", status: "Active" },
-    { id: 3, name: "North Star Animal Hospital", location: "Chicago, IL", orders: 28, growthPercent: 0, lastActive: "1 day ago", status: "Pending" },
-    { id: 4, name: "Eastside Paws", location: "Miami, FL", orders: 64, growthPercent: 8, lastActive: "3 hours ago", status: "Active" },
-    { id: 5, name: "Valley Vet Center", location: "Phoenix, AZ", orders: 12, growthPercent: -2, lastActive: "5 days ago", status: "Suspended" },
-  ];
+/** Backend action endpoints answer with { success, message } and no data envelope. */
+export function extractMessage(result) {
+  const message = pick(result, "message", "Message");
+  return typeof message === "string" && message.trim() ? message.trim() : "";
 }
-export async function getSystemAlerts() {
-  await delay();
-  return [
-    { id: 1, severity: "warning", title: "High Memory Usage", detail: "Node-04 reporting 88% utilization" },
-    { id: 2, severity: "error", title: "Email Gateway Timeout", detail: "124 notifications in queue" },
-  ];
+// ── GET /api/Admin/stats ──────────────────────────────────────────────
+export async function getAdminStats() {
+  const data = await apiRequest("/Admin/stats");
+  return normalizeStats(data);
 }
-export async function getClinicApprovals() {
-  await delay();
-  return {
-    pendingRequests: [
-      {
-        id: 1,
-        name: "Paws & Care Vet Clinic",
-        location: "Seattle, WA",
-        logoUrl:
-          "https://lh3.googleusercontent.com/aida-public/AB6AXuCmnEfzMWEKaGwD4EEES8_cPAR3IxdVge_CMdlMOa2OQF3TnX_CtZM0xuYbgjCjswEtXHqxbJLodZPdbs3CMWOC6q5t1H4MGzNNc5tngSi7tQMIZu2uS6OLzqfAdy_PthhPyIQYVYh5b_C1RE5ZKZTHNg8YYABEp3SuGPHpf3Gg4PIzBMRsUAMsZZHGeSkGiGj6t0fKcjdUWKBrgy3HxxyeBp-qrQE5mx4U5I37zG-BsPsj3R2OZARL0YpABF5p5VrkoRPeb8fK1hrb",
-        contactName: "Dr. Sarah Jenkins",
-        contactEmail: "s.jenkins@pawsandcare.com",
-        submissionDate: "Oct 24, 2023",
-      },
-      {
-        id: 2,
-        name: "Oakwood Animal Hospital",
-        location: "Portland, OR",
-        logoUrl: null,
-        contactName: "Michael Chen",
-        contactEmail: "admin@oakwoodah.com",
-        submissionDate: "Oct 23, 2023",
-      },
-      {
-        id: 3,
-        name: "Green Valley Pet Hospital",
-        location: "Denver, CO",
-        logoUrl: null,
-        contactName: "Dr. Laura Kim",
-        contactEmail: "l.kim@greenvalleypets.com",
-        submissionDate: "Oct 22, 2023",
-      },
-    ],
-    recentDecisions: [
-      {
-        id: 1,
-        name: "Sunshine Vet Partners",
-        processedBy: "Admin: Emily R.",
-        status: "approved",
-        timestamp: "Today, 09:45 AM",
-      },
-      {
-        id: 2,
-        name: "City Paws Emergency Clinic",
-        processedBy: "Admin: Marcus T.",
-        status: "rejected",
-        reason:
-          "Submitted state veterinary license document was expired as of Sept 2023. Requested re-submission of current paperwork.",
-        timestamp: "Yesterday, 14:20 PM",
-      },
-      {
-        id: 3,
-        name: "Whiskers & Tails Medical",
-        processedBy: "Admin: Emily R.",
-        status: "approved",
-        timestamp: "Oct 21, 2023, 11:15 AM",
-      },
-    ],
-  };
+// ── GET /api/Admin/vets/pending ───────────────────────────────────────
+export async function getPendingVets() {
+  const data = await apiRequest("/Admin/vets/pending");
+  return Array.isArray(data) ? data.map(normalizePendingVet) : [];
 }
-export async function getUsers() {
-  await delay();
-  return {
-    totalCount: 1248,
-    page: 1,
-    pageSize: 4,
-    totalPages: 312,
-    security: {
-      activeUsersPercent: 94,
-      suspendedAccountsPercent: 4,
-      bannedEntitiesPercent: 2,
-    },
-    users: [
-      {
-        id: "DOC-8472",
-        name: "Dr. Sarah Jenkins",
-        avatarUrl:
-          "https://lh3.googleusercontent.com/aida-public/AB6AXuAkjv_Fb8FE9lNq3eDP-pnsmVGIGtdsV5q_EDNY16urxNf0BlZ1ClzWjvAuihPeKmoVVb4E61EyYQF9HBUwflk7mDxTUy2jll0-tAZUpf-YeTIN-FOJo4jcCGd5ljXCZ8siZbqCsBKnrM5-EVeO7RGD2O-740Q1Ym2_sXJW-mlH7Y-T-lCQYrievctXMIBM_Y7EMhEEb6bY9haXyHQVt-YQmhFLYNbQKea9JcHohEepSTQElkQFkXLHw8StqdggZZLuZhV3fIQq2K6A",
-        role: "Doctor",
-        status: "active",
-        joinedDate: "Oct 12, 2023",
-        lastActive: "2 hours ago",
-      },
-      {
-        id: "TRN-9931",
-        name: "Paws & Train Co.",
-        avatarUrl: null,
-        initials: "PT",
-        role: "Trainer",
-        status: "suspended",
-        joinedDate: "Jan 05, 2024",
-        lastActive: "1 day ago",
-      },
-      {
-        id: "CTR-1044",
-        name: "City Vet Care",
-        avatarUrl:
-          "https://lh3.googleusercontent.com/aida-public/AB6AXuA2ZTpezHEJsaC7pBh8KVXL3N7UgV-PLfE47YyfsVv2YmaGhYt76E7prOGAx-MDZYiHHbyxILmdYktX02qINdaVVSsNdQUIsbe3Rs10pN3mEvuQW43j1RrB16ib33BmqZkOEHd0Qi9Er6GMBAtQ_MYeC-y5ewenNWE2IyMhBm1HZSw_VOUOqcgWXNgBgURAA5TQgs5rVbE6VvJYCmN40j3B2TZiOjwaFKDD2f9wjigp3_IPY3xp0KOaoKYKtMaUpBQLDgMAMHWif-Qc",
-        role: "Center",
-        status: "active",
-        joinedDate: "Nov 22, 2023",
-        lastActive: "Just now",
-      },
-      {
-        id: "TRN-2284",
-        name: "Mike Barnes",
-        avatarUrl: null,
-        initials: "MB",
-        role: "Trainer",
-        status: "banned",
-        joinedDate: "Aug 14, 2023",
-        lastActive: "Mar 01, 2024",
-      },
-    ],
-  };
+// ── PUT /api/Admin/vets/{id}/verify ───────────────────────────────────
+export async function verifyVet(vetId) {
+  return apiRequest(`/Admin/vets/${vetId}/verify`, { method: "PUT" });
 }
-export async function getBlocklist() {
-  await delay();
-  return [
-    {
-      id: 1,
-      entityId: "TRN-9931",
-      reason: "Multiple unauthorized facility claims",
-      justification: "Business justification: Violation of TOS 4.2",
-      blockedAt: "2024-03-10 14:32 UTC",
-      enforcement: "active_suspension",
-    },
-    {
-      id: 2,
-      entityId: "TRN-2284",
-      reason: "Severe malpractice report (Verified)",
-      justification: "Scientific justification: Endangerment protocol triggered",
-      blockedAt: "2024-03-01 09:15 UTC",
-      enforcement: "permanent_ban",
-    },
-    {
-      id: 3,
-      entityId: "DOC-5512",
-      reason: "Expired veterinary license",
-      justification: "System auto-flag: Pending document verification",
-      blockedAt: "2024-02-28 11:00 UTC",
-      enforcement: "resolved",
-    },
-  ];
+// ── DELETE /api/Admin/vets/{id}/reject (destructive: deletes account) ──
+export async function rejectVet(vetId) {
+  return apiRequest(`/Admin/vets/${vetId}/reject`, { method: "DELETE" });
+}
+// ── PUT /api/Admin/users/{id}/ban ─────────────────────────────────────
+export async function banUser(userId, reason) {
+  return apiRequest(`/Admin/users/${userId}/ban`, {
+    method: "PUT",
+    body: JSON.stringify({ reason: reason ?? "" }),
+  });
+}
+// ── PUT /api/Admin/users/{id}/unban ───────────────────────────────────
+export async function unbanUser(userId) {
+  return apiRequest(`/Admin/users/${userId}/unban`, { method: "PUT" });
 }
 ```
 
@@ -596,12 +5976,14 @@ export async function apiRequest(path, options = {}) {
   const payload = parseJson(text);
   if (response.status === 401) {
     if (token) {
+      // تنظيف التوكنات
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("expiresAt");
       localStorage.removeItem("authToken");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
+      // إشعار المستخدم عبر التوست بدلاً من التوجيه القسري
       notifySessionExpired();
     }
     const message =
@@ -650,9 +6032,11 @@ async function handleAuthResponse(response) {
   } catch {
     throw new Error('الرد من السيرفر مش بصيغة صحيحة');
   }
+  // دعم الحالتين: response.ok أو data.success
   if (!response.ok || data?.success === false) {
     throw new Error(data?.message || 'صار في خطأ، حاول مرة ثانية');
   }
+  // مرونة: بعض الـ backends ترجع { data: {...} } والبعض ترجع مباشرة
   const payload = data?.data ?? data;
   const { token, refreshToken, expiresAt, user } = payload;
   if (!token) {
@@ -744,6 +6128,12 @@ export function addToCart(productId, quantity = 1) {
 ## File: src/api/centerApi.js
 ```javascript
 import { apiRequest } from './apiClient';
+// ── Response mappers ──────────────────────────────────────
+// The backend DTOs only expose a subset of the fields the Stitch UI
+// expects. These mappers translate real backend shapes into the shape
+// the components read, without inventing data for fields the backend
+// does not provide (those are left undefined so the UI renders an
+// empty/dash state instead of fake content).
 function mapPet(p) {
   if (!p) return p;
   return {
@@ -830,6 +6220,7 @@ export async function updateCenterProfile(dto) {
   });
   return getCenterProfile();
 }
+// ── Dashboard ────────────────────────────────────────────
 export async function getDashboardStats() {
   return apiRequest('/CenterDashboard/stats');
 }
@@ -837,6 +6228,8 @@ export async function getLatestOrders(count = 5) {
   const orders = await apiRequest(`/CenterDashboard/orders?count=${count}`);
   return (orders ?? []).map(mapOrder);
 }
+// RecentAdoptionDto/RecentProductSaleDto carry no id — derive a stable
+// React key from the real fields instead of inventing one.
 export async function getRecentAdoptions() {
   const items = await apiRequest('/CenterDashboard/recent-adoptions');
   return (items ?? []).map((a, i) => ({
@@ -858,8 +6251,54 @@ export async function getRecentSales(count = 3) {
 }
 // TODO: backend endpoint missing
 export async function getRecentActivity() { return []; }
-// TODO: backend endpoint missing (AdoptionCenter has no wallet/balance)
-export async function getWallet() { return { balance: 0, currency: 'USD', transactions: [] }; }
+// ── Center Wallet ─────────────────────────────────────────
+// The center balance is what it earned from paid product orders
+// (see CenterWalletController on the backend).
+const EMPTY_WALLET = { balance: 0, currency: 'USD', transactions: [] };
+function mapWalletTransaction(tx) {
+  return {
+    id: tx.id,
+    orderId: tx.orderId,
+    description: tx.description,
+    date: tx.date ? String(tx.date).slice(0, 10) : '',
+    amount: tx.amount ?? 0,
+    type: tx.type ?? 'credit',
+    itemsCount: tx.itemsCount ?? 0,
+    buyerName: tx.buyerName ?? '',
+  };
+}
+export async function getWallet(transactionsCount = 10) {
+  try {
+    const w = await apiRequest(`/CenterWallet?transactionsCount=${transactionsCount}`);
+    return {
+      balance: w?.balance ?? 0,
+      currency: 'USD',
+      pendingBalance: w?.pendingBalance ?? 0,
+      earningsToday: w?.earningsToday ?? 0,
+      earningsThisMonth: w?.earningsThisMonth ?? 0,
+      paidOrdersCount: w?.paidOrdersCount ?? 0,
+      soldItemsCount: w?.soldItemsCount ?? 0,
+      lastTransactionDate: w?.lastTransactionDate
+        ? String(w.lastTransactionDate).slice(0, 10)
+        : '',
+      transactions: (w?.transactions ?? []).map(mapWalletTransaction),
+    };
+  } catch {
+    // The dashboard loads the wallet inside a Promise.all — never let a
+    // wallet failure take the whole dashboard down.
+    return { ...EMPTY_WALLET };
+  }
+}
+export async function getWalletTransactions(page = 1, pageSize = 10) {
+  const data = await apiRequest(`/CenterWallet/transactions?page=${page}&pageSize=${pageSize}`);
+  return {
+    totalCount: data?.totalCount ?? 0,
+    page: data?.page ?? page,
+    pageSize: data?.pageSize ?? pageSize,
+    transactions: (data?.items ?? []).map(mapWalletTransaction),
+  };
+}
+// ── Product Reviews ───────────────────────────────────────
 export async function getCenterProductReviews() {
   const data = await apiRequest('/ProductRatings/CenterReviews');
   const reviews = (data?.reviews ?? []).map((review) => ({
@@ -910,7 +6349,9 @@ export async function deleteAnimal(id) {
   return apiRequest(`/Pets/DeleteCenterPet/${id}`, { method: 'DELETE' });
 }
 // TODO: backend endpoint missing (no "all adoptions" list, only a
+// Take(3) recent-adoptions endpoint)
 export async function getAllRecentAdoptions() { return []; }
+// ── Product Inventory ─────────────────────────────────────
 export async function getProductInventory() {
   return apiRequest('/StoreCatalog/CenterProducts');
 }
@@ -932,11 +6373,15 @@ export async function updateProduct(id, dto) {
 export async function deleteProduct(id) {
   return apiRequest(`/StoreCatalog/DeleteProduct/${id}`, { method: 'DELETE' });
 }
+// TODO: backend endpoint missing (no per-center full sales list, and
+// no buyer name is returned by any sales-related DTO)
 export async function getAllProductSales() { return []; }
+// ── Monthly Reports ───────────────────────────────────────
 export async function getMonthlyReports() {
   const reports = await apiRequest('/PetReports/CenterReports');
   return {
     submitted: (reports ?? []).map(mapReport),
+    // Backend has no "pets due for a report" endpoint.
     dueForReport: [],
   };
 }
@@ -947,13 +6392,22 @@ export async function addReport(dto) {
   });
   return mapReport(created);
 }
+// Backend has no resolve/close/approve/delete endpoint for pet
+// reports (PetReportsController only exposes SubmitReport +
+// CenterReports). Throwing here (instead of silently no-opping) lets
+// the existing optimistic-update rollback in CenterContext revert the
+// UI instead of faking a success that the server never performed.
 export async function deleteReport(_id) {
   throw new Error('Resolving pet reports is not supported by the backend yet.');
 }
+// ── Adoption Requests ─────────────────────────────────────
 export async function getAdoptionRequests() {
   const requests = await apiRequest('/Adoption/CenterRequests');
   return (requests ?? []).map(mapAdoptionRequest);
 }
+// RespondToRequest returns only { success, message } — no request data —
+// so these resolve to a small status patch that the caller shallow-merges
+// onto the existing (already-mapped) request instead of replacing it.
 export async function approveRequest(id) {
   await apiRequest(`/Adoption/Respond/${id}`, {
     method: 'PUT',
@@ -968,6 +6422,8 @@ export async function rejectRequest(id, reason) {
   });
   return { status: 'Rejected', centerNote: reason };
 }
+// The list response intentionally exposes only blacklist record data.
+// It does not include AdopterId, so Ban/Unban cannot be connected safely.
 export async function getCenterBlacklist() {
   const entries = await apiRequest('/Blacklist/CenterBlacklist');
   return (entries ?? []).map(mapBlacklistEntry);
@@ -1008,31 +6464,105 @@ export async function fetchAdopterDashboard() {
 ```javascript
 const RAG_BASE_URL =
   import.meta.env.VITE_RAG_BASE_URL ?? "http://127.0.0.1:8000";
+// Animals supported by the RAG knowledge base.
+const SUPPORTED_ANIMALS = [
+  "dog",
+  "cat",
+  "bird",
+  "rabbit",
+  "hamster",
+  "fish",
+  "turtle",
+];
+/**
+ * Maps a raw species value coming from the .NET adopted-pets API to an animal
+ * value the RAG service understands. Returns null when unknown, so the RAG
+ * service can answer without an animal filter instead of receiving garbage.
+ */
+export function normalizeAnimal(species) {
+  if (typeof species !== "string") {
+    return null;
+  }
+  const value = species.trim().toLowerCase();
+  if (!value) {
+    return null;
+  }
+  if (SUPPORTED_ANIMALS.includes(value)) {
+    return value;
+  }
+  // Tolerate plurals and common variants ("Dogs", "Cats", "Bunny", ...).
+  const variants = {
+    dogs: "dog",
+    puppy: "dog",
+    canine: "dog",
+    cats: "cat",
+    kitten: "cat",
+    feline: "cat",
+    birds: "bird",
+    parrot: "bird",
+    rabbits: "rabbit",
+    bunny: "rabbit",
+    hamsters: "hamster",
+    fishes: "fish",
+    turtles: "turtle",
+    tortoise: "turtle",
+  };
+  return variants[value] ?? null;
+}
 export async function askHealthAssistant({
   question,
   animal = null,
   conversationId = null,
+  language = "en",
 }) {
-  const response = await fetch(`${RAG_BASE_URL}/ask`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      question,
-      animal,
-      conversation_id: conversationId,
-    }),
-  });
-  if (!response.ok) {
-    throw new Error("Health Assistant service is unavailable.");
+  const unavailable =
+    language === "ar"
+      ? "خدمة المساعد الصحي غير متاحة حالياً."
+      : "Health Assistant service is currently unavailable.";
+  let response;
+  try {
+    response = await fetch(`${RAG_BASE_URL}/ask`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question,
+        animal,
+        conversation_id: conversationId,
+        language,
+      }),
+    });
+  } catch (networkError) {
+    // Network failure / CORS / server down. Never surface internals.
+    console.error("Health Assistant network error:", networkError);
+    throw new Error(unavailable, { cause: networkError });
   }
-  return response.json();
+  if (!response.ok) {
+    // Server-side detail may contain Python paths, provider errors or keys,
+    // so it is logged but never shown to the user.
+    try {
+      const errorData = await response.json();
+      if (errorData?.detail) {
+        console.error("Health Assistant API error:", errorData.detail);
+      }
+    } catch {
+      // Ignore unparsable error bodies.
+    }
+    throw new Error(unavailable);
+  }
+  try {
+    return await response.json();
+  } catch (parseError) {
+    console.error("Health Assistant response parse error:", parseError);
+    throw new Error(unavailable, { cause: parseError });
+  }
 }
 ```
 
 ## File: src/api/healthAssistantMockData.js
 ```javascript
+// src/api/healthAssistantMockData.js
 export const healthHistoryData = [
   {
     id: 1,
@@ -1083,6 +6613,7 @@ export const assistantData = {
   avatar:
     "https://lh3.googleusercontent.com/aida-public/AB6AXuBU1JFyDRfYvkIzsJB-aN_tsDdyNg1jThMylU8kNsUpT4NGDXks0VGzrS3AOdQvfXT7clWkGPF6awqdXNuZsSP_0LGUmeD1uCvX3aXAFN1I6kMGcFiZwpAK8hAOcS8F8E8KNlELQectO6zGznbn0PjdfrvRBB_GjvDr6oRDH89nLr3fVTzAsTXiQGMoskQGbMwE0C33cztYeqCJyqC6IpFL_KmkMhT6PsBFePJwHwYIQzpqfwxkbhNW5zf3n3qzN89uLRwxp7lRPB4U",
 };
+// chat message shape: { id, sender: 'ai' | 'user', type: 'text' | 'typing', text }
 export const chatMessagesData = [
   {
     id: 1,
@@ -1120,7 +6651,7 @@ function mapOrderForDisplay(order) {
 }
 export async function getRecentOrders() {
   if (!hasAuthToken()) {
-    return [];
+    return []; 
   }
   const orders = await apiRequest('/Orders/my-orders');
   return (Array.isArray(orders) ? orders : []).slice(0, 2).map(mapOrderForDisplay);
@@ -1465,6 +6996,7 @@ const MOCK_FOOTER = {
     { label: "Contact Us", href: "#" },
   ],
 };
+// ─── "Endpoints" ───────────────────────────────────────────
 const STORE_CATALOG_BASE_URL = `${API_BASE_URL}/StoreCatalog`;
 const RATINGS_BASE_URL = `${API_BASE_URL}/ProductRatings`;
 const CATEGORY_ICONS = {
@@ -1498,7 +7030,7 @@ export async function getCategories() {
     id: cat.categoryId,
     label: cat.name,
     description: cat.description,
-    icon: CATEGORY_ICONS[cat.name] || "category",
+    icon: CATEGORY_ICONS[cat.name] || "category", 
   }));
 }
 export async function getProductRatings(productId) {
@@ -1510,7 +7042,7 @@ export async function getProductRatings(productId) {
   if (!json.success) {
     throw new Error("failed");
   }
-  return json.data;
+  return json.data; 
 }
 function summarizeRatings(ratingsArray) {
   if (!ratingsArray || ratingsArray.length === 0) {
@@ -1538,7 +7070,7 @@ export async function getRecentOrders() {
     });
     if (res.status === 401) {
       console.warn("must be loggged in");
-      return [];
+      return []; 
     }
     if (!res.ok) {
       console.warn(`erorr fetching data: ${res.status}`);
@@ -1572,7 +7104,7 @@ export async function getProducts({ page = 1, sort = "popular", filters = {} } =
   }
   const ratingsResults = await Promise.all(
     json.data.map((item) =>
-      getProductRatings(item.productId).catch(() => [])
+      getProductRatings(item.productId).catch(() => []) 
     )
   );
   const mappedProducts = json.data.map((item, index) => {
@@ -2079,39 +7611,231 @@ export function removeWishlistItem(productId) {
 }
 ```
 
+## File: src/Components/admin/AdminConfirmDialog.jsx
+```javascript
+import { useEffect } from "react";
+import Icon from "../Icon.jsx";
+export default function AdminConfirmDialog({
+  open,
+  title,
+  message,
+  details,
+  confirmLabel,
+  cancelLabel,
+  danger = false,
+  busy = false,
+  onConfirm,
+  onCancel,
+}) {
+  useEffect(() => {
+    if (!open) return undefined;
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && !busy) onCancel();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, busy, onCancel]);
+  if (!open) return null;
+  return (
+    <div className="admin-modal" role="dialog" aria-modal="true" aria-label={title}>
+      <button
+        type="button"
+        className="admin-modal__backdrop"
+        aria-label={cancelLabel}
+        onClick={busy ? undefined : onCancel}
+      />
+      <div className={`admin-modal__panel${danger ? " admin-modal__panel--danger" : ""}`}>
+        <div className="admin-modal__icon" aria-hidden="true">
+          <Icon name={danger ? "warning" : "help"} />
+        </div>
+        <h2 className="admin-modal__title">{title}</h2>
+        <p className="admin-modal__message">{message}</p>
+        {details ? <div className="admin-modal__details">{details}</div> : null}
+        <div className="admin-modal__actions">
+          <button
+            type="button"
+            className="admin-btn admin-btn--ghost"
+            onClick={onCancel}
+            disabled={busy}
+          >
+            {cancelLabel}
+          </button>
+          <button
+            type="button"
+            className={`admin-btn ${danger ? "admin-btn--danger" : "admin-btn--primary"}`}
+            onClick={onConfirm}
+            disabled={busy}
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+## File: src/Components/admin/AdminFeedback.jsx
+```javascript
+import Icon from "../Icon.jsx";
+const ICONS = {
+  success: "check_circle",
+  error: "error",
+  info: "info",
+};
+/** Inline banner used to surface the real backend message (success or error). */
+export default function AdminFeedback({ type = "info", message, onDismiss, dismissLabel }) {
+  if (!message) return null;
+  return (
+    <div className={`admin-feedback admin-feedback--${type}`} role={type === "error" ? "alert" : "status"}>
+      <Icon name={ICONS[type] ?? ICONS.info} />
+      <p className="admin-feedback__text">{message}</p>
+      {onDismiss ? (
+        <button
+          type="button"
+          className="admin-feedback__close"
+          onClick={onDismiss}
+          aria-label={dismissLabel}
+        >
+          <Icon name="close" />
+        </button>
+      ) : null}
+    </div>
+  );
+}
+```
+
+## File: src/Components/admin/adminFormat.js
+```javascript
+/** Formats a backend ISO date for admin screens; returns "" when absent. */
+export function formatAdminDate(value, language = "en") {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  try {
+    return new Intl.DateTimeFormat(language === "ar" ? "ar" : "en", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(date);
+  } catch {
+    return date.toISOString().slice(0, 10);
+  }
+}
+```
+
+## File: src/Components/admin/AdminLayout.jsx
+```javascript
+import AdminSidebar from "./AdminSidebar.jsx";
+import AdminNavbar from "./AdminNavbar.jsx";
+export default function AdminLayout({ title, subtitle, actions, children }) {
+  return (
+    <div className="admin-layout">
+      <AdminSidebar />
+      <div className="admin-layout__main">
+        <AdminNavbar />
+        <main className="admin-content">
+          <div className="admin-page">
+            <header className="admin-page__header">
+              <div className="admin-page__heading">
+                <h1 className="admin-page__title">{title}</h1>
+                {subtitle ? <p className="admin-page__subtitle">{subtitle}</p> : null}
+              </div>
+              {actions ? <div className="admin-page__actions">{actions}</div> : null}
+            </header>
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+```
+
 ## File: src/Components/admin/AdminNavbar.jsx
 ```javascript
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Icon from "../Icon.jsx";
+import { fetchMyProfile } from "../../api/profileApi";
+function getInitials(name) {
+  const parts = String(name ?? "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!parts.length) return "";
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
+}
 export default function AdminNavbar() {
   const { t, i18n } = useTranslation();
+  const [profile, setProfile] = useState(null);
+  const [profileError, setProfileError] = useState(null);
+  useEffect(() => {
+    let active = true;
+    fetchMyProfile()
+      .then((data) => {
+        if (!active) return;
+        setProfile(data);
+        setProfileError(null);
+      })
+      .catch((error) => {
+        if (!active) return;
+        setProfile(null);
+        setProfileError(error.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === "ar" ? "en" : "ar");
   };
+  const displayName = profile?.fullName || profile?.userName || profile?.username || "";
+  const email = profile?.email || "";
+  const imageUrl = profile?.profileImageUrl || "";
+  const initials = getInitials(displayName || email);
   return (
     <header className="admin-navbar">
-      <div className="admin-navbar__spacer" />
+      <div className="admin-navbar__brand">
+        <span className="admin-navbar__brand-title">{t("admin.navbar.workspace")}</span>
+      </div>
       <div className="admin-navbar__actions">
         <button
-          className="admin-navbar__icon-btn"
+          className="admin-navbar__lang-btn"
           type="button"
           aria-label={t("admin.navbar.switchLanguage")}
           onClick={toggleLanguage}
         >
           {i18n.language === "ar" ? "EN" : "عربي"}
         </button>
-        <button className="admin-navbar__icon-btn" type="button" aria-label={t("admin.navbar.help")}>
-          <Icon name="help" />
-        </button>
-        <button className="admin-navbar__icon-btn admin-navbar__icon-btn--bell" type="button" aria-label={t("admin.navbar.notifications")}>
-          <Icon name="notifications" />
-          <span className="admin-navbar__badge" />
-        </button>
-        <img
-          className="admin-navbar__avatar"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8mpNg8_UsLTwot_g_I4U_dyv7rr6xhl4OaVPKc4hO_yT4r60ZqPv99x9V791K1LlGvBNH4sM6Td25y1S0uKeNLh0vz3pNjKOJw7I_vyWVpFoaUPYFaTiPebHVCd4lcZx15JSOe1rLS66jHMz-6mupDRA8uXMl94f0WGde9LVqaJ1cayW_nNxDQ_JjODgPBVq4lEV6pKQLxIOF82B44uoUHZ8QhkGlKO08XPzFs0KkwOx5DOnWWRZbdpUPSFYL6KN63PfseesVWUAe"
-          alt={t("admin.navbar.avatarAlt")}
-        />
+        {profileError ? (
+          <span className="admin-navbar__profile-error" title={profileError}>
+            {t("admin.navbar.profileError")}
+          </span>
+        ) : null}
+        {profile ? (
+          <div className="admin-navbar__profile">
+            {imageUrl ? (
+              <img
+                className="admin-navbar__avatar"
+                src={imageUrl}
+                alt={displayName || t("admin.navbar.profileTitle")}
+              />
+            ) : (
+              <span className="admin-navbar__avatar admin-navbar__avatar--initials" aria-hidden="true">
+                {initials || "A"}
+              </span>
+            )}
+            <span className="admin-navbar__profile-text">
+              {displayName ? (
+                <span className="admin-navbar__profile-name">{displayName}</span>
+              ) : null}
+              {email ? <span className="admin-navbar__profile-email">{email}</span> : null}
+            </span>
+          </div>
+        ) : null}
       </div>
     </header>
   );
@@ -2125,10 +7849,14 @@ import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
 export default function AdminSidebar() {
   const { t } = useTranslation();
+  // Only features backed by a real AdminController endpoint are listed here.
   const NAV_ITEMS = [
     { to: "/admin", label: t("admin.sidebar.dashboard"), icon: "dashboard", end: true },
-    { to: "/admin/clinic-approvals", label: t("admin.sidebar.clinicApprovals"), icon: "verified_user" },
-    { to: "/admin/vet-approvals", label: t("admin.sidebar.vetApprovals"), icon: "medical_information" },
+    {
+      to: "/admin/vet-approvals",
+      label: t("admin.sidebar.vetApprovals"),
+      icon: "medical_information",
+    },
     { to: "/admin/users", label: t("admin.sidebar.userManagement"), icon: "group" },
   ];
   return (
@@ -2139,12 +7867,13 @@ export default function AdminSidebar() {
           alt={t("admin.sidebar.logoAlt")}
         />
       </div>
-      <nav className="admin-sidebar__nav">
+      <nav className="admin-sidebar__nav" aria-label={t("admin.sidebar.navLabel")}>
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
+            title={item.label}
             className={({ isActive }) =>
               `admin-sidebar__link${isActive ? " admin-sidebar__link--active" : ""}`
             }
@@ -2155,6 +7884,30 @@ export default function AdminSidebar() {
         ))}
       </nav>
     </aside>
+  );
+}
+```
+
+## File: src/Components/admin/AdminStatCard.jsx
+```javascript
+import Icon from "../Icon.jsx";
+/**
+ * Plain counter card. It renders only what the backend returns — no trends,
+ * no growth percentages, no derived projections.
+ */
+export default function AdminStatCard({ label, value, icon, tone = "primary", hint }) {
+  const displayValue = typeof value === "number" ? value.toLocaleString() : value;
+  return (
+    <article className={`admin-stat admin-stat--${tone}`}>
+      <span className="admin-stat__icon" aria-hidden="true">
+        <Icon name={icon} />
+      </span>
+      <span className="admin-stat__body">
+        <span className="admin-stat__label">{label}</span>
+        <span className="admin-stat__value">{displayValue}</span>
+        {hint ? <span className="admin-stat__hint">{hint}</span> : null}
+      </span>
+    </article>
   );
 }
 ```
@@ -2440,6 +8193,13 @@ export default AdoptionRequests;
 
 ## File: src/Components/AdoptionHub/AdoptionTabs.jsx
 ```javascript
+/**
+ * تابات صفحة Adoption Hub
+ * props:
+ *  - tabs: [{ id, label }]
+ *  - activeTab: string
+ *  - onTabChange: function(tabId)
+ */
 function AdoptionTabs({ tabs, activeTab, onTabChange }) {
   return (
     <div className="adoption-tabs">
@@ -2467,6 +8227,11 @@ export default AdoptionTabs;
 import { FaPaw, FaArrowRight } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
+/**
+ * بانر "Find Your Perfect Match" مع زر بدء الكويز
+ * props:
+ *  - onStartQuiz: function
+ */
 function CompatibilityQuizBanner({ onStartQuiz }) {
   const { t } = useTranslation();
   return (
@@ -2943,6 +8708,13 @@ export default PetCatalogGrid;
 import { FaStar } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { formatPetAge, translateDisplayValue } from "../../utils/localization.js";
+/**
+ * قسم "Recommended for You"
+ * props:
+ *  - pets: [{ id, name, breed, age, temperament, matchPercent, image }]
+ *  - onViewProfile: function(petId)
+ *  - onAdoptNow: function(petId)
+ */
 function RecommendedPets({ pets, onViewProfile, onAdoptNow }) {
   const { t } = useTranslation();
   return (
@@ -3756,6 +9528,7 @@ const AdoptionInventory = forwardRef(function AdoptionInventory(
   const ta = t.adoption;
   const tm = translate("center.modals", { returnObjects: true });
   const statusMap = translate("center.status", { returnObjects: true });
+  // Active Requests has no matching backend endpoint — stays empty (see audit report).
   const activeRequests = adoptionInventory?.activeRequests ?? [];
   const recentAdoptions = recentAdoptionsProp ?? [];
   const animals = useMemo(
@@ -5855,6 +11628,9 @@ import { logoutUser } from "../../../api/authApi.js";
 import "../../../Styling/VetDashboard.css";
 const LOGO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuB1isoZOydVyD5MYhvYGwVYTsmYtteNtWg89-SIig8AWCVHdHN8IzU34EjCDa4DWDt6VFxBbsg41KE1FOmvamfFJZNDGHkosK022Eh8K4IZVAFAjfdMDk08k-sUbVWYl7PrXFQuhaSeFL-8et9k6894ikaSaU_t9x2LnJ1mlreuwtp4zJa7rHufl79MX9kc62yp2E4CC8SNyC-XVLBx-WNbmQOA1JP5WO96WUk4Ll4RocbyTPOHoek4a1HSSL9fhptbUmLWo7C3zn9c";
+/* Legacy placeholder avatar intentionally not used.
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBVf5-FuadOrH8dn03uJxt8n3dpli9imW8s7QxXJ6Je0FQXbneDz868-6PJCOqEFD5mW9sptE5yulr3imwW4PIAimU-jiRb1YozdgIBRV6moBPZHCSPMglxo0mQzf2Mn8RjgZrbc87TnphWZTGdsnlUx_1QLsXmRDM0Lvs7qXcurQgEQGe9owNEamfugtaymWPS61LpwUdEN49IellG5MjDQv1ccPiVZJmntEb1rjNhwXFmIVg9BHQjE1pAlIUqfP8lbdVFfbJVup5l";
+*/
 const NAV_ITEMS = [
   { key: "dashboard", to: "/vet/dashboard" },
   { key: "patients", to: "/vet/patients" },
@@ -7723,10 +13499,12 @@ import { useState } from "react";
 import { FaArrowUp } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "../../Styling/HealthAssistant.css";
-const ChatInput = ({ onSend }) => {
+const ChatInput = ({ onSend, isSending = false, disabled = false }) => {
   const { t } = useTranslation();
   const [value, setValue] = useState("");
+  const isBlocked = isSending || disabled;
   const handleSend = () => {
+    if (isBlocked) return;
     const trimmed = value.trim();
     if (!trimmed) return;
     onSend?.(trimmed);
@@ -7735,6 +13513,7 @@ const ChatInput = ({ onSend }) => {
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      // Shift+Enter still inserts a new line.
       handleSend();
     }
   };
@@ -7749,13 +13528,14 @@ const ChatInput = ({ onSend }) => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
+            disabled={isBlocked}
           />
           <button
             type="button"
             onClick={handleSend}
             className="chat-input__send"
             aria-label={t("adopter.health.send")}
-            disabled={!value.trim()}
+            disabled={isBlocked || !value.trim()}
           >
             <FaArrowUp size={15} />
           </button>
@@ -7870,22 +13650,46 @@ export default HealthHistorySidebar;
 
 ## File: src/Components/healthAssistant/PetSelector.jsx
 ```javascript
+import { FaPaw } from "react-icons/fa";
 import "../../Styling/HealthAssistant.css";
 const PetSelector = ({ pets = [], activePetId, onSelectPet }) => {
+  if (!pets.length) {
+    return null;
+  }
   return (
-    <div className="pet-selector">
+    <div className="pet-selector" role="group">
       {pets.map((pet) => {
         const isActive = pet.id === activePetId;
+        // The adopted-pets API exposes `image`; older mock pets used `avatar`.
+        const petImage = pet.image ?? pet.avatar ?? null;
+        const subtitle = pet.breed || pet.species || "";
         return (
           <button
             key={pet.id}
+            type="button"
             onClick={() => onSelectPet?.(pet.id)}
+            aria-pressed={isActive}
             className={`pet-selector__item ${isActive ? "pet-selector__item--active" : ""}`}
           >
-            <img alt={pet.name} className="pet-selector__avatar" src={pet.avatar} />
+            {petImage ? (
+              <img
+                alt={pet.name}
+                className="pet-selector__avatar"
+                src={petImage}
+              />
+            ) : (
+              <span
+                className="pet-selector__avatar pet-selector__avatar--fallback"
+                aria-hidden="true"
+              >
+                <FaPaw />
+              </span>
+            )}
             <div className="pet-selector__info">
               <p className="pet-selector__name">{pet.name}</p>
-              <p className="pet-selector__breed">{pet.breed}</p>
+              {subtitle ? (
+                <p className="pet-selector__breed">{subtitle}</p>
+              ) : null}
             </div>
           </button>
         );
@@ -8955,6 +14759,11 @@ export default function TrustSection({ items }) {
 ```javascript
 import { FaStethoscope } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+/**
+ * تايم لاين التاريخ الطبي
+ * props:
+ *  - items: [{ id, title, date, description, vet, severity }]
+ */
 function MedicalTimeline({ items }) {
   const { t } = useTranslation();
   return (
@@ -9077,6 +14886,13 @@ export default PetHeroCard;
 
 ## File: src/Components/PetProfile/ProfileTabs.jsx
 ```javascript
+/**
+ * شريط التابات فوق محتوى البروفايل
+ * props:
+ *  - tabs: [{ id, label }]
+ *  - activeTab: string
+ *  - onTabChange: function(tabId)
+ */
 function ProfileTabs({ tabs, activeTab, onTabChange }) {
   return (
     <div className="profile-tabs">
@@ -9103,6 +14919,12 @@ export default ProfileTabs;
 ```javascript
 import { FaPlus } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+/**
+ * ويدجت المواعيد القادمة في السايدبار
+ * props:
+ *  - appointments: [{ id, title, month, day, time, location, vetName, vetAvatar }]
+ *  - onAddClick: function
+ */
 function UpcomingAppointments({ appointments, onAddClick }) {
   const { t } = useTranslation();
   return (
@@ -9310,6 +15132,7 @@ export default function QuantitySelector({ quantity, onIncrease, onDecrease }) {
 
 ## File: src/Components/text/publicTexts.js
 ```javascript
+// Images
 export const LOGO_URL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuB1isoZOydVyD5MYhvYGwVYTsmYtteNtWg89-SIig8AWCVHdHN8IzU34EjCDa4DWDt6VFxBbsg41KE1FOmvamfFJZNDGHkosK022Eh8K4IZVAFAjfdMDk08k-sUbVWYl7PrXFQuhaSeFL-8et9k6894ikaSaU_t9x2LnJ1mlreuwtp4zJa7rHufl79MX9kc62yp2E4CC8SNyC-XVLBx-WNbmQOA1JP5WO96WUk4Ll4RocbyTPOHoek4a1HSSL9fhptbUmLWo7C3zn9c";
 export const LOGO_GRAY_URL =
@@ -9322,6 +15145,7 @@ export const VET_IMAGE_URL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuD2SZGfjgib1IGsHQOQ7RCP3vKnR8VzM-ihn7WL_MQFcxukb-eEdPZsPXTINSV5yc_erC2ECMmqbuD8ppLpAsuRUS3lXddtjYJJ8HdpjVGLWscyoKUfG-vVxvBA1hMhE0xEX1D2HuBCva7x5X1M63GI9sHnZr4JpNMVtbvkBVvWo5GJNHXZqlR8DWO5RtFgobhZqa0UX_5dsSpK4eJnQQ9Nptojzzx5S2_4Iv8IJQh2iuyvkwudyYFbVw";
 export const TESTIMONIAL_AVATAR_URL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBZdKA3uMWlHCYH2rvZ2eRltRmzBLxxryG83yYB6Y3gLH09a5vi_ksf3gFys7_uFizDPKZn4XiWfpfwRiwokN1FUGAsBT7C1-0ehzhhDREYXmUZ8p4pc0htY6wH_gYiKkntQMioQEiUIQC6hhU5jortTvneSfNyj5dTKx4hQjPSEGjg4VRcDVu5CrDEii83zh3fQ4eECl91Irllh-XSkatl6W39t6DRR_o-oQhmpLOCZ5urkwT5RqWc48PvMhFIuVopKQ2RX6BSPJxI";
+// Header / Nav
 export const NAV_TABS = [
   { id: "adoption", label: "Adoption" },
   { id: "shop", label: "Shop" },
@@ -9332,6 +15156,7 @@ export const DROPDOWN_ITEMS = [
   { label: "Sign In", path: "/login" },
   { label: "Sign Up", path: "/Register" },
 ];
+// Hero Section
 export const HERO_BADGE = "Your Pet's Best Life Starts Here";
 export const HERO_TITLE_PREFIX = "Every Paw Deserves a ";
 export const HERO_TITLE_HIGHLIGHT = "Happy Haven.";
@@ -9346,11 +15171,13 @@ export const HERO_TRUST_STATS = [
 export const HERO_IMAGE_ALT = "A happy golden retriever running through a sunny green park.";
 export const HERO_BADGE_TITLE = "AI Health Checked";
 export const HERO_BADGE_SUBTITLE = "100% Safe & Healthy";
+// Impact Stats Section
 export const IMPACT_STATS = [
   { value: "12,000+", label: "Pets Rescued" },
   { value: "2,500+", label: "Verified Vets" },
   { value: "98%", label: "Happy Rehoming" },
 ];
+// Categories Grid Section
 export const CATEGORIES_TITLE = "Everything You Need";
 export const CATEGORIES = [
   {
@@ -9378,6 +15205,7 @@ export const CATEGORIES = [
     accent: "success",
   },
 ];
+// Featured Pets Section
 export const FEATURED_PETS_TITLE = "Meet Your New Best Friend";
 export const FEATURED_PETS_VIEW_ALL = "View all pets →";
 export const FEATURED_PETS = [
@@ -9411,6 +15239,7 @@ export const FEATURED_PETS = [
   },
 ];
 export const FEATURED_PETS_CTA = "View Profile";
+// Trending Products (Shop) Section
 export const TRENDING_PRODUCTS_TITLE = "Trending in Shop";
 export const TRENDING_PRODUCTS_VIEW_ALL = "View all products →";
 export const TRENDING_PRODUCTS = [
@@ -9455,6 +15284,7 @@ export const TRENDING_PRODUCTS = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDSSY60Mwn8ZznjFlO_Ga5vXhCf7VWjDAj9nt-fz3UYxi715peqY2-J69g45Ehu_XUsxiFsY2hDc9tYHV6RXC3X5Bmkw1awje816IXKgvbWT8H7TS-chao8Z-WsQJ2Hw5yDY8vQc8XqDHWRgJskyXCefUzzBU9w6N42pMFfxgxa3pxFfP1Vsy7oqrnS39Oubnn4e_rhyAOU9RIcwxCyoGu9uUEyvy5TUnppero37_vLPEuGWOp0SkdlYpe-M-1EfuCIzoqLUrFD9IlX",
   },
 ];
+// How It Works Section
 export const HOW_IT_WORKS_TITLE = "How It Works";
 export const HOW_IT_WORKS_STEPS = [
   {
@@ -9473,6 +15303,7 @@ export const HOW_IT_WORKS_STEPS = [
     description: "Complete the adoption process and welcome your new friend.",
   },
 ];
+// Events Section
 export const EVENTS_TITLE = "Upcoming Pet Events";
 export const EVENTS_VIEW_ALL = "View full calendar →";
 export const EVENTS = [
@@ -9505,6 +15336,7 @@ export const EVENTS = [
     hiddenOnMobile: true,
   },
 ];
+// Vet Experts Section
 export const VET_BADGE = "Certified Care";
 export const VET_TITLE_PREFIX = "Meet Our ";
 export const VET_TITLE_HIGHLIGHT = "Certified Veterinary Experts.";
@@ -9513,6 +15345,7 @@ export const VET_DESCRIPTION =
 export const VET_FEATURES = ["Background Checked", "License Verified", "Top-Rated Facilities"];
 export const VET_CTA = "Find a Vet Near You";
 export const VET_IMAGE_ALT = "Professional female veterinarian in a modern clinic";
+// Blog / Articles Section
 export const BLOG_TITLE = "Health & Care Tips";
 export const BLOG_VIEW_ALL = "Read more articles →";
 export const BLOG_ARTICLES = [
@@ -9556,16 +15389,19 @@ export const BLOG_ARTICLES = [
   },
 ];
 export const BLOG_READ_ARTICLE = "Read article";
+// Testimonials Section
 export const TESTIMONIAL_QUOTE =
   "\"Adopting Bella through Pet Haven was the best decision of our lives. The process was incredibly smooth, and being able to buy all her supplies in the same place saved us so much time!\"";
 export const TESTIMONIAL_AUTHOR = "Sarah J.";
 export const TESTIMONIAL_ROLE = "Proud owner of Bella";
+// Newsletter Section
 export const NEWSLETTER_TITLE = "Join the Haven Community";
 export const NEWSLETTER_DESCRIPTION =
   "Get weekly pet care tips, exclusive shop discounts, and inspiring adoption stories delivered right to your inbox.";
 export const NEWSLETTER_PLACEHOLDER = "Enter your email address";
 export const NEWSLETTER_CTA = "Subscribe";
 export const NEWSLETTER_PRIVACY = "We respect your privacy. No spam, ever.";
+// Auth prompt
 export const AUTH_REQUIRED_MESSAGE = "Please sign in or create an account to continue.";
 ```
 
@@ -10051,6 +15887,7 @@ import VetCalendarDay from "./VetCalendarDay.jsx";
 import { formatLocalizedDate } from "../../utils/localization.js";
 import { toDateParam } from "../../api/vetAppointmentsApi.js";
 function buildWeekdayLabels(language) {
+  // January 1, 2023 was a Sunday — used only as a stable Sun..Sat reference week.
   return Array.from({ length: 7 }, (_, i) => formatLocalizedDate(new Date(2023, 0, 1 + i), language, { weekday: "short" }));
 }
 function buildMonthCells(year, month) {
@@ -11475,6 +17312,7 @@ export default function StarRating({ count, total = 5, size = "20px" }) {
 
 ## File: src/Components/Toast.jsx
 ```javascript
+// Components/Toast.jsx
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "../Styling/Toast.css";
@@ -11763,89 +17601,166 @@ export default function TopNavBar() {
 
 ## File: src/context/AdminContext.jsx
 ```javascript
-import { createContext, useState, useCallback } from 'react';
-import * as adminApi from '../api/adminApi';
-export const AdminContext = createContext(null);
-const initialState = {
-  kpis: null,
-  platformHealth: null,
-  clinicPerformance: [],
-  systemAlerts: [],
-  dashboardLoading: false,
-  dashboardError: null,
-  clinicApprovals: [],
-  blocklist: [],
-  approvalsLoading: false,
-  approvalsError: null,
-  users: [],
-  usersLoading: false,
-  usersError: null,
-};
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import * as adminApi from "../api/adminApi";
+import { AdminContext } from "./adminContextBase.js";
 export default function AdminProvider({ children }) {
-  const [state, setState] = useState(initialState);
-  const set = useCallback(
-    (slice) => setState((prev) => ({ ...prev, ...slice })),
+  // ── Dashboard stats (GET /api/Admin/stats) ─────────────────────────
+  const [stats, setStats] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
+  const [dashboardError, setDashboardError] = useState(null);
+  // ── Pending vets (GET /api/Admin/vets/pending) ─────────────────────
+  const [pendingVets, setPendingVets] = useState([]);
+  const [pendingVetsLoaded, setPendingVetsLoaded] = useState(false);
+  const [pendingVetsLoading, setPendingVetsLoading] = useState(false);
+  const [pendingVetsError, setPendingVetsError] = useState(null);
+  // ── In-flight mutation key, e.g. "verify-12" / "ban" / "unban" ─────
+  const [actionLoading, setActionLoading] = useState(null);
+  const mountedRef = useRef(true);
+  const statsLoadedRef = useRef(false);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+  const fetchStats = useCallback(async () => {
+    setDashboardLoading(true);
+    setDashboardError(null);
+    try {
+      const data = await adminApi.getAdminStats();
+      if (!mountedRef.current) return null;
+      statsLoadedRef.current = true;
+      setStats(data);
+      return data;
+    } catch (error) {
+      if (!mountedRef.current) return null;
+      setDashboardError(error.message);
+      return null;
+    } finally {
+      if (mountedRef.current) setDashboardLoading(false);
+    }
+  }, []);
+  const fetchPendingVets = useCallback(async () => {
+    setPendingVetsLoading(true);
+    setPendingVetsError(null);
+    try {
+      const data = await adminApi.getPendingVets();
+      if (!mountedRef.current) return [];
+      setPendingVets(data);
+      setPendingVetsLoaded(true);
+      return data;
+    } catch (error) {
+      if (!mountedRef.current) return [];
+      setPendingVetsError(error.message);
+      setPendingVets([]);
+      setPendingVetsLoaded(false);
+      return [];
+    } finally {
+      if (mountedRef.current) setPendingVetsLoading(false);
+    }
+  }, []);
+  /** Re-syncs the stat counters only for pages that already loaded them. */
+  const refreshStatsIfLoaded = useCallback(() => {
+    if (!statsLoadedRef.current) return;
+    fetchStats();
+  }, [fetchStats]);
+  const runAction = useCallback(
+    async (key, request, onSuccess) => {
+      setActionLoading(key);
+      try {
+        const result = await request();
+        if (onSuccess) onSuccess();
+        return { success: true, message: adminApi.extractMessage(result) };
+      } catch (error) {
+        return { success: false, message: error.message };
+      } finally {
+        if (mountedRef.current) setActionLoading(null);
+      }
+    },
     []
   );
-  const fetchDashboard = useCallback(async () => {
-    set({ dashboardLoading: true, dashboardError: null });
-    try {
-      const [kpis, platformHealth, clinicPerformance, systemAlerts] =
-        await Promise.all([
-          adminApi.getAdminKpis(),
-          adminApi.getPlatformHealth(),
-          adminApi.getClinicPerformance(),
-          adminApi.getSystemAlerts(),
-        ]);
-      set({ kpis, platformHealth, clinicPerformance,
-            systemAlerts, dashboardLoading: false });
-    } catch (e) {
-      set({ dashboardError: e.message, dashboardLoading: false });
-    }
-  }, [set]);
-  const fetchApprovals = useCallback(async () => {
-    set({ approvalsLoading: true, approvalsError: null });
-    try {
-      const [clinicApprovals, blocklist] = await Promise.all([
-        adminApi.getClinicApprovals(),
-        adminApi.getBlocklist(),
-      ]);
-      set({ clinicApprovals, blocklist, approvalsLoading: false });
-    } catch (e) {
-      set({ approvalsError: e.message, approvalsLoading: false });
-    }
-  }, [set]);
-  const fetchUsers = useCallback(async () => {
-    set({ usersLoading: true, usersError: null });
-    try {
-      const users = await adminApi.getUsers();
-      set({ users, usersLoading: false });
-    } catch (e) {
-      set({ usersError: e.message, usersLoading: false });
-    }
-  }, [set]);
-  const value = {
-    ...state,
-    fetchDashboard,
-    fetchApprovals,
-    fetchUsers,
-  };
-  return (
-    <AdminContext.Provider value={value}>
-      {children}
-    </AdminContext.Provider>
+  const verifyVet = useCallback(
+    (vetId) =>
+      runAction(
+        `verify-${vetId}`,
+        () => adminApi.verifyVet(vetId),
+        () => {
+          if (!mountedRef.current) return;
+          setPendingVets((previous) => previous.filter((vet) => vet.vetId !== vetId));
+        }
+      ),
+    [runAction]
   );
+  const rejectVet = useCallback(
+    (vetId) =>
+      runAction(
+        `reject-${vetId}`,
+        () => adminApi.rejectVet(vetId),
+        () => {
+          if (!mountedRef.current) return;
+          setPendingVets((previous) => previous.filter((vet) => vet.vetId !== vetId));
+          // Rejection deletes the user account, so the counters move too.
+          refreshStatsIfLoaded();
+        }
+      ),
+    [runAction, refreshStatsIfLoaded]
+  );
+  const banUser = useCallback(
+    (userId, reason) =>
+      runAction("ban", () => adminApi.banUser(userId, reason), refreshStatsIfLoaded),
+    [runAction, refreshStatsIfLoaded]
+  );
+  const unbanUser = useCallback(
+    (userId) => runAction("unban", () => adminApi.unbanUser(userId), refreshStatsIfLoaded),
+    [runAction, refreshStatsIfLoaded]
+  );
+  const value = useMemo(
+    () => ({
+      stats,
+      dashboardLoading,
+      dashboardError,
+      pendingVets,
+      pendingVetsLoaded,
+      pendingVetsLoading,
+      pendingVetsError,
+      actionLoading,
+      fetchStats,
+      fetchPendingVets,
+      verifyVet,
+      rejectVet,
+      banUser,
+      unbanUser,
+    }),
+    [
+      stats,
+      dashboardLoading,
+      dashboardError,
+      pendingVets,
+      pendingVetsLoaded,
+      pendingVetsLoading,
+      pendingVetsError,
+      actionLoading,
+      fetchStats,
+      fetchPendingVets,
+      verifyVet,
+      rejectVet,
+      banUser,
+      unbanUser,
+    ]
+  );
+  return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
 }
 ```
 
 ## File: src/context/adminContextBase.js
 ```javascript
-import { useContext } from 'react';
-import { AdminContext } from './AdminContext';
+import { createContext, useContext } from "react";
+export const AdminContext = createContext(null);
 export function useAdminContext() {
   const context = useContext(AdminContext);
   if (!context) {
-    throw new Error('useAdminContext must be used inside <AdminProvider>');
+    throw new Error("useAdminContext must be used inside <AdminProvider>");
   }
   return context;
 }
@@ -11856,26 +17771,34 @@ export function useAdminContext() {
 import { useState, useCallback } from "react";
 import * as centerApi from "../api/centerApi.js";
 import { CenterContext } from "./centerContextBase.js";
+// getMonthlyReports resolves to a single object,
+// not a list, so that slice defaults to null rather than [].
+// getAdoptionInventory/getProductInventory resolve to plain arrays, so they default to [].
 const initialState = {
+  // ─── Profile ───────────────────────────────
   profile: null,
   profileLoading: false,
   profileError: null,
+  // ─── Dashboard ─────────────────────────────
   dashboardStats: null,
   recentActivity: [],
   latestOrders: [],
   wallet: null,
   dashboardLoading: false,
   dashboardError: null,
+  // ─── Reviews ───────────────────────────────
   reviewStats: null,
   reviews: [],
   reviewsLoading: false,
   reviewsError: null,
+  // ─── Adoption Requests ─────────────────────
   adoptionRequests: [],
   requestsLoading: false,
   requestsError: null,
   blacklist: [],
   blacklistLoading: false,
   blacklistError: null,
+  // ─── Inventory ─────────────────────────────
   productInventory: [],
   adoptionInventory: [],
   categories: [],
@@ -11889,6 +17812,7 @@ const initialState = {
   allRecentAdoptions: [],
   allRecentAdoptionsLoading: false,
   allRecentAdoptionsError: null,
+  // ─── Reports ────────────────────────────────
   monthlyReports: null,
   vaccinationLoading: false,
   vaccinationError: null,
@@ -11896,6 +17820,7 @@ const initialState = {
 export default function CenterProvider({ children }) {
   const [state, setState] = useState(initialState);
   const set = useCallback((slice) => setState((prev) => ({ ...prev, ...slice })), []);
+  // ── Profile actions ──────────────────────────────────────
   const fetchProfile = useCallback(async () => {
     set({ profileLoading: true, profileError: null });
     try {
@@ -11917,6 +17842,7 @@ export default function CenterProvider({ children }) {
       throw err;
     }
   }, []);
+  // ── Dashboard actions ────────────────────────────────────
   const fetchDashboard = useCallback(async () => {
     set({ dashboardLoading: true, dashboardError: null });
     try {
@@ -11932,6 +17858,7 @@ export default function CenterProvider({ children }) {
       throw err;
     }
   }, [set]);
+  // ── Reviews actions ──────────────────────────────────────
   const fetchReviews = useCallback(async () => {
     set({ reviewsLoading: true, reviewsError: null });
     try {
@@ -11942,6 +17869,7 @@ export default function CenterProvider({ children }) {
       throw err;
     }
   }, [set]);
+  // ── Adoption Requests actions ────────────────────────────
   const fetchRequests = useCallback(async () => {
     set({ requestsLoading: true, requestsError: null });
     try {
@@ -12010,6 +17938,7 @@ export default function CenterProvider({ children }) {
   const blockAdopter = useCallback(async ({ adopterId, reason }) => {
     return centerApi.banAdopter({ adopterId, reason });
   }, []);
+  // ── Inventory actions ────────────────────────────────────
   const fetchProductInventory = useCallback(async () => {
     set({ inventoryLoading: true, inventoryError: null });
     try {
@@ -12212,6 +18141,7 @@ export default function CenterProvider({ children }) {
       throw err;
     }
   }, []);
+  // ── Report actions ───────────────────────────────────────
   const fetchMonthlyReports = useCallback(async () => {
     set({ vaccinationLoading: true, vaccinationError: null });
     try {
@@ -13159,7 +19089,11 @@ export function useCenterContext() {
       "messages": {
         "1": "مرحبًا! أنا هنا لمساعدتك في الاطمئنان على ديزي. هل يمكنك وصف ما لاحظته بشأن عرجها؟",
         "2": "بدأت تعرج بساقها الخلفية اليمنى هذا الصباح بعد التنزه. ما زالت تأكل جيدًا وتبدو سعيدة فيما عدا ذلك."
-      }
+      },
+      "petsLoading": "جارٍ تحميل حيواناتك الأليفة...",
+      "petsError": "تعذر تحميل حيواناتك الأليفة حالياً.",
+      "noPets": "لا توجد حيوانات متبنّاة بعد. يمكنك طرح الأسئلة مع ذلك — اختيار أو تبنّي حيوان يعطيك إجابات أدق حسب نوع الحيوان.",
+      "chattingAbout": "المحادثة بشأن"
     },
     "vets": {
       "retry": "إعادة المحاولة",
@@ -14269,125 +20203,116 @@ export function useCenterContext() {
     }
   },
   "admin": {
+    "common": {
+      "loading": "جارٍ التحميل…",
+      "refresh": "تحديث",
+      "refreshing": "جارٍ التحديث…",
+      "retry": "إعادة المحاولة",
+      "cancel": "إلغاء",
+      "dismiss": "إغلاق",
+      "processing": "جارٍ التنفيذ…",
+      "actionFailed": "تعذر إتمام الطلب.",
+      "notProvided": "غير متوفر"
+    },
     "navbar": {
-      "help": "مساعدة",
-      "notifications": "الإشعارات",
-      "avatarAlt": "صورة المسؤول",
-      "switchLanguage": "تبديل اللغة"
+      "workspace": "لوحة المدير",
+      "switchLanguage": "تغيير اللغة",
+      "profileTitle": "ملف المدير",
+      "profileError": "تعذر جلب الملف الشخصي"
     },
     "sidebar": {
-      "logoAlt": "شعار بيت هافن",
+      "logoAlt": "شعار Pet Haven",
+      "navLabel": "تنقل المدير",
       "dashboard": "لوحة التحكم",
-      "clinicApprovals": "اعتماد العيادات",
-      "userManagement": "إدارة المستخدمين وقائمة الحظر"
-    },
-    "status": {
-      "Active": "نشط",
-      "Inactive": "غير نشط",
-      "Suspended": "موقوف",
-      "Banned": "محظور",
-      "Pending": "قيد الانتظار",
-      "Approved": "مقبول",
-      "Rejected": "مرفوض"
+      "vetApprovals": "موافقات الأطباء",
+      "userManagement": "إدارة المستخدمين"
     },
     "dashboard": {
-      "loading": "جارٍ تحميل لوحة التحكم…",
-      "activeUsers": "المستخدمون النشطون",
-      "totalRevenue": "إجمالي الإيرادات",
-      "reviewNow": "راجع الآن",
-      "clinicPerformanceOverview": "نظرة عامة على أداء العيادات",
-      "viewFullReport": "عرض التقرير الكامل",
-      "table": {
-        "clinicName": "اسم العيادة",
-        "location": "الموقع",
-        "orders": "الطلبات",
-        "growth": "النمو",
-        "lastActive": "آخر نشاط",
-        "status": "الحالة"
+      "title": "لوحة تحكم المدير",
+      "subtitle": "إحصاءات مباشرة من خوادم Pet Haven.",
+      "statsSection": "إحصاءات المنصة",
+      "statsUnavailable": "تعذر تحميل الإحصاءات.",
+      "stats": {
+        "totalUsers": "إجمالي المستخدمين",
+        "adopters": "المتبنون",
+        "centers": "مراكز التبني",
+        "vets": "الأطباء البيطريون",
+        "admins": "المدراء",
+        "totalPets": "إجمالي الحيوانات",
+        "bannedUsers": "المستخدمون المحظورون"
       },
-      "platformHealth": "صحة المنصة",
-      "apiResponseTime": "زمن استجابة الواجهة البرمجية",
-      "serverLoad": "حمل الخادم",
-      "uptimeLabel": "وقت التشغيل (آخر 24 ساعة):",
-      "systemAlerts": "تنبيهات النظام"
+      "pendingVets": {
+        "title": "طلبات موافقة الأطباء",
+        "subtitle": "حسابات أطباء بانتظار التحقق.",
+        "manage": "مراجعة الطلبات",
+        "awaiting": "بانتظار المراجعة",
+        "more": "ويوجد {{remaining}} إضافي في قائمة الانتظار."
+      }
     },
-    "clinicApprovals": {
-      "loading": "جارٍ تحميل اعتمادات العيادات…",
-      "title": "اعتماد العيادات",
-      "subtitle": "راجع وأدر طلبات انضمام العيادات البيطرية الجديدة. تحقق من التراخيص وتأكد من الامتثال لمعايير بيت هافن المهنية قبل التفعيل.",
-      "pendingRequests": "الطلبات قيد الانتظار",
-      "filter": "تصفية",
-      "table": {
-        "centerName": "اسم المركز",
-        "contactPerson": "جهة الاتصال",
-        "submissionDate": "تاريخ التقديم",
-        "licenseVerification": "التحقق من الترخيص",
-        "actions": "إجراءات"
-      },
-      "centerLogoAlt": "شعار {{name}}",
-      "viewDocument": "عرض المستند",
+    "vetApprovals": {
+      "title": "موافقات الأطباء",
+      "subtitle": "الموافقة على حسابات الأطباء البيطريين أو رفضها.",
+      "pendingCount": "{{total}} بانتظار المراجعة",
+      "idLabel": "معرف الطبيب {{id}}",
+      "empty": "لا يوجد أطباء بانتظار الموافقة.",
+      "emptyHint": "تظهر الطلبات الجديدة هنا فور تسجيل أي طبيب.",
+      "loadFailed": "تعذر تحميل قائمة الأطباء المعلقة.",
+      "verify": "موافقة",
+      "verifying": "جارٍ الموافقة…",
+      "verifySuccess": "تمت الموافقة على {{name}}.",
       "reject": "رفض",
-      "activate": "تفعيل",
-      "recentDecisions": "القرارات الأخيرة",
-      "processedByPrefix": "تمت المعالجة بواسطة",
-      "approved": "مقبول",
-      "rejected": "مرفوض",
-      "reasonLabel": "السبب:"
+      "rejecting": "جارٍ الرفض…",
+      "rejectSuccess": "تم رفض {{name}}.",
+      "yearsValue": "{{years}} سنوات خبرة",
+      "fields": {
+        "specialization": "التخصص",
+        "clinicName": "اسم العيادة",
+        "clinicAddress": "عنوان العيادة",
+        "licenseNumber": "رقم الترخيص",
+        "experienceYears": "الخبرة",
+        "createdAt": "تاريخ التسجيل"
+      },
+      "rejectConfirm": {
+        "title": "رفض هذا الطبيب؟",
+        "message": "أنت على وشك رفض {{name}}.",
+        "warning": "سيؤدي ذلك إلى حذف حساب الطبيب نهائياً من المنصة، ولا يمكن التراجع عن ذلك.",
+        "confirm": "رفض وحذف"
+      }
     },
     "users": {
-      "loading": "جارٍ تحميل إدارة المستخدمين…",
-      "title": "إدارة المستخدمين وقائمة الحظر",
-      "subtitle": "أدر صلاحيات الوصول للمنصة، وراقب الأدوار، وراجع سجلات المخالفات.",
-      "registeredUsers": "المستخدمون المسجّلون",
-      "totalPrefix": "الإجمالي:",
-      "table": {
-        "user": "المستخدم",
-        "role": "الدور",
-        "status": "الحالة",
-        "joinedDate": "تاريخ الانضمام",
-        "lastActive": "آخر نشاط",
-        "actions": "إجراءات"
+      "title": "إدارة المستخدمين",
+      "subtitle": "حظر حسابات المستخدمين أو فك الحظر عنها.",
+      "notice": {
+        "title": "تتم العمليات باستخدام معرف المستخدم",
+        "text": "يوفر الخادم واجهتي الحظر وفك الحظر فقط، ولا توجد واجهة لجلب قائمة المستخدمين، لذلك يتم تحديد الحساب عبر معرفه الرقمي. لا يمكن حظر حسابات المدراء."
       },
-      "idPrefix": "المعرّف:",
-      "statusLabel": {
-        "active": "نشط",
-        "suspended": "موقوف",
-        "banned": "محظور"
+      "fields": {
+        "userId": "معرف المستخدم",
+        "userIdPlaceholder": "مثال: 42",
+        "reason": "السبب",
+        "reasonPlaceholder": "اذكر سبب حظر هذا الحساب",
+        "reasonHint": "يُرسل إلى الخادم مع طلب الحظر."
       },
-      "moreActions": "مزيد من الإجراءات",
-      "footer": {
-        "showingPrefix": "عرض 1 إلى",
-        "of": "من",
-        "entries": "إدخالات"
+      "errors": {
+        "invalidUserId": "أدخل معرف مستخدم رقمياً صحيحاً."
       },
-      "pagination": {
-        "previous": "السابق",
-        "next": "التالي"
+      "ban": {
+        "title": "حظر مستخدم",
+        "subtitle": "يمنع الحساب من تسجيل الدخول إلى Pet Haven.",
+        "submit": "حظر المستخدم",
+        "submitting": "جارٍ الحظر…",
+        "success": "تم حظر المستخدم {{userId}}.",
+        "confirmTitle": "حظر هذا المستخدم؟",
+        "confirmMessage": "سيفقد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
       },
-      "auditLog": {
-        "title": "سجل تدقيق المخالفات",
-        "subtitle": "الإجراءات الإدارية الأخيرة التي أثرت على وصول المستخدمين.",
-        "table": {
-          "entityId": "معرّف الكيان",
-          "reason": "سبب الحظر/الإيقاف",
-          "blockedAt": "تاريخ الحظر",
-          "enforcement": "الإجراء المتخذ"
-        },
-        "enforcementLabel": {
-          "active_suspension": "إيقاف نشط",
-          "permanent_ban": "حظر دائم",
-          "resolved": "تم الحل (رفع الحظر)"
-        }
-      },
-      "security": {
-        "title": "أمان المنصة",
-        "activeUsers": "المستخدمون النشطون",
-        "suspendedAccounts": "الحسابات الموقوفة",
-        "bannedEntities": "الكيانات المحظورة"
-      },
-      "privacyNote": {
-        "title": "متوافق مع خصوصية البيانات",
-        "text": "بيانات المعلومات الشخصية بما فيها الموقع الجغرافي وأرقام الهواتف مُخفاة حالياً وفق إرشادات SRS 6.1."
+      "unban": {
+        "title": "فك الحظر",
+        "subtitle": "يعيد الوصول لحساب محظور سابقاً.",
+        "submit": "فك الحظر",
+        "submitting": "جارٍ فك الحظر…",
+        "success": "تم فك الحظر عن المستخدم {{userId}}.",
+        "confirmTitle": "فك الحظر عن هذا المستخدم؟",
+        "confirmMessage": "سيستعيد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
       }
     }
   },
@@ -15532,7 +21457,11 @@ export function useCenterContext() {
       "messages": {
         "1": "Hi! I'm here to help you check on Daisy. Can you describe what you've noticed about her limp?",
         "2": "She started limping on her back right leg this morning after her walk. She still eats fine and seems happy otherwise."
-      }
+      },
+      "petsLoading": "Loading your pets...",
+      "petsError": "Could not load your pets right now.",
+      "noPets": "No adopted pets yet. You can still ask questions - adopting or selecting a pet gives you animal-specific answers.",
+      "chattingAbout": "Chatting about"
     },
     "vets": {
       "retry": "Try again",
@@ -16638,125 +22567,116 @@ export function useCenterContext() {
     }
   },
   "admin": {
+    "common": {
+      "loading": "Loading…",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing…",
+      "retry": "Try again",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss",
+      "processing": "Processing…",
+      "actionFailed": "The request could not be completed.",
+      "notProvided": "Not provided"
+    },
     "navbar": {
-      "help": "Help",
-      "notifications": "Notifications",
-      "avatarAlt": "Admin Avatar",
-      "switchLanguage": "Switch Language"
+      "workspace": "Admin Workspace",
+      "switchLanguage": "Switch language",
+      "profileTitle": "Admin profile",
+      "profileError": "Profile unavailable"
     },
     "sidebar": {
       "logoAlt": "Pet Haven Logo",
+      "navLabel": "Admin navigation",
       "dashboard": "Dashboard",
-      "clinicApprovals": "Clinic Approvals",
-      "userManagement": "User Management and Blocklist"
-    },
-    "status": {
-      "Active": "Active",
-      "Inactive": "Inactive",
-      "Suspended": "Suspended",
-      "Banned": "Banned",
-      "Pending": "Pending",
-      "Approved": "Approved",
-      "Rejected": "Rejected"
+      "vetApprovals": "Vet Approvals",
+      "userManagement": "User Management"
     },
     "dashboard": {
-      "loading": "Loading dashboard…",
-      "activeUsers": "Active Users",
-      "totalRevenue": "Total Revenue",
-      "reviewNow": "Review now",
-      "clinicPerformanceOverview": "Clinic Performance Overview",
-      "viewFullReport": "View Full Report",
-      "table": {
-        "clinicName": "Clinic Name",
-        "location": "Location",
-        "orders": "Orders",
-        "growth": "Growth",
-        "lastActive": "Last Active",
-        "status": "Status"
+      "title": "Admin Dashboard",
+      "subtitle": "Live platform counters served by the Pet Haven backend.",
+      "statsSection": "Platform statistics",
+      "statsUnavailable": "Statistics could not be loaded.",
+      "stats": {
+        "totalUsers": "Total Users",
+        "adopters": "Adopters",
+        "centers": "Adoption Centers",
+        "vets": "Veterinarians",
+        "admins": "Admins",
+        "totalPets": "Total Pets",
+        "bannedUsers": "Banned Users"
       },
-      "platformHealth": "Platform Health",
-      "apiResponseTime": "API Response Time",
-      "serverLoad": "Server Load",
-      "uptimeLabel": "Uptime (Last 24h):",
-      "systemAlerts": "System Alerts"
+      "pendingVets": {
+        "title": "Pending Vet Approvals",
+        "subtitle": "Veterinarian accounts waiting for verification.",
+        "manage": "Review approvals",
+        "awaiting": "awaiting review",
+        "more": "+{{remaining}} more waiting in the approvals queue."
+      }
     },
-    "clinicApprovals": {
-      "loading": "Loading clinic approvals…",
-      "title": "Clinic Approvals",
-      "subtitle": "Review and manage onboarding applications for new veterinary centers. Verify licenses and ensure compliance with Pet Haven's professional standards before activation.",
-      "pendingRequests": "Pending Requests",
-      "filter": "Filter",
-      "table": {
-        "centerName": "Center Name",
-        "contactPerson": "Contact Person",
-        "submissionDate": "Submission Date",
-        "licenseVerification": "License Verification",
-        "actions": "Actions"
-      },
-      "centerLogoAlt": "{{name}} Logo",
-      "viewDocument": "View Document",
+    "vetApprovals": {
+      "title": "Vet Approvals",
+      "subtitle": "Verify or reject veterinarian accounts submitted for review.",
+      "pendingCount": "{{total}} pending",
+      "idLabel": "Vet ID {{id}}",
+      "empty": "No veterinarians are waiting for approval.",
+      "emptyHint": "New submissions appear here as soon as a veterinarian registers.",
+      "loadFailed": "The pending veterinarians list could not be loaded.",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "verifySuccess": "{{name}} has been verified.",
       "reject": "Reject",
-      "activate": "Activate",
-      "recentDecisions": "Recent Decisions",
-      "processedByPrefix": "Processed by",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "reasonLabel": "Reason:"
+      "rejecting": "Rejecting…",
+      "rejectSuccess": "{{name}} has been rejected.",
+      "yearsValue": "{{years}} years of experience",
+      "fields": {
+        "specialization": "Specialization",
+        "clinicName": "Clinic name",
+        "clinicAddress": "Clinic address",
+        "licenseNumber": "License number",
+        "experienceYears": "Experience",
+        "createdAt": "Submitted on"
+      },
+      "rejectConfirm": {
+        "title": "Reject this veterinarian?",
+        "message": "You are about to reject {{name}}.",
+        "warning": "This permanently deletes the veterinarian account from the platform. The action cannot be undone.",
+        "confirm": "Reject and delete"
+      }
     },
     "users": {
-      "loading": "Loading user management…",
-      "title": "User Management & Blocklist",
-      "subtitle": "Manage platform access, monitor roles, and review violation logs.",
-      "registeredUsers": "Registered Users",
-      "totalPrefix": "Total:",
-      "table": {
-        "user": "User",
-        "role": "Role",
-        "status": "Status",
-        "joinedDate": "Joined Date",
-        "lastActive": "Last Active",
-        "actions": "Actions"
+      "title": "User Management",
+      "subtitle": "Ban or unban platform accounts.",
+      "notice": {
+        "title": "Actions are performed by User ID",
+        "text": "The backend exposes ban and unban endpoints only — there is no user listing endpoint — so accounts are targeted by their numeric User ID. Admin accounts cannot be banned."
       },
-      "idPrefix": "ID:",
-      "statusLabel": {
-        "active": "Active",
-        "suspended": "Suspended",
-        "banned": "Banned"
+      "fields": {
+        "userId": "User ID",
+        "userIdPlaceholder": "e.g. 42",
+        "reason": "Reason",
+        "reasonPlaceholder": "Describe why this account is being banned",
+        "reasonHint": "Sent to the backend together with the ban request."
       },
-      "moreActions": "More actions",
-      "footer": {
-        "showingPrefix": "Showing 1 to",
-        "of": "of",
-        "entries": "entries"
+      "errors": {
+        "invalidUserId": "Enter a valid numeric User ID."
       },
-      "pagination": {
-        "previous": "Previous",
-        "next": "Next"
+      "ban": {
+        "title": "Ban User",
+        "subtitle": "Blocks the account from signing in to Pet Haven.",
+        "submit": "Ban user",
+        "submitting": "Banning…",
+        "success": "User {{userId}} has been banned.",
+        "confirmTitle": "Ban this user?",
+        "confirmMessage": "User ID {{userId}} will lose access to the platform."
       },
-      "auditLog": {
-        "title": "Violation Audit Log",
-        "subtitle": "Recent administrative actions affecting user access.",
-        "table": {
-          "entityId": "Entity ID",
-          "reason": "Reason for Ban/Suspension",
-          "blockedAt": "Blocked At",
-          "enforcement": "Enforcement"
-        },
-        "enforcementLabel": {
-          "active_suspension": "Active Suspension",
-          "permanent_ban": "Permanent Ban",
-          "resolved": "Resolved (Unbanned)"
-        }
-      },
-      "security": {
-        "title": "Platform Security",
-        "activeUsers": "Active Users",
-        "suspendedAccounts": "Suspended Accounts",
-        "bannedEntities": "Banned Entities"
-      },
-      "privacyNote": {
-        "title": "Data Privacy Compliant",
-        "text": "PII data including GPS and phone numbers are currently masked per SRS 6.1 guidelines."
+      "unban": {
+        "title": "Unban User",
+        "subtitle": "Restores access for a previously banned account.",
+        "submit": "Unban user",
+        "submitting": "Unbanning…",
+        "success": "User {{userId}} has been unbanned.",
+        "confirmTitle": "Unban this user?",
+        "confirmMessage": "User ID {{userId}} will regain access to the platform."
       }
     }
   },
@@ -17111,619 +23031,651 @@ i18n
 export default i18n;
 ```
 
-## File: src/Pages/admin/AdminClinicApprovals.jsx
-```javascript
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import AdminSidebar from "../../Components/admin/AdminSidebar.jsx";
-import AdminNavbar from "../../Components/admin/AdminNavbar.jsx";
-import Icon from "../../Components/Icon.jsx";
-import { useAdminContext } from "../../context/adminContextBase";
-export default function AdminClinicApprovals() {
-  const { t: translate } = useTranslation();
-  const adminText = { clinicApprovals: translate("admin.clinicApprovals", { returnObjects: true }) };
-  const {
-    clinicApprovals,
-    approvalsLoading: loading,
-    fetchApprovals,
-  } = useAdminContext();
-  const pendingRequests = clinicApprovals?.pendingRequests ?? [];
-  const recentDecisions = clinicApprovals?.recentDecisions ?? [];
-  useEffect(() => {
-    fetchApprovals();
-  }, [fetchApprovals]);
-  return (
-    <div className="admin-layout">
-      <AdminSidebar />
-      <div className="admin-layout__main">
-        <AdminNavbar />
-        <main className="admin-content">
-          {loading ? (
-            <div className="admin-loading">{adminText.clinicApprovals.loading}</div>
-          ) : (
-            <div className="admin-approvals-page">
-              <section className="admin-approvals-header">
-                <h1 className="admin-approvals-header__title">{adminText.clinicApprovals.title}</h1>
-                <p className="admin-approvals-header__subtitle">
-                  {adminText.clinicApprovals.subtitle}
-                </p>
-              </section>
-              <section className="admin-approvals-section">
-                <div className="admin-approvals-section__header">
-                  <h2 className="admin-approvals-section__title">
-                    <Icon name="pending_actions" className="admin-approvals-section__icon admin-approvals-section__icon--pending" />
-                    {adminText.clinicApprovals.pendingRequests}
-                    <span className="admin-approvals-badge">{pendingRequests.length}</span>
-                  </h2>
-                  <button type="button" className="admin-approvals-filter-btn">
-                    {adminText.clinicApprovals.filter} <Icon name="filter_list" />
-                  </button>
-                </div>
-                <div className="admin-card admin-approvals-table-card">
-                  <div className="admin-approvals-table-card__scroll">
-                    <table className="admin-approvals-table">
-                      <thead>
-                        <tr>
-                          <th>{adminText.clinicApprovals.table.centerName}</th>
-                          <th>{adminText.clinicApprovals.table.contactPerson}</th>
-                          <th>{adminText.clinicApprovals.table.submissionDate}</th>
-                          <th>{adminText.clinicApprovals.table.licenseVerification}</th>
-                          <th className="admin-approvals-table__actions-head">{adminText.clinicApprovals.table.actions}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {pendingRequests.map((req) => (
-                          <tr key={req.id} className="admin-approvals-table__row">
-                            <td>
-                              <div className="admin-approvals-center">
-                                <div className="admin-approvals-center__logo">
-                                  {req.logoUrl ? (
-                                    <img src={req.logoUrl} alt={translate("admin.clinicApprovals.centerLogoAlt", { name: req.name })} />
-                                  ) : (
-                                    <Icon name="local_hospital" className="admin-approvals-center__logo-fallback" />
-                                  )}
-                                </div>
-                                <div>
-                                  <p className="admin-approvals-center__name">{req.name}</p>
-                                  <p className="admin-approvals-center__location">
-                                    <Icon name="location_on" /> {req.location}
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
-                            <td>
-                              <p className="admin-approvals-contact__name">{req.contactName}</p>
-                              <p className="admin-approvals-contact__email">{req.contactEmail}</p>
-                            </td>
-                            <td className="admin-approvals-table__date">{req.submissionDate}</td>
-                            <td>
-                              <button type="button" className="admin-approvals-doc-btn">
-                                <Icon name="description" />
-                                {adminText.clinicApprovals.viewDocument}
-                              </button>
-                            </td>
-                            <td className="admin-approvals-table__actions">
-                              <button type="button" className="admin-approvals-reject-btn">{adminText.clinicApprovals.reject}</button>
-                              <button type="button" className="admin-approvals-activate-btn">{adminText.clinicApprovals.activate}</button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </section>
-              <section className="admin-approvals-section admin-approvals-audit">
-                <h2 className="admin-approvals-section__title">
-                  <Icon name="history" className="admin-approvals-section__icon" />
-                  {adminText.clinicApprovals.recentDecisions}
-                </h2>
-                <div className="admin-approvals-audit__grid">
-                  {recentDecisions.map((decision) => (
-                    <div
-                      key={decision.id}
-                      className={`admin-card admin-approvals-audit-item${
-                        decision.status === "rejected" ? " admin-approvals-audit-item--rejected" : ""
-                      }`}
-                    >
-                      <div className="admin-approvals-audit-item__top">
-                        <div>
-                          <p className="admin-approvals-audit-item__name">{decision.name}</p>
-                          <p className="admin-approvals-audit-item__processor">
-                            {adminText.clinicApprovals.processedByPrefix} {decision.processedBy}
-                          </p>
-                        </div>
-                        <span
-                          className={`admin-approvals-status admin-approvals-status--${decision.status}`}
-                        >
-                          <Icon name={decision.status === "approved" ? "check_circle" : "cancel"} />
-                          {decision.status === "approved" ? adminText.clinicApprovals.approved : adminText.clinicApprovals.rejected}
-                        </span>
-                      </div>
-                      {decision.reason && (
-                        <div className="admin-approvals-audit-item__reason">
-                          <span className="admin-approvals-audit-item__reason-label">{adminText.clinicApprovals.reasonLabel}</span>{" "}
-                          {decision.reason}
-                        </div>
-                      )}
-                      <div className="admin-approvals-audit-item__timestamp">{decision.timestamp}</div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            </div>
-          )}
-        </main>
-      </div>
-    </div>
-  );
-}
-```
-
 ## File: src/Pages/admin/AdminDashboard.jsx
 ```javascript
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import AdminSidebar from "../../Components/admin/AdminSidebar.jsx";
-import AdminNavbar from "../../Components/admin/AdminNavbar.jsx";
+import AdminLayout from "../../Components/admin/AdminLayout.jsx";
+import AdminStatCard from "../../Components/admin/AdminStatCard.jsx";
+import AdminFeedback from "../../Components/admin/AdminFeedback.jsx";
 import Icon from "../../Components/Icon.jsx";
 import { useAdminContext } from "../../context/adminContextBase";
+import { formatAdminDate } from "../../Components/admin/adminFormat.js";
 export default function AdminDashboard() {
-  const { t: translate } = useTranslation();
-  const adminText = { dashboard: translate("admin.dashboard", { returnObjects: true }) };
+  const { t, i18n } = useTranslation();
   const {
-    kpis,
-    platformHealth: health,
-    clinicPerformance: clinics,
-    systemAlerts: alerts,
-    dashboardLoading: loading,
-    fetchDashboard,
+    stats,
+    dashboardLoading,
+    dashboardError,
+    pendingVets,
+    pendingVetsLoading,
+    pendingVetsError,
+    fetchStats,
+    fetchPendingVets,
   } = useAdminContext();
   useEffect(() => {
-    fetchDashboard();
-  }, [fetchDashboard]);
+    fetchStats();
+    fetchPendingVets();
+  }, [fetchStats, fetchPendingVets]);
+  const refreshAll = () => {
+    fetchStats();
+    fetchPendingVets();
+  };
+  const busy = dashboardLoading || pendingVetsLoading;
+  const statCards = stats
+    ? [
+        { key: "totalUsers", icon: "groups", tone: "primary", value: stats.totalUsers },
+        { key: "adopters", icon: "person", tone: "primary", value: stats.adopters },
+        { key: "centers", icon: "home_work", tone: "accent", value: stats.centers },
+        { key: "vets", icon: "stethoscope", tone: "accent", value: stats.vets },
+        { key: "admins", icon: "shield_person", tone: "neutral", value: stats.admins },
+        { key: "totalPets", icon: "pets", tone: "neutral", value: stats.totalPets },
+        { key: "bannedUsers", icon: "block", tone: "danger", value: stats.bannedUsers },
+      ]
+    : [];
   return (
-    <div className="admin-layout">
-      <AdminSidebar />
-      <div className="admin-layout__main">
-        <AdminNavbar />
-        <main className="admin-content">
-          {loading || !kpis ? (
-            <div className="admin-loading">{adminText.dashboard.loading}</div>
-          ) : (
-            <div className="admin-dashboard">
-              <div className="admin-dashboard__grid">
-                <div className="admin-dashboard__primary">
-                  <div className="admin-kpis">
-                    <div className="admin-card admin-kpi">
-                      <div className="admin-kpi__top">
-                        <div className="admin-kpi__icon admin-kpi__icon--primary">
-                          <Icon name="groups" />
-                        </div>
-                        <div className="admin-kpi__trend-wrap">
-                          <span className="admin-kpi__label">{adminText.dashboard.activeUsers}</span>
-                          <span className="admin-kpi__trend admin-kpi__trend--up">
-                            <Icon name="trending_up" />
-                            {kpis.activeUsers.changePercent}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="admin-kpi__value-wrap">
-                        <p className="admin-kpi__value">{kpis.activeUsers.value.toLocaleString()}</p>
-                        <p className="admin-kpi__subtext">{kpis.activeUsers.changeLabel}</p>
-                      </div>
-                      <div className="admin-kpi__breakdown">
-                        {kpis.activeUsers.breakdown.map((row) => (
-                          <div className="admin-kpi__breakdown-row" key={row.label}>
-                            <span>{row.label}</span>
-                            <span>
-                              {row.value}{" "}
-                              <span className={`admin-kpi__mini-trend admin-kpi__mini-trend--${row.trend}`}>
-                                {row.trend === "up" ? "↑" : "→"}
-                              </span>
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="admin-card admin-kpi">
-                      <div className="admin-kpi__top">
-                        <div className="admin-kpi__icon admin-kpi__icon--secondary">
-                          <Icon name="payments" />
-                        </div>
-                        <div className="admin-kpi__trend-wrap">
-                          <span className="admin-kpi__label">{adminText.dashboard.totalRevenue}</span>
-                          <span className="admin-kpi__trend admin-kpi__trend--up">
-                            <Icon name="trending_up" />
-                            {kpis.totalRevenue.changePercent}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="admin-kpi__value-wrap">
-                        <p className="admin-kpi__value">${kpis.totalRevenue.value.toLocaleString()}</p>
-                      </div>
-                      <div className="admin-kpi__breakdown">
-                        {kpis.totalRevenue.breakdown.map((row) => (
-                          <div className="admin-kpi__breakdown-row" key={row.label}>
-                            <span>{row.label}</span>
-                            <span>{row.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="admin-card admin-kpi">
-                      <div className="admin-kpi__top">
-                        <div className="admin-kpi__icon admin-kpi__icon--warning">
-                          <Icon name="pending_actions" />
-                        </div>
-                        <span className="admin-kpi__priority">{kpis.pendingApprovals.priority}</span>
-                      </div>
-                      <div className="admin-kpi__value-wrap">
-                        <p className="admin-kpi__value">{kpis.pendingApprovals.value}</p>
-                        <span className="admin-kpi__label">{kpis.pendingApprovals.subtitle}</span>
-                        <p className="admin-kpi__subtext">{kpis.pendingApprovals.note}</p>
-                      </div>
-                      <div className="admin-kpi__footer">
-                        <a href="#" className="admin-kpi__link">
-                          {adminText.dashboard.reviewNow} <Icon name="arrow_forward" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="admin-card admin-table-card">
-                    <div className="admin-table-card__header">
-                      <h2>{adminText.dashboard.clinicPerformanceOverview}</h2>
-                      <button type="button" className="admin-link-btn">{adminText.dashboard.viewFullReport}</button>
-                    </div>
-                    <div className="admin-table-card__scroll">
-                      <table className="admin-table">
-                        <thead>
-                          <tr>
-                            <th>{adminText.dashboard.table.clinicName}</th>
-                            <th>{adminText.dashboard.table.location}</th>
-                            <th className="admin-table__center">{adminText.dashboard.table.orders}</th>
-                            <th className="admin-table__center">{adminText.dashboard.table.growth}</th>
-                            <th>{adminText.dashboard.table.lastActive}</th>
-                            <th>{adminText.dashboard.table.status}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {clinics.map((clinic) => (
-                            <tr key={clinic.id}>
-                              <td>{clinic.name}</td>
-                              <td>{clinic.location}</td>
-                              <td className="admin-table__center">{clinic.orders}</td>
-                              <td className="admin-table__center">
-                                <span
-                                  className={`admin-growth admin-growth--${
-                                    clinic.growthPercent > 0 ? "up" : clinic.growthPercent < 0 ? "down" : "flat"
-                                  }`}
-                                >
-                                  {clinic.growthPercent > 0 ? "+" : ""}
-                                  {clinic.growthPercent}%
-                                </span>
-                              </td>
-                              <td className="admin-table__muted">{clinic.lastActive}</td>
-                              <td>
-                                <span className={`admin-status admin-status--${clinic.status.toLowerCase()}`}>
-                                  {translate(`admin.status.${clinic.status}`, { defaultValue: clinic.status })}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-                <div className="admin-dashboard__side">
-                  <div className="admin-card admin-health">
-                    <div className="admin-health__header">
-                      <h3>{adminText.dashboard.platformHealth}</h3>
-                      <span className="admin-health__status">
-                        <span className="admin-health__dot" /> {health.status}
-                      </span>
-                    </div>
-                    <div className="admin-health__metric">
-                      <div className="admin-health__metric-row">
-                        <span>{adminText.dashboard.apiResponseTime}</span>
-                        <span>{health.apiResponseTime.value}</span>
-                      </div>
-                      <div className="admin-health__bar">
-                        <div className="admin-health__bar-fill" style={{ width: `${health.apiResponseTime.percent}%` }} />
-                      </div>
-                    </div>
-                    <div className="admin-health__metric">
-                      <div className="admin-health__metric-row">
-                        <span>{adminText.dashboard.serverLoad}</span>
-                        <span>{health.serverLoad.value}</span>
-                      </div>
-                      <div className="admin-health__bar">
-                        <div className="admin-health__bar-fill" style={{ width: `${health.serverLoad.percent}%` }} />
-                      </div>
-                    </div>
-                    <div className="admin-health__history">
-                      <div className="admin-health__bars">
-                        {health.loadHistory.map((v, i) => (
-                          <div
-                            key={i}
-                            className={`admin-health__history-bar${
-                              i === health.loadHistory.length - 2 ? " admin-health__history-bar--peak" : ""
-                            }`}
-                            style={{ height: `${v * 4}px` }}
-                          />
-                        ))}
-                      </div>
-                      <p className="admin-health__uptime">{adminText.dashboard.uptimeLabel} {health.uptimeLast24h}</p>
-                    </div>
-                  </div>
-                  <div className="admin-card admin-alerts">
-                    <h3>{adminText.dashboard.systemAlerts}</h3>
-                    <div className="admin-alerts__list">
-                      {alerts.map((alert) => (
-                        <div className={`admin-alert admin-alert--${alert.severity}`} key={alert.id}>
-                          <Icon name={alert.severity === "error" ? "error" : "warning"} />
-                          <div>
-                            <p className="admin-alert__title">{alert.title}</p>
-                            <p className="admin-alert__detail">{alert.detail}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+    <AdminLayout
+      title={t("admin.dashboard.title")}
+      subtitle={t("admin.dashboard.subtitle")}
+      actions={
+        <button
+          type="button"
+          className="admin-btn admin-btn--ghost"
+          onClick={refreshAll}
+          disabled={busy}
+        >
+          <Icon name="refresh" />
+          {busy ? t("admin.common.refreshing") : t("admin.common.refresh")}
+        </button>
+      }
+    >
+      {dashboardError ? (
+        <AdminFeedback type="error" message={dashboardError} />
+      ) : null}
+      {!stats && dashboardLoading ? (
+        <div className="admin-state admin-state--loading">
+          <span className="admin-spinner" aria-hidden="true" />
+          <p>{t("admin.common.loading")}</p>
+        </div>
+      ) : null}
+      {!stats && !dashboardLoading && dashboardError ? (
+        <div className="admin-state">
+          <Icon name="cloud_off" />
+          <p>{t("admin.dashboard.statsUnavailable")}</p>
+          <button type="button" className="admin-btn admin-btn--primary" onClick={fetchStats}>
+            {t("admin.common.retry")}
+          </button>
+        </div>
+      ) : null}
+      {stats ? (
+        <section className="admin-section" aria-label={t("admin.dashboard.statsSection")}>
+          <div className="admin-stat-grid">
+            {statCards.map((card) => (
+              <AdminStatCard
+                key={card.key}
+                label={t(`admin.dashboard.stats.${card.key}`)}
+                value={card.value}
+                icon={card.icon}
+                tone={card.tone}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+      <section className="admin-section">
+        <div className="admin-panel admin-panel--pending">
+          <div className="admin-panel__header">
+            <div className="admin-panel__heading">
+              <h2 className="admin-panel__title">
+                <Icon name="pending_actions" />
+                {t("admin.dashboard.pendingVets.title")}
+              </h2>
+              <p className="admin-panel__subtitle">
+                {t("admin.dashboard.pendingVets.subtitle")}
+              </p>
             </div>
-          )}
-        </main>
-      </div>
-    </div>
+            <Link className="admin-btn admin-btn--primary" to="/admin/vet-approvals">
+              {t("admin.dashboard.pendingVets.manage")}
+              <Icon name="arrow_forward" />
+            </Link>
+          </div>
+          {pendingVetsError ? (
+            <AdminFeedback type="error" message={pendingVetsError} />
+          ) : null}
+          {pendingVetsLoading && !pendingVets.length ? (
+            <div className="admin-state admin-state--inline">
+              <span className="admin-spinner" aria-hidden="true" />
+              <p>{t("admin.common.loading")}</p>
+            </div>
+          ) : null}
+          {!pendingVetsLoading && !pendingVetsError && !pendingVets.length ? (
+            <div className="admin-state admin-state--inline">
+              <Icon name="task_alt" />
+              <p>{t("admin.vetApprovals.empty")}</p>
+            </div>
+          ) : null}
+          {pendingVets.length ? (
+            <>
+              <p className="admin-panel__count">
+                <span className="admin-panel__count-value">{pendingVets.length}</span>
+                <span className="admin-panel__count-label">
+                  {t("admin.dashboard.pendingVets.awaiting")}
+                </span>
+              </p>
+              <ul className="admin-mini-list">
+                {pendingVets.slice(0, 5).map((vet) => (
+                  <li className="admin-mini-list__item" key={vet.vetId}>
+                    <span className="admin-mini-list__main">
+                      <span className="admin-mini-list__name">{vet.fullName || vet.email}</span>
+                      {vet.specialization ? (
+                        <span className="admin-mini-list__meta">{vet.specialization}</span>
+                      ) : null}
+                    </span>
+                    <span className="admin-mini-list__date">
+                      {formatAdminDate(vet.createdAt, i18n.language)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {pendingVets.length > 5 ? (
+                <p className="admin-panel__more">
+                  {t("admin.dashboard.pendingVets.more", { remaining: pendingVets.length - 5 })}
+                </p>
+              ) : null}
+            </>
+          ) : null}
+        </div>
+      </section>
+    </AdminLayout>
   );
 }
 ```
 
 ## File: src/Pages/admin/AdminUsers.jsx
 ```javascript
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import AdminSidebar from "../../Components/admin/AdminSidebar.jsx";
-import AdminNavbar from "../../Components/admin/AdminNavbar.jsx";
+import AdminLayout from "../../Components/admin/AdminLayout.jsx";
+import AdminStatCard from "../../Components/admin/AdminStatCard.jsx";
+import AdminFeedback from "../../Components/admin/AdminFeedback.jsx";
+import AdminConfirmDialog from "../../Components/admin/AdminConfirmDialog.jsx";
 import Icon from "../../Components/Icon.jsx";
 import { useAdminContext } from "../../context/adminContextBase";
-const ROLE_CLASS = {
-  Doctor: "admin-users-role--doctor",
-  Trainer: "admin-users-role--trainer",
-  Center: "admin-users-role--center",
+const parseUserId = (raw) => {
+  const trimmed = String(raw ?? "").trim();
+  if (!/^\d+$/.test(trimmed)) return null;
+  const parsed = Number(trimmed);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 };
 export default function AdminUsers() {
-  const { t: translate } = useTranslation();
-  const adminText = { users: translate("admin.users", { returnObjects: true }) };
-  const STATUS_LABEL = adminText.users.statusLabel;
-  const ENFORCEMENT_LABEL = adminText.users.auditLog.enforcementLabel;
+  const { t } = useTranslation();
   const {
-    users: usersData,
-    blocklist,
-    usersLoading: loading,
-    fetchUsers,
-    fetchApprovals,
+    stats,
+    dashboardLoading,
+    dashboardError,
+    actionLoading,
+    fetchStats,
+    banUser,
+    unbanUser,
   } = useAdminContext();
+  const [banForm, setBanForm] = useState({ userId: "", reason: "" });
+  const [unbanUserId, setUnbanUserId] = useState("");
+  const [banFeedback, setBanFeedback] = useState(null);
+  const [unbanFeedback, setUnbanFeedback] = useState(null);
+  const [confirm, setConfirm] = useState(null); // { mode: "ban" | "unban", userId }
   useEffect(() => {
-    fetchUsers();
-    fetchApprovals();
-  }, [fetchUsers, fetchApprovals]);
+    fetchStats();
+  }, [fetchStats]);
+  const banBusy = actionLoading === "ban";
+  const unbanBusy = actionLoading === "unban";
+  const submitBan = (event) => {
+    event.preventDefault();
+    const userId = parseUserId(banForm.userId);
+    if (!userId) {
+      setBanFeedback({ type: "error", message: t("admin.users.errors.invalidUserId") });
+      return;
+    }
+    setBanFeedback(null);
+    setConfirm({ mode: "ban", userId });
+  };
+  const submitUnban = (event) => {
+    event.preventDefault();
+    const userId = parseUserId(unbanUserId);
+    if (!userId) {
+      setUnbanFeedback({ type: "error", message: t("admin.users.errors.invalidUserId") });
+      return;
+    }
+    setUnbanFeedback(null);
+    setConfirm({ mode: "unban", userId });
+  };
+  const runConfirmedAction = async () => {
+    if (!confirm) return;
+    const { mode, userId } = confirm;
+    const result =
+      mode === "ban"
+        ? await banUser(userId, banForm.reason.trim())
+        : await unbanUser(userId);
+    const feedback = {
+      type: result.success ? "success" : "error",
+      message:
+        result.message ||
+        (result.success
+          ? t(mode === "ban" ? "admin.users.ban.success" : "admin.users.unban.success", { userId })
+          : t("admin.common.actionFailed")),
+    };
+    if (mode === "ban") {
+      setBanFeedback(feedback);
+      if (result.success) setBanForm({ userId: "", reason: "" });
+    } else {
+      setUnbanFeedback(feedback);
+      if (result.success) setUnbanUserId("");
+    }
+    setConfirm(null);
+  };
+  const confirmBusy = confirm?.mode === "ban" ? banBusy : unbanBusy;
   return (
-    <div className="admin-layout">
-      <AdminSidebar />
-      <div className="admin-layout__main">
-        <AdminNavbar />
-        <main className="admin-content">
-          {loading || !usersData?.totalCount ? (
-            <div className="admin-loading">{adminText.users.loading}</div>
-          ) : (
-            <div className="admin-users-page">
-              <section className="admin-users-header">
-                <h1 className="admin-users-header__title">{adminText.users.title}</h1>
-                <p className="admin-users-header__subtitle">
-                  {adminText.users.subtitle}
-                </p>
-              </section>
-              <div className="admin-card admin-users-table-card">
-                <div className="admin-users-table-card__header">
-                  <h2 className="admin-users-table-card__title">{adminText.users.registeredUsers}</h2>
-                  <span className="admin-users-total-badge">
-                    {adminText.users.totalPrefix} {usersData.totalCount.toLocaleString()}
-                  </span>
-                </div>
-                <div className="admin-users-table-card__scroll">
-                  <table className="admin-users-table">
-                    <thead>
-                      <tr>
-                        <th>{adminText.users.table.user}</th>
-                        <th>{adminText.users.table.role}</th>
-                        <th>{adminText.users.table.status}</th>
-                        <th>{adminText.users.table.joinedDate}</th>
-                        <th>{adminText.users.table.lastActive}</th>
-                        <th className="admin-users-table__actions-head">{adminText.users.table.actions}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {usersData.users.map((user) => (
-                        <tr
-                          key={user.id}
-                          className={`admin-users-table__row${
-                            user.status === "suspended" ? " admin-users-table__row--suspended" : ""
-                          }${user.status === "banned" ? " admin-users-table__row--banned" : ""}`}
-                        >
-                          <td>
-                            <div className="admin-users-user">
-                              {user.avatarUrl ? (
-                                <img
-                                  className="admin-users-user__avatar"
-                                  src={user.avatarUrl}
-                                  alt={user.name}
-                                />
-                              ) : (
-                                <div className="admin-users-user__avatar admin-users-user__avatar--initials">
-                                  {user.initials}
-                                </div>
-                              )}
-                              <div>
-                                <p className="admin-users-user__name">{user.name}</p>
-                                <p className="admin-users-user__id">{adminText.users.idPrefix} {user.id}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <span className={`admin-users-role ${ROLE_CLASS[user.role] || ""}`}>
-                              {user.role}
-                            </span>
-                          </td>
-                          <td>
-                            <span className={`admin-users-status admin-users-status--${user.status}`}>
-                              {user.status === "banned" ? (
-                                <Icon name="block" />
-                              ) : (
-                                <span className="admin-users-status__dot" />
-                              )}
-                              {STATUS_LABEL[user.status]}
-                            </span>
-                          </td>
-                          <td className="admin-users-table__muted">{user.joinedDate}</td>
-                          <td className="admin-users-table__muted">{user.lastActive}</td>
-                          <td className="admin-users-table__actions">
-                            <button type="button" className="admin-users-more-btn" aria-label={adminText.users.moreActions}>
-                              <Icon name="more_vert" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="admin-users-table-card__footer">
-                  <span className="admin-users-table-card__count">
-                    {adminText.users.footer.showingPrefix} {usersData.users.length} {adminText.users.footer.of} {usersData.totalCount.toLocaleString()} {adminText.users.footer.entries}
-                  </span>
-                  <div className="admin-users-pagination">
-                    <button type="button" className="admin-users-pagination__btn" disabled>
-                      {adminText.users.pagination.previous}
-                    </button>
-                    <button type="button" className="admin-users-pagination__btn admin-users-pagination__btn--active">
-                      1
-                    </button>
-                    <button type="button" className="admin-users-pagination__btn">2</button>
-                    <button type="button" className="admin-users-pagination__btn">3</button>
-                    <button type="button" className="admin-users-pagination__btn">{adminText.users.pagination.next}</button>
-                  </div>
-                </div>
-              </div>
-              <div className="admin-users-bento">
-                <div className="admin-card admin-users-audit-card">
-                  <div className="admin-users-audit-card__header">
-                    <div className="admin-users-audit-card__title-row">
-                      <Icon name="gavel" className="admin-users-audit-card__icon" />
-                      <h2 className="admin-users-audit-card__title">{adminText.users.auditLog.title}</h2>
-                    </div>
-                    <p className="admin-users-audit-card__subtitle">
-                      {adminText.users.auditLog.subtitle}
-                    </p>
-                  </div>
-                  <div className="admin-users-audit-card__scroll">
-                    <table className="admin-users-audit-table">
-                      <thead>
-                        <tr>
-                          <th>{adminText.users.auditLog.table.entityId}</th>
-                          <th>{adminText.users.auditLog.table.reason}</th>
-                          <th>{adminText.users.auditLog.table.blockedAt}</th>
-                          <th className="admin-users-audit-table__enforcement-head">{adminText.users.auditLog.table.enforcement}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {blocklist.map((entry) => (
-                          <tr key={entry.id}>
-                            <td className="admin-users-audit-table__entity">{entry.entityId}</td>
-                            <td>
-                              <p className="admin-users-audit-table__reason">{entry.reason}</p>
-                              <p className="admin-users-audit-table__justification">{entry.justification}</p>
-                            </td>
-                            <td className="admin-users-table__muted">{entry.blockedAt}</td>
-                            <td className="admin-users-audit-table__enforcement-cell">
-                              <span
-                                className={`admin-users-enforcement admin-users-enforcement--${entry.enforcement}`}
-                              >
-                                {ENFORCEMENT_LABEL[entry.enforcement]}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className="admin-card admin-users-security-card">
-                  <div>
-                    <h2 className="admin-users-security-card__title">{adminText.users.security.title}</h2>
-                    <div className="admin-users-security-metrics">
-                      <div className="admin-users-security-metric">
-                        <div className="admin-users-security-metric__row">
-                          <span>{adminText.users.security.activeUsers}</span>
-                          <span className="admin-users-security-metric__value admin-users-security-metric__value--green">
-                            {usersData.security.activeUsersPercent}%
-                          </span>
-                        </div>
-                        <div className="admin-users-security-bar">
-                          <div
-                            className="admin-users-security-bar__fill admin-users-security-bar__fill--green"
-                            style={{ width: `${usersData.security.activeUsersPercent}%` }}
-                          />
-                        </div>
-                      </div>
-                      <div className="admin-users-security-metric">
-                        <div className="admin-users-security-metric__row">
-                          <span>{adminText.users.security.suspendedAccounts}</span>
-                          <span className="admin-users-security-metric__value admin-users-security-metric__value--yellow">
-                            {usersData.security.suspendedAccountsPercent}%
-                          </span>
-                        </div>
-                        <div className="admin-users-security-bar">
-                          <div
-                            className="admin-users-security-bar__fill admin-users-security-bar__fill--yellow"
-                            style={{ width: `${usersData.security.suspendedAccountsPercent}%` }}
-                          />
-                        </div>
-                      </div>
-                      <div className="admin-users-security-metric">
-                        <div className="admin-users-security-metric__row">
-                          <span>{adminText.users.security.bannedEntities}</span>
-                          <span className="admin-users-security-metric__value admin-users-security-metric__value--red">
-                            {usersData.security.bannedEntitiesPercent}%
-                          </span>
-                        </div>
-                        <div className="admin-users-security-bar">
-                          <div
-                            className="admin-users-security-bar__fill admin-users-security-bar__fill--red"
-                            style={{ width: `${usersData.security.bannedEntitiesPercent}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="admin-users-privacy-note">
-                    <Icon name="info" className="admin-users-privacy-note__icon" />
-                    <div>
-                      <p className="admin-users-privacy-note__title">{adminText.users.privacyNote.title}</p>
-                      <p className="admin-users-privacy-note__text">
-                        {adminText.users.privacyNote.text}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </main>
+    <AdminLayout
+      title={t("admin.users.title")}
+      subtitle={t("admin.users.subtitle")}
+      actions={
+        <button
+          type="button"
+          className="admin-btn admin-btn--ghost"
+          onClick={fetchStats}
+          disabled={dashboardLoading}
+        >
+          <Icon name="refresh" />
+          {dashboardLoading ? t("admin.common.refreshing") : t("admin.common.refresh")}
+        </button>
+      }
+    >
+      <div className="admin-notice">
+        <Icon name="info" />
+        <div>
+          <p className="admin-notice__title">{t("admin.users.notice.title")}</p>
+          <p className="admin-notice__text">{t("admin.users.notice.text")}</p>
+        </div>
       </div>
+      {dashboardError ? <AdminFeedback type="error" message={dashboardError} /> : null}
+      {stats ? (
+        <section className="admin-section">
+          <div className="admin-stat-grid admin-stat-grid--compact">
+            <AdminStatCard
+              label={t("admin.dashboard.stats.totalUsers")}
+              value={stats.totalUsers}
+              icon="groups"
+              tone="primary"
+            />
+            <AdminStatCard
+              label={t("admin.dashboard.stats.bannedUsers")}
+              value={stats.bannedUsers}
+              icon="block"
+              tone="danger"
+            />
+          </div>
+        </section>
+      ) : null}
+      <section className="admin-section admin-action-grid">
+        <form className="admin-panel admin-panel--danger" onSubmit={submitBan} noValidate>
+          <div className="admin-panel__header">
+            <div className="admin-panel__heading">
+              <h2 className="admin-panel__title">
+                <Icon name="gavel" />
+                {t("admin.users.ban.title")}
+              </h2>
+              <p className="admin-panel__subtitle">{t("admin.users.ban.subtitle")}</p>
+            </div>
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label" htmlFor="admin-ban-user-id">
+              {t("admin.users.fields.userId")}
+            </label>
+            <input
+              id="admin-ban-user-id"
+              className="admin-field__input"
+              type="number"
+              min="1"
+              step="1"
+              inputMode="numeric"
+              placeholder={t("admin.users.fields.userIdPlaceholder")}
+              value={banForm.userId}
+              onChange={(event) =>
+                setBanForm((previous) => ({ ...previous, userId: event.target.value }))
+              }
+              disabled={banBusy}
+            />
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label" htmlFor="admin-ban-reason">
+              {t("admin.users.fields.reason")}
+            </label>
+            <textarea
+              id="admin-ban-reason"
+              className="admin-field__input admin-field__input--textarea"
+              rows={3}
+              placeholder={t("admin.users.fields.reasonPlaceholder")}
+              value={banForm.reason}
+              onChange={(event) =>
+                setBanForm((previous) => ({ ...previous, reason: event.target.value }))
+              }
+              disabled={banBusy}
+            />
+            <span className="admin-field__hint">{t("admin.users.fields.reasonHint")}</span>
+          </div>
+          {banFeedback ? (
+            <AdminFeedback
+              type={banFeedback.type}
+              message={banFeedback.message}
+              onDismiss={() => setBanFeedback(null)}
+              dismissLabel={t("admin.common.dismiss")}
+            />
+          ) : null}
+          <div className="admin-panel__footer">
+            <button type="submit" className="admin-btn admin-btn--danger" disabled={banBusy}>
+              <Icon name="block" />
+              {banBusy ? t("admin.users.ban.submitting") : t("admin.users.ban.submit")}
+            </button>
+          </div>
+        </form>
+        <form className="admin-panel admin-panel--success" onSubmit={submitUnban} noValidate>
+          <div className="admin-panel__header">
+            <div className="admin-panel__heading">
+              <h2 className="admin-panel__title">
+                <Icon name="lock_open" />
+                {t("admin.users.unban.title")}
+              </h2>
+              <p className="admin-panel__subtitle">{t("admin.users.unban.subtitle")}</p>
+            </div>
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label" htmlFor="admin-unban-user-id">
+              {t("admin.users.fields.userId")}
+            </label>
+            <input
+              id="admin-unban-user-id"
+              className="admin-field__input"
+              type="number"
+              min="1"
+              step="1"
+              inputMode="numeric"
+              placeholder={t("admin.users.fields.userIdPlaceholder")}
+              value={unbanUserId}
+              onChange={(event) => setUnbanUserId(event.target.value)}
+              disabled={unbanBusy}
+            />
+          </div>
+          {unbanFeedback ? (
+            <AdminFeedback
+              type={unbanFeedback.type}
+              message={unbanFeedback.message}
+              onDismiss={() => setUnbanFeedback(null)}
+              dismissLabel={t("admin.common.dismiss")}
+            />
+          ) : null}
+          <div className="admin-panel__footer">
+            <button type="submit" className="admin-btn admin-btn--primary" disabled={unbanBusy}>
+              <Icon name="lock_open" />
+              {unbanBusy ? t("admin.users.unban.submitting") : t("admin.users.unban.submit")}
+            </button>
+          </div>
+        </form>
+      </section>
+      <AdminConfirmDialog
+        open={Boolean(confirm)}
+        danger={confirm?.mode === "ban"}
+        busy={confirmBusy}
+        title={t(confirm?.mode === "ban" ? "admin.users.ban.confirmTitle" : "admin.users.unban.confirmTitle")}
+        message={t(
+          confirm?.mode === "ban" ? "admin.users.ban.confirmMessage" : "admin.users.unban.confirmMessage",
+          { userId: confirm?.userId ?? "" }
+        )}
+        confirmLabel={
+          confirmBusy
+            ? t("admin.common.processing")
+            : t(confirm?.mode === "ban" ? "admin.users.ban.submit" : "admin.users.unban.submit")
+        }
+        cancelLabel={t("admin.common.cancel")}
+        onConfirm={runConfirmedAction}
+        onCancel={() => setConfirm(null)}
+      />
+    </AdminLayout>
+  );
+}
+```
+
+## File: src/Pages/admin/AdminVetApprovals.jsx
+```javascript
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import AdminLayout from "../../Components/admin/AdminLayout.jsx";
+import AdminFeedback from "../../Components/admin/AdminFeedback.jsx";
+import AdminConfirmDialog from "../../Components/admin/AdminConfirmDialog.jsx";
+import Icon from "../../Components/Icon.jsx";
+import { formatAdminDate } from "../../Components/admin/adminFormat.js";
+import { useAdminContext } from "../../context/adminContextBase";
+function VetDetail({ icon, label, value }) {
+  if (!value) return null;
+  return (
+    <div className="admin-vet-card__detail">
+      <Icon name={icon} />
+      <span className="admin-vet-card__detail-body">
+        <span className="admin-vet-card__detail-label">{label}</span>
+        <span className="admin-vet-card__detail-value">{value}</span>
+      </span>
     </div>
+  );
+}
+export default function AdminVetApprovals() {
+  const { t, i18n } = useTranslation();
+  const {
+    pendingVets,
+    pendingVetsLoading,
+    pendingVetsError,
+    actionLoading,
+    fetchPendingVets,
+    verifyVet,
+    rejectVet,
+  } = useAdminContext();
+  const [feedback, setFeedback] = useState(null);
+  const [vetToReject, setVetToReject] = useState(null);
+  useEffect(() => {
+    fetchPendingVets();
+  }, [fetchPendingVets]);
+  const handleVerify = async (vet) => {
+    setFeedback(null);
+    const result = await verifyVet(vet.vetId);
+    setFeedback({
+      type: result.success ? "success" : "error",
+      message:
+        result.message ||
+        (result.success
+          ? t("admin.vetApprovals.verifySuccess", { name: vet.fullName })
+          : t("admin.common.actionFailed")),
+    });
+  };
+  const handleRejectConfirmed = async () => {
+    if (!vetToReject) return;
+    setFeedback(null);
+    const result = await rejectVet(vetToReject.vetId);
+    setVetToReject(null);
+    setFeedback({
+      type: result.success ? "success" : "error",
+      message:
+        result.message ||
+        (result.success
+          ? t("admin.vetApprovals.rejectSuccess", { name: vetToReject.fullName })
+          : t("admin.common.actionFailed")),
+    });
+  };
+  const rejectBusy = vetToReject ? actionLoading === `reject-${vetToReject.vetId}` : false;
+  const showEmpty = !pendingVetsLoading && !pendingVetsError && pendingVets.length === 0;
+  return (
+    <AdminLayout
+      title={t("admin.vetApprovals.title")}
+      subtitle={t("admin.vetApprovals.subtitle")}
+      actions={
+        <button
+          type="button"
+          className="admin-btn admin-btn--ghost"
+          onClick={fetchPendingVets}
+          disabled={pendingVetsLoading}
+        >
+          <Icon name="refresh" />
+          {pendingVetsLoading ? t("admin.common.refreshing") : t("admin.common.refresh")}
+        </button>
+      }
+    >
+      {feedback ? (
+        <AdminFeedback
+          type={feedback.type}
+          message={feedback.message}
+          onDismiss={() => setFeedback(null)}
+          dismissLabel={t("admin.common.dismiss")}
+        />
+      ) : null}
+      {pendingVetsError ? <AdminFeedback type="error" message={pendingVetsError} /> : null}
+      {pendingVets.length ? (
+        <div className="admin-toolbar">
+          <span className="admin-badge admin-badge--warning">
+            <Icon name="pending_actions" />
+            {t("admin.vetApprovals.pendingCount", { total: pendingVets.length })}
+          </span>
+        </div>
+      ) : null}
+      {pendingVetsLoading && !pendingVets.length ? (
+        <div className="admin-state admin-state--loading">
+          <span className="admin-spinner" aria-hidden="true" />
+          <p>{t("admin.common.loading")}</p>
+        </div>
+      ) : null}
+      {pendingVetsError && !pendingVets.length ? (
+        <div className="admin-state">
+          <Icon name="cloud_off" />
+          <p>{t("admin.vetApprovals.loadFailed")}</p>
+          <button type="button" className="admin-btn admin-btn--primary" onClick={fetchPendingVets}>
+            {t("admin.common.retry")}
+          </button>
+        </div>
+      ) : null}
+      {showEmpty ? (
+        <div className="admin-state">
+          <Icon name="task_alt" />
+          <p>{t("admin.vetApprovals.empty")}</p>
+          <span className="admin-state__hint">{t("admin.vetApprovals.emptyHint")}</span>
+        </div>
+      ) : null}
+      {pendingVets.length ? (
+        <div className="admin-vet-grid">
+          {pendingVets.map((vet) => {
+            const verifying = actionLoading === `verify-${vet.vetId}`;
+            const rejecting = actionLoading === `reject-${vet.vetId}`;
+            // Any in-flight admin action locks every card, so a second request
+            // can never be fired before the first one resolves.
+            const disabled = Boolean(actionLoading);
+            return (
+              <article className="admin-vet-card" key={vet.vetId}>
+                <header className="admin-vet-card__header">
+                  <div className="admin-vet-card__identity">
+                    <span className="admin-vet-card__avatar" aria-hidden="true">
+                      <Icon name="stethoscope" />
+                    </span>
+                    <div>
+                      <h2 className="admin-vet-card__name">
+                        {vet.fullName || t("admin.common.notProvided")}
+                      </h2>
+                      <p className="admin-vet-card__email">{vet.email}</p>
+                    </div>
+                  </div>
+                  <span className="admin-badge admin-badge--muted">
+                    {t("admin.vetApprovals.idLabel", { id: vet.vetId })}
+                  </span>
+                </header>
+                <div className="admin-vet-card__details">
+                  <VetDetail
+                    icon="workspace_premium"
+                    label={t("admin.vetApprovals.fields.specialization")}
+                    value={vet.specialization}
+                  />
+                  <VetDetail
+                    icon="local_hospital"
+                    label={t("admin.vetApprovals.fields.clinicName")}
+                    value={vet.clinicName}
+                  />
+                  <VetDetail
+                    icon="location_on"
+                    label={t("admin.vetApprovals.fields.clinicAddress")}
+                    value={vet.clinicAddress}
+                  />
+                  <VetDetail
+                    icon="badge"
+                    label={t("admin.vetApprovals.fields.licenseNumber")}
+                    value={vet.licenseNumber}
+                  />
+                  <VetDetail
+                    icon="timeline"
+                    label={t("admin.vetApprovals.fields.experienceYears")}
+                    value={
+                      vet.experienceYears === null
+                        ? ""
+                        : t("admin.vetApprovals.yearsValue", { years: vet.experienceYears })
+                    }
+                  />
+                  <VetDetail
+                    icon="event"
+                    label={t("admin.vetApprovals.fields.createdAt")}
+                    value={formatAdminDate(vet.createdAt, i18n.language)}
+                  />
+                </div>
+                <footer className="admin-vet-card__actions">
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn--danger-outline"
+                    onClick={() => setVetToReject(vet)}
+                    disabled={disabled}
+                  >
+                    <Icon name="delete_forever" />
+                    {rejecting ? t("admin.vetApprovals.rejecting") : t("admin.vetApprovals.reject")}
+                  </button>
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn--primary"
+                    onClick={() => handleVerify(vet)}
+                    disabled={disabled}
+                  >
+                    <Icon name="verified" />
+                    {verifying ? t("admin.vetApprovals.verifying") : t("admin.vetApprovals.verify")}
+                  </button>
+                </footer>
+              </article>
+            );
+          })}
+        </div>
+      ) : null}
+      <AdminConfirmDialog
+        open={Boolean(vetToReject)}
+        danger
+        busy={rejectBusy}
+        title={t("admin.vetApprovals.rejectConfirm.title")}
+        message={t("admin.vetApprovals.rejectConfirm.message", {
+          name: vetToReject?.fullName || vetToReject?.email || "",
+        })}
+        details={
+          <p className="admin-modal__warning">
+            <Icon name="delete_forever" />
+            {t("admin.vetApprovals.rejectConfirm.warning")}
+          </p>
+        }
+        confirmLabel={
+          rejectBusy
+            ? t("admin.vetApprovals.rejecting")
+            : t("admin.vetApprovals.rejectConfirm.confirm")
+        }
+        cancelLabel={t("admin.common.cancel")}
+        onConfirm={handleRejectConfirmed}
+        onCancel={() => setVetToReject(null)}
+      />
+    </AdminLayout>
   );
 }
 ```
@@ -17833,7 +23785,7 @@ export default function AdoptionProfile() {
           <p className="center-profile-subtitle">{t.subtitle}</p>
         </div>
         <form className="center-profile-form" onSubmit={handleSave}>
-          {}
+          {/* Basic Information */}
           <section className="center-profile-card">
             <div className="center-profile-card__header">
               <Icon name="domain" />
@@ -17912,7 +23864,7 @@ export default function AdoptionProfile() {
               </div>
             </div>
           </section>
-          {}
+          {/* Security */}
           <section className="center-profile-card">
             <div className="center-profile-card__header">
               <Icon name="security" />
@@ -17938,7 +23890,7 @@ export default function AdoptionProfile() {
               </div>
             </div>
           </section>
-          {}
+          {/* Action Buttons */}
           <div className="center-profile-actions">
             <button type="button" className="center-profile-btn center-profile-btn-cancel" onClick={handleCancel}>
               {t.cancel}
@@ -20196,7 +26148,7 @@ import "../Styling/AccountModal.css";
 const HOUSING_OPTIONS = ["Apartment", "Department", "House", "Villa"];
 const EXPERIENCE_OPTIONS = ["Beginner", "Intermediate", "Expert"];
 export default function AccountModal({ onClose, onLogout }) {
-    const [mode, setMode] = useState("view");
+    const [mode, setMode] = useState("view"); // "view" | "edit"
     const [profile, setProfile] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20787,7 +26739,7 @@ function AdoptionHubPage() {
   const [selectedPetName, setSelectedPetName] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState(null); // { message, type }
   const showToast = (message, type = "success") => {
     setToast({ message, type });
   };
@@ -21632,7 +27584,7 @@ export default function OrderDetailsModal({ orderId, onClose }) {
           {!order && <p role={error ? 'alert' : 'status'}>{error || t('adopter.orders.loading')}</p>}
           {order && <>
           <OrderMetaGrid id={order.id} date={order.date} status={order.status} />
-          {}
+          {/* القسم الناقص تبع عنوان العناصر وعددها */}
           <div className="odm-section">
             <h3 className="odm-section-title">
               {t('adopter.orders.itemsTitle')}
@@ -21912,6 +27864,7 @@ export default function PetHavenDashboardPage() {
       </div>
     );
   }
+  // تحويل استجابة الـ API لنفس شكل الـ props يلي بتتوقعها الكومبوننتس
   const kpiData = [
     {
       id: "pending-adoptions",
@@ -22052,7 +28005,7 @@ export default function PetHavenDashboardPage() {
 
 ## File: src/Pages/PetHavenHealthAssistant.jsx
 ```javascript
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TopNavBar from "../Components/TopNavBar";
 import Footer from "../Components/Footer";
@@ -22060,45 +28013,121 @@ import HealthHistorySidebar from "../Components/healthAssistant/HealthHistorySid
 import ChatHeader from "../Components/healthAssistant/ChatHeader ";
 import ChatMessages from "../Components/healthAssistant/ChatMessages ";
 import ChatInput from "../Components/healthAssistant/ChatInput ";
+import PetSelector from "../Components/healthAssistant/PetSelector";
 import {
-  healthHistoryData,
-  chatMessagesData,
-} from "../api/healthAssistantMockData";
+  askHealthAssistant,
+  normalizeAnimal,
+} from "../api/healthAssistantApi";
+import { fetchAdoptedPets } from "../api/petsApi";
 import "../Styling/HealthAssistant.css";
+const createConversationId = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+  return `conversation-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}`;
+};
 const PetHavenHealthAssistant = () => {
-  const { t } = useTranslation();
-  const initialSessionId = healthHistoryData.find((session) => session.active)?.id ?? null;
-  const [sessions, setSessions] = useState(healthHistoryData);
-  const [activeSessionId, setActiveSessionId] = useState(initialSessionId);
-  const [messagesBySession, setMessagesBySession] = useState(() =>
-    initialSessionId == null ? {} : { [initialSessionId]: chatMessagesData }
-  );
-  const messages = activeSessionId == null ? [] : messagesBySession[activeSessionId] ?? [];
-  const localizedSessions = sessions.map((session) =>
-    session.isUserCreated
-      ? session
-      : {
-          ...session,
-          title: t(`adopter.health.history.${session.id}.title`, {
-            defaultValue: session.title,
-          }),
-          date: t(`adopter.health.history.${session.id}.date`, {
-            defaultValue: session.date,
-          }),
+  // =====================================================
+  // Translation / Current Language
+  // =====================================================
+  const { t, i18n } = useTranslation();
+  const currentLanguage =
+    i18n.resolvedLanguage?.startsWith("ar") ? "ar" : "en";
+  // =====================================================
+  // Adopted Pets State
+  // =====================================================
+  const [pets, setPets] = useState([]);
+  const [petsLoading, setPetsLoading] = useState(true);
+  const [petsError, setPetsError] = useState(null);
+  const [selectedPetId, setSelectedPetId] = useState(null);
+  // =====================================================
+  // Chat State
+  // =====================================================
+  const [sessions, setSessions] = useState([]);
+  const [activeSessionId, setActiveSessionId] =
+    useState(null);
+  const [messagesBySession, setMessagesBySession] =
+    useState({});
+  const [isSending, setIsSending] = useState(false);
+  // =====================================================
+  // Load the adopter real adopted pets
+  // =====================================================
+  useEffect(() => {
+    let isMounted = true;
+    const loadPets = async () => {
+      setPetsLoading(true);
+      setPetsError(null);
+      try {
+        const adoptedPets = await fetchAdoptedPets();
+        if (!isMounted) {
+          return;
         }
+        setPets(adoptedPets);
+        // Default to the first pet when at least one exists.
+        setSelectedPetId(adoptedPets[0]?.id ?? null);
+      } catch (error) {
+        console.error("Failed to load adopted pets:", error);
+        if (!isMounted) {
+          return;
+        }
+        setPets([]);
+        setSelectedPetId(null);
+        setPetsError(t("adopter.health.petsError"));
+      } finally {
+        if (isMounted) {
+          setPetsLoading(false);
+        }
+      }
+    };
+    loadPets();
+    return () => {
+      isMounted = false;
+    };
+  }, [t]);
+  // =====================================================
+  // Selected Pet (derived, never duplicated in state)
+  // =====================================================
+  const selectedPet = useMemo(
+    () => pets.find((pet) => pet.id === selectedPetId) ?? null,
+    [pets, selectedPetId]
   );
-  const localizedMessages = messages.map((message) => ({
-    ...message,
-    text: t(`adopter.health.messages.${message.id}`, { defaultValue: message.text }),
-  }));
-  const handleSendMessage = (text) => {
+  const selectedAnimal = normalizeAnimal(selectedPet?.species);
+  // =====================================================
+  // Current Messages
+  // =====================================================
+  const messages =
+    activeSessionId == null
+      ? []
+      : messagesBySession[activeSessionId] ?? [];
+  // =====================================================
+  // Send Message
+  // =====================================================
+  const handleSendMessage = async (text) => {
+    if (isSending) {
+      return;
+    }
+    const trimmedText = text.trim();
+    if (!trimmedText) {
+      return;
+    }
     let targetSessionId = activeSessionId;
-    if (activeSessionId == null) {
-      targetSessionId = `session-${Date.now()}`;
+    // ===================================================
+    // Create a new conversation if needed
+    // ===================================================
+    if (targetSessionId == null) {
+      targetSessionId = createConversationId();
       setSessions((current) => [
         {
           id: targetSessionId,
-          title: text.length > 42 ? `${text.slice(0, 42)}…` : text,
+          title:
+            trimmedText.length > 42
+              ? `${trimmedText.slice(0, 42)}…`
+              : trimmedText,
           date: t("adopter.health.now"),
           isUserCreated: true,
         },
@@ -22106,31 +28135,196 @@ const PetHavenHealthAssistant = () => {
       ]);
       setActiveSessionId(targetSessionId);
     }
+    // ===================================================
+    // Add User Message
+    // ===================================================
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      sender: "user",
+      type: "text",
+      text: trimmedText,
+    };
+    // ===================================================
+    // Typing Indicator
+    // ===================================================
+    const typingMessage = {
+      id: `typing-${Date.now()}`,
+      sender: "ai",
+      type: "typing",
+      text: "",
+    };
     setMessagesBySession((current) => ({
       ...current,
       [targetSessionId]: [
         ...(current[targetSessionId] ?? []),
-        { id: `user-${Date.now()}`, sender: "user", type: "text", text },
+        userMessage,
+        typingMessage,
       ],
     }));
+    setIsSending(true);
+    try {
+      // =================================================
+      // Call FastAPI / RAG
+      // =================================================
+      const result = await askHealthAssistant({
+        question: trimmedText,
+        // Real species of the selected pet, normalized to a value the RAG
+        // knowledge base supports. null when there is no pet, or when the
+        // species is missing / unsupported.
+        animal: selectedAnimal,
+        conversationId: targetSessionId,
+        // IMPORTANT:
+        // Send current platform language to FastAPI.
+        language: currentLanguage,
+      });
+      // =================================================
+      // AI Response
+      // =================================================
+      const answer =
+        typeof result?.answer === "string" ? result.answer.trim() : "";
+      const assistantMessage = {
+        id: `assistant-${Date.now()}`,
+        sender: "ai",
+        type: "text",
+        text:
+          answer ||
+          (currentLanguage === "ar"
+            ? "لم يتم إرجاع إجابة."
+            : "No answer was returned."),
+      };
+      // =================================================
+      // Remove Typing + Add AI Answer
+      // =================================================
+      setMessagesBySession((current) => ({
+        ...current,
+        [targetSessionId]: [
+          ...(current[targetSessionId] ?? []).filter(
+            (message) =>
+              message.id !== typingMessage.id
+          ),
+          assistantMessage,
+        ],
+      }));
+    } catch (error) {
+      console.error(
+        "Health Assistant request failed:",
+        error
+      );
+      // =================================================
+      // Error Message (user-safe text only)
+      // =================================================
+      const errorMessage = {
+        id: `error-${Date.now()}`,
+        sender: "ai",
+        type: "text",
+        text:
+          error?.message ||
+          (currentLanguage === "ar"
+            ? "خدمة المساعد الصحي غير متاحة حالياً."
+            : "Health Assistant service is currently unavailable."),
+      };
+      // =================================================
+      // Remove Typing + Show Error
+      // =================================================
+      setMessagesBySession((current) => ({
+        ...current,
+        [targetSessionId]: [
+          ...(current[targetSessionId] ?? []).filter(
+            (message) =>
+              message.id !== typingMessage.id
+          ),
+          errorMessage,
+        ],
+      }));
+    } finally {
+      setIsSending(false);
+    }
   };
+  // =====================================================
+  // New Chat
+  // =====================================================
   const handleNewChat = () => {
     setActiveSessionId(null);
   };
+  // =====================================================
+  // Select Pet
+  //
+  // Switching pet starts a fresh conversation so a dog chat context is
+  // never mixed with a cat chat. Existing sidebar sessions are kept.
+  // =====================================================
+  const handleSelectPet = (petId) => {
+    if (petId === selectedPetId) {
+      return;
+    }
+    setSelectedPetId(petId);
+    setActiveSessionId(null);
+  };
+  // =====================================================
+  // Render
+  // =====================================================
   return (
     <div className="pet-haven-health-assistant">
       <TopNavBar />
       <main className="pet-haven-health-assistant__main">
         <HealthHistorySidebar
-          sessions={localizedSessions}
+          sessions={sessions}
           activeSessionId={activeSessionId}
-          onSelectSession={(session) => setActiveSessionId(session.id)}
+          onSelectSession={(session) =>
+            setActiveSessionId(session.id)
+          }
           onNewChat={handleNewChat}
         />
         <section className="pet-haven-health-assistant__chat-panel">
-          <ChatHeader onNewChat={handleNewChat} />
-          <ChatMessages messages={localizedMessages} />
-          <ChatInput onSend={handleSendMessage} />
+          <ChatHeader
+            onNewChat={handleNewChat}
+          />
+          <div className="pet-context">
+            {petsLoading ? (
+              <p className="pet-context__note">
+                {t("adopter.health.petsLoading")}
+              </p>
+            ) : petsError ? (
+              <p className="pet-context__note pet-context__note--error">
+                {petsError}
+              </p>
+            ) : pets.length === 0 ? (
+              <p className="pet-context__note">
+                {t("adopter.health.noPets")}
+              </p>
+            ) : (
+              <>
+                <PetSelector
+                  pets={pets}
+                  activePetId={selectedPetId}
+                  onSelectPet={handleSelectPet}
+                />
+                {selectedPet ? (
+                  <p className="pet-context__current">
+                    <span className="pet-context__label">
+                      {t("adopter.health.chattingAbout")}
+                    </span>
+                    <span className="pet-context__name">
+                      {selectedPet.name}
+                    </span>
+                    {selectedPet.breed || selectedPet.species ? (
+                      <span className="pet-context__meta">
+                        {[selectedPet.breed, selectedPet.species]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
+                    ) : null}
+                  </p>
+                ) : null}
+              </>
+            )}
+          </div>
+          <ChatMessages
+            messages={messages}
+          />
+          <ChatInput
+            onSend={handleSendMessage}
+            isSending={isSending}
+          />
         </section>
       </main>
       <Footer />
@@ -22581,7 +28775,7 @@ import OrderSummary from '../Components/ShoppingCart/OrderSummary';
 import Footer from '../Components/Footer';
 import Icon from '../Components/Icon.jsx';
 import { getCart, updateCartItemQty, removeCartItem, clearCart } from '../api/cartData';
-const TAX_RATE = 0;
+const TAX_RATE = 0; // الـ Backend الحالي لا يضيف ضريبة على Order.TotalPrice
 export default function ShoppingCart() {
   const { t } = useTranslation();
   const [cart, setCart] = useState(null);
@@ -22615,6 +28809,7 @@ export default function ShoppingCart() {
     if (!item) return;
     const newQty = item.quantity + delta;
     if (newQty < 1) return;
+    // تحديث تفاؤلي (optimistic) بالواجهة قبل رد السيرفر
     const prevCart = cart;
     setCart((prev) => ({
       ...prev,
@@ -22626,9 +28821,9 @@ export default function ShoppingCart() {
     }));
     try {
       await updateCartItemQty(cartItemId, newQty);
-      fetchCart();
+      fetchCart(); // نجيب النسخة الرسمية من السيرفر (فيها cartTotal محدث)
     } catch (err) {
-      setCart(prevCart);
+      setCart(prevCart); // ارجاع الحالة القديمة لو فشل الطلب
       setError(err.message);
     }
   };
@@ -22721,7 +28916,7 @@ export default function ShoppingCart() {
     );
   }
   const subtotal = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
-  const shipping = 0;
+  const shipping = 0; // عدّلها إذا صار عندك shipping من الـ API
   const tax = subtotal * TAX_RATE;
   const total = cart.cartTotal ?? subtotal + shipping + tax;
   return (
@@ -22812,7 +29007,7 @@ export function VetHubPage() {
   const [error, setError] = useState("");
   const [retryKey, setRetryKey] = useState(0);
   const [coords, setCoords] = useState({ lat: null, lng: null });
-  const [locationStatus, setLocationStatus] = useState("idle");
+  const [locationStatus, setLocationStatus] = useState("idle"); // idle | locating | ready | error
   const [locationMessageKey, setLocationMessageKey] = useState("");
   useEffect(() => {
     let active = true;
@@ -23726,6 +29921,11 @@ function formatConfirmDate(dateValue, language = "en") {
 
 ## File: src/Styling/AdminPages.css
 ```css
+/* ============================================================
+   Admin Pages — Pet Haven
+   Every screen styled here is backed by a real AdminController
+   endpoint (stats, pending vets, verify/reject, ban/unban).
+   ============================================================ */
 :root {
   --admin-primary: #00685f;
   --admin-primary-container: #008378;
@@ -23737,12 +29937,17 @@ function formatConfirmDate(dateValue, language = "en") {
   --admin-on-surface-variant: #3d4947;
   --admin-outline: #6d7a77;
   --admin-outline-variant: #bcc9c6;
-  --admin-border-slate: #f1f5f9;
+  --admin-border-slate: #e6ecea;
   --admin-routine-green: #22c55e;
   --admin-moderate-yellow: #f59e0b;
   --admin-emergency-red: #ef4444;
   --admin-inverse-surface: #2d3133;
-  --admin-sidebar-width: 280px;
+  --admin-sidebar-width: 264px;
+  --admin-radius-lg: 16px;
+  --admin-radius-md: 12px;
+  --admin-radius-sm: 8px;
+  --admin-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --admin-shadow-md: 0 8px 24px rgba(16, 24, 40, 0.08);
 }
 .admin-layout {
   display: flex;
@@ -23752,6 +29957,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-family: "Inter", sans-serif;
   color: var(--admin-on-surface);
 }
+/* ── Sidebar ─────────────────────────────────────────────── */
 .admin-sidebar {
   width: var(--admin-sidebar-width);
   flex-shrink: 0;
@@ -23765,10 +29971,10 @@ function formatConfirmDate(dateValue, language = "en") {
   display: flex;
   justify-content: center;
   padding: 0 24px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 .admin-sidebar__logo img {
-  height: 96px;
+  height: 84px;
   width: auto;
   object-fit: contain;
 }
@@ -23776,15 +29982,16 @@ function formatConfirmDate(dateValue, language = "en") {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  overflow-y: auto;
 }
 .admin-sidebar__link {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 0 8px;
+  margin: 0 12px;
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: var(--admin-radius-sm);
   color: #cfd8d6;
   text-decoration: none;
   font-size: 14px;
@@ -23793,12 +30000,18 @@ function formatConfirmDate(dateValue, language = "en") {
 }
 .admin-sidebar__link:hover {
   color: #ffffff;
-  background: rgba(0, 104, 95, 0.15);
+  background: rgba(0, 104, 95, 0.22);
 }
 .admin-sidebar__link--active {
   background: var(--admin-primary);
   color: #ffffff;
 }
+.admin-sidebar__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* ── Main column ─────────────────────────────────────────── */
 .admin-layout__main {
   flex: 1;
   display: flex;
@@ -23806,1239 +30019,857 @@ function formatConfirmDate(dateValue, language = "en") {
   height: 100%;
   min-width: 0;
 }
+/* ── Navbar ──────────────────────────────────────────────── */
 .admin-navbar {
-  height: 64px;
+  min-height: 64px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
-  background: rgba(255, 255, 255, 0.8);
+  gap: 16px;
+  padding: 10px 32px;
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--admin-border-slate);
 }
-.admin-navbar__spacer {
-  flex: 1;
+.admin-navbar__brand-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--admin-on-surface-variant);
 }
 .admin-navbar__actions {
   display: flex;
   align-items: center;
-  gap: 24px;
-  color: var(--admin-on-surface-variant);
+  gap: 16px;
+  min-width: 0;
 }
-.admin-navbar__icon-btn {
-  position: relative;
+.admin-navbar__lang-btn {
+  border: 1px solid var(--admin-outline-variant);
+  background: var(--admin-surface);
+  color: var(--admin-on-surface-variant);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+.admin-navbar__lang-btn:hover {
+  color: var(--admin-primary);
+  border-color: var(--admin-primary);
+  background: rgba(0, 104, 95, 0.06);
+}
+.admin-navbar__profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-inline-start: 16px;
+  border-inline-start: 1px solid var(--admin-border-slate);
+  min-width: 0;
+}
+.admin-navbar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--admin-border-slate);
+}
+.admin-navbar__avatar--initials {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 104, 95, 0.12);
+  color: var(--admin-primary);
+  font-size: 13px;
+  font-weight: 700;
+  border-color: rgba(0, 104, 95, 0.2);
+}
+.admin-navbar__profile-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+.admin-navbar__profile-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-navbar__profile-email {
+  font-size: 12px;
+  color: var(--admin-outline);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-navbar__profile-error {
+  font-size: 12px;
+  color: var(--admin-emergency-red);
+}
+/* ── Content shell ───────────────────────────────────────── */
+.admin-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  background: var(--admin-background);
+}
+.admin-page {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.admin-page__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.admin-page__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.admin-page__title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+.admin-page__subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--admin-on-surface-variant);
+  max-width: 68ch;
+}
+.admin-page__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* ── Buttons ─────────────────────────────────────────────── */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.admin-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+.admin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.admin-btn--primary {
+  background: var(--admin-primary);
+  color: #ffffff;
+}
+.admin-btn--primary:hover:not(:disabled) {
+  background: var(--admin-primary-container);
+}
+.admin-btn--ghost {
+  background: var(--admin-surface);
+  color: var(--admin-on-surface-variant);
+  border-color: var(--admin-outline-variant);
+}
+.admin-btn--ghost:hover:not(:disabled) {
+  color: var(--admin-primary);
+  border-color: var(--admin-primary);
+}
+.admin-btn--danger {
+  background: var(--admin-emergency-red);
+  color: #ffffff;
+}
+.admin-btn--danger:hover:not(:disabled) {
+  background: #d93a3a;
+}
+.admin-btn--danger-outline {
+  background: var(--admin-surface);
+  color: var(--admin-emergency-red);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.admin-btn--danger-outline:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: var(--admin-emergency-red);
+}
+/* ── Badges & toolbar ────────────────────────────────────── */
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.admin-badge .material-symbols-outlined {
+  font-size: 16px;
+}
+.admin-badge--warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #a45c00;
+  border-color: rgba(245, 158, 11, 0.28);
+}
+.admin-badge--muted {
+  background: var(--admin-surface-container);
+  color: var(--admin-on-surface-variant);
+  border-color: var(--admin-outline-variant);
+}
+/* ── Stat cards ──────────────────────────────────────────── */
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.admin-stat-grid--compact {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 320px));
+}
+.admin-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border-slate);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-sm);
+  padding: 18px 20px;
+}
+.admin-stat__icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--admin-radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-stat__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.admin-stat__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--admin-outline);
+}
+.admin-stat__value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.admin-stat__hint {
+  font-size: 12px;
+  color: var(--admin-on-surface-variant);
+}
+.admin-stat--primary .admin-stat__icon {
+  background: rgba(0, 104, 95, 0.1);
+  color: var(--admin-primary);
+}
+.admin-stat--accent .admin-stat__icon {
+  background: rgba(254, 166, 25, 0.14);
+  color: #b46f00;
+}
+.admin-stat--neutral .admin-stat__icon {
+  background: var(--admin-surface-container);
+  color: var(--admin-on-surface-variant);
+}
+.admin-stat--danger .admin-stat__icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--admin-emergency-red);
+}
+/* ── Panels ──────────────────────────────────────────────── */
+.admin-panel {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border-slate);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-sm);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.admin-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.admin-panel__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.admin-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.admin-panel__title .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--admin-primary);
+}
+.admin-panel--danger .admin-panel__title .material-symbols-outlined {
+  color: var(--admin-emergency-red);
+}
+.admin-panel__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--admin-on-surface-variant);
+}
+.admin-panel__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: auto;
+}
+.admin-panel__count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+}
+.admin-panel__count-value {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--admin-primary);
+}
+.admin-panel__count-label {
+  font-size: 13px;
+  color: var(--admin-on-surface-variant);
+}
+.admin-panel__more {
+  margin: 0;
+  font-size: 12px;
+  color: var(--admin-outline);
+}
+/* ── Compact list (dashboard pending preview) ────────────── */
+.admin-mini-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--admin-border-slate);
+  border-radius: var(--admin-radius-md);
+  overflow: hidden;
+}
+.admin-mini-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--admin-surface);
+}
+.admin-mini-list__item + .admin-mini-list__item {
+  border-top: 1px solid var(--admin-border-slate);
+}
+.admin-mini-list__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.admin-mini-list__name {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-mini-list__meta {
+  font-size: 12px;
+  color: var(--admin-on-surface-variant);
+}
+.admin-mini-list__date {
+  font-size: 12px;
+  color: var(--admin-outline);
+  white-space: nowrap;
+}
+/* ── Vet approvals ───────────────────────────────────────── */
+.admin-vet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+.admin-vet-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border-slate);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-sm);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.admin-vet-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-vet-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.admin-vet-card__avatar {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 104, 95, 0.1);
+  color: var(--admin-primary);
+}
+.admin-vet-card__name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.admin-vet-card__email {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--admin-on-surface-variant);
+  overflow-wrap: anywhere;
+}
+.admin-vet-card__details {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-background);
+  border: 1px solid var(--admin-border-slate);
+}
+.admin-vet-card__detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.admin-vet-card__detail .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--admin-outline);
+  margin-top: 2px;
+}
+.admin-vet-card__detail-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.admin-vet-card__detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--admin-outline);
+}
+.admin-vet-card__detail-value {
+  font-size: 14px;
+  color: var(--admin-on-surface);
+  overflow-wrap: anywhere;
+}
+.admin-vet-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+/* ── Forms (user management) ─────────────────────────────── */
+.admin-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.admin-field__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-on-surface-variant);
+}
+.admin-field__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-outline-variant);
+  background: var(--admin-surface);
+  color: var(--admin-on-surface);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.admin-field__input:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px rgba(0, 104, 95, 0.12);
+}
+.admin-field__input:disabled {
+  background: var(--admin-surface-container);
+  cursor: not-allowed;
+}
+.admin-field__input--textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+.admin-field__hint {
+  font-size: 12px;
+  color: var(--admin-outline);
+}
+/* ── Notice ──────────────────────────────────────────────── */
+.admin-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--admin-radius-md);
+  background: rgba(0, 104, 95, 0.06);
+  border: 1px solid rgba(0, 104, 95, 0.16);
+}
+.admin-notice .material-symbols-outlined {
+  color: var(--admin-primary);
+  font-size: 20px;
+}
+.admin-notice__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.admin-notice__text {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--admin-on-surface-variant);
+  max-width: 80ch;
+}
+/* ── Feedback banner ─────────────────────────────────────── */
+.admin-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid transparent;
+  font-size: 14px;
+}
+.admin-feedback .material-symbols-outlined {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.admin-feedback__text {
+  margin: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.admin-feedback__close {
   background: none;
   border: none;
   cursor: pointer;
   color: inherit;
   padding: 0;
+  display: inline-flex;
+  opacity: 0.7;
 }
-.admin-navbar__icon-btn:hover {
+.admin-feedback__close:hover {
+  opacity: 1;
+}
+.admin-feedback--success {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.28);
+  color: #14713c;
+}
+.admin-feedback--error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.28);
+  color: #a12626;
+}
+.admin-feedback--info {
+  background: rgba(0, 104, 95, 0.08);
+  border-color: rgba(0, 104, 95, 0.2);
   color: var(--admin-primary);
 }
-.admin-navbar__badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--admin-emergency-red);
+/* ── States ──────────────────────────────────────────────── */
+.admin-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 56px 24px;
+  background: var(--admin-surface);
+  border: 1px dashed var(--admin-outline-variant);
+  border-radius: var(--admin-radius-lg);
+  text-align: center;
+  color: var(--admin-on-surface-variant);
 }
-.admin-navbar__avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--admin-border-slate);
-  cursor: pointer;
-  padding-left: 16px;
-  margin-left: 8px;
-  border-left: 1px solid var(--admin-border-slate);
-  box-sizing: content-box;
+.admin-state .material-symbols-outlined {
+  font-size: 40px;
+  color: var(--admin-outline);
 }
-.admin-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 40px;
+.admin-state p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.admin-state__hint {
+  font-size: 13px;
+  color: var(--admin-outline);
+}
+.admin-state--inline {
+  padding: 28px 16px;
+  border-style: solid;
+  border-color: var(--admin-border-slate);
   background: var(--admin-background);
 }
-.admin-loading {
+.admin-spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid var(--admin-outline-variant);
+  border-top-color: var(--admin-primary);
+  animation: admin-spin 0.8s linear infinite;
+}
+@keyframes admin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-spinner {
+    animation-duration: 2.4s;
+  }
+}
+/* ── Confirmation modal ──────────────────────────────────── */
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  color: var(--admin-outline);
-  font-size: 16px;
-}
-.admin-dashboard {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-.admin-dashboard__grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  align-items: start;
-}
-.admin-dashboard__primary {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-.admin-dashboard__side {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-.admin-card {
-  background: var(--admin-surface);
-  border: 1px solid var(--admin-border-slate);
-  border-radius: 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   padding: 24px;
 }
-.admin-kpis {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+.admin-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: rgba(25, 28, 30, 0.55);
+  cursor: pointer;
 }
-.admin-kpi {
+.admin-modal__panel {
+  position: relative;
+  width: min(460px, 100%);
+  background: var(--admin-surface);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-md);
+  padding: 28px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
 }
-.admin-kpi__top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-.admin-kpi__icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  display: flex;
+.admin-modal__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-.admin-kpi__icon--primary {
   background: rgba(0, 104, 95, 0.1);
   color: var(--admin-primary);
 }
-.admin-kpi__icon--secondary {
-  background: rgba(254, 166, 25, 0.1);
-  color: var(--admin-secondary-container);
-}
-.admin-kpi__icon--warning {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--admin-moderate-yellow);
-}
-.admin-kpi__trend-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-.admin-kpi__label {
-  font-size: 12px;
-  color: var(--admin-outline);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.admin-kpi__trend {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.admin-kpi__trend--up {
-  color: var(--admin-routine-green);
-}
-.admin-kpi__trend .material-symbols-outlined {
-  font-size: 16px;
-}
-.admin-kpi__priority {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 6px;
-  background: rgba(239, 68, 68, 0.1);
+.admin-modal__panel--danger .admin-modal__icon {
+  background: rgba(239, 68, 68, 0.12);
   color: var(--admin-emergency-red);
-  font-size: 12px;
-  font-weight: 500;
 }
-.admin-kpi__value-wrap {
-  margin-bottom: 16px;
-}
-.admin-kpi__value {
-  font-size: 32px;
+.admin-modal__title {
+  margin: 0;
+  font-size: 20px;
   font-weight: 700;
-  line-height: 1.25;
+}
+.admin-modal__message {
   margin: 0;
+  font-size: 14px;
+  color: var(--admin-on-surface-variant);
+  overflow-wrap: anywhere;
 }
-.admin-kpi__subtext {
-  font-size: 12px;
-  color: var(--admin-outline);
-  margin: 4px 0 0;
+.admin-modal__details {
+  width: 100%;
 }
-.admin-kpi__breakdown {
+.admin-modal__warning {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
-  padding-top: 16px;
-  border-top: 1px solid var(--admin-border-slate);
-}
-.admin-kpi__breakdown-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--admin-outline);
-}
-.admin-kpi__breakdown-row span:last-child {
-  font-weight: 600;
-  color: var(--admin-on-surface);
-}
-.admin-kpi__mini-trend--up {
-  color: var(--admin-routine-green);
-}
-.admin-kpi__mini-trend--flat {
-  color: var(--admin-outline);
-}
-.admin-kpi__footer {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid var(--admin-border-slate);
-}
-.admin-kpi__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--admin-primary);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.admin-kpi__link:hover {
-  text-decoration: underline;
-}
-.admin-kpi__link .material-symbols-outlined {
-  font-size: 16px;
-}
-.admin-table-card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 20px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid var(--admin-border-slate);
-}
-.admin-table-card__header h2 {
-  font-size: 24px;
-  font-weight: 600;
   margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--admin-radius-md);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.24);
+  color: #a12626;
+  font-size: 13px;
+  text-align: start;
 }
-.admin-link-btn {
-  background: none;
-  border: none;
-  color: var(--admin-primary);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
+.admin-modal__warning .material-symbols-outlined {
+  font-size: 18px;
+  flex-shrink: 0;
 }
-.admin-link-btn:hover {
-  color: var(--admin-primary-container);
-}
-.admin-table-card__scroll {
-  overflow-x: auto;
-}
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-.admin-table thead {
-  background: var(--admin-background);
-  border-bottom: 1px solid var(--admin-border-slate);
-}
-.admin-table th {
-  padding: 16px 24px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--admin-outline);
-}
-.admin-table td {
-  padding: 16px 24px;
-  font-size: 14px;
-  border-top: 1px solid var(--admin-border-slate);
-}
-.admin-table tbody tr:hover {
-  background: rgba(247, 249, 251, 0.6);
-}
-.admin-table__center {
-  text-align: center;
-}
-.admin-table__muted {
-  color: var(--admin-outline);
-  font-size: 12px;
-}
-.admin-growth--up {
-  color: var(--admin-routine-green);
-  font-weight: 600;
-}
-.admin-growth--down {
-  color: var(--admin-emergency-red);
-  font-weight: 600;
-}
-.admin-growth--flat {
-  color: var(--admin-outline);
-  font-weight: 600;
-}
-.admin-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 10px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 600;
-}
-.admin-status--active {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--admin-routine-green);
-}
-.admin-status--pending {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--admin-moderate-yellow);
-}
-.admin-status--suspended {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--admin-emergency-red);
-}
-.admin-health__header {
+.admin-modal__actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-.admin-health__header h3,
-.admin-alerts h3 {
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0;
-}
-.admin-health__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--admin-routine-green);
-  font-size: 12px;
-}
-.admin-health__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--admin-routine-green);
-}
-.admin-health__metric {
-  margin-bottom: 16px;
-}
-.admin-health__metric-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--admin-outline);
-  margin-bottom: 4px;
-}
-.admin-health__metric-row span:last-child {
-  color: var(--admin-on-surface);
-  font-weight: 600;
-}
-.admin-health__bar {
-  width: 100%;
-  height: 8px;
-  border-radius: 9999px;
-  background: var(--admin-surface-container);
-  overflow: hidden;
-}
-.admin-health__bar-fill {
-  height: 100%;
-  border-radius: 9999px;
-  background: var(--admin-primary);
-}
-.admin-health__history {
-  padding-top: 16px;
-  border-top: 1px solid var(--admin-border-slate);
-}
-.admin-health__bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 4px;
-  height: 64px;
-}
-.admin-health__history-bar {
-  flex: 1;
-  border-radius: 2px;
-  background: rgba(0, 104, 95, 0.2);
-}
-.admin-health__history-bar--peak {
-  background: var(--admin-primary);
-}
-.admin-health__uptime {
-  text-align: center;
-  font-size: 12px;
-  color: var(--admin-outline);
-  margin: 8px 0 0;
-}
-.admin-alerts__list {
-  display: flex;
-  flex-direction: column;
+  justify-content: center;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 8px;
+  width: 100%;
+  flex-wrap: wrap;
 }
-.admin-alert {
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 8px;
-}
-.admin-alert--warning {
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  color: var(--admin-moderate-yellow);
-}
-.admin-alert--error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: var(--admin-emergency-red);
-}
-.admin-alert__title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--admin-on-surface);
-  margin: 0;
-}
-.admin-alert__detail {
-  font-size: 12px;
-  color: var(--admin-outline);
-  margin: 2px 0 0;
-}
+/* ── Breakpoints ─────────────────────────────────────────── */
 @media (max-width: 1024px) {
   :root {
-    --admin-sidebar-width: 72px;
+    --admin-sidebar-width: 76px;
   }
   .admin-sidebar__label {
     display: none;
   }
   .admin-sidebar__logo img {
-    height: 40px;
+    height: 44px;
   }
   .admin-sidebar__link {
     justify-content: center;
+    margin: 0 8px;
   }
-  .admin-kpis {
-    grid-template-columns: repeat(2, 1fr);
+  .admin-content {
+    padding: 24px;
   }
-  .admin-dashboard__grid {
-    grid-template-columns: 1fr;
+  .admin-navbar {
+    padding: 10px 20px;
   }
 }
 @media (max-width: 768px) {
   .admin-layout {
     flex-direction: column;
     height: auto;
+    min-height: 100vh;
     overflow: visible;
   }
   .admin-sidebar {
     width: 100%;
+    height: auto;
     flex-direction: row;
     align-items: center;
-    padding: 12px 16px;
+    gap: 8px;
+    padding: 10px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
   }
   .admin-sidebar__logo {
-    margin: 0 16px 0 0;
+    margin: 0;
     padding: 0;
   }
   .admin-sidebar__logo img {
-    height: 32px;
+    height: 34px;
   }
   .admin-sidebar__nav {
     flex-direction: row;
+    justify-content: flex-end;
+    gap: 4px;
+    overflow-x: auto;
   }
-  .admin-sidebar__label {
-    display: none;
+  .admin-sidebar__link {
+    margin: 0;
+    padding: 10px 12px;
+  }
+  .admin-navbar {
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .admin-navbar__brand-title {
+    font-size: 14px;
   }
   .admin-content {
     padding: 16px;
+    overflow-y: visible;
   }
-  .admin-kpis {
-    grid-template-columns: 1fr;
+  .admin-page__title {
+    font-size: 23px;
   }
-}
-.admin-approvals-page {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-}
-.admin-approvals-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.admin-approvals-header__title {
-  font-size: 40px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin: 0;
-}
-.admin-approvals-header__subtitle {
-  font-size: 16px;
-  color: var(--admin-on-surface-variant);
-  max-width: 720px;
-  margin: 0;
-}
-.admin-approvals-section {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-.admin-approvals-audit {
-  padding-top: 16px;
-  border-top: 1px solid var(--admin-border-slate);
-}
-.admin-approvals-section__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-.admin-approvals-section__title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
-}
-.admin-approvals-section__icon--pending {
-  color: var(--admin-moderate-yellow);
-}
-.admin-approvals-badge {
-  background: var(--admin-surface-container);
-  color: var(--admin-on-surface-variant);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  margin-left: 8px;
-}
-.admin-approvals-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  color: var(--admin-primary);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.admin-approvals-filter-btn:hover {
-  text-decoration: underline;
-}
-.admin-approvals-table-card {
-  padding: 0;
-  overflow: hidden;
-}
-.admin-approvals-table-card__scroll {
-  overflow-x: auto;
-}
-.admin-approvals-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-.admin-approvals-table thead {
-  background: var(--admin-surface-container);
-  border-bottom: 1px solid var(--admin-border-slate);
-}
-.admin-approvals-table th {
-  padding: 16px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--admin-on-surface-variant);
-}
-.admin-approvals-table__actions-head {
-  text-align: right;
-}
-.admin-approvals-table__row {
-  border-top: 1px solid var(--admin-border-slate);
-  transition: background-color 0.15s ease;
-}
-.admin-approvals-table__row:hover {
-  background: var(--admin-background);
-}
-.admin-approvals-table td {
-  padding: 16px 24px;
-  vertical-align: middle;
-}
-.admin-approvals-table__date {
-  font-size: 16px;
-}
-.admin-approvals-center {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.admin-approvals-center__logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--admin-surface-container);
-  border: 1px solid var(--admin-border-slate);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.admin-approvals-center__logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.admin-approvals-center__logo-fallback {
-  color: var(--admin-outline);
-  font-size: 24px;
-}
-.admin-approvals-center__name {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 2px;
-}
-.admin-approvals-center__location {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--admin-outline-variant);
-  margin: 0;
-}
-.admin-approvals-center__location .material-symbols-outlined {
-  font-size: 14px;
-}
-.admin-approvals-contact__name {
-  font-size: 16px;
-  margin: 0;
-}
-.admin-approvals-contact__email {
-  font-size: 12px;
-  color: var(--admin-outline-variant);
-  margin: 0;
-}
-.admin-approvals-doc-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: var(--admin-surface-container);
-  border: 1px solid var(--admin-border-slate);
-  color: var(--admin-primary);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-}
-.admin-approvals-doc-btn .material-symbols-outlined {
-  font-size: 16px;
-}
-.admin-approvals-doc-btn:hover {
-  background: rgba(0, 104, 95, 0.1);
-}
-.admin-approvals-table__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-.admin-approvals-reason-input {
-  width: 160px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--admin-outline-variant);
-  font-size: 13px;
-}
-.admin-approvals-error-banner {
-  color: #ba1a1a;
-  font-size: 14px;
-  margin: 0 0 16px;
-}
-.admin-approvals-reject-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--admin-outline-variant);
-  background: transparent;
-  color: #ba1a1a;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-.admin-approvals-reject-btn:hover {
-  background: #ffdad6;
-  border-color: #ffdad6;
-}
-.admin-approvals-activate-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  background: var(--admin-primary);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-  transition: background-color 0.15s ease, transform 0.15s ease;
-}
-.admin-approvals-activate-btn:hover {
-  background: var(--admin-primary-container);
-  transform: translateY(-1px);
-}
-.admin-approvals-audit__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-.admin-approvals-audit-item {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
-}
-.admin-approvals-audit-item--rejected {
-  border-inline-start: 4px solid var(--admin-emergency-red);
-}
-.admin-approvals-audit-item__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-.admin-approvals-audit-item__name {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 2px;
-}
-.admin-approvals-audit-item__processor {
-  font-size: 12px;
-  color: var(--admin-on-surface-variant);
-  margin: 0;
-}
-.admin-approvals-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-.admin-approvals-status .material-symbols-outlined {
-  font-size: 14px;
-}
-.admin-approvals-status--approved {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--admin-routine-green);
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-.admin-approvals-status--rejected {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--admin-emergency-red);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-.admin-approvals-audit-item__reason {
-  background: rgba(255, 218, 214, 0.3);
-  border: 1px solid #ffdad6;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  color: #93000a;
-}
-.admin-approvals-audit-item__reason-label {
-  font-weight: 600;
-}
-.admin-approvals-audit-item__timestamp {
-  text-align: right;
-  margin-top: auto;
-  font-size: 12px;
-  color: var(--admin-outline-variant);
-}
-@media (max-width: 1024px) {
-  .admin-approvals-table__actions {
-    opacity: 1;
-  }
-}
-@media (max-width: 768px) {
-  .admin-approvals-header__title {
-    font-size: 28px;
-  }
-  .admin-approvals-audit__grid {
-    grid-template-columns: 1fr;
-  }
-  .admin-approvals-table th,
-  .admin-approvals-table td {
-    padding: 12px 16px;
-  }
-}
-.admin-users-page {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-.admin-users-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.admin-users-header__title {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0;
-}
-.admin-users-header__subtitle {
-  font-size: 18px;
-  color: var(--admin-on-surface-variant);
-  margin: 0;
-}
-.admin-users-table-card {
-  padding: 0;
-  overflow: hidden;
-}
-.admin-users-table-card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px;
-  border-bottom: 1px solid var(--admin-border-slate);
-  background: var(--admin-background);
-}
-.admin-users-table-card__title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
-}
-.admin-users-total-badge {
-  padding: 4px 12px;
-  border-radius: 9999px;
-  background: rgba(0, 104, 95, 0.1);
-  color: var(--admin-primary);
-  font-size: 12px;
-  font-weight: 500;
-}
-.admin-users-table-card__scroll {
-  overflow-x: auto;
-}
-.admin-users-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-.admin-users-table thead {
-  background: var(--admin-surface-container);
-  border-bottom: 1px solid var(--admin-outline-variant);
-}
-.admin-users-table th {
-  padding: 16px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--admin-on-surface-variant);
-}
-.admin-users-table__actions-head {
-  text-align: right;
-}
-.admin-users-table__row {
-  border-bottom: 1px solid var(--admin-border-slate);
-  transition: background-color 0.15s ease;
-}
-.admin-users-table__row:hover {
-  background: #f8fafc;
-}
-.admin-users-table__row--suspended {
-  background: rgba(255, 218, 214, 0.2);
-}
-.admin-users-table__row--banned {
-  background: rgba(241, 245, 249, 0.5);
-}
-.admin-users-table__row--banned .admin-users-user,
-.admin-users-table__row--banned .admin-users-role,
-.admin-users-table__row--banned .admin-users-table__muted {
-  opacity: 0.6;
-}
-.admin-users-table td {
-  padding: 16px 24px;
-  vertical-align: middle;
-}
-.admin-users-table__muted {
-  color: var(--admin-on-surface-variant);
-}
-.admin-users-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.admin-users-user__avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-.admin-users-user__avatar--initials {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--admin-surface-container);
-  color: var(--admin-on-surface-variant);
-  font-weight: 500;
-  font-size: 14px;
-}
-.admin-users-user__name {
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0;
-}
-.admin-users-user__id {
-  font-size: 12px;
-  color: var(--admin-on-surface-variant);
-  margin: 2px 0 0;
-}
-.admin-users-role {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 10px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid transparent;
-}
-.admin-users-role--doctor {
-  background: rgba(70, 72, 212, 0.1);
-  color: #4648d4;
-  border-color: rgba(70, 72, 212, 0.2);
-}
-.admin-users-role--trainer {
-  background: rgba(133, 83, 0, 0.1);
-  color: #855300;
-  border-color: rgba(133, 83, 0, 0.2);
-}
-.admin-users-role--center {
-  background: rgba(0, 104, 95, 0.1);
-  color: var(--admin-primary);
-  border-color: rgba(0, 104, 95, 0.2);
-}
-.admin-users-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid transparent;
-}
-.admin-users-status .material-symbols-outlined {
-  font-size: 14px;
-}
-.admin-users-status__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-.admin-users-status--active {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--admin-routine-green);
-  border-color: rgba(34, 197, 94, 0.2);
-}
-.admin-users-status--suspended {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--admin-emergency-red);
-  border-color: rgba(239, 68, 68, 0.2);
-}
-.admin-users-status--banned {
-  background: var(--admin-on-surface-variant);
-  color: #ffffff;
-  border-color: rgba(61, 73, 71, 0.2);
-}
-.admin-users-table__actions {
-  text-align: right;
-}
-.admin-users-more-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-radius: 9999px;
-  background: none;
-  border: none;
-  color: var(--admin-outline);
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-.admin-users-more-btn:hover {
-  background: #f1f5f9;
-  color: var(--admin-primary);
-}
-.admin-users-table-card__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-top: 1px solid var(--admin-border-slate);
-  background: var(--admin-background);
-}
-.admin-users-table-card__count {
-  font-size: 14px;
-  color: var(--admin-on-surface-variant);
-}
-.admin-users-pagination {
-  display: flex;
-  gap: 4px;
-}
-.admin-users-pagination__btn {
-  padding: 4px 12px;
-  border: 1px solid var(--admin-border-slate);
-  border-radius: 8px;
-  background: none;
-  color: var(--admin-on-surface-variant);
-  font-size: 14px;
-  cursor: pointer;
-}
-.admin-users-pagination__btn:hover:not(:disabled) {
-  background: #f8fafc;
-}
-.admin-users-pagination__btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.admin-users-pagination__btn--active {
-  background: var(--admin-primary);
-  border-color: var(--admin-primary);
-  color: #ffffff;
-}
-.admin-users-bento {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 32px;
-  align-items: start;
-}
-.admin-users-audit-card {
-  padding: 0;
-  overflow: hidden;
-}
-.admin-users-audit-card__header {
-  padding: 24px;
-  border-bottom: 1px solid var(--admin-border-slate);
-  background: rgba(186, 26, 26, 0.05);
-}
-.admin-users-audit-card__title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-.admin-users-audit-card__icon {
-  color: var(--admin-error, #ba1a1a);
-}
-.admin-users-audit-card__title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
-}
-.admin-users-audit-card__subtitle {
-  font-size: 16px;
-  color: var(--admin-on-surface-variant);
-  margin: 0;
-}
-.admin-users-audit-card__scroll {
-  overflow-x: auto;
-}
-.admin-users-audit-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 14px;
-}
-.admin-users-audit-table thead {
-  background: var(--admin-surface-container);
-  border-bottom: 1px solid var(--admin-outline-variant);
-}
-.admin-users-audit-table th {
-  padding: 12px 24px;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--admin-on-surface-variant);
-}
-.admin-users-audit-table__enforcement-head {
-  text-align: center;
-}
-.admin-users-audit-table td {
-  padding: 12px 24px;
-  border-bottom: 1px solid var(--admin-border-slate);
-  vertical-align: top;
-}
-.admin-users-audit-table__entity {
-  font-weight: 500;
-}
-.admin-users-audit-table__reason {
-  color: var(--admin-on-surface);
-  font-weight: 500;
-  margin: 0;
-}
-.admin-users-audit-table__justification {
-  font-size: 12px;
-  color: var(--admin-on-surface-variant);
-  margin: 2px 0 0;
-}
-.admin-users-audit-table__enforcement-cell {
-  text-align: center;
-}
-.admin-users-enforcement {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid transparent;
-}
-.admin-users-enforcement--active_suspension {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--admin-moderate-yellow);
-  border-color: rgba(245, 158, 11, 0.2);
-}
-.admin-users-enforcement--permanent_ban {
-  background: rgba(186, 26, 26, 0.1);
-  color: #ba1a1a;
-  border-color: rgba(186, 26, 26, 0.2);
-}
-.admin-users-enforcement--resolved {
-  background: var(--admin-surface-container);
-  color: var(--admin-on-surface-variant);
-  border-color: var(--admin-outline-variant);
-}
-.admin-users-security-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.admin-users-security-card__title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 24px;
-}
-.admin-users-security-metrics {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.admin-users-security-metric__row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-.admin-users-security-metric__row span:first-child {
-  color: var(--admin-on-surface-variant);
-}
-.admin-users-security-metric__value--green {
-  color: var(--admin-routine-green);
-  font-weight: 500;
-}
-.admin-users-security-metric__value--yellow {
-  color: var(--admin-moderate-yellow);
-  font-weight: 500;
-}
-.admin-users-security-metric__value--red {
-  color: var(--admin-emergency-red);
-  font-weight: 500;
-}
-.admin-users-security-bar {
-  width: 100%;
-  height: 8px;
-  border-radius: 9999px;
-  background: var(--admin-surface-container);
-  overflow: hidden;
-}
-.admin-users-security-bar__fill {
-  height: 100%;
-  border-radius: 9999px;
-}
-.admin-users-security-bar__fill--green {
-  background: var(--admin-routine-green);
-}
-.admin-users-security-bar__fill--yellow {
-  background: var(--admin-moderate-yellow);
-}
-.admin-users-security-bar__fill--red {
-  background: var(--admin-emergency-red);
-}
-.admin-users-privacy-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-top: 32px;
-  padding: 16px;
-  border-radius: 12px;
-  background: rgba(0, 104, 95, 0.05);
-  border: 1px solid rgba(0, 104, 95, 0.1);
-}
-.admin-users-privacy-note__icon {
-  color: var(--admin-primary);
-  margin-top: 2px;
-}
-.admin-users-privacy-note__title {
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0;
-}
-.admin-users-privacy-note__text {
-  font-size: 12px;
-  color: var(--admin-on-surface-variant);
-  margin: 4px 0 0;
-}
-@media (max-width: 1024px) {
-  .admin-users-bento {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 768px) {
-  .admin-users-header__title {
-    font-size: 26px;
-  }
-  .admin-users-table th,
-  .admin-users-table td,
-  .admin-users-audit-table th,
-  .admin-users-audit-table td {
-    padding: 12px 16px;
-  }
-  .admin-users-table-card__footer {
-    flex-direction: column;
-    gap: 12px;
+  .admin-page__header {
     align-items: flex-start;
+  }
+  .admin-stat-grid,
+  .admin-stat-grid--compact {
+    grid-template-columns: 1fr;
+  }
+  .admin-vet-grid,
+  .admin-action-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-panel,
+  .admin-vet-card {
+    padding: 18px;
+  }
+  .admin-vet-card__actions .admin-btn,
+  .admin-panel__footer .admin-btn {
+    flex: 1;
+  }
+}
+@media (max-width: 480px) {
+  .admin-navbar__profile-text {
+    display: none;
+  }
+  .admin-modal__actions .admin-btn {
+    flex: 1;
   }
 }
 ```
@@ -25364,6 +31195,10 @@ function formatConfirmDate(dateValue, language = "en") {
 
 ## File: src/Styling/AdoptionHub.css
 ```css
+/* ==========================================================================
+   AdoptionHub.css
+   ملف CSS واحد لكل صفحة Adoption Hub - Pet Haven
+   ========================================================================== */
 .adoption-hub-page {
   --ah-primary: #00685f;
   --ah-primary-container: #008378;
@@ -25392,6 +31227,9 @@ function formatConfirmDate(dateValue, language = "en") {
   color: var(--ah-on-surface);
   font-family: "Inter", sans-serif;
 }
+/* ==========================================================================
+   Layout / Header
+   ========================================================================== */
 .adoption-hub-main {
   flex-grow: 1;
   width: 100%;
@@ -25446,6 +31284,9 @@ function formatConfirmDate(dateValue, language = "en") {
   flex-direction: column;
   gap: 4rem;
 }
+/* ==========================================================================
+   Tabs
+   ========================================================================== */
 .adoption-tabs {
   display: flex;
   justify-content: center;
@@ -25475,6 +31316,9 @@ function formatConfirmDate(dateValue, language = "en") {
   color: var(--ah-primary);
   border-bottom-color: var(--ah-primary);
 }
+/* ==========================================================================
+   Compatibility Quiz Banner
+   ========================================================================== */
 .quiz-banner {
   background: var(--ah-surface-white);
   border: 1px solid var(--ah-border-slate);
@@ -25577,6 +31421,9 @@ function formatConfirmDate(dateValue, language = "en") {
   width: 96px;
   height: 96px;
 }
+/* ==========================================================================
+   Recommended Pets
+   ========================================================================== */
 .recommended-pets {
   background: var(--ah-surface-white);
   border: 1px solid var(--ah-border-slate);
@@ -25718,6 +31565,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .recommended-card__btn--primary:hover {
   background: var(--ah-primary-container);
 }
+/* ==========================================================================
+   Pet Catalog Grid
+   ========================================================================== */
 .pet-catalog__toolbar {
   display: flex;
   flex-direction: column;
@@ -25817,6 +31667,7 @@ function formatConfirmDate(dateValue, language = "en") {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+/* ---- Pet Card ---- */
 .pet-catalog-card {
   background: var(--ah-surface-white);
   border: 1px solid var(--ah-border-slate);
@@ -25913,6 +31764,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .pet-catalog-card__adopt-btn:active {
   transform: scale(0.97);
 }
+/* ==========================================================================
+   Adoption Requests
+   ========================================================================== */
 .adoption-requests__title {
   font-size: 24px;
   font-weight: 600;
@@ -26056,6 +31910,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .adoption-requests__action-btn:hover {
   background: var(--ah-surface-container-low);
 }
+/* ==========================================================================
+   Adopted Pets
+   ========================================================================== */
 .adopted-pets {
   margin-top: 3rem;
 }
@@ -26153,6 +32010,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .adopted-pets__records-btn:hover {
   background: var(--ah-surface-container);
 }
+/* ==========================================================================
+   Adoption Application Modal
+   ========================================================================== */
 .adoption-modal-overlay {
   position: fixed;
   inset: 0;
@@ -26408,6 +32268,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .adoption-modal__btn--submit:hover {
   background: var(--ah-primary-container);
 }
+/* ==========================================================================
+   Compatibility Quiz Modal
+   ========================================================================== */
 .compat-quiz-overlay {
   position: fixed;
   inset: 0;
@@ -26754,6 +32617,7 @@ function formatConfirmDate(dateValue, language = "en") {
   margin: 0;
   color: var(--ah-on-surface-variant);
 }
+/* Backend-driven catalog controls and states */
 .pet-catalog__count {
   margin: 0.25rem 0 0;
   color: var(--ah-on-surface-variant);
@@ -26871,6 +32735,10 @@ function formatConfirmDate(dateValue, language = "en") {
 
 ## File: src/Styling/AdoptionHubPage.css
 ```css
+/* ==========================================================================
+   AdoptionHub.css
+   ملف CSS واحد لكل صفحة Adoption Hub - Pet Haven
+   ========================================================================== */
 .adoption-hub-page {
   --ah-primary: #00685f;
   --ah-primary-container: #008378;
@@ -26899,6 +32767,9 @@ function formatConfirmDate(dateValue, language = "en") {
   color: var(--ah-on-surface);
   font-family: "Inter", sans-serif;
 }
+/* ==========================================================================
+   Layout / Header
+   ========================================================================== */
 .adoption-hub-main {
   flex-grow: 1;
   width: 100%;
@@ -26953,6 +32824,9 @@ function formatConfirmDate(dateValue, language = "en") {
   flex-direction: column;
   gap: 4rem;
 }
+/* ==========================================================================
+   Tabs
+   ========================================================================== */
 .adoption-tabs {
   display: flex;
   justify-content: center;
@@ -26982,6 +32856,9 @@ function formatConfirmDate(dateValue, language = "en") {
   color: var(--ah-primary);
   border-bottom-color: var(--ah-primary);
 }
+/* ==========================================================================
+   Compatibility Quiz Banner
+   ========================================================================== */
 .quiz-banner {
   background: var(--ah-surface-white);
   border: 1px solid var(--ah-border-slate);
@@ -27084,6 +32961,9 @@ function formatConfirmDate(dateValue, language = "en") {
   width: 96px;
   height: 96px;
 }
+/* ==========================================================================
+   Recommended Pets
+   ========================================================================== */
 .recommended-pets {
   background: var(--ah-surface-white);
   border: 1px solid var(--ah-border-slate);
@@ -27225,6 +33105,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .recommended-card__btn--primary:hover {
   background: var(--ah-primary-container);
 }
+/* ==========================================================================
+   Pet Catalog Grid
+   ========================================================================== */
 .pet-catalog__toolbar {
   display: flex;
   flex-direction: column;
@@ -27323,6 +33206,7 @@ function formatConfirmDate(dateValue, language = "en") {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+/* ---- Pet Card ---- */
 .pet-catalog-card {
   background: var(--ah-surface-white);
   border: 1px solid var(--ah-border-slate);
@@ -27438,6 +33322,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .pet-catalog-card__adopt-btn:active {
   transform: scale(0.97);
 }
+/* ==========================================================================
+   Adoption Requests
+   ========================================================================== */
 .adoption-requests__title {
   font-size: 24px;
   font-weight: 600;
@@ -27558,6 +33445,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .adoption-requests__action-btn:hover {
   background: var(--ah-surface-container-low);
 }
+/* ==========================================================================
+   Adopted Pets
+   ========================================================================== */
 .adopted-pets {
   margin-top: 3rem;
 }
@@ -27655,6 +33545,9 @@ function formatConfirmDate(dateValue, language = "en") {
 .adopted-pets__records-btn:hover {
   background: var(--ah-surface-container);
 }
+/* ==========================================================================
+   Adoption Application Modal
+   ========================================================================== */
 .adoption-modal-overlay {
   position: fixed;
   inset: 0;
@@ -27914,6 +33807,16 @@ function formatConfirmDate(dateValue, language = "en") {
 
 ## File: src/Styling/Applicationdetails.css
 ```css
+/* ============================================
+   Application Details — Plain CSS (no Tailwind)
+   ============================================ */
+/* Material Symbols icon font — لازم تضيفيه بملف public/index.html
+   جوا <head> إذا مش مضاف أصلاً:
+   <link rel="stylesheet"
+     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
+   <link rel="stylesheet"
+     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+*/
 :root {
   --color-primary: #00685f;
   --color-on-primary: #ffffff;
@@ -27943,6 +33846,7 @@ function formatConfirmDate(dateValue, language = "en") {
   --container-max: 1280px;
   --font-family: "Inter", sans-serif;
 }
+/* ---------- Page shell ---------- */
 .application-details-page {
   display: flex;
   flex-direction: column;
@@ -27968,6 +33872,7 @@ function formatConfirmDate(dateValue, language = "en") {
     padding: 3rem var(--space-desktop) 4rem;
   }
 }
+/* ---------- Back link ---------- */
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -27996,6 +33901,7 @@ function formatConfirmDate(dateValue, language = "en") {
 [dir="rtl"] .application-details-page .animal-summary-card__link .material-symbols-outlined {
   transform: scaleX(-1);
 }
+/* ---------- Header row ---------- */
 .application-details__header {
   display: flex;
   flex-direction: column;
@@ -28028,6 +33934,7 @@ function formatConfirmDate(dateValue, language = "en") {
   color: var(--color-on-surface-variant);
   margin: 0;
 }
+/* ---------- Status badge ---------- */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -28066,6 +33973,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .status-badge--rejected .status-badge__icon {
   color: var(--color-error);
 }
+/* ---------- Content grid ---------- */
 .application-details__grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -28081,12 +33989,14 @@ function formatConfirmDate(dateValue, language = "en") {
   flex-direction: column;
   gap: 1.5rem;
 }
+/* ---------- Shared card look ---------- */
 .card {
   background: var(--color-surface-white);
   border: 1px solid #f1f5f9;
   border-radius: var(--radius-2xl);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
+/* ---------- Animal summary card ---------- */
 .animal-summary-card {
   background: var(--color-surface-white);
   border: 1px solid #f1f5f9;
@@ -28162,6 +34072,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .animal-summary-card__link .material-symbols-outlined {
   font-size: 18px;
 }
+/* ---------- Applicant info card ---------- */
 .applicant-info-card {
   background: var(--color-surface-white);
   border: 1px solid #f1f5f9;
@@ -28197,6 +34108,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-size: 14px;
   font-weight: 600;
 }
+/* ---------- Matching insights card ---------- */
 .matching-insights-card {
   background: var(--color-surface-white);
   border: 1px solid #f1f5f9;
@@ -28234,6 +34146,7 @@ function formatConfirmDate(dateValue, language = "en") {
   color: var(--color-on-surface-variant);
   margin: 0;
 }
+/* ---------- Timeline ---------- */
 .application-timeline {
   background: var(--color-surface-white);
   border: 1px solid #f1f5f9;
@@ -28313,6 +34226,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .application-timeline__step-date--in-progress {
   color: var(--color-moderate-yellow);
 }
+/* ---------- Mobile bottom nav ---------- */
 .bottom-nav {
   display: none;
   position: fixed;
@@ -28466,6 +34380,10 @@ function formatConfirmDate(dateValue, language = "en") {
 
 ## File: src/Styling/CenterPages.css
 ```css
+/* ==========================================================================
+   Center Dashboard — extracted from Stitch screen 6afa3a6694ea4d4291e8af5d88117418
+   "Refactored Adoption Center Dashboard - Professional Refinement"
+   ========================================================================== */
 .center-dash-page {
   min-height: 100vh;
   display: flex;
@@ -28496,6 +34414,7 @@ function formatConfirmDate(dateValue, language = "en") {
     padding-right: 40px;
   }
 }
+/* Welcome header */
 .center-dash-welcome {
   display: flex;
   flex-direction: column;
@@ -28568,6 +34487,7 @@ function formatConfirmDate(dateValue, language = "en") {
   background: #008378;
   transform: translateY(-2px);
 }
+/* KPI grid */
 .center-dash-kpi-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -28664,6 +34584,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-dash-kpi__trend--neutral {
   color: #3d4947;
 }
+/* Content grid: left stack + right column */
 .center-dash-content-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -28693,6 +34614,7 @@ function formatConfirmDate(dateValue, language = "en") {
     grid-column: span 2;
   }
 }
+/* Generic card */
 .center-dash-card {
   background: #ffffff;
   border-radius: 1rem;
@@ -28707,6 +34629,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-size: 14px;
   color: #6d7a77;
 }
+/* Alerts & Follow-ups */
 .center-dash-alerts__head {
   display: flex;
   align-items: center;
@@ -28796,6 +34719,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-dash-alerts__item-btn--warning:hover {
   background: rgba(245, 158, 11, 0.9);
 }
+/* Recent Activity */
 .center-dash-activity__title,
 .center-dash-obligations__title,
 .center-dash-orders__title {
@@ -28876,6 +34800,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-dash-view-all:hover {
   text-decoration: underline;
 }
+/* Wallet */
 .center-dash-wallet__head {
   display: flex;
   align-items: center;
@@ -28945,6 +34870,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-size: 13px;
   color: #3d4947;
 }
+/* Completed Obligations */
 .center-dash-obligations__list {
   display: flex;
   flex-direction: column;
@@ -28985,6 +34911,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-size: 10px;
   color: #3d4947;
 }
+/* Latest Store Orders */
 .center-dash-orders__head {
   display: flex;
   align-items: center;
@@ -29061,6 +34988,7 @@ function formatConfirmDate(dateValue, language = "en") {
   background: rgba(245, 158, 11, 0.1);
   color: #f59e0b;
 }
+/* Breakpoints per spec */
 @media (max-width: 1024px) {
   .center-dash-content-grid {
     grid-template-columns: 1fr;
@@ -29081,6 +35009,9 @@ function formatConfirmDate(dateValue, language = "en") {
     gap: 8px;
   }
 }
+/* ==========================================================================
+   Client Reviews — extracted from Stitch screen 4360194615863945930
+   ========================================================================== */
 .center-reviews-page {
   min-height: 100vh;
   display: flex;
@@ -29111,6 +35042,7 @@ function formatConfirmDate(dateValue, language = "en") {
     padding-right: 40px;
   }
 }
+/* Header */
 .center-reviews-header {
   display: flex;
   flex-direction: column;
@@ -29137,6 +35069,7 @@ function formatConfirmDate(dateValue, language = "en") {
   color: #3d4947;
   margin-top: 4px;
 }
+/* Overall Rating card */
 .center-reviews-rating-card {
   background: #ffffff;
   border-radius: 0.75rem;
@@ -29242,6 +35175,7 @@ function formatConfirmDate(dateValue, language = "en") {
   width: 32px;
   text-align: right;
 }
+/* Filters & Search */
 .center-reviews-filters {
   display: flex;
   flex-direction: column;
@@ -29326,6 +35260,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-reviews-filters__tab--active:hover {
   background: #00685f;
 }
+/* Review list */
 .center-reviews-list {
   display: flex;
   flex-direction: column;
@@ -29579,6 +35514,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-reviews-btn-secondary:hover {
   background: #f2f4f6;
 }
+/* Pagination */
 .center-reviews-pagination {
   display: flex;
   flex-direction: column;
@@ -29636,6 +35572,7 @@ function formatConfirmDate(dateValue, language = "en") {
   justify-content: center;
   color: #6d7a77;
 }
+/* Breakpoints per spec */
 @media (max-width: 1024px) {
   .center-reviews-rating {
     align-items: stretch;
@@ -29649,6 +35586,11 @@ function formatConfirmDate(dateValue, language = "en") {
     align-self: flex-end;
   }
 }
+/* ==========================================================================
+   Inventory — extracted from Stitch screens
+   423e678b2051438f8190578bb36ffd2f "Product Inventory with Recent Sales Sidebar"
+   73477dfb09464697a9d44f667555505d "All Recent Adoptions Modal Overlay"
+   ========================================================================== */
 .center-inv-page {
   min-height: 100vh;
   display: flex;
@@ -29682,6 +35624,7 @@ function formatConfirmDate(dateValue, language = "en") {
     padding-right: 40px;
   }
 }
+/* Page header */
 .center-inv-header {
   display: flex;
   flex-direction: column;
@@ -29733,6 +35676,7 @@ function formatConfirmDate(dateValue, language = "en") {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   transform: translateY(-2px);
 }
+/* Tabs */
 .center-inv-tabs {
   display: flex;
   gap: 24px;
@@ -29757,6 +35701,7 @@ function formatConfirmDate(dateValue, language = "en") {
   border-bottom-color: #00685f;
   font-weight: 700;
 }
+/* ---- Shared card + pagination primitives ---- */
 .center-inv-card {
   background: #ffffff;
   border-radius: 0.75rem;
@@ -29773,6 +35718,9 @@ function formatConfirmDate(dateValue, language = "en") {
   font-weight: 600;
   color: #191c1e;
 }
+/* ==========================================================================
+   Product Inventory — center-inv-product-*
+   ========================================================================== */
 .center-inv-product-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -30134,6 +36082,9 @@ function formatConfirmDate(dateValue, language = "en") {
   border-color: #00685f;
   color: #ffffff;
 }
+/* ==========================================================================
+   Adoption Inventory — center-inv-adoption-*
+   ========================================================================== */
 .center-inv-adoption-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -30583,6 +36534,7 @@ function formatConfirmDate(dateValue, language = "en") {
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* Modal — All Recent Adoptions */
 .center-inv-adoption-modal-overlay {
   position: fixed;
   inset: 0;
@@ -30768,6 +36720,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-inv-adoption-modal__close-action-btn:hover {
   background: #008378;
 }
+/* Breakpoints per spec */
 @media (max-width: 1024px) {
   .center-inv-product-layout,
   .center-inv-adoption-layout {
@@ -30779,6 +36732,11 @@ function formatConfirmDate(dateValue, language = "en") {
     overflow-x: auto;
   }
 }
+/* ==========================================================================
+   Vaccination & Reports — extracted from Stitch screens
+   b4bbc2b5a8494d73a2cbd74e6643a52f "Vaccination & Reports - Pet Haven Admin"
+   12955ea100b9410dae3d6f966fd9b399 "Vaccination & Reports - 6-Month Reports Management"
+   ========================================================================== */
 .center-vacc-page-page {
   min-height: 100vh;
   display: flex;
@@ -30870,6 +36828,9 @@ function formatConfirmDate(dateValue, language = "en") {
   color: #00685f;
   border-bottom-color: #00685f;
 }
+/* ==========================================================================
+   Vaccinations tab — center-vacc-*
+   ========================================================================== */
 .center-vacc-toolbar {
   display: flex;
   flex-direction: column;
@@ -31202,6 +37163,9 @@ function formatConfirmDate(dateValue, language = "en") {
   border-color: #00685f;
   color: #ffffff;
 }
+/* ==========================================================================
+   6-Month Reports tab — center-reports-*
+   ========================================================================== */
 .center-reports-card {
   display: flex;
   flex-direction: column;
@@ -31411,6 +37375,7 @@ function formatConfirmDate(dateValue, language = "en") {
   background: rgba(255, 218, 214, 0.5);
   color: #ba1a1a;
 }
+/* Breakpoints per spec */
 @media (max-width: 1024px) {
   .center-vacc-toolbar__filters {
     flex-direction: column;
@@ -31424,6 +37389,13 @@ function formatConfirmDate(dateValue, language = "en") {
     min-width: 0;
   }
 }
+/* ==========================================================================
+   Inventory Modals — extracted from Stitch screens
+   96b4fbb061944ba38ba7905d090712d2 "Delete Product Modal with Contextual Background"
+   c124ac0435be4fc5a7a3fb5e02043967 "Edit Product Modal with Contextual Background"
+   4ed952a9c25f4f75850c92a4d19610b4 "Add Pet Modal with Pet Inventory Background"
+   f84d434b72964ce0bb5e6510a378efee "Edit Pet Modal with Pet Inventory Background"
+   ========================================================================== */
 .center-modal-overlay {
   position: fixed;
   inset: 0;
@@ -31561,6 +37533,7 @@ function formatConfirmDate(dateValue, language = "en") {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* Delete confirmation */
 .center-modal-confirm {
   display: flex;
   flex-direction: column;
@@ -31653,6 +37626,7 @@ function formatConfirmDate(dateValue, language = "en") {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* Photo */
 .center-modal-photo {
   display: flex;
   flex-wrap: wrap;
@@ -31727,6 +37701,7 @@ function formatConfirmDate(dateValue, language = "en") {
   background: #f2f4f6;
   color: #6d7a77;
 }
+/* Form primitives */
 .center-modal-section {
   display: flex;
   flex-direction: column;
@@ -31927,6 +37902,7 @@ function formatConfirmDate(dateValue, language = "en") {
   flex: 0 0 128px;
   align-self: flex-end;
 }
+/* Breakpoints per spec */
 @media (max-width: 768px) {
   .center-modal-panel {
     max-height: 95vh;
@@ -31942,6 +37918,7 @@ function formatConfirmDate(dateValue, language = "en") {
     flex: 1 1 auto;
   }
 }
+/* Read-only value display (View Record / View Sales) */
 .center-modal-value {
   padding: 12px 16px;
   background: #f7f9fb;
@@ -31965,6 +37942,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-size: 12px;
   font-weight: 600;
 }
+/* Search field (modal list views) */
 .center-modal-search {
   position: relative;
 }
@@ -31979,6 +37957,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-modal-input--search {
   padding-left: 40px;
 }
+/* Table (modal list views) */
 .center-modal-table-wrap {
   overflow-x: auto;
   border: 1px solid #f1f5f9;
@@ -32030,6 +38009,11 @@ function formatConfirmDate(dateValue, language = "en") {
   font-size: 14px;
   color: #6d7a77;
 }
+/* ==========================================================================
+   Adoption Requests — extracted from Stitch screens
+   0ccc05003a074d6db4ff9a0bf894b102 / 78d59b96513d49488b172d5359870437 / 939a5d4d91c04dbea0b1b9308d99a932
+   ========================================================================== */
+/* Shared status pill (used on request cards + review modal banner) */
 .center-requests-status {
   display: inline-flex;
   align-items: center;
@@ -32423,6 +38407,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-weight: 600;
   cursor: not-allowed;
 }
+/* Review / Reject modal additions */
 .center-modal-panel--xl {
   max-width: 48rem;
 }
@@ -32663,6 +38648,10 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-modal-reject__quick-btn:hover {
   background: #e0e3e5;
 }
+/* ==========================================================================
+   Vaccination & Reports modals — extracted from Stitch screens
+   49f4552601ee4c78aed5ff5192e5a1d6 / f03b9f15bee948608649e55b6f6832e5
+   ========================================================================== */
 .center-vacc-table__avatar--placeholder {
   display: flex;
   align-items: center;
@@ -32687,6 +38676,7 @@ function formatConfirmDate(dateValue, language = "en") {
 .center-reports-btn-view:hover {
   background: #f2f4f6;
 }
+/* Record Vaccine modal */
 .center-vacc-modal-patient {
   display: flex;
   flex-direction: column;
@@ -32724,6 +38714,7 @@ function formatConfirmDate(dateValue, language = "en") {
   font-size: 11px;
   color: #3d4947;
 }
+/* Report Details modal */
 .center-report-details-summary {
   display: flex;
   align-items: center;
@@ -32787,6 +38778,9 @@ function formatConfirmDate(dateValue, language = "en") {
   color: #00685f;
   font-size: 18px;
 }
+/* ==========================================================================
+   Inventory toolbar filters (Status/Age — Animals · Category/Rating — Products)
+   ========================================================================== */
 .center-inv-adoption-select-wrap {
   position: relative;
   flex: 1 1 auto;
@@ -32862,9 +38856,13 @@ function formatConfirmDate(dateValue, language = "en") {
 
 ## File: src/Styling/CenterProfile.css
 ```css
+/* Center Profile — values extracted from Stitch design (screen.html) */
+/* Keep the centered Adoption Center navbar from shifting when route content
+   changes between pages that do and do not need a vertical scrollbar. */
 html:has(.center-header) {
   scrollbar-gutter: stable;
 }
+/* === CENTER HEADER — mirrors PublicHeader.jsx exactly === */
 .center-header {
   position: sticky;
   top: 0;
@@ -33085,6 +39083,7 @@ html:has(.center-header) {
 .nav-dropdown-item:hover {
   background-color: #eceef0;
 }
+/* Page shell */
 .center-profile-page {
   min-height: 100vh;
   display: flex;
@@ -33104,6 +39103,7 @@ html:has(.center-header) {
     padding-right: 40px;
   }
 }
+/* Back link */
 .center-profile-back-link {
   display: inline-flex;
   align-items: center;
@@ -33126,6 +39126,7 @@ html:has(.center-header) {
 .center-profile-back-link:hover .material-symbols-outlined {
   transform: translateX(-4px);
 }
+/* Heading */
 .center-profile-heading {
   margin-bottom: 32px;
 }
@@ -33148,6 +39149,7 @@ html:has(.center-header) {
   line-height: 1.5;
   color: #3d4947;
 }
+/* Form / cards */
 .center-profile-form {
   display: flex;
   flex-direction: column;
@@ -33207,6 +39209,7 @@ html:has(.center-header) {
   letter-spacing: 0.01em;
   color: #3d4947;
 }
+/* Inputs */
 .center-profile-input,
 .center-profile-textarea {
   width: 100%;
@@ -33284,6 +39287,7 @@ html:has(.center-header) {
 .center-profile-hint--right {
   text-align: right;
 }
+/* Working hours */
 .center-profile-hours {
   display: flex;
   flex-direction: column;
@@ -33332,6 +39336,7 @@ html:has(.center-header) {
   color: #bcc9c6;
   padding: 8px 12px;
 }
+/* Actions */
 .center-profile-actions {
   display: flex;
   align-items: center;
@@ -33372,6 +39377,7 @@ html:has(.center-header) {
   cursor: not-allowed;
   transform: none;
 }
+/* Footer */
 .center-profile-footer {
   background: #ffffff;
   border-top: 1px solid #e0e3e5;
@@ -33425,6 +39431,10 @@ html:has(.center-header) {
 
 ## File: src/Styling/Checkout.css
 ```css
+/* ==========================================================================
+   Checkout Page - converted from Tailwind mockup to plain CSS
+   Color tokens taken from the original tailwind.config
+   ========================================================================== */
 :root {
   --checkout-primary: #00685f;
   --checkout-primary-container: #008378;
@@ -33449,6 +39459,7 @@ html:has(.center-header) {
   color: var(--checkout-on-surface);
   font-family: "Inter", sans-serif;
 }
+/* Hide number input spinners (kept from original, harmless if unused) */
 .checkout-page input[type="number"]::-webkit-inner-spin-button,
 .checkout-page input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -33466,6 +39477,7 @@ html:has(.center-header) {
     padding: 3rem 2.5rem;
   }
 }
+/* ---------- Header ---------- */
 .checkout-header {
   margin-bottom: 2rem;
 }
@@ -33519,6 +39531,7 @@ html:has(.center-header) {
   font-size: 14px;
   color: var(--checkout-routine-green);
 }
+/* ---------- Grid ---------- */
 .checkout-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -33549,6 +39562,7 @@ html:has(.center-header) {
   flex-direction: column;
   gap: 2rem;
 }
+/* ---------- Card / Section ---------- */
 .checkout-card {
   background-color: var(--checkout-surface-white);
   border-radius: 1rem;
@@ -33574,6 +39588,7 @@ html:has(.center-header) {
 .checkout-card__title-icon {
   color: var(--checkout-primary);
 }
+/* ---------- Payment Options ---------- */
 .payment-options {
   display: grid;
   grid-template-columns: 1fr;
@@ -33652,6 +39667,7 @@ html:has(.center-header) {
 .payment-option__check .material-symbols-outlined {
   font-size: 14px;
 }
+/* ---------- Card Form ---------- */
 .card-form {
   display: flex;
   flex-direction: column;
@@ -33725,6 +39741,7 @@ html:has(.center-header) {
   background-color: var(--checkout-outline-variant);
   border-radius: 2px;
 }
+/* ---------- Order Summary Sidebar ---------- */
 .order-summary {
   background-color: var(--checkout-surface-white);
   border-radius: 1rem;
@@ -33930,6 +39947,7 @@ html:has(.center-header) {
   flex-direction: column;
   background: var(--ha-white);
 }
+/* Chat sessions */
 .health-sidebar {
   width: 260px;
   flex: 0 0 260px;
@@ -34036,6 +40054,7 @@ html:has(.center-header) {
   color: var(--ha-muted);
   font-size: 0.75rem;
 }
+/* Conversation header */
 .chat-header {
   min-height: 58px;
   display: flex;
@@ -34080,6 +40099,7 @@ html:has(.center-header) {
   color: var(--ha-text);
   cursor: pointer;
 }
+/* Conversation */
 .chat-messages {
   flex: 1;
   min-height: 0;
@@ -34154,6 +40174,7 @@ html:has(.center-header) {
   font-size: 0.86rem;
   line-height: 1.55;
 }
+/* Typing indicator */
 .typing-indicator {
   width: min(100%, 820px);
   display: flex;
@@ -34181,6 +40202,7 @@ html:has(.center-header) {
   0%, 80%, 100% { transform: translateY(0); opacity: 0.45; }
   40% { transform: translateY(-4px); opacity: 1; }
 }
+/* Composer */
 .chat-input {
   flex: 0 0 auto;
   padding: 0.85rem 1.25rem 0.7rem;
@@ -34281,6 +40303,103 @@ html:has(.center-header) {
   .chat-messages__text {
     font-size: 0.86rem;
   }
+}
+/* Pet context bar (selected pet for the RAG conversation) */
+.pet-context {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-bottom: 1px solid var(--ha-border);
+  background: var(--ha-sidebar);
+}
+.pet-context__note {
+  margin: 0;
+  color: var(--ha-muted);
+  font-size: 0.78rem;
+}
+.pet-context__note--error {
+  color: #b4443a;
+}
+.pet-context__current {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--ha-muted);
+}
+.pet-context__name {
+  color: var(--ha-text);
+  font-weight: 650;
+}
+.pet-context__meta {
+  color: var(--ha-muted);
+}
+.pet-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+}
+.pet-selector__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  padding: 0.35rem 0.7rem 0.35rem 0.35rem;
+  border: 1px solid var(--ha-border);
+  border-radius: 999px;
+  background: var(--ha-white);
+  color: var(--ha-text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.pet-selector__item:hover {
+  border-color: var(--ha-primary);
+}
+.pet-selector__item--active {
+  border-color: var(--ha-primary);
+  background: rgba(8, 127, 114, 0.08);
+}
+.pet-selector__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+.pet-selector__avatar--fallback {
+  display: grid;
+  place-items: center;
+  background: var(--ha-primary);
+  color: var(--ha-white);
+  font-size: 0.7rem;
+}
+.pet-selector__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+  text-align: start;
+}
+.pet-selector__name {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+.pet-selector__breed {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--ha-muted);
+}
+.chat-input__textarea:disabled,
+.chat-input__send:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 ```
 
@@ -34982,6 +41101,7 @@ html:has(.center-header) {
 
 ## File: src/Styling/PetHavenDashboardPage.css
 ```css
+/* ===== متغيرات نظام الألوان (موحّدة مع ستايل صفحة الشوب) ===== */
 .dashboard-page {
   --ph-primary: #1976d2;
   --ph-primary-container: #e3f2fd;
@@ -35017,6 +41137,7 @@ html:has(.center-header) {
   color: var(--ph-text-main);
   font-family: system-ui, -apple-system, sans-serif;
 }
+/* ===== الحاوية الرئيسية ===== */
 .dashboard-main {
   flex: 1;
   width: 100%;
@@ -35032,6 +41153,7 @@ html:has(.center-header) {
     padding: 2rem var(--ph-margin-desktop) 3.5rem;
   }
 }
+/* ===== قسم الترحيب ===== */
 .welcome-section {
   display: flex;
   flex-direction: column;
@@ -35058,6 +41180,7 @@ html:has(.center-header) {
     line-height: 1.25;
   }
 }
+/* ===== شريط إنجاز التبني ===== */
 .milestone-banner {
   background-color: var(--ph-primary-container);
   border: 1px solid var(--ph-primary);
@@ -35163,6 +41286,7 @@ html:has(.center-header) {
 .btn-dismiss:hover {
   background-color: rgba(13, 71, 161, 0.1);
 }
+/* ===== بطاقات المؤشرات KPI ===== */
 .kpi-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -35233,6 +41357,7 @@ html:has(.center-header) {
   background-color: var(--ph-secondary-container);
   color: var(--ph-on-secondary-container);
 }
+/* ===== محفظة المتبني ===== */
 .wallet-card {
   position: relative;
   overflow: hidden;
@@ -35331,6 +41456,7 @@ html:has(.center-header) {
     align-items: center;
   }
 }
+/* ===== إجراءات سريعة ===== */
 .quick-actions-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -35395,6 +41521,7 @@ html:has(.center-header) {
   color: var(--ph-text-muted);
   margin-top: 0.25rem;
 }
+/* ===== الشبكة الرئيسية (التقويمات + العمود الجانبي) ===== */
 .content-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -35577,6 +41704,7 @@ html:has(.center-header) {
   background-color: var(--ph-primary-container);
   color: var(--ph-on-primary-container);
 }
+/* ===== قوائم التذكيرات ===== */
 .list-card {
   background-color: var(--ph-surface);
   border: 1px solid var(--ph-outline);
@@ -35657,6 +41785,7 @@ html:has(.center-header) {
 .reminder-edit-btn:hover {
   color: var(--ph-primary);
 }
+/* ===== حيواناتي وقائمة الأمنيات ===== */
 .stacked-list {
   display: flex;
   flex-direction: column;
@@ -35997,6 +42126,7 @@ html:has(.center-header) {
     display: inline;
   }
 }
+/* ===== مودال مشاركة صورة التحديث (Milestone Update Modal) ===== */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -37618,6 +43748,10 @@ a{
 
 ## File: src/Styling/PetProfile.css
 ```css
+/* ==========================================================================
+   PetProfile.css
+   ملف CSS واحد لكل صفحة بروفايل الحيوان الأليف (Daisy - Pet Haven)
+   ========================================================================== */
 .pet-profile-page {
   --pp-primary: #00685f;
   --pp-primary-soft: rgba(0, 104, 95, 0.05);
@@ -37641,6 +43775,9 @@ a{
   color: var(--pp-on-surface);
   font-family: "Inter", sans-serif;
 }
+/* ==========================================================================
+   Layout
+   ========================================================================== */
 .pet-profile-page__main {
   flex-grow: 1;
   width: 100%;
@@ -37706,6 +43843,9 @@ a{
   color: var(--pp-on-surface-variant);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
+/* ==========================================================================
+   PetHeroCard
+   ========================================================================== */
 .pet-hero-card {
   position: relative;
   overflow: hidden;
@@ -37884,6 +44024,9 @@ a{
   font-size: 14px;
   font-weight: 600;
 }
+/* ==========================================================================
+   ProfileTabs
+   ========================================================================== */
 .profile-tabs {
   display: flex;
   border-bottom: 1px solid var(--pp-border-slate);
@@ -37913,6 +44056,9 @@ a{
   border-bottom-color: var(--pp-primary);
   color: var(--pp-primary);
 }
+/* ==========================================================================
+   MedicalTimeline
+   ========================================================================== */
 .medical-timeline {
   position: relative;
   background: var(--pp-surface-white);
@@ -38000,6 +44146,9 @@ a{
   font-size: 12px;
   font-weight: 500;
 }
+/* ==========================================================================
+   UpcomingAppointments
+   ========================================================================== */
 .upcoming-appointments {
   background: var(--pp-surface-white);
   border: 1px solid var(--pp-border-slate);
@@ -38168,6 +44317,7 @@ html {
   padding-top: 16px;
   padding-bottom: 64px;
 }
+/* === NAVBAR (public-header) — mirrors CenterHeader (.center-header in CenterProfile.css) exactly === */
 .public-header {
   position: sticky;
   top: 0;
@@ -38376,6 +44526,7 @@ html {
     display: none;
   }
 }
+/* === HERO === */
 .hero {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -38574,6 +44725,7 @@ html {
     height: 500px;
   }
 }
+/* === IMPACT STATS === */
 .impact-stats {
   width: 100%;
   background-color: var(--color-primary);
@@ -38631,6 +44783,7 @@ html {
     font-size: 48px;
   }
 }
+/* === CATEGORIES === */
 .categories {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -38712,6 +44865,7 @@ html {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+/* === FEATURED PETS === */
 .featured-pets {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -38824,6 +44978,7 @@ html {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+/* === TRENDING PRODUCTS === */
 .trending-products {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -38976,6 +45131,7 @@ html {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+/* === HOW IT WORKS === */
 .how-it-works {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -39057,6 +45213,7 @@ html {
     z-index: 0;
   }
 }
+/* === EVENTS === */
 .events {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -39189,6 +45346,7 @@ html {
     display: flex;
   }
 }
+/* === VET EXPERTS === */
 .vet {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -39320,6 +45478,7 @@ html {
     height: 100%;
   }
 }
+/* === BLOG === */
 .blog {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -39461,6 +45620,7 @@ html {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+/* === TESTIMONIALS === */
 .testimonials {
   max-width: 56rem;
   margin: 0 auto;
@@ -39530,6 +45690,7 @@ html {
     padding: 48px;
   }
 }
+/* === NEWSLETTER === */
 .newsletter {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -39640,6 +45801,7 @@ html {
     height: 256px;
   }
 }
+/* === PET MODAL === */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -39720,6 +45882,7 @@ html {
 .pet-modal__cta:hover {
   opacity: 0.9;
 }
+/* === PRODUCT MODAL === */
 .product-modal {
   position: relative;
   width: 100%;
@@ -39801,6 +45964,7 @@ html {
     max-width: calc(100vw - 32px);
   }
 }
+/* === AUTH MODAL === */
 .auth-modal {
   position: relative;
   width: 100%;
@@ -40096,6 +46260,7 @@ html {
     line-height: 1.3;
   }
 }
+/* === FOOTER === */
 .site-footer {
   background: #ffffff;
   border-top: 1px solid #e0e3e5;
@@ -40172,14 +46337,15 @@ html {
   font: inherit;
   cursor: pointer;
 }
+/* === MODALS SHARED === */
 .modal__backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1000; animation:fadeIn 200ms ease; }
 .modal__card { background:#fff; border-radius:20px; width:100%; padding:2rem; position:relative; animation:slideUp 250ms ease; box-shadow:0 20px 60px rgba(0,0,0,0.15); }
 .modal__close { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.4rem; cursor:pointer; color:#94a3b8; }
 @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
 @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
 @media(max-width:480px){ .modal__card{ margin:1rem; border-radius:16px; padding:1.25rem; } }
- .modal__card--contact { max-width:480px; }
- .modal__card--article { max-width:600px; max-height:85vh; overflow-y:auto; }
+/* contact modal */ .modal__card--contact { max-width:480px; }
+/* article modal */ .modal__card--article { max-width:600px; max-height:85vh; overflow-y:auto; }
 .article-modal__img { width:100%; height:220px; object-fit:cover; border-radius:12px; margin-bottom:1rem; }
 .article-modal__meta { color:#64748b; font-size:0.85rem; margin-bottom:1rem; }
 .contact-modal__title {
@@ -40713,6 +46879,7 @@ html {
 
 ## File: src/Styling/Toast.css
 ```css
+/* Styling/Toast.css */
 .toast {
   position: fixed;
   bottom: 24px;
@@ -40749,6 +46916,8 @@ html {
 
 ## File: src/Styling/TopNavBar.css
 ```css
+/* Prevent the centered adopter navbar from shifting between routes when the
+   vertical scrollbar appears or disappears. */
 html:has(.adopter-header) {
   scrollbar-gutter: stable;
 }
@@ -41001,6 +47170,13 @@ html:has(.adopter-header) {
 
 ## File: src/Styling/VetAppointments.css
 ```css
+/* ==========================================================================
+   Veterinarian Appointments — extracted from Stitch screen
+   8abb2e9e63a3485d9eabdad01f7433b4 ("Appointments - Veterinarian Dashboard - Pet Haven")
+   All selectors are scoped under the vet-appointments-* prefix so they cannot
+   leak into adopter, adoption center, admin, public, dashboard, profile,
+   reviews, or patients pages.
+   ========================================================================== */
 .vet-appointments-page {
   min-height: 100vh;
   display: flex;
@@ -41070,6 +47246,9 @@ html:has(.adopter-header) {
   color: #93000a;
   font-size: 14px;
 }
+/* ==========================================================================
+   View toggle (List View / Calendar)
+   ========================================================================== */
 .vet-appointments-view-toggle {
   display: flex;
   padding: 4px;
@@ -41109,6 +47288,9 @@ html:has(.adopter-header) {
 .vet-appointments-view-toggle__icon {
   font-size: 18px !important;
 }
+/* ==========================================================================
+   Date navigation
+   ========================================================================== */
 .vet-appointments-date-nav {
   display: flex;
   flex-wrap: wrap;
@@ -41166,6 +47348,9 @@ html:has(.adopter-header) {
   color: #191c1e;
   font-size: 14px;
 }
+/* ==========================================================================
+   Summary cards
+   ========================================================================== */
 .vet-appointments-summary {
   display: grid;
   grid-template-columns: 1fr;
@@ -41229,6 +47414,9 @@ html:has(.adopter-header) {
   font-size: 12px;
   color: #6d7a77;
 }
+/* ==========================================================================
+   Schedule / appointments list
+   ========================================================================== */
 .vet-appointments-list-section {
   background: #ffffff;
   border: 1px solid #f1f5f9;
@@ -41282,6 +47470,9 @@ html:has(.adopter-header) {
 .vet-appointments-list-section > .vet-appointments-alert {
   margin: 16px 24px;
 }
+/* ==========================================================================
+   Appointment card / row
+   ========================================================================== */
 .vet-appointments-card {
   display: flex;
   flex-wrap: wrap;
@@ -41463,6 +47654,7 @@ html:has(.adopter-header) {
 .vet-appointments-card__icon-btn--cancel:hover:not(:disabled) {
   background: rgba(239, 68, 68, 0.1);
 }
+/* Inline confirm / reschedule bars */
 .vet-appointments-card__confirm-bar {
   flex-basis: 100%;
   display: flex;
@@ -41547,6 +47739,15 @@ html:has(.adopter-header) {
 
 ## File: src/Styling/VetCalendar.css
 ```css
+/* ==========================================================================
+   Veterinarian Clinic Calendar — extracted from Stitch screen
+   e8ae4bd3a51f489bb1148ef9a4b39fa9 ("Clinic Calendar - Veterinarian Dashboard - Pet Haven")
+   All selectors are scoped under the vet-calendar-* prefix so they cannot
+   leak into adopter, adoption center, admin, public, dashboard, profile,
+   reviews, patients, or appointments pages. The one intentional exception is
+   the ".vet-calendar-event-modal .vet-appointments-card" override below,
+   which only fires when that card is nested inside this page's own modal.
+   ========================================================================== */
 .vet-calendar-page {
   min-height: 100vh;
   display: flex;
@@ -41605,6 +47806,7 @@ html:has(.adopter-header) {
   color: #6d7a77;
   font-size: 14px;
 }
+/* View toggle (List View / Calendar) — mirrors vet-appointments-view-toggle */
 .vet-calendar-view-toggle {
   display: flex;
   padding: 4px;
@@ -41644,6 +47846,7 @@ html:has(.adopter-header) {
 .vet-calendar-view-toggle__icon {
   font-size: 18px !important;
 }
+/* Panel wrapping toolbar + grid */
 .vet-calendar-panel {
   background: #ffffff;
   border: 1px solid #f1f5f9;
@@ -41651,6 +47854,9 @@ html:has(.adopter-header) {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
+/* ==========================================================================
+   Toolbar
+   ========================================================================== */
 .vet-calendar-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -41726,6 +47932,9 @@ html:has(.adopter-header) {
   background: #ffffff;
   cursor: pointer;
 }
+/* ==========================================================================
+   Grid
+   ========================================================================== */
 .vet-calendar-grid {
   overflow-x: auto;
 }
@@ -41871,6 +48080,9 @@ html:has(.adopter-header) {
 .vet-calendar-day__more:hover {
   text-decoration: underline;
 }
+/* ==========================================================================
+   Event details modal — reuses VetAppointmentCard as-is
+   ========================================================================== */
 .vet-calendar-event-modal-overlay {
   position: fixed;
   inset: 0;
@@ -41910,6 +48122,7 @@ html:has(.adopter-header) {
 .vet-calendar-event-modal__close:hover {
   background: #e6e8ea;
 }
+/* The reused card is designed for a wide list row; stack it for the modal. */
 .vet-calendar-event-modal .vet-appointments-card {
   flex-direction: column;
   align-items: stretch;
@@ -41920,6 +48133,9 @@ html:has(.adopter-header) {
   margin-inline-start: 0;
   justify-content: space-between;
 }
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
 @media (max-width: 640px) {
   .vet-calendar-toolbar {
     flex-direction: column;
@@ -41933,6 +48149,17 @@ html:has(.adopter-header) {
 
 ## File: src/Styling/VetDashboard.css
 ```css
+/* ==========================================================================
+   Veterinarian Dashboard v2 — extracted from Stitch screen
+   1dab7e5ee3a24ba3a37912303ba18b72 ("Veterinarian Dashboard - Advanced Analytics")
+   All selectors are scoped under the vet-dashboard-* prefix so they cannot
+   leak into adopter, adoption center, admin, store, or public pages.
+   ========================================================================== */
+/* ==========================================================================
+   Header — mirrors CenterHeader.jsx structurally, Stitch-styled
+   ========================================================================== */
+/* Prevent the centered vet navbar from shifting between routes when the
+   vertical scrollbar appears or disappears. */
 html:has(.vet-dashboard-header) {
   scrollbar-gutter: stable;
 }
@@ -42145,6 +48372,9 @@ html:has(.vet-dashboard-header) {
     display: none;
   }
 }
+/* ==========================================================================
+   Page shell
+   ========================================================================== */
 .vet-dashboard-page {
   min-height: 100vh;
   display: flex;
@@ -42191,6 +48421,9 @@ html:has(.vet-dashboard-header) {
   color: #6d7a77;
   font-size: 14px;
 }
+/* ==========================================================================
+   Welcome section
+   ========================================================================== */
 .vet-dashboard-welcome__title {
   font-size: 28px;
   line-height: 1.3;
@@ -42207,6 +48440,9 @@ html:has(.vet-dashboard-header) {
   font-size: 16px;
   color: #3d4947;
 }
+/* ==========================================================================
+   KPI cards
+   ========================================================================== */
 .vet-dashboard-kpi-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -42301,6 +48537,9 @@ html:has(.vet-dashboard-header) {
   position: relative;
   z-index: 1;
 }
+/* ==========================================================================
+   Analytics row — clinic activity / breakdown / top breeds
+   ========================================================================== */
 .vet-dashboard-analytics-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -42356,6 +48595,7 @@ html:has(.vet-dashboard-header) {
   outline: 2px solid #00685f;
   outline-offset: 1px;
 }
+/* Bar chart */
 .vet-dashboard-chart-scroll {
   width: 100%;
   overflow-x: auto;
@@ -42390,6 +48630,7 @@ html:has(.vet-dashboard-header) {
   font-size: 12px;
   color: #3d4947;
 }
+/* Donut chart */
 .vet-dashboard-donut {
   display: flex;
   align-items: center;
@@ -42435,6 +48676,7 @@ html:has(.vet-dashboard-header) {
   border-radius: 9999px;
   flex-shrink: 0;
 }
+/* Top breeds list */
 .vet-dashboard-breeds {
   display: flex;
   flex-direction: column;
@@ -42472,6 +48714,9 @@ html:has(.vet-dashboard-header) {
   font-weight: 600;
   color: #3d4947;
 }
+/* ==========================================================================
+   Bento grid — schedule / patients
+   ========================================================================== */
 .vet-dashboard-bento-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -42482,6 +48727,7 @@ html:has(.vet-dashboard-header) {
     grid-template-columns: 1fr 2fr;
   }
 }
+/* Today's schedule */
 .vet-dashboard-schedule__header {
   display: flex;
   justify-content: space-between;
@@ -42591,6 +48837,7 @@ html:has(.vet-dashboard-header) {
   font-size: 12px;
   font-weight: 500;
 }
+/* Recent patients table */
 .vet-dashboard-patients__header {
   display: flex;
   flex-wrap: wrap;
@@ -42713,6 +48960,9 @@ html:has(.vet-dashboard-header) {
 .vet-dashboard-patients__view-btn:hover {
   text-decoration: underline;
 }
+/* ==========================================================================
+   Shared utilities
+   ========================================================================== */
 .vet-dashboard-icon-sm {
   font-size: 14px !important;
 }
@@ -44022,6 +50272,7 @@ html:has(.vet-dashboard-header) {
   height: 40px;
   font-size: 12px;
 }
+/* Adopter Vet visual refresh */
 .vet-page {
   --vet-teal: #087f72;
   --vet-teal-dark: #05675d;
@@ -44389,6 +50640,7 @@ html:has(.vet-dashboard-header) {
     justify-content: center;
   }
 }
+/* Match the adopter Health page footer */
 .vet-page .vet-frame {
   display: flex;
   flex-direction: column;
@@ -44472,6 +50724,7 @@ html:has(.vet-dashboard-header) {
     gap: 12px 20px;
   }
 }
+/* Adopter appointment management */
 .vet-page .my-visits-page {
   width: 100%;
   max-width: 1180px;
@@ -44886,6 +51139,7 @@ html:has(.vet-dashboard-header) {
     text-align: start;
   }
 }
+/* Platform typography and balanced adopter Vet layouts */
 .vet-page {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -45005,6 +51259,7 @@ html:has(.vet-dashboard-header) {
     width: 100%;
   }
 }
+/* My Visits spacing and element distribution */
 .vet-page .my-visits-heading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -45109,6 +51364,7 @@ html:has(.vet-dashboard-header) {
     margin-inline: 18px;
   }
 }
+/* Distinct My Visits visual treatment */
 .vet-page .my-visits-page {
   --visits-primary: #087f72;
   --visits-primary-soft: #e5f5f1;
@@ -45294,6 +51550,7 @@ html:has(.vet-dashboard-header) {
     font-size: 1.15rem;
   }
 }
+/* Server-backed appointment availability */
 .vet-page .availability-panel {
   margin-top: 20px;
   padding: 20px;
@@ -45390,6 +51647,13 @@ html:has(.vet-dashboard-header) {
 
 ## File: src/Styling/VetPatients.css
 ```css
+/* ==========================================================================
+   Veterinarian Patients Directory — extracted from Stitch screen
+   8dbad80a2c6d45d1b9fbad31386aafa4 ("Patients Directory - Veterinarian Dashboard - Pet Haven")
+   All selectors are scoped under the vet-patients-* prefix so they cannot
+   leak into adopter, adoption center, admin, public, dashboard, profile, or
+   reviews pages.
+   ========================================================================== */
 .vet-patients-page {
   min-height: 100vh;
   display: flex;
@@ -45449,6 +51713,9 @@ html:has(.vet-dashboard-header) {
   color: #93000a;
   font-size: 14px;
 }
+/* ==========================================================================
+   Summary cards
+   ========================================================================== */
 .vet-patients-summary {
   display: grid;
   grid-template-columns: 1fr;
@@ -45504,6 +51771,9 @@ html:has(.vet-dashboard-header) {
   font-weight: 700;
   color: #191c1e;
 }
+/* ==========================================================================
+   Toolbar — species chips + search + status filter
+   ========================================================================== */
 .vet-patients-toolbar {
   display: flex;
   flex-direction: column;
@@ -45619,6 +51889,9 @@ html:has(.vet-dashboard-header) {
   outline: none;
   box-shadow: 0 0 0 2px rgba(0, 131, 120, 0.3);
 }
+/* ==========================================================================
+   Patient cards grid
+   ========================================================================== */
 .vet-patients-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -45772,6 +52045,9 @@ html:has(.vet-dashboard-header) {
 .vet-patients-card__action:hover {
   background: #f2f4f6;
 }
+/* ==========================================================================
+   Pagination — mirrors vet-reviews-pagination
+   ========================================================================== */
 .vet-patients-pagination {
   display: flex;
   align-items: center;
@@ -45808,6 +52084,9 @@ html:has(.vet-dashboard-header) {
   padding: 0 4px;
   color: #6d7a77;
 }
+/* ==========================================================================
+   Records modal
+   ========================================================================== */
 .vet-patients-modal-overlay {
   position: fixed;
   inset: 0;
@@ -45996,6 +52275,13 @@ html:has(.vet-dashboard-header) {
 
 ## File: src/Styling/VetPendingApproval.css
 ```css
+/* ==========================================================================
+   Veterinarian Account Pending Approval — extracted from Stitch screen
+   a61b7afff140491ea6275d5c97ce86da ("Account Pending Approval - Pet Haven")
+   All selectors are scoped under the vet-pending-* prefix so they cannot
+   leak into adopter, adoption center, admin, store, or public pages.
+   UI-only screen: no backend polling, no approval APIs.
+   ========================================================================== */
 .vet-pending-page {
   position: relative;
   min-height: 100vh;
@@ -46212,6 +52498,12 @@ html:has(.vet-dashboard-header) {
 
 ## File: src/Styling/VetProfile.css
 ```css
+/* ==========================================================================
+   Veterinarian Profile — extracted from Stitch screen
+   2b81bfcd8a7840cab80e53c97ecd683c ("Vet Profile - Navigation & Security Update")
+   All selectors are scoped under the vet-profile-* prefix so they cannot
+   leak into adopter, adoption center, admin, store, or public pages.
+   ========================================================================== */
 .vet-profile-page {
   min-height: 100vh;
   display: flex;
@@ -46252,6 +52544,7 @@ html:has(.vet-dashboard-header) {
   color: #93000a;
   font-size: 14px;
 }
+/* Back link */
 .vet-profile-back-link {
   display: inline-flex;
   align-items: center;
@@ -46266,6 +52559,7 @@ html:has(.vet-dashboard-header) {
 .vet-profile-back-link:hover {
   color: #008378;
 }
+/* Heading */
 .vet-profile-heading {
   margin-bottom: 24px;
 }
@@ -46286,6 +52580,7 @@ html:has(.vet-dashboard-header) {
   font-size: 16px;
   color: #3d4947;
 }
+/* Identity card */
 .vet-profile-identity {
   display: flex;
   align-items: center;
@@ -46347,6 +52642,7 @@ html:has(.vet-dashboard-header) {
 .vet-profile-identity__meta--muted {
   color: #6d7a77;
 }
+/* Form / cards */
 .vet-profile-form {
   display: flex;
   flex-direction: column;
@@ -46410,6 +52706,7 @@ html:has(.vet-dashboard-header) {
   letter-spacing: 0.01em;
   color: #3d4947;
 }
+/* Inputs */
 .vet-profile-input,
 .vet-profile-textarea {
   width: 100%;
@@ -46504,6 +52801,7 @@ html:has(.vet-dashboard-header) {
     width: 100%;
   }
 }
+/* Actions */
 .vet-profile-actions {
   display: flex;
   align-items: center;
@@ -46550,6 +52848,12 @@ html:has(.vet-dashboard-header) {
 
 ## File: src/Styling/VetReviews.css
 ```css
+/* ==========================================================================
+   Veterinarian Client Reviews — extracted from Stitch screen
+   16961237473925846139 ("Client Reviews - Veterinarian Dashboard - Pet Haven")
+   All selectors are scoped under the vet-reviews-* prefix so they cannot
+   leak into adopter, adoption center, admin, public, dashboard, or profile pages.
+   ========================================================================== */
 .vet-reviews-page {
   min-height: 100vh;
   display: flex;
@@ -46598,6 +52902,7 @@ html:has(.vet-dashboard-header) {
   color: #6d7a77;
   font-size: 14px;
 }
+/* Heading */
 .vet-reviews-heading {
   border-bottom: 2px solid #e6e8ea;
   padding-bottom: 16px;
@@ -46618,6 +52923,7 @@ html:has(.vet-dashboard-header) {
   font-size: 16px;
   color: #3d4947;
 }
+/* Shared card */
 .vet-reviews-card {
   background: #ffffff;
   border: 1px solid #f1f5f9;
@@ -46631,6 +52937,7 @@ html:has(.vet-dashboard-header) {
   color: #191c1e;
   margin-bottom: 24px;
 }
+/* Stars */
 .vet-reviews-stars {
   display: flex;
   align-items: center;
@@ -46649,6 +52956,7 @@ html:has(.vet-dashboard-header) {
 .vet-reviews-star--empty {
   color: #bcc9c6;
 }
+/* Overall rating summary */
 .vet-reviews-summary__body {
   display: flex;
   flex-direction: column;
@@ -46721,6 +53029,7 @@ html:has(.vet-dashboard-header) {
   font-size: 12px;
   color: #3d4947;
 }
+/* Toolbar */
 .vet-reviews-toolbar {
   display: flex;
   flex-direction: column;
@@ -46798,6 +53107,7 @@ html:has(.vet-dashboard-header) {
   background: #e6e8ea;
   border-color: #6d7a77;
 }
+/* Review list */
 .vet-reviews-list {
   display: flex;
   flex-direction: column;
@@ -46851,6 +53161,7 @@ html:has(.vet-dashboard-header) {
   color: #6d7a77;
   font-style: italic;
 }
+/* Pagination */
 .vet-reviews-pagination {
   display: flex;
   flex-direction: column;
@@ -46923,6 +53234,13 @@ html:has(.vet-dashboard-header) {
 
 ## File: src/Styling/VetVerification.css
 ```css
+/* ==========================================================================
+   Veterinarian Professional Verification — extracted from Stitch screen
+   d6958d3f79154f8187f4022ada61f950 ("Professional Verification - Pet Haven")
+   All selectors are scoped under the vet-verification-* prefix so they
+   cannot leak into adopter, adoption center, admin, store, or public pages.
+   UI-only screen: no backend integration.
+   ========================================================================== */
 .vet-verification-page {
   min-height: 100vh;
   display: flex;
@@ -47003,6 +53321,7 @@ html:has(.vet-dashboard-header) {
   max-width: 420px;
   margin-inline: auto;
 }
+/* Upload area */
 .vet-verification-upload {
   border: 2px dashed #bcc9c6;
   border-radius: 12px;
@@ -47069,6 +53388,7 @@ html:has(.vet-dashboard-header) {
 .vet-verification-upload__file-remove:hover {
   color: #93000a;
 }
+/* Form fields */
 .vet-verification-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -47109,6 +53429,7 @@ html:has(.vet-dashboard-header) {
   color: #93000a;
   margin-bottom: 16px;
 }
+/* Actions */
 .vet-verification-actions {
   display: flex;
   flex-direction: column;
@@ -47270,6 +53591,9 @@ export function speciesIcon(species = "") {
 
 ## File: src/utils/sessionEvents.js
 ```javascript
+// src/utils/sessionEvents.js
+// نظام عام لإطلاق حدث "انتهت الجلسة" من أي مكان بالتطبيق
+// apiClient.js بيطلق الحدث، وأي مكوّن (زي App.jsx) فيه يسمعله ويعرض توستة + يفتح شاشة تسجيل الدخول
 export const SESSION_EXPIRED_EVENT = "session-expired";
 export function notifySessionExpired() {
   window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
@@ -47282,6 +53606,7 @@ export function onSessionExpired(callback) {
 
 ## File: src/App.jsx
 ```javascript
+// React & Router
 import { useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -47293,9 +53618,12 @@ import {
 } from "react-router-dom";
 import { isAuthenticated } from "./api/authApi.js";
 import { onSessionExpired } from "./utils/sessionEvents.js";
+// CSS imports (keep ALL existing CSS imports)
 import "./Styling/AdminPages.css";
 import "./Styling/CenterPages.css";
+// Pages — Public
 import PublicPage from "./Pages/public/PublicPage.jsx";
+// Pages — Pet Adopter
 import PetHavenShopPage from "./Pages/PetHavenShopPage.jsx";
 import PetHavenDashboardPage from "./Pages/PetHavenDashboardPage.jsx";
 import AdopterProfile from "./Pages/AdopterProfile.jsx";
@@ -47314,6 +53642,7 @@ import {
   MyVisitsPage,
   VetHubPage,
 } from "./Pages/VetPages.jsx";
+// Pages — Veterinarian
 import VetDashboard from "./Pages/vet/VetDashboard.jsx";
 import VetProfile from "./Pages/vet/VetProfile.jsx";
 import VetReviews from "./Pages/vet/VetReviews.jsx";
@@ -47322,6 +53651,7 @@ import VetAppointments from "./Pages/vet/VetAppointments.jsx";
 import VetCalendar from "./Pages/vet/VetCalendar.jsx";
 import VetProfessionalVerification from "./Pages/vet/VetProfessionalVerification.jsx";
 import VetPendingApproval from "./Pages/vet/VetPendingApproval.jsx";
+// Pages — Adoption Center
 import CenterDashboard from "./Pages/adoptionCenter/CenterDashboard.jsx";
 import AdoptionProfile from "./Pages/adoptionCenter/AdoptionProfile.jsx";
 import CenterReviews from "./Pages/adoptionCenter/CenterReviews.jsx";
@@ -47329,10 +53659,12 @@ import Inventory from "./Pages/adoptionCenter/Inventory.jsx";
 import Reports from "./Pages/adoptionCenter/Reports.jsx";
 import AdoptionRequests from "./Pages/adoptionCenter/AdoptionRequests.jsx";
 import CenterProvider from "./context/CenterContext.jsx";
+// Pages — Admin
 import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
-import AdminClinicApprovals from "./Pages/admin/AdminClinicApprovals.jsx";
+import AdminVetApprovals from "./Pages/admin/AdminVetApprovals.jsx";
 import AdminUsers from "./Pages/admin/AdminUsers.jsx";
 import AdminProvider from "./context/AdminContext.jsx";
+// pages _ vet
 const getRoleRedirect = (role) => {
   switch (role) {
     case "AdoptionCenter": return "/center/dashboard";
@@ -47395,9 +53727,9 @@ function App() {
     <Router>
       <SessionExpiryHandler />
       <Routes>
-        {}
+        {/* PUBLIC */}
         <Route path="/" element={<PublicPage />} />
-        {}
+        {/* PET ADOPTER */}
         <Route path="/adopter/dashboard" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetHavenDashboardPage />} />} />
         <Route path="/adopter/profile" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<AdopterProfile />} />} />
         <Route path="/adopter/store" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<PetHavenShopPage />} />} />
@@ -47415,7 +53747,7 @@ function App() {
         <Route path="/adopter/vets/visits" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<MyVisitsPage />} />} />
         <Route path="/adopter/vets/book/:vetId" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<BookAppointmentPage />} />} />
         <Route path="/adopter/vets/confirm" element={<ProtectedRoute allowedRoles={["Adopter"]} element={<ConfirmAppointmentPage />} />} />
-        {}
+        {/* ADOPTION CENTER */}
         <Route
           path="/center/*"
           element={
@@ -47431,20 +53763,21 @@ function App() {
             </CenterProvider>
           }
         />
-        {}
+        {/* ADMIN */}
         <Route
           path="/admin/*"
           element={
             <AdminProvider>
               <Routes>
                 <Route path="" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminDashboard />} />} />
-                <Route path="clinic-approvals" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminClinicApprovals />} />} />
+                <Route path="vet-approvals" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminVetApprovals />} />} />
                 <Route path="users" element={<ProtectedRoute allowedRoles={["Admin"]} element={<AdminUsers />} />} />
+                <Route path="*" element={<Navigate to="/admin" replace />} />
               </Routes>
             </AdminProvider>
           }
         />
-        {}
+        {/* VETERINARIAN */}
         <Route path="/vet/dashboard" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetDashboard />} />} />
         <Route path="/vet/profile" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetProfile />} />} />
         <Route path="/vet/reviews" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetReviews />} />} />
@@ -47453,7 +53786,7 @@ function App() {
         <Route path="/vet/calendar" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetCalendar />} />} />
         <Route path="/vet/professional-verification" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetProfessionalVerification />} />} />
         <Route path="/vet/pending-approval" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetPendingApproval />} />} />
-        {}
+        {/* CATCH-ALL */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
@@ -47486,6 +53819,16 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+```
+
+## File: .env.example
+```
+# .NET backend API (adopters, pets, shop, vets, ...)
+VITE_API_BASE_URL=http://localhost:5248/api
+
+# FastAPI RAG service used by the Health Assistant.
+# Separate service from VITE_API_BASE_URL - do not merge them.
+VITE_RAG_BASE_URL=http://127.0.0.1:8000
 ```
 
 ## File: .gitignore

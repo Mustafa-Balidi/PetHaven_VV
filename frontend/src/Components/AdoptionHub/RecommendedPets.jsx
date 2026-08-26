@@ -19,7 +19,7 @@ function RecommendedPets({ pets, onViewProfile, onAdoptNow }) {
 
       <div className="recommended-pets__grid">
         {pets.map((pet) => (
-          <div key={pet.petId} className="recommended-card">
+          <article key={pet.petId} className="recommended-card">
             <div className="recommended-card__image-wrap">
               <img
                 className="recommended-card__image"
@@ -65,7 +65,7 @@ function RecommendedPets({ pets, onViewProfile, onAdoptNow }) {
                 </button>
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>

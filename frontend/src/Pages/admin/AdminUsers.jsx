@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AdminLayout from "../../Components/admin/AdminLayout.jsx";
 import AdminStatCard from "../../Components/admin/AdminStatCard.jsx";
@@ -29,9 +29,14 @@ export default function AdminUsers() {
 
   const [banForm, setBanForm] = useState({ userId: "", reason: "" });
   const [unbanUserId, setUnbanUserId] = useState("");
-  const [banFeedback, setBanFeedback] = useState(null);
+  // `field` marks a client-side validation failure, so the offending input can
+  // be flagged with aria-invalid and described by the message below it.
+  const [banFeedback, setBanFeedback] = useState(null); // { type, message, field? }
   const [unbanFeedback, setUnbanFeedback] = useState(null);
   const [confirm, setConfirm] = useState(null); // { mode: "ban" | "unban", userId }
+
+  const banIdRef = useRef(null);
+  const unbanIdRef = useRef(null);
 
   useEffect(() => {
     fetchStats();
@@ -45,7 +50,13 @@ export default function AdminUsers() {
     const userId = parseUserId(banForm.userId);
 
     if (!userId) {
-      setBanFeedback({ type: "error", message: t("admin.users.errors.invalidUserId") });
+      setBanFeedback({
+        type: "error",
+        message: t("admin.users.errors.invalidUserId"),
+        field: "userId",
+      });
+      // Put the keyboard user back on the field they have to correct.
+      banIdRef.current?.focus();
       return;
     }
 
@@ -58,7 +69,12 @@ export default function AdminUsers() {
     const userId = parseUserId(unbanUserId);
 
     if (!userId) {
-      setUnbanFeedback({ type: "error", message: t("admin.users.errors.invalidUserId") });
+      setUnbanFeedback({
+        type: "error",
+        message: t("admin.users.errors.invalidUserId"),
+        field: "userId",
+      });
+      unbanIdRef.current?.focus();
       return;
     }
 
@@ -96,6 +112,8 @@ export default function AdminUsers() {
   };
 
   const confirmBusy = confirm?.mode === "ban" ? banBusy : unbanBusy;
+  const banIdInvalid = banFeedback?.field === "userId";
+  const unbanIdInvalid = unbanFeedback?.field === "userId";
 
   return (
     <AdminLayout
@@ -107,25 +125,28 @@ export default function AdminUsers() {
           className="admin-btn admin-btn--ghost"
           onClick={fetchStats}
           disabled={dashboardLoading}
+          aria-busy={dashboardLoading || undefined}
         >
           <Icon name="refresh" />
           {dashboardLoading ? t("admin.common.refreshing") : t("admin.common.refresh")}
         </button>
       }
     >
-      <div className="admin-notice">
+      <div className="admin-notice" role="note" aria-labelledby="admin-users-notice-title">
         <Icon name="info" />
         <div>
-          <p className="admin-notice__title">{t("admin.users.notice.title")}</p>
+          <p className="admin-notice__title" id="admin-users-notice-title">
+            {t("admin.users.notice.title")}
+          </p>
           <p className="admin-notice__text">{t("admin.users.notice.text")}</p>
         </div>
       </div>
 
-      {dashboardError ? <AdminFeedback type="error" message={dashboardError} /> : null}
+      <AdminFeedback type="error" message={dashboardError} />
 
       {stats ? (
-        <section className="admin-section">
-          <div className="admin-stat-grid admin-stat-grid--compact">
+        <section className="admin-section" aria-label={t("admin.dashboard.statsSection")}>
+          <ul className="admin-stat-grid admin-stat-grid--compact">
             <AdminStatCard
               label={t("admin.dashboard.stats.totalUsers")}
               value={stats.totalUsers}
@@ -138,15 +159,20 @@ export default function AdminUsers() {
               icon="block"
               tone="danger"
             />
-          </div>
+          </ul>
         </section>
       ) : null}
 
       <section className="admin-section admin-action-grid">
-        <form className="admin-panel admin-panel--danger" onSubmit={submitBan} noValidate>
+        <form
+          className="admin-panel admin-panel--danger"
+          onSubmit={submitBan}
+          aria-labelledby="admin-ban-title"
+          noValidate
+        >
           <div className="admin-panel__header">
             <div className="admin-panel__heading">
-              <h2 className="admin-panel__title">
+              <h2 className="admin-panel__title" id="admin-ban-title">
                 <Icon name="gavel" />
                 {t("admin.users.ban.title")}
               </h2>
@@ -160,11 +186,16 @@ export default function AdminUsers() {
             </label>
             <input
               id="admin-ban-user-id"
+              ref={banIdRef}
               className="admin-field__input"
               type="number"
               min="1"
               step="1"
               inputMode="numeric"
+              required
+              aria-required="true"
+              aria-invalid={banIdInvalid || undefined}
+              aria-describedby={banIdInvalid ? "admin-ban-feedback" : undefined}
               placeholder={t("admin.users.fields.userIdPlaceholder")}
               value={banForm.userId}
               onChange={(event) =>
@@ -182,6 +213,7 @@ export default function AdminUsers() {
               id="admin-ban-reason"
               className="admin-field__input admin-field__input--textarea"
               rows={3}
+              aria-describedby="admin-ban-reason-hint"
               placeholder={t("admin.users.fields.reasonPlaceholder")}
               value={banForm.reason}
               onChange={(event) =>
@@ -189,30 +221,41 @@ export default function AdminUsers() {
               }
               disabled={banBusy}
             />
-            <span className="admin-field__hint">{t("admin.users.fields.reasonHint")}</span>
+            <span className="admin-field__hint" id="admin-ban-reason-hint">
+              {t("admin.users.fields.reasonHint")}
+            </span>
           </div>
 
-          {banFeedback ? (
-            <AdminFeedback
-              type={banFeedback.type}
-              message={banFeedback.message}
-              onDismiss={() => setBanFeedback(null)}
-              dismissLabel={t("admin.common.dismiss")}
-            />
-          ) : null}
+          <AdminFeedback
+            id="admin-ban-feedback"
+            type={banFeedback?.type ?? "info"}
+            message={banFeedback?.message}
+            onDismiss={banFeedback ? () => setBanFeedback(null) : undefined}
+            dismissLabel={t("admin.common.dismiss")}
+          />
 
           <div className="admin-panel__footer">
-            <button type="submit" className="admin-btn admin-btn--danger" disabled={banBusy}>
+            <button
+              type="submit"
+              className="admin-btn admin-btn--danger"
+              disabled={banBusy}
+              aria-busy={banBusy || undefined}
+            >
               <Icon name="block" />
               {banBusy ? t("admin.users.ban.submitting") : t("admin.users.ban.submit")}
             </button>
           </div>
         </form>
 
-        <form className="admin-panel admin-panel--success" onSubmit={submitUnban} noValidate>
+        <form
+          className="admin-panel admin-panel--success"
+          onSubmit={submitUnban}
+          aria-labelledby="admin-unban-title"
+          noValidate
+        >
           <div className="admin-panel__header">
             <div className="admin-panel__heading">
-              <h2 className="admin-panel__title">
+              <h2 className="admin-panel__title" id="admin-unban-title">
                 <Icon name="lock_open" />
                 {t("admin.users.unban.title")}
               </h2>
@@ -226,11 +269,16 @@ export default function AdminUsers() {
             </label>
             <input
               id="admin-unban-user-id"
+              ref={unbanIdRef}
               className="admin-field__input"
               type="number"
               min="1"
               step="1"
               inputMode="numeric"
+              required
+              aria-required="true"
+              aria-invalid={unbanIdInvalid || undefined}
+              aria-describedby={unbanIdInvalid ? "admin-unban-feedback" : undefined}
               placeholder={t("admin.users.fields.userIdPlaceholder")}
               value={unbanUserId}
               onChange={(event) => setUnbanUserId(event.target.value)}
@@ -238,17 +286,21 @@ export default function AdminUsers() {
             />
           </div>
 
-          {unbanFeedback ? (
-            <AdminFeedback
-              type={unbanFeedback.type}
-              message={unbanFeedback.message}
-              onDismiss={() => setUnbanFeedback(null)}
-              dismissLabel={t("admin.common.dismiss")}
-            />
-          ) : null}
+          <AdminFeedback
+            id="admin-unban-feedback"
+            type={unbanFeedback?.type ?? "info"}
+            message={unbanFeedback?.message}
+            onDismiss={unbanFeedback ? () => setUnbanFeedback(null) : undefined}
+            dismissLabel={t("admin.common.dismiss")}
+          />
 
           <div className="admin-panel__footer">
-            <button type="submit" className="admin-btn admin-btn--primary" disabled={unbanBusy}>
+            <button
+              type="submit"
+              className="admin-btn admin-btn--primary"
+              disabled={unbanBusy}
+              aria-busy={unbanBusy || undefined}
+            >
               <Icon name="lock_open" />
               {unbanBusy ? t("admin.users.unban.submitting") : t("admin.users.unban.submit")}
             </button>

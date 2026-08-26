@@ -63,7 +63,7 @@ export default function Inventory() {
     <div className="center-inv-page">
       <CenterHeader />
 
-      <div className="center-inv-body">
+      <main id="main-content" tabIndex={-1} className="center-inv-body">
         <div className="center-inv-header">
           <div>
             <h1 className="center-inv-header__title">{t.title}</h1>
@@ -75,10 +75,11 @@ export default function Inventory() {
           </button>
         </div>
 
-        <div className="center-inv-tabs">
+        <div className="center-inv-tabs" role="group" aria-label={t.tabs.groupLabel}>
           <button
             type="button"
             className={`center-inv-tabs__item ${activeTab === "animals" ? "center-inv-tabs__item--active" : ""}`}
+            aria-pressed={activeTab === "animals"}
             onClick={() => setActiveTab("animals")}
           >
             {t.tabs.animals}
@@ -86,6 +87,7 @@ export default function Inventory() {
           <button
             type="button"
             className={`center-inv-tabs__item ${activeTab === "products" ? "center-inv-tabs__item--active" : ""}`}
+            aria-pressed={activeTab === "products"}
             onClick={() => setActiveTab("products")}
           >
             {t.tabs.products}
@@ -122,7 +124,7 @@ export default function Inventory() {
             onOpenAllProductSales={fetchAllProductSales}
           />
         )}
-      </div>
+      </main>
 
       <Footer />
     </div>

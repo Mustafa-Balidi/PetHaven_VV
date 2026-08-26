@@ -187,7 +187,9 @@ export default function PetHavenShopPage() {
 
   function handleShopNowClick() {
     document.getElementById("products-grid")?.scrollIntoView({
-      behavior: "smooth",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
     });
   }
 
@@ -195,7 +197,7 @@ export default function PetHavenShopPage() {
     <div className="pethaven-wrapper">
       <TopNavBar />
 
-      <main className="main-content">
+      <main id="main-content" tabIndex={-1} className="main-content">
         {hero && <HeroBanner hero={hero} onShopNowClick={handleShopNowClick} />}
 
         <TrustSection items={trustItems} />
@@ -222,7 +224,7 @@ export default function PetHavenShopPage() {
 
           <div className="products-container">
             <div className="sorting-bar">
-              <span className="results-count">
+              <span className="results-count" role="status" aria-live="polite">
                 {t("adopter.store.results", {
                   from: pagination.totalResults ? (pagination.currentPage - 1) * (pagination.resultsPerPage ?? 12) + 1 : 0,
                   to: Math.min(
@@ -251,7 +253,7 @@ export default function PetHavenShopPage() {
               </div>
             </div>
 
-            <div id="products-grid" className="products-grid">
+            <div id="products-grid" className="products-grid" aria-busy={productsLoading}>
               {productsLoading ? (
                 <div className="products-state" aria-live="polite">
                   {t("adopter.store.loadingProducts")}

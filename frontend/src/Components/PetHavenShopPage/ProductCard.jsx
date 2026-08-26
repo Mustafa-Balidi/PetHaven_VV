@@ -30,18 +30,7 @@ export default function ProductCard({ product, onAddToCart, onToggleWishlist, is
   };
 
   return (
-    <div
-      className="product-card"
-      role="link"
-      tabIndex={0}
-      onClick={viewProduct}
-      onKeyDown={(event) => {
-        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
-          event.preventDefault();
-          viewProduct();
-        }
-      }}
-    >
+    <article className="product-card">
         {badge && (
           <div className="badge-container">
             <span className={`badge ${BADGE_CLASS_MAP[badge.variant] ?? "badge-secondary"}`}>
@@ -51,17 +40,21 @@ export default function ProductCard({ product, onAddToCart, onToggleWishlist, is
         )}
 
         <button
+          type="button"
           aria-label={t("adopter.store.productCard.wishlist")}
           className={`wishlist-btn${isWishlisted ? " active" : ""}`}
-          onClick={(event) => {
-            event.stopPropagation();
-            onToggleWishlist?.(product.id);
-          }}
+          aria-pressed={isWishlisted}
+          onClick={() => onToggleWishlist?.(product.id)}
         >
           <Icon name="favorite" className="icon-md" filled={isWishlisted} />
         </button>
 
-        <div className="product-img-box">
+        <button
+          type="button"
+          className="product-img-box product-card__view-button"
+          onClick={viewProduct}
+          aria-label={t("adopter.store.productCard.viewProduct", { name: title })}
+        >
           {image ? (
             <img alt={title} src={image} />
           ) : (
@@ -70,15 +63,22 @@ export default function ProductCard({ product, onAddToCart, onToggleWishlist, is
               <span>{t("adopter.store.productCard.imageUnavailable")}</span>
             </div>
           )}
-        </div>
+        </button>
 
         <div className="product-info">
           <span className="product-brand">{brand}</span>
-          <h3 className="product-title">{title}</h3>
+          <h3 className="product-title">
+            <button type="button" className="product-card__title-button" onClick={viewProduct}>
+              {title}
+            </button>
+          </h3>
 
           {hasRating && (
             <div className="rating-box">
-              <StarRating count={rating} />
+              <StarRating
+                count={rating}
+                ariaLabel={t("adopter.product.review.starLabel", { count: rating })}
+              />
               <span className="rating-count">({reviewCount ?? 0})</span>
             </div>
           )}
@@ -93,17 +93,15 @@ export default function ProductCard({ product, onAddToCart, onToggleWishlist, is
               <span className="product-price">${price.toFixed(2)}</span>
             )}
             <button
+              type="button"
               aria-label={t("adopter.store.productCard.addToCart")}
               className="add-cart-btn"
-              onClick={(event) => {
-                event.stopPropagation();
-                onAddToCart?.(product.id);
-              }}
+              onClick={() => onAddToCart?.(product.id)}
             >
               <Icon name="add_shopping_cart" className="icon-md" />
             </button>
           </div>
         </div>
-    </div>
+    </article>
   );
 }

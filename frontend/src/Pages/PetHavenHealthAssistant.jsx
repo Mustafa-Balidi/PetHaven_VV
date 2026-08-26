@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import TopNavBar from "../Components/TopNavBar";
@@ -8,8 +8,13 @@ import HealthHistorySidebar from "../Components/healthAssistant/HealthHistorySid
 import ChatHeader from "../Components/healthAssistant/ChatHeader ";
 import ChatMessages from "../Components/healthAssistant/ChatMessages ";
 import ChatInput from "../Components/healthAssistant/ChatInput ";
+import PetSelector from "../Components/healthAssistant/PetSelector";
 
-import { askHealthAssistant } from "../api/healthAssistantApi";
+import {
+  askHealthAssistant,
+  normalizeAnimal,
+} from "../api/healthAssistantApi";
+import { fetchAdoptedPets } from "../api/petsApi";
 
 import "../Styling/HealthAssistant.css";
 
@@ -40,6 +45,16 @@ const PetHavenHealthAssistant = () => {
 
 
   // =====================================================
+  // Adopted Pets State
+  // =====================================================
+
+  const [pets, setPets] = useState([]);
+  const [petsLoading, setPetsLoading] = useState(true);
+  const [petsError, setPetsError] = useState(null);
+  const [selectedPetId, setSelectedPetId] = useState(null);
+
+
+  // =====================================================
   // Chat State
   // =====================================================
 
@@ -50,6 +65,67 @@ const PetHavenHealthAssistant = () => {
 
   const [messagesBySession, setMessagesBySession] =
     useState({});
+
+  const [isSending, setIsSending] = useState(false);
+
+
+  // =====================================================
+  // Load the adopter real adopted pets
+  // =====================================================
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPets = async () => {
+      setPetsLoading(true);
+      setPetsError(null);
+
+      try {
+        const adoptedPets = await fetchAdoptedPets();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setPets(adoptedPets);
+
+        // Default to the first pet when at least one exists.
+        setSelectedPetId(adoptedPets[0]?.id ?? null);
+      } catch (error) {
+        console.error("Failed to load adopted pets:", error);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setPets([]);
+        setSelectedPetId(null);
+        setPetsError(t("adopter.health.petsError"));
+      } finally {
+        if (isMounted) {
+          setPetsLoading(false);
+        }
+      }
+    };
+
+    loadPets();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [t]);
+
+
+  // =====================================================
+  // Selected Pet (derived, never duplicated in state)
+  // =====================================================
+
+  const selectedPet = useMemo(
+    () => pets.find((pet) => pet.id === selectedPetId) ?? null,
+    [pets, selectedPetId]
+  );
+
+  const selectedAnimal = normalizeAnimal(selectedPet?.species);
 
 
   // =====================================================
@@ -67,6 +143,10 @@ const PetHavenHealthAssistant = () => {
   // =====================================================
 
   const handleSendMessage = async (text) => {
+    if (isSending) {
+      return;
+    }
+
     const trimmedText = text.trim();
 
     if (!trimmedText) {
@@ -140,6 +220,8 @@ const PetHavenHealthAssistant = () => {
       ],
     }));
 
+    setIsSending(true);
+
 
     try {
       // =================================================
@@ -149,7 +231,10 @@ const PetHavenHealthAssistant = () => {
       const result = await askHealthAssistant({
         question: trimmedText,
 
-        animal: null,
+        // Real species of the selected pet, normalized to a value the RAG
+        // knowledge base supports. null when there is no pet, or when the
+        // species is missing / unsupported.
+        animal: selectedAnimal,
 
         conversationId: targetSessionId,
 
@@ -163,13 +248,16 @@ const PetHavenHealthAssistant = () => {
       // AI Response
       // =================================================
 
+      const answer =
+        typeof result?.answer === "string" ? result.answer.trim() : "";
+
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
         sender: "ai",
         type: "text",
 
         text:
-          result?.answer ||
+          answer ||
           (currentLanguage === "ar"
             ? "لم يتم إرجاع إجابة."
             : "No answer was returned."),
@@ -200,7 +288,7 @@ const PetHavenHealthAssistant = () => {
 
 
       // =================================================
-      // Error Message
+      // Error Message (user-safe text only)
       // =================================================
 
       const errorMessage = {
@@ -232,6 +320,8 @@ const PetHavenHealthAssistant = () => {
           errorMessage,
         ],
       }));
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -246,6 +336,23 @@ const PetHavenHealthAssistant = () => {
 
 
   // =====================================================
+  // Select Pet
+  //
+  // Switching pet starts a fresh conversation so a dog chat context is
+  // never mixed with a cat chat. Existing sidebar sessions are kept.
+  // =====================================================
+
+  const handleSelectPet = (petId) => {
+    if (petId === selectedPetId) {
+      return;
+    }
+
+    setSelectedPetId(petId);
+    setActiveSessionId(null);
+  };
+
+
+  // =====================================================
   // Render
   // =====================================================
 
@@ -253,7 +360,7 @@ const PetHavenHealthAssistant = () => {
     <div className="pet-haven-health-assistant">
       <TopNavBar />
 
-      <main className="pet-haven-health-assistant__main">
+      <main id="main-content" tabIndex={-1} className="pet-haven-health-assistant__main">
 
         <HealthHistorySidebar
           sessions={sessions}
@@ -270,12 +377,57 @@ const PetHavenHealthAssistant = () => {
             onNewChat={handleNewChat}
           />
 
+          <div className="pet-context">
+            {petsLoading ? (
+              <p className="pet-context__note">
+                {t("adopter.health.petsLoading")}
+              </p>
+            ) : petsError ? (
+              <p className="pet-context__note pet-context__note--error">
+                {petsError}
+              </p>
+            ) : pets.length === 0 ? (
+              <p className="pet-context__note">
+                {t("adopter.health.noPets")}
+              </p>
+            ) : (
+              <>
+                <PetSelector
+                  pets={pets}
+                  activePetId={selectedPetId}
+                  onSelectPet={handleSelectPet}
+                />
+
+                {selectedPet ? (
+                  <p className="pet-context__current">
+                    <span className="pet-context__label">
+                      {t("adopter.health.chattingAbout")}
+                    </span>
+
+                    <span className="pet-context__name">
+                      {selectedPet.name}
+                    </span>
+
+                    {selectedPet.breed || selectedPet.species ? (
+                      <span className="pet-context__meta">
+                        {[selectedPet.breed, selectedPet.species]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
+                    ) : null}
+                  </p>
+                ) : null}
+              </>
+            )}
+          </div>
+
           <ChatMessages
             messages={messages}
           />
 
           <ChatInput
             onSend={handleSendMessage}
+            isSending={isSending}
           />
 
         </section>

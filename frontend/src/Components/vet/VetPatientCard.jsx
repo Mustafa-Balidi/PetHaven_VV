@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import NoValue from "../common/NoValue.jsx";
 import { speciesIcon } from "../../utils/petIcons.js";
 import { formatLocalizedDate } from "../../utils/localization.js";
 
@@ -32,7 +33,7 @@ export default function VetPatientCard({ patient, onViewRecords }) {
             <div>
               <h3 className="vet-patients-card__name">{patient.petName}</h3>
               <p className="vet-patients-card__meta">
-                {[patient.breed, patient.species].filter(Boolean).join(" • ") || "—"}
+                {[patient.breed, patient.species].filter(Boolean).join(" • ") || <NoValue />}
               </p>
             </div>
           </div>
@@ -46,7 +47,7 @@ export default function VetPatientCard({ patient, onViewRecords }) {
             <dt>
               <Icon name="person" className="vet-patients-card__stat-icon" /> {t("vetPatients.card.owner")}
             </dt>
-            <dd>{patient.ownerName || "—"}</dd>
+            <dd>{patient.ownerName || <NoValue />}</dd>
           </div>
           <div className="vet-patients-card__stat">
             <dt>
@@ -59,7 +60,7 @@ export default function VetPatientCard({ patient, onViewRecords }) {
                     day: "numeric",
                     year: "numeric",
                   })
-                : "—"}
+                : <NoValue />}
             </dd>
           </div>
           <div className="vet-patients-card__stat">
@@ -72,7 +73,13 @@ export default function VetPatientCard({ patient, onViewRecords }) {
       </div>
 
       <div className="vet-patients-card__actions">
-        <button type="button" className="vet-patients-card__action" onClick={() => onViewRecords(patient)}>
+        {/* Identical button text on every card in the grid. */}
+        <button
+          type="button"
+          className="vet-patients-card__action"
+          aria-label={t("vetPatients.card.viewRecordsFor", { name: patient.petName })}
+          onClick={() => onViewRecords(patient)}
+        >
           {t("vetPatients.card.viewRecords")}
         </button>
       </div>

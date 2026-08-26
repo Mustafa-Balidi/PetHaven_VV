@@ -9,7 +9,7 @@ export default function CategoryNav({ categories, selectedCategoryId, onSelectCa
       <div className="categories-heading-row">
         <h2 className="section-heading">{t("adopter.store.categories.title")}</h2>
         {selectedCategoryId != null && (
-          <button className="category-clear-btn" onClick={onClearCategory}>
+          <button type="button" className="category-clear-btn" onClick={onClearCategory}>
             <Icon name="close" className="icon-sm" /> {t("adopter.store.categories.clear")}
           </button>
         )}
@@ -18,6 +18,8 @@ export default function CategoryNav({ categories, selectedCategoryId, onSelectCa
         {categories.map((cat) => (
           <button
             key={cat.id}
+            type="button"
+            aria-pressed={selectedCategoryId === cat.id}
             className={`category-pill${selectedCategoryId === cat.id ? " active" : ""}`}
             onClick={() => onSelectCategory?.(cat.id)}
           >

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import VetWelcomeSection from "../../Components/vet/VetWelcomeSection.jsx";
 import VetStatsCards from "../../Components/vet/VetStatsCards.jsx";
 import VetClinicActivity from "../../Components/vet/VetClinicActivity.jsx";
@@ -22,6 +23,7 @@ import "../../Styling/VetDashboard.css";
 export default function VetDashboard() {
   const { t } = useTranslation();
   const user = getCurrentUser();
+  useDocumentTitle(t("vetDashboard.header.nav.dashboard"));
 
   const [stats, setStats] = useState(null);
   const [breakdown, setBreakdown] = useState([]);
@@ -96,11 +98,11 @@ export default function VetDashboard() {
     <div className="vet-dashboard-page">
       <VetHeader />
 
-      <main className="vet-dashboard-main">
+      <main id="main-content" tabIndex={-1} className="vet-dashboard-main">
         <VetWelcomeSection fullName={user?.fullName} />
 
         {loading ? (
-          <div className="vet-dashboard-loading">{t("vetDashboard.loading")}</div>
+          <div className="vet-dashboard-loading" role="status">{t("vetDashboard.loading")}</div>
         ) : error ? (
           <div className="vet-dashboard-alert" role="alert">
             <span>{error}</span>

@@ -15,7 +15,7 @@ export default function WalletCard({ balance, loading, error, onRetry }) {
       <div className="wallet-card">
         <div className="wallet-card__content">
           <div className="wallet-card__icon" aria-hidden="true">
-            <span className="material-symbols-outlined">account_balance_wallet</span>
+            <span className="material-symbols-outlined" aria-hidden="true">account_balance_wallet</span>
           </div>
 
           <div>

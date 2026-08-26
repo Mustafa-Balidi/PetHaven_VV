@@ -251,7 +251,7 @@ export default function PetHavenDashboardPage() {
     return (
       <div className="dashboard-page">
         <TopNavBar />
-        <main className="dashboard-main">
+        <main id="main-content" tabIndex={-1} className="dashboard-main">
           <p>{t("adopter.dashboard.loading")}</p>
         </main>
         <Footer />
@@ -263,9 +263,9 @@ export default function PetHavenDashboardPage() {
     return (
       <div className="dashboard-page">
         <TopNavBar />
-        <main className="dashboard-main">
+        <main id="main-content" tabIndex={-1} className="dashboard-main">
           <div className="dashboard-page-state" role="alert">
-            <span className="material-symbols-outlined">error</span>
+            <span className="material-symbols-outlined" aria-hidden="true">error</span>
             <p>{t("adopter.dashboard.loadError", { message: error })}</p>
             <button type="button" className="dashboard-retry-button" onClick={retryDashboard}>
               {t("adopter.dashboard.retry")}
@@ -366,7 +366,7 @@ export default function PetHavenDashboardPage() {
     <div className="dashboard-page">
       <TopNavBar />
 
-      <main className="dashboard-main">
+      <main id="main-content" tabIndex={-1} className="dashboard-main">
         <WelcomeSection
           userName={profile?.fullName || profile?.username || null}
           loading={profileLoading}

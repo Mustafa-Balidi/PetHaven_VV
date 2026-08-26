@@ -32,7 +32,7 @@ const SERVICES = [
 ];
 
 function Avatar({ label, size = "md" }) {
-  return <div className={`vet-avatar vet-avatar-${size}`}>{label?.slice(0, 2) || "PH"}</div>;
+  return <div className={`vet-avatar vet-avatar-${size}`} aria-hidden="true">{label?.slice(0, 2) || "PH"}</div>;
 }
 
 function Rating({ value, count }) {
@@ -178,7 +178,7 @@ export function VetHubPage() {
         </label>
       </div>
 
-      {error && <div className="vet-alert vet-state-action">{error}<button type="button" onClick={() => {
+      {error && <div className="vet-alert vet-state-action" role="alert">{error}<button type="button" onClick={() => {
         setIsLoading(true);
         setError("");
         setRetryKey((value) => value + 1);
@@ -290,8 +290,8 @@ export function MyVisitsPage() {
           </div>
         </section>
 
-        {message && <div className="success-note">{message}</div>}
-        {error && <div className="vet-alert vet-state-action">{error}<button type="button" onClick={() => {
+        {message && <div className="success-note" role="status">{message}</div>}
+        {error && <div className="vet-alert vet-state-action" role="alert">{error}<button type="button" onClick={() => {
           setIsLoading(true);
           setError("");
           setRetryKey((value) => value + 1);
@@ -459,7 +459,7 @@ function AdopterAppointmentCard({ appointment, onUpdate, onMessage }) {
 
       {mode === "details" && (
         <div className="appointment-action-panel">
-          {isWorking ? <p>{t("adopter.vets.visits.loadingDetails")}</p> : details && (
+          {isWorking ? <p role="status">{t("adopter.vets.visits.loadingDetails")}</p> : details && (
             <dl>
               <div><dt>{t("adopter.vets.visits.appointmentId")}</dt><dd>#{shown.appointmentId}</dd></div>
               <div><dt>{t("adopter.vets.visits.pet")}</dt><dd>{shown.petName}</dd></div>
@@ -474,7 +474,7 @@ function AdopterAppointmentCard({ appointment, onUpdate, onMessage }) {
         <form className="appointment-action-panel appointment-inline-form" onSubmit={reschedule}>
           <label><span>{t("adopter.vets.booking.date")}</span><input type="date" min={nextDate(0)} value={newDate} onChange={(event) => setNewDate(event.target.value)} required /></label>
           <label><span>{t("adopter.vets.booking.time")}</span><input type="time" value={newTime} onChange={(event) => setNewTime(event.target.value)} required /></label>
-          <button className="primary-btn" disabled={isWorking || !newTime}>{isWorking ? t("adopter.vets.visits.rescheduling") : t("adopter.vets.visits.saveSchedule")}</button>
+          <button type="submit" className="primary-btn" disabled={isWorking || !newTime}>{isWorking ? t("adopter.vets.visits.rescheduling") : t("adopter.vets.visits.saveSchedule")}</button>
         </form>
       )}
 
@@ -482,11 +482,11 @@ function AdopterAppointmentCard({ appointment, onUpdate, onMessage }) {
         <form className="appointment-action-panel appointment-rating-form" onSubmit={submitRating}>
           <label><span>{t("adopter.vets.visits.rating")}</span><select value={rating} onChange={(event) => setRating(Number(event.target.value))}>{[5, 4, 3, 2, 1].map((value) => <option key={value} value={value}>{t("adopter.vets.visits.stars", { count: value })}</option>)}</select></label>
           <label><span>{t("adopter.vets.visits.review")}</span><textarea value={reviewText} onChange={(event) => setReviewText(event.target.value)} rows="3" /></label>
-          <button className="primary-btn" disabled={isWorking}>{isWorking ? t("adopter.vets.visits.submittingRating") : t("adopter.vets.visits.submitRating")}</button>
+          <button type="submit" className="primary-btn" disabled={isWorking}>{isWorking ? t("adopter.vets.visits.submittingRating") : t("adopter.vets.visits.submitRating")}</button>
         </form>
       )}
 
-      {error && <div className="vet-alert">{error}</div>}
+      {error && <div className="vet-alert" role="alert">{error}</div>}
     </article>
   );
 }
@@ -568,7 +568,7 @@ export function BookAppointmentPage() {
     navigate("/adopter/vets/confirm", { state: { draft } });
   }
 
-  if (error) return <VetShell><div className="vet-alert vet-state-action">{error}<button type="button" onClick={() => {
+  if (error) return <VetShell><div className="vet-alert vet-state-action" role="alert">{error}<button type="button" onClick={() => {
     setIsLoading(true);
     setError("");
     setRetryKey((value) => value + 1);
@@ -579,7 +579,7 @@ export function BookAppointmentPage() {
     <VetShell>
       <Link className="back-link-vet" to="/adopter/vets"><Icon name="arrow_back" /> {t("adopter.vets.booking.back")}</Link>
       <div className="booking-layout">
-        <main className="booking-main">
+        <div className="booking-main">
           <VetIdentity vet={vet} />
           <Stepper step={2} />
           <div className="booking-panel">
@@ -647,7 +647,7 @@ export function BookAppointmentPage() {
               </div>
             </BookingSection>
           </div>
-        </main>
+        </div>
         <aside className="summary-card">
           <h2>{t("adopter.vets.booking.summary")}</h2>
           <SummaryLine label={t("adopter.vets.booking.veterinarian")} value={vet.fullName} />
@@ -666,7 +666,7 @@ export function BookAppointmentPage() {
             value={formatRequestedTime(date, time, i18n.language) || t("adopter.vets.notScheduled")}
           />
           <div className="info-note"><Icon name="info" /> {t("adopter.vets.booking.ratingNote")}</div>
-          <button className="primary-btn" onClick={continueToConfirm} disabled={!petId || !date || !time}>{t("adopter.vets.booking.confirm")}</button>
+          <button type="button" className="primary-btn" onClick={continueToConfirm} disabled={!petId || !date || !time}>{t("adopter.vets.booking.confirm")}</button>
           <small><Icon name="lock" /> {t("adopter.vets.booking.protected")}</small>
         </aside>
       </div>
@@ -700,7 +700,7 @@ export function ConfirmAppointmentPage() {
     return (
       <VetShell compact>
         <section className="confirm-page">
-          <div className="vet-alert">{t("adopter.vets.confirm.missing")}</div>
+          <div className="vet-alert" role="alert">{t("adopter.vets.confirm.missing")}</div>
           <Link className="primary-btn confirm-action" to="/adopter/vets">{t("adopter.vets.confirm.back")}</Link>
         </section>
       </VetShell>
@@ -768,9 +768,9 @@ export function ConfirmAppointmentPage() {
             <p>{t("adopter.vets.confirm.policyText")}</p>
           </div>
         </div>
-        {error && <div className="vet-alert">{error}</div>}
+        {error && <div className="vet-alert" role="alert">{error}</div>}
         <div className="confirm-actions">
-          <button className="primary-btn confirm-action" onClick={confirm} disabled={isSubmitting}>
+          <button type="button" className="primary-btn confirm-action" onClick={confirm} disabled={isSubmitting}>
             {isSubmitting ? t("adopter.vets.confirm.confirming") : t("adopter.vets.confirm.action")} <Icon name="arrow_forward" />
           </button>
         </div>
@@ -790,7 +790,7 @@ function VetShell({ children, compact = false }) {
     <div className="vet-page">
       <div className="vet-frame">
         <TopNavBar />
-        <main className={compact ? "vet-main compact" : "vet-main"}>{children}</main>
+        <main id="main-content" tabIndex={-1} className={compact ? "vet-main compact" : "vet-main"}>{children}</main>
         <Footer />
       </div>
     </div>
@@ -859,7 +859,7 @@ function ConfirmDetail({ icon, label, title, text }) {
 
 function BookingSection({ title, actionKey, onAction, children, muted = false }) {
   const { t } = useTranslation();
-  return <section className={muted ? "booking-section booking-section-muted" : "booking-section"}><header><h2>{title}</h2>{actionKey && <button onClick={onAction}><Icon name={actionKey === "done" ? "check" : "edit"} /> {t(`adopter.vets.booking.${actionKey}`)}</button>}</header>{children}</section>;
+  return <section className={muted ? "booking-section booking-section-muted" : "booking-section"}><header><h2>{title}</h2>{actionKey && <button type="button" onClick={onAction}><Icon name={actionKey === "done" ? "check" : "edit"} /> {t(`adopter.vets.booking.${actionKey}`)}</button>}</header>{children}</section>;
 }
 
 function SummaryLine({ label, value }) {

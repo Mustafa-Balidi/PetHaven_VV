@@ -12,15 +12,20 @@ export default function Newsletter({ requireAuth }) {
   }
 
   return (
-    <section className="newsletter">
+    <section className="newsletter" aria-labelledby="public-newsletter-title">
       <div className="newsletter__card">
         <div className="newsletter__content">
-          <h2 className="newsletter__title">{t("newsletter.title")}</h2>
+          <h2 id="public-newsletter-title" className="newsletter__title">{t("newsletter.title")}</h2>
           <p className="newsletter__description">{t("newsletter.description")}</p>
-          <form className="newsletter__form" onSubmit={handleSubmit}>
+          <form className="newsletter__form" aria-labelledby="public-newsletter-title" onSubmit={handleSubmit}>
+            <label className="sr-only" htmlFor="public-newsletter-email">
+              {t("newsletter.placeholder")}
+            </label>
             <input
+              id="public-newsletter-email"
               className="newsletter__input"
               placeholder={t("newsletter.placeholder")}
+              autoComplete="email"
               required
               type="email"
               value={email}

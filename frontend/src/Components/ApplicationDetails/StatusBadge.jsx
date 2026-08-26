@@ -13,7 +13,7 @@ export default function StatusBadge({ status }) {
 
   return (
     <div className={`status-badge status-badge--${config.modifier}`}>
-      <span className="material-symbols-outlined status-badge__icon">{config.icon}</span>
+      <span className="material-symbols-outlined status-badge__icon" aria-hidden="true">{config.icon}</span>
       <span>
         {t(`adopter.applicationDetails.statuses.${normalizedStatus}`, { defaultValue: status })}
       </span>

@@ -16,14 +16,19 @@ export default function AdminSidebar() {
     { to: "/admin/users", label: t("admin.sidebar.userManagement"), icon: "group" },
   ];
 
+  // A plain container, not <aside>: the <nav> below is the landmark that
+  // matters and a second, unnamed complementary landmark only adds noise.
   return (
-    <aside className="admin-sidebar">
+    <div className="admin-sidebar">
       <div className="admin-sidebar__logo">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBXDtsQLom3t7hNvPlq89h_VatD8qWwqMzLuIVlWxpmW0U3UvNTQcLUhgfkYmLuA7PAcaEinn8S1CeVxb4WcbPY0w27oZPg-6DsuVsmnCsV99vFwHwMkuqxNiAJ0J5MP4ccsGLvgy6Z221XTvmMUQ3yiArdLSXEaG4KW3o0qLEBhkL9UyJmK8ceuaKHHMSYq-irlLDz1Xt1nFb3Ag_uAwAblY3fwAyIUsZqNPSuauDHTz1kOqolieE3Y8h31JkjYkOAMOr55EQTCuU"
           alt={t("admin.sidebar.logoAlt")}
         />
       </div>
+      {/* NavLink sets aria-current="page" on the active route by itself. The
+          label is clipped, never `display: none`, on the collapsed rail so the
+          link keeps an accessible name; `title` covers sighted mouse users. */}
       <nav className="admin-sidebar__nav" aria-label={t("admin.sidebar.navLabel")}>
         {NAV_ITEMS.map((item) => (
           <NavLink
@@ -40,6 +45,6 @@ export default function AdminSidebar() {
           </NavLink>
         ))}
       </nav>
-    </aside>
+    </div>
   );
 }

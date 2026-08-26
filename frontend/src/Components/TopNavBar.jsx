@@ -3,12 +3,12 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Icon from "./Icon.jsx";
 import { getCurrentUser, isAuthenticated, logoutUser } from "../api/authApi.js";
+import SkipLink from "./common/SkipLink.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
 import "../Styling/TopNavBar.css";
 
 const LOGO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuB1isoZOydVyD5MYhvYGwVYTsmYtteNtWg89-SIig8AWCVHdHN8IzU34EjCDa4DWDt6VFxBbsg41KE1FOmvamfFJZNDGHkosK022Eh8K4IZVAFAjfdMDk08k-sUbVWYl7PrXFQuhaSeFL-8et9k6894ikaSaU_t9x2LnJ1mlreuwtp4zJa7rHufl79MX9kc62yp2E4CC8SNyC-XVLBx-WNbmQOA1JP5WO96WUk4Ll4RocbyTPOHoek4a1HSSL9fhptbUmLWo7C3zn9c";
-const AVATAR =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuBVf5-FuadOrH8dn03uJxt8n3dpli9imW8s7QxXJ6Je0FQXbneDz868-6PJCOqEFD5mW9sptE5yulr3imwW4PIAimU-jiRb1YozdgIBRV6moBPZHCSPMglxo0mQzf2Mn8RjgZrbc87TnphWZTGdsnlUx_1QLsXmRDM0Lvs7qXcurQgEQGe9owNEamfugtaymWPS61LpwUdEN49IellG5MjDQv1ccPiVZJmntEb1rjNhwXFmIVg9BHQjE1pAlIUqfP8lbdVFfbJVup5l";
 const NAV_ITEMS = [
   {
     key: "dashboard",
@@ -57,6 +57,7 @@ export default function TopNavBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
   const langRef = useRef(null);
+  const mobileButtonRef = useRef(null);
 
   const loggedIn = isAuthenticated();
   const user = getCurrentUser();
@@ -74,9 +75,16 @@ export default function TopNavBar() {
 
     const handleEscape = (event) => {
       if (event.key === "Escape") {
+        const activeElement = document.activeElement;
+        const focusTarget = langRef.current?.contains(activeElement)
+          ? langRef.current.querySelector("button")
+          : dropdownRef.current?.contains(activeElement)
+            ? dropdownRef.current.querySelector("button")
+            : mobileButtonRef.current;
         setDropdownOpen(false);
         setLangOpen(false);
         setMobileOpen(false);
+        focusTarget?.focus();
       }
     };
 
@@ -123,6 +131,7 @@ export default function TopNavBar() {
 
   return (
     <header className="adopter-header">
+      <SkipLink />
         <div className="adopter-header__inner">
           <Link
             to="/adopter/dashboard"
@@ -144,6 +153,7 @@ export default function TopNavBar() {
                 className={`adopter-header__nav-link${
                   isLinkActive(item) ? " adopter-header__nav-link--active" : ""
                 }`}
+                aria-current={isLinkActive(item) ? "page" : undefined}
               >
                 {t(`adopter.header.nav.${item.key}`)}
               </NavLink>
@@ -151,6 +161,7 @@ export default function TopNavBar() {
           </nav>
 
           <div className="adopter-header__actions">
+            <ThemeToggle />
             <button
               type="button"
               aria-label={t("adopter.header.cart")}
@@ -164,8 +175,9 @@ export default function TopNavBar() {
               <button
                 type="button"
                 aria-label={t("adopter.header.language")}
-                aria-haspopup="menu"
+                aria-haspopup="true"
                 aria-expanded={langOpen}
+                aria-controls="adopter-language-options"
                 className="adopter-header__lang-btn"
                 onClick={toggleLanguageMenu}
               >
@@ -173,12 +185,11 @@ export default function TopNavBar() {
               </button>
 
               {langOpen && (
-                <div className="adopter-header__dropdown" role="menu">
+                <div id="adopter-language-options" className="adopter-header__dropdown">
                   <button
                     type="button"
                     className="adopter-header__dropdown-item"
                     onClick={() => changeLanguage("en")}
-                    role="menuitem"
                   >
                     {i18n.language?.startsWith("en") ? "✓ " : ""}
                     English
@@ -187,7 +198,6 @@ export default function TopNavBar() {
                     type="button"
                     className="adopter-header__dropdown-item"
                     onClick={() => changeLanguage("ar")}
-                    role="menuitem"
                   >
                     {i18n.language?.startsWith("ar") ? "✓ " : ""}
                     العربية
@@ -200,30 +210,24 @@ export default function TopNavBar() {
               <button
                 type="button"
                 aria-label={t("adopter.header.userMenu")}
-                aria-haspopup="menu"
+                aria-haspopup="true"
                 aria-expanded={dropdownOpen}
-                className="adopter-header__avatar-btn"
+                aria-controls="adopter-user-options"
+                className="adopter-header__avatar-btn user-menu-button"
                 onClick={toggleUserMenu}
               >
-                <img
-                  src={AVATAR}
-                  alt={t("adopter.header.avatarAlt", {
-                    name:
-                      user?.fullName ||
-                      user?.userName ||
-                      t("adopter.header.defaultUser"),
-                  })}
-                  className="adopter-header__avatar-img"
+                <Icon
+                  name="account_circle"
+                  className="adopter-header__avatar-icon user-menu-avatar user-menu-avatar--icon"
                 />
               </button>
 
               {dropdownOpen && (
-                <div className="adopter-header__dropdown" role="menu">
+                <div id="adopter-user-options" className="adopter-header__dropdown">
                   <button
                     type="button"
                     className="adopter-header__dropdown-item"
                     onClick={openProfile}
-                    role="menuitem"
                   >
                     <Icon name="person" className="adopter-header__dropdown-icon" />
                     {t("adopter.header.profile")}
@@ -232,7 +236,6 @@ export default function TopNavBar() {
                     type="button"
                     className="adopter-header__dropdown-item"
                     onClick={handleLogout}
-                    role="menuitem"
                   >
                     <Icon name="logout" className="adopter-header__dropdown-icon" />
                     {t("adopter.header.logout")}
@@ -242,12 +245,14 @@ export default function TopNavBar() {
             </div>
 
             <button
+              ref={mobileButtonRef}
               type="button"
               className="adopter-header__hamburger"
               aria-label={
                 mobileOpen ? t("adopter.header.closeMenu") : t("adopter.header.openMenu")
               }
               aria-expanded={mobileOpen}
+              aria-controls="adopter-mobile-navigation"
               onClick={() => setMobileOpen((open) => !open)}
             >
               <Icon name={mobileOpen ? "close" : "menu"} />
@@ -256,7 +261,7 @@ export default function TopNavBar() {
         </div>
 
         {mobileOpen && (
-          <nav className="adopter-header__mobile-panel" aria-label={t("adopter.header.navigation")}>
+          <nav id="adopter-mobile-navigation" className="adopter-header__mobile-panel" aria-label={t("adopter.header.navigation")}>
             {NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.to}
@@ -265,6 +270,7 @@ export default function TopNavBar() {
                 className={`adopter-header__mobile-link${
                   isLinkActive(item) ? " adopter-header__mobile-link--active" : ""
                 }`}
+                aria-current={isLinkActive(item) ? "page" : undefined}
               >
                 {t(`adopter.header.nav.${item.key}`)}
               </NavLink>

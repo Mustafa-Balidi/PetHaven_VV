@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 export default function BlockAdopterModal({ report, onClose, onConfirm }) {
   const { t: translate } = useTranslation();
+  const titleId = useId();
   const t = translate("center.reports.block", { returnObjects: true });
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const dialogRef = useModalA11y({ onClose, closeOnEscape: !submitting });
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -31,9 +34,16 @@ export default function BlockAdopterModal({ report, onClose, onConfirm }) {
   return (
     <div className="center-modal-overlay">
       <button type="button" aria-label={t.cancel} className="center-modal-backdrop" onClick={onClose} disabled={submitting} />
-      <form className="center-modal-panel center-modal-panel--sm center-block-modal" onSubmit={handleSubmit}>
+      <form
+        className="center-modal-panel center-modal-panel--sm center-block-modal" onSubmit={handleSubmit}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
         <div className="center-modal-header">
-          <h2 className="center-modal-title">{t.title}</h2>
+          <h2 id={titleId} className="center-modal-title">{t.title}</h2>
           <button type="button" aria-label={t.cancel} className="center-modal-close-btn" onClick={onClose} disabled={submitting}>
             <Icon name="close" />
           </button>

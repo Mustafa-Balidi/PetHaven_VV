@@ -2,12 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import Icon from "../../Components/Icon.jsx";
 import { logoutUser } from "../../api/authApi.js";
 import "../../Styling/VetPendingApproval.css";
 
 export default function VetPendingApproval() {
   const { t } = useTranslation();
+  useDocumentTitle(t("vetPendingApproval.title"));
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -24,7 +26,7 @@ export default function VetPendingApproval() {
         <div className="vet-pending-page__glow-blob vet-pending-page__glow-blob--bottom" />
       </div>
 
-      <main className="vet-pending-main">
+      <main id="main-content" tabIndex={-1} className="vet-pending-main">
         <div className="vet-pending-card">
           <div className="vet-pending-icon">
             <div className="vet-pending-icon__circle">

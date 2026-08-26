@@ -56,7 +56,11 @@ export default function CenterReviews() {
     return (
       <div className="center-reviews-page">
         <CenterHeader />
-        <div className="center-reviews-loading">{reviewsError || t.loading}</div>
+        {/* The header's skip link needs a target on every branch, and the
+            loading / error text has to be announced when it swaps in. */}
+        <main id="main-content" tabIndex={-1} className="center-reviews-loading">
+          <span role={reviewsError ? "alert" : "status"}>{reviewsError || t.loading}</span>
+        </main>
       </div>
     );
   }
@@ -65,7 +69,7 @@ export default function CenterReviews() {
     <div className="center-reviews-page">
       <CenterHeader />
 
-      <div className="center-reviews-body">
+      <main id="main-content" tabIndex={-1} className="center-reviews-body">
         <header className="center-reviews-header">
           <div>
             <h1 className="center-reviews-header__title">{t.header.title}</h1>
@@ -77,8 +81,15 @@ export default function CenterReviews() {
           <h2 className="center-reviews-rating-card__title">{t.overallRating.title}</h2>
           <div className="center-reviews-rating">
             <div className="center-reviews-rating__score-box">
-              <span className="center-reviews-rating__score">{stats.average.toFixed(1)}</span>
-              <div className="center-reviews-rating__stars">
+              <span className="center-reviews-rating__score" aria-hidden="true">
+                {stats.average.toFixed(1)}
+              </span>
+              <span className="sr-only">
+                {translate("center.reviews.overallRating.ratingLabel", {
+                  rating: stats.average.toFixed(1),
+                })}
+              </span>
+              <div className="center-reviews-rating__stars" aria-hidden="true">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <Icon
                     key={n}
@@ -95,7 +106,13 @@ export default function CenterReviews() {
             <div className="center-reviews-rating__bars">
               {stats.breakdown.map((row) => (
                 <div key={row.stars} className="center-reviews-rating__bar-row">
-                  <span className="center-reviews-rating__bar-label">{row.stars}</span>
+                  <span className="sr-only">
+                    {translate("center.reviews.overallRating.barLabel", {
+                      stars: row.stars,
+                      percent: row.percent,
+                    })}
+                  </span>
+                  <span className="center-reviews-rating__bar-label" aria-hidden="true">{row.stars}</span>
                   <Icon name="star" filled className="center-reviews-rating__bar-star" />
                   <div className="center-reviews-rating__bar-track">
                     <div
@@ -103,7 +120,7 @@ export default function CenterReviews() {
                       style={{ width: `${row.percent}%` }}
                     />
                   </div>
-                  <span className="center-reviews-rating__bar-percent">{row.percent}%</span>
+                  <span className="center-reviews-rating__bar-percent" aria-hidden="true">{row.percent}%</span>
                 </div>
               ))}
             </div>
@@ -116,6 +133,7 @@ export default function CenterReviews() {
             <input
               type="text"
               className="center-reviews-filters__search-input"
+              aria-label={t.filters.searchLabel}
               placeholder={t.filters.searchPlaceholder}
               value={search}
               onChange={(e) => {
@@ -124,10 +142,11 @@ export default function CenterReviews() {
               }}
             />
           </div>
-          <div className="center-reviews-filters__tabs">
+          <div className="center-reviews-filters__tabs" role="group" aria-label={t.filters.groupLabel}>
             <button
               type="button"
               className={`center-reviews-filters__tab ${filter === "all" ? "center-reviews-filters__tab--active" : ""}`}
+              aria-pressed={filter === "all"}
               onClick={() => handleFilterChange("all")}
             >
               {t.filters.allReviews}
@@ -137,6 +156,7 @@ export default function CenterReviews() {
                 key={stars}
                 type="button"
                 className={`center-reviews-filters__tab ${filter === String(stars) ? "center-reviews-filters__tab--active" : ""}`}
+                aria-pressed={filter === String(stars)}
                 onClick={() => handleFilterChange(String(stars))}
               >
                 {translate("center.reviews.filters.stars", { count: stars })}
@@ -147,7 +167,7 @@ export default function CenterReviews() {
 
         <div className="center-reviews-list">
           {pagedReviews.length === 0 ? (
-            <p className="center-reviews-empty">{t.empty}</p>
+            <p className="center-reviews-empty" role="status">{t.empty}</p>
           ) : (
             pagedReviews.map((review, i) => (
               <ClientReview key={review.id} review={review} avatarIndex={i} />
@@ -156,11 +176,15 @@ export default function CenterReviews() {
         </div>
 
         <div className="center-reviews-pagination">
-          <span className="center-reviews-pagination__info">
+          <span className="center-reviews-pagination__info" role="status" aria-live="polite">
             {t.pagination.showing} {rangeStart} {t.pagination.to} {rangeEnd} {t.pagination.of}{" "}
             {filteredReviews.length} {t.pagination.reviewsWord}
           </span>
-          <div className="center-reviews-pagination__controls">
+          <div
+            className="center-reviews-pagination__controls"
+            role="navigation"
+            aria-label={t.pagination.label}
+          >
             <button
               type="button"
               className="center-reviews-pagination__btn"
@@ -175,6 +199,8 @@ export default function CenterReviews() {
                 key={n}
                 type="button"
                 className={`center-reviews-pagination__btn ${n === page ? "center-reviews-pagination__btn--active" : ""}`}
+                aria-label={translate("center.reviews.pagination.page", { number: n })}
+                aria-current={n === page ? "page" : undefined}
                 onClick={() => setPage(n)}
               >
                 {n}
@@ -191,7 +217,7 @@ export default function CenterReviews() {
             </button>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

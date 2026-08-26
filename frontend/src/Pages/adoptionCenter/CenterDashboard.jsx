@@ -66,7 +66,11 @@ export default function CenterDashboard() {
     return (
       <div className="center-dash-page">
         <CenterHeader />
-        <div className="center-dash-loading">{dashboardError || t.loading}</div>
+        {/* The header's skip link needs a target on every branch, and the
+            loading / error text has to be announced when it swaps in. */}
+        <main id="main-content" tabIndex={-1} className="center-dash-loading">
+          <span role={dashboardError ? "alert" : "status"}>{dashboardError || t.loading}</span>
+        </main>
       </div>
     );
   }
@@ -75,7 +79,7 @@ export default function CenterDashboard() {
     <div className="center-dash-page">
       <CenterHeader />
 
-      <div className="center-dash-body">
+      <main id="main-content" tabIndex={-1} className="center-dash-body">
         <div className="center-dash-welcome">
           <div>
             <h1 className="center-dash-welcome__title">
@@ -103,7 +107,7 @@ export default function CenterDashboard() {
                 <Icon name="pets" />
               </div>
             </div>
-            <h2 className="center-dash-kpi__value">{stats.availablePetsCount}</h2>
+            <p className="center-dash-kpi__value">{stats.availablePetsCount}</p>
             {false && (
               <p className="center-dash-kpi__trend center-dash-kpi__trend--up">
                 <Icon name={TREND_ICON.up} />
@@ -120,7 +124,7 @@ export default function CenterDashboard() {
                 <Icon name="assignment" />
               </div>
             </div>
-            <h2 className="center-dash-kpi__value">{stats.pendingRequestsCount}</h2>
+            <p className="center-dash-kpi__value">{stats.pendingRequestsCount}</p>
             {false && (
               <p className="center-dash-kpi__trend center-dash-kpi__trend--warning">
                 <Icon name={TREND_ICON.warning} />
@@ -136,7 +140,7 @@ export default function CenterDashboard() {
                 <Icon name="favorite" />
               </div>
             </div>
-            <h2 className="center-dash-kpi__value">{stats.successfulAdoptionsThisMonth}</h2>
+            <p className="center-dash-kpi__value">{stats.successfulAdoptionsThisMonth}</p>
             {false && (
               <p className="center-dash-kpi__trend center-dash-kpi__trend--neutral">
                 {stats.successfulAdoptions.trend}
@@ -151,7 +155,7 @@ export default function CenterDashboard() {
                 <Icon name="storefront" />
               </div>
             </div>
-            <h2 className="center-dash-kpi__value">${stats.storeSalesToday.toLocaleString()}</h2>
+            <p className="center-dash-kpi__value">${stats.storeSalesToday.toLocaleString()}</p>
             {false && (
               <p className="center-dash-kpi__trend center-dash-kpi__trend--up">
                 <Icon name={TREND_ICON.up} />
@@ -164,11 +168,12 @@ export default function CenterDashboard() {
         <div className="center-dash-content-grid">
           <div className="center-dash-content-grid__left">
             <section className="center-dash-card">
-              <h3 className="center-dash-activity__title">{t.activity.title}</h3>
-              <div className="center-dash-activity__list">
+              <h2 className="center-dash-activity__title">{t.activity.title}</h2>
+              <div className="center-dash-activity__list" role="list">
                 {activity.map((item) => (
-                  <div key={item.id} className="center-dash-activity__row">
-                    <img src={item.avatar} alt={item.name} className="center-dash-activity__avatar" />
+                  <div key={item.id} className="center-dash-activity__row" role="listitem">
+                    {/* The name is spoken by the paragraph beside it. */}
+                    <img src={item.avatar} alt="" className="center-dash-activity__avatar" />
                     <div className="center-dash-activity__info">
                       <p className="center-dash-activity__name">{item.name}</p>
                       <p className="center-dash-activity__detail">{item.detail}</p>
@@ -193,20 +198,20 @@ export default function CenterDashboard() {
             <section className="center-dash-card">
               <div className="center-dash-wallet__head">
                 <Icon name="account_balance_wallet" />
-                <h3 className="center-dash-wallet__title">{t.wallet.title}</h3>
+                <h2 className="center-dash-wallet__title">{t.wallet.title}</h2>
               </div>
 
               <div className="center-dash-wallet__balance">
                 <p className="center-dash-wallet__balance-label">{t.wallet.balanceLabel}</p>
-                <h2 className="center-dash-wallet__balance-value">
+                <p className="center-dash-wallet__balance-value">
                   ${(wallet?.balance ?? 0).toLocaleString()}
-                </h2>
+                </p>
               </div>
 
-              <div className="center-dash-wallet__list">
+              <div className="center-dash-wallet__list" role="list">
                 {wallet?.transactions?.length ? (
                   wallet.transactions.map((tx) => (
-                    <div key={tx.id} className="center-dash-wallet__row">
+                    <div key={tx.id} className="center-dash-wallet__row" role="listitem">
                       <div>
                         <p className="center-dash-wallet__tx-desc">{tx.description}</p>
                         <p className="center-dash-wallet__tx-date">{tx.date}</p>
@@ -218,6 +223,9 @@ export default function CenterDashboard() {
                             : "center-dash-wallet__tx-amount--debit"
                         }`}
                       >
+                        <span className="sr-only">
+                          {tx.type === "credit" ? t.wallet.credit : t.wallet.debit}
+                        </span>
                         {tx.type === "credit" ? "+" : "-"}${Math.abs(tx.amount).toLocaleString()}
                       </p>
                     </div>
@@ -236,7 +244,7 @@ export default function CenterDashboard() {
           <div className="center-dash-content-grid__right">
             <section className="center-dash-card center-dash-card--full">
               <div className="center-dash-orders__head">
-                <h3 className="center-dash-orders__title">{t.orders.title}</h3>
+                <h2 className="center-dash-orders__title">{t.orders.title}</h2>
                 <button type="button" className="center-dash-orders__see-all">
                   {t.orders.seeAll}
                   <Icon name="arrow_forward" />
@@ -244,14 +252,14 @@ export default function CenterDashboard() {
               </div>
 
               <div className="center-dash-orders__table-wrap">
-                <table className="center-dash-orders__table">
+                <table className="center-dash-orders__table" aria-label={t.orders.tableLabel}>
                   <thead>
                     <tr>
-                      <th>{t.orders.columns.orderId}</th>
-                      <th>{t.orders.columns.customer}</th>
-                      <th>{t.orders.columns.items}</th>
-                      <th>{t.orders.columns.total}</th>
-                      <th>{t.orders.columns.status}</th>
+                      <th scope="col">{t.orders.columns.orderId}</th>
+                      <th scope="col">{t.orders.columns.customer}</th>
+                      <th scope="col">{t.orders.columns.items}</th>
+                      <th scope="col">{t.orders.columns.total}</th>
+                      <th scope="col">{t.orders.columns.status}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -280,7 +288,7 @@ export default function CenterDashboard() {
             </section>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

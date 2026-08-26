@@ -128,6 +128,7 @@ export default function VetProfileForm({ values, onChange, onSubmit, onCancel, o
                   className="vet-profile-input vet-profile-input--icon"
                   type="text"
                   autoComplete="street-address"
+                  aria-describedby="vet-address-hint"
                   placeholder={t("vetProfile.basicInfo.addressPlaceholder")}
                   value={values.clinicAddress}
                   onChange={(event) => {
@@ -142,12 +143,15 @@ export default function VetProfileForm({ values, onChange, onSubmit, onCancel, o
                 className="vet-profile-gps-btn"
                 onClick={onUseGps}
                 disabled={locating || saving}
+                aria-busy={locating || undefined}
               >
                 <Icon name="my_location" />
                 {locating ? t("vetProfile.basicInfo.locating") : t("vetProfile.basicInfo.useGps")}
               </button>
             </div>
-            <p className="vet-profile-location-hint">{t("vetProfile.basicInfo.gpsHint")}</p>
+            <p className="vet-profile-location-hint" id="vet-address-hint">
+              {t("vetProfile.basicInfo.gpsHint")}
+            </p>
           </div>
         </div>
       </section>
@@ -156,7 +160,12 @@ export default function VetProfileForm({ values, onChange, onSubmit, onCancel, o
         <button type="button" className="vet-profile-btn vet-profile-btn--cancel" onClick={onCancel} disabled={saving || locating}>
           {t("vetProfile.cancel")}
         </button>
-        <button type="submit" className="vet-profile-btn vet-profile-btn--save" disabled={saving || locating}>
+        <button
+          type="submit"
+          className="vet-profile-btn vet-profile-btn--save"
+          disabled={saving || locating}
+          aria-busy={saving || undefined}
+        >
           {saving ? t("vetProfile.saving") : t("vetProfile.saveChanges")}
         </button>
       </div>

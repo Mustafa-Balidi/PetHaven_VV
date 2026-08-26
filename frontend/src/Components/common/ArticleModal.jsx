@@ -1,28 +1,39 @@
-import { useEffect } from "react";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
+import useModalA11y from "../../hooks/useModalA11y.js";
 
 export default function ArticleModal({ article, onClose }) {
   const { t } = useTranslation();
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  const titleId = useId();
+  const contentId = useId();
+  const dialogRef = useModalA11y({ open: Boolean(article), onClose });
 
   if (!article) return null;
 
   return (
-    <div className="modal__backdrop" onClick={onClose}>
-      <div className="modal__card modal__card--article" onClick={(e) => e.stopPropagation()}>
-        <button aria-label={t("articleModal.close")} className="modal__close" onClick={onClose}>
-          &times;
+    <div className="modal__backdrop" role="presentation" onClick={onClose}>
+      <div
+        className="modal__card modal__card--article"
+        onClick={(e) => e.stopPropagation()}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={contentId}
+        tabIndex={-1}
+      >
+        <button
+          type="button"
+          aria-label={t("articleModal.close")}
+          className="modal__close"
+          onClick={onClose}
+        >
+          <span aria-hidden="true">&times;</span>
         </button>
         {article.image && (
           <img src={article.image} alt={article.title} className="article-modal__img" />
         )}
-        <h3 className="article-modal__title">{article.title}</h3>
+        <h3 id={titleId} className="article-modal__title">{article.title}</h3>
         {(article.author || article.date) && (
           <p className="article-modal__meta">
             {article.author}
@@ -30,7 +41,7 @@ export default function ArticleModal({ article, onClose }) {
             {article.date}
           </p>
         )}
-        <div className="article-modal__content">
+        <div id={contentId} className="article-modal__content">
           {(article.content || article.description || "")
             .split("\n")
             .filter(Boolean)

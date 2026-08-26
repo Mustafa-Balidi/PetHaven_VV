@@ -10,7 +10,7 @@ function AdoptedPets({ pets, loading, error, onViewProfile }) {
       <h2 className="adopted-pets__title">{t("adopter.adoptionHub.adoptedPets.title")}</h2>
 
       {loading ? (
-        <div className="pet-catalog__state"><p>{t("adopter.adoptionHub.adoptedPets.loading")}</p></div>
+        <div className="pet-catalog__state" role="status" aria-live="polite"><p>{t("adopter.adoptionHub.adoptedPets.loading")}</p></div>
       ) : error ? (
         <div className="pet-catalog__state pet-catalog__state--error" role="alert"><p>{error}</p></div>
       ) : pets.length === 0 ? (

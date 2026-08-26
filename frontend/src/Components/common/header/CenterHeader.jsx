@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import Icon from "../../Icon.jsx";
 import { useCenterContext } from "../../../context/centerContextBase.js";
 import { logoutUser } from "../../../api/authApi.js";
+import SkipLink from "../SkipLink.jsx";
+import ThemeToggle from "../../ThemeToggle.jsx";
 
 const LOGO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuB1isoZOydVyD5MYhvYGwVYTsmYtteNtWg89-SIig8AWCVHdHN8IzU34EjCDa4DWDt6VFxBbsg41KE1FOmvamfFJZNDGHkosK022Eh8K4IZVAFAjfdMDk08k-sUbVWYl7PrXFQuhaSeFL-8et9k6894ikaSaU_t9x2LnJ1mlreuwtp4zJa7rHufl79MX9kc62yp2E4CC8SNyC-XVLBx-WNbmQOA1JP5WO96WUk4Ll4RocbyTPOHoek4a1HSSL9fhptbUmLWo7C3zn9c";
@@ -61,12 +63,13 @@ export default function CenterHeader() {
 
   return (
     <header className="center-header">
+      <SkipLink />
       <div className="center-header__inner">
         <Link to="/center/profile" className="center-header__logo-link">
           <img src={LOGO} alt={t("center.header.logoAlt")} className="center-header__logo-img" />
         </Link>
 
-        <div className="center-header__nav">
+        <nav className="center-header__nav" aria-label={t("center.header.navigation")}>
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -79,9 +82,10 @@ export default function CenterHeader() {
               {item.label}
             </NavLink>
           ))}
-        </div>
+        </nav>
 
         <div className="center-header__actions">
+          <ThemeToggle />
           <div style={{ position: "relative" }} ref={langRef}>
             <button
               aria-label={t("center.header.language")}
@@ -107,9 +111,9 @@ export default function CenterHeader() {
             <button
               aria-label={t("center.header.userMenu")}
               onClick={() => setDropdownOpen((o) => !o)}
-              className="center-header__avatar-btn"
+              className="center-header__avatar-btn user-menu-button"
             >
-              <Icon name="account_circle" className="center-header__avatar-icon" />
+              <Icon name="account_circle" className="center-header__avatar-icon user-menu-avatar user-menu-avatar--icon" />
             </button>
 
             {dropdownOpen && (

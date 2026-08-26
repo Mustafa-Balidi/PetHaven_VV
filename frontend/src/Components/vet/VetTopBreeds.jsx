@@ -5,9 +5,9 @@ export default function VetTopBreeds({ data }) {
 
   return (
     <section className="vet-dashboard-card">
-      <h3 className="vet-dashboard-card__title vet-dashboard-card__title--sm">
+      <h2 className="vet-dashboard-card__title vet-dashboard-card__title--sm">
         {t("vetDashboard.breeds.title")}
-      </h3>
+      </h2>
 
       {data.length ? (
         <ul className="vet-dashboard-breeds">

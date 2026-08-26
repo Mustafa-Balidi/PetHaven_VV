@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import Icon from "../../Components/Icon.jsx";
 import VetCalendarToolbar from "../../Components/vet/VetCalendarToolbar.jsx";
 import VetCalendarGrid from "../../Components/vet/VetCalendarGrid.jsx";
@@ -14,6 +15,7 @@ import {
   toDateParam,
 } from "../../api/vetAppointmentsApi.js";
 import { formatLocalizedDate } from "../../utils/localization.js";
+import useModalA11y from "../../hooks/useModalA11y.js";
 import "../../Styling/VetCalendar.css";
 
 function startOfDay(date) {
@@ -24,6 +26,7 @@ function startOfDay(date) {
 
 export default function VetCalendar() {
   const { t, i18n } = useTranslation();
+  useDocumentTitle(t("vetCalendar.title"));
   const today = useMemo(() => startOfDay(new Date()), []);
 
   const [viewMonth, setViewMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
@@ -33,6 +36,10 @@ export default function VetCalendar() {
   const [statusFilter, setStatusFilter] = useState("");
 
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const appointmentDialogRef = useModalA11y({
+    open: Boolean(selectedAppointment),
+    onClose: () => setSelectedAppointment(null),
+  });
   const [actionState, setActionState] = useState({});
 
   const cacheRef = useRef(new Map());
@@ -193,7 +200,7 @@ export default function VetCalendar() {
     <div className="vet-calendar-page">
       <VetHeader />
 
-      <main className="vet-calendar-main">
+      <main id="main-content" tabIndex={-1} className="vet-calendar-main">
         <div className="vet-calendar-heading">
           <div>
             <h1 className="vet-calendar-title">{t("vetCalendar.title")}</h1>
@@ -205,7 +212,7 @@ export default function VetCalendar() {
               <Icon name="calendar_view_day" className="vet-calendar-view-toggle__icon" />
               {t("vetAppointments.viewToggle.list")}
             </Link>
-            <span className="vet-calendar-view-toggle__btn vet-calendar-view-toggle__btn--active">
+            <span className="vet-calendar-view-toggle__btn vet-calendar-view-toggle__btn--active" aria-current="page">
               <Icon name="calendar_month" className="vet-calendar-view-toggle__icon" />
               {t("vetAppointments.viewToggle.calendar")}
             </span>
@@ -224,7 +231,7 @@ export default function VetCalendar() {
           />
 
           {monthLoading ? (
-            <p className="vet-calendar-empty">{t("vetCalendar.grid.loading")}</p>
+            <p className="vet-calendar-empty" role="status">{t("vetCalendar.grid.loading")}</p>
           ) : (
             <VetCalendarGrid
               year={viewMonth.year}
@@ -241,8 +248,20 @@ export default function VetCalendar() {
       <Footer />
 
       {selectedAppointment && (
-        <div className="vet-calendar-event-modal-overlay" role="dialog" aria-modal="true" onClick={() => setSelectedAppointment(null)}>
-          <div className="vet-calendar-event-modal" onClick={(event) => event.stopPropagation()}>
+        <div
+          className="vet-calendar-event-modal-overlay"
+          role="presentation"
+          onClick={() => setSelectedAppointment(null)}
+        >
+          <div
+            className="vet-calendar-event-modal"
+            onClick={(event) => event.stopPropagation()}
+            ref={appointmentDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("vetCalendar.modal.title")}
+            tabIndex={-1}
+          >
             <button
               type="button"
               className="vet-calendar-event-modal__close"

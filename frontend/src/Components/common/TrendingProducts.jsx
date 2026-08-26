@@ -15,7 +15,7 @@ function StarRating({ rating }) {
       <Icon key={i} name={icon} className={`trending-products__star${empty ? " trending-products__star--empty" : ""}`} />
     );
   }
-  return <>{stars}</>;
+  return <span aria-hidden="true">{stars}</span>;
 }
 
 export default function TrendingProducts({ onProductClick, requireAuth }) {
@@ -30,40 +30,45 @@ export default function TrendingProducts({ onProductClick, requireAuth }) {
   }
 
   return (
-    <section id="shop" className="trending-products">
+    <section id="shop" className="trending-products" aria-labelledby="public-trending-title">
       <div className="trending-products__header">
-        <h2 className="trending-products__title">{t("trendingProducts.title")}</h2>
-        <a className="trending-products__view-all trending-products__view-all--desktop" href="#" onClick={handleViewAll}>
+        <h2 id="public-trending-title" className="trending-products__title">{t("trendingProducts.title")}</h2>
+        <a className="trending-products__view-all trending-products__view-all--desktop" href="/adopter/store" onClick={handleViewAll}>
           {t("trendingProducts.viewAll")}
         </a>
       </div>
       <div className="trending-products__grid">
         {TRENDING_PRODUCTS.map((product, i) => (
-          <div key={product.name} className="trending-products__card">
+          <article key={product.name} className="trending-products__card">
             {product.sale && <div className="trending-products__badge">{t("trendingProducts.sale")}</div>}
             <div className="trending-products__image-wrap">
               <img alt={products[i].alt} className="trending-products__image" src={product.image} />
             </div>
             <h3 className="trending-products__name">{products[i].name}</h3>
-            <div className="trending-products__rating">
+            <div
+              className="trending-products__rating"
+              role="img"
+              aria-label={t("productModal.ratingLabel", { rating: product.rating })}
+            >
               <StarRating rating={product.rating} />
               <span className="trending-products__reviews">({product.reviews})</span>
             </div>
             <div className="trending-products__footer">
               <span className="trending-products__price">{product.price}</span>
               <button
-                aria-label={t("trendingProducts.addToCart")}
+                type="button"
+                aria-label={t("trendingProducts.addToCartAria", { name: products[i].name })}
                 onClick={() => onProductClick({ ...product, ...products[i] })}
                 className="trending-products__cart-btn"
               >
                 <Icon name="add_shopping_cart" className="trending-products__cart-icon" />
               </button>
             </div>
-          </div>
+          </article>
         ))}
       </div>
       <div className="trending-products__view-all--mobile-wrap">
-        <a className="trending-products__view-all" href="#" onClick={handleViewAll}>
+        <a className="trending-products__view-all" href="/adopter/store" onClick={handleViewAll}>
           {t("trendingProducts.viewAll")}
         </a>
       </div>

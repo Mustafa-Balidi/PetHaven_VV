@@ -19,32 +19,32 @@ export default function Hero({ requireAuth }) {
   }
 
   return (
-    <section id="home" className="hero">
+    <section id="home" className="hero" aria-labelledby="public-hero-title">
       <div className="hero__card">
         <div className="hero__content">
           <div className="hero__badge">
             <Icon name="pets" className="hero__badge-icon" />
             <span>{t("hero.badge")}</span>
           </div>
-          <h1 className="hero__title">
+          <h1 id="public-hero-title" className="hero__title">
             {t("hero.titlePrefix")}
             <span className="hero__title-highlight">{t("hero.titleHighlight")}</span>
           </h1>
           <p className="hero__description">{t("hero.description")}</p>
           <div className="hero__actions">
-            <button onClick={handleAdopt} className="hero__btn hero__btn--adopt">
+            <button type="button" onClick={handleAdopt} className="hero__btn hero__btn--adopt">
               <Icon name="favorite" />
               {t("hero.ctaAdopt")}
             </button>
-            <button onClick={handleShop} className="hero__btn hero__btn--shop">
+            <button type="button" onClick={handleShop} className="hero__btn hero__btn--shop">
               <Icon name="shopping_bag" />
               {t("hero.ctaShop")}
             </button>
           </div>
-          <div className="hero__stats">
+          <div className="hero__stats" role="list" aria-label={t("hero.statsLabel")}>
             {stats.map((stat, i) => (
-              <div key={stat.label} className="hero__stat-group">
-                {i > 0 && <div className="hero__stat-divider" />}
+              <div key={stat.label} className="hero__stat-group" role="listitem">
+                {i > 0 && <div className="hero__stat-divider" aria-hidden="true" />}
                 <div className="hero__stat">
                   <span className="hero__stat-value">{stat.value}</span>
                   <span className="hero__stat-label">{stat.label}</span>

@@ -90,7 +90,11 @@ export default function AdoptionProfile() {
     return (
       <div className="center-profile-page">
         <CenterHeader />
-        <div className="center-profile-loading">{profileError || t.loading}</div>
+        {/* The header's skip link needs a target on every branch, and the
+            loading / error text has to be announced when it swaps in. */}
+        <main id="main-content" tabIndex={-1} className="center-profile-loading">
+          <span role={profileError ? "alert" : "status"}>{profileError || t.loading}</span>
+        </main>
       </div>
     );
   }
@@ -103,23 +107,29 @@ export default function AdoptionProfile() {
         <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
 
-      <main className="center-profile-main">
+      <main id="main-content" tabIndex={-1} className="center-profile-main">
         <Link to="/center/dashboard" className="center-profile-back-link">
           <Icon name="arrow_back" />
           {t.backToDashboard}
         </Link>
 
         <div className="center-profile-heading">
-          <h1 className="center-profile-title">{t.title}</h1>
+          <h1 className="center-profile-title" id="center-profile-title">{t.title}</h1>
           <p className="center-profile-subtitle">{t.subtitle}</p>
         </div>
 
-        <form className="center-profile-form" onSubmit={handleSave}>
+        <form
+          className="center-profile-form"
+          aria-labelledby="center-profile-title"
+          onSubmit={handleSave}
+        >
           {/* Basic Information */}
-          <section className="center-profile-card">
+          <section className="center-profile-card" aria-labelledby="center-profile-basic-title">
             <div className="center-profile-card__header">
               <Icon name="domain" />
-              <h2 className="center-profile-card__title">{t.basicInfo.title}</h2>
+              <h2 className="center-profile-card__title" id="center-profile-basic-title">
+                {t.basicInfo.title}
+              </h2>
             </div>
             <div className="center-profile-grid">
               <div className="center-profile-field">
@@ -185,6 +195,7 @@ export default function AdoptionProfile() {
                     type="button"
                     className="center-profile-gps-btn"
                     onClick={handleUseGps}
+                    aria-busy={locating}
                     disabled={locating}
                   >
                     <Icon name="location_on" />
@@ -196,10 +207,12 @@ export default function AdoptionProfile() {
           </section>
 
           {/* Security */}
-          <section className="center-profile-card">
+          <section className="center-profile-card" aria-labelledby="center-profile-security-title">
             <div className="center-profile-card__header">
               <Icon name="security" />
-              <h2 className="center-profile-card__title">{t.security.title}</h2>
+              <h2 className="center-profile-card__title" id="center-profile-security-title">
+                {t.security.title}
+              </h2>
             </div>
             <div className="center-profile-grid">
               <div className="center-profile-field center-profile-field--full">
@@ -211,13 +224,17 @@ export default function AdoptionProfile() {
                   <input
                     id="password"
                     type="password"
+                    autoComplete="new-password"
+                    aria-describedby="center-profile-password-hint"
                     placeholder={t.security.passwordPlaceholder}
                     className="center-profile-input center-profile-input--icon"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                <p className="center-profile-hint">{t.security.passwordHint}</p>
+                <p className="center-profile-hint" id="center-profile-password-hint">
+                  {t.security.passwordHint}
+                </p>
               </div>
             </div>
           </section>
@@ -227,8 +244,21 @@ export default function AdoptionProfile() {
             <button type="button" className="center-profile-btn center-profile-btn-cancel" onClick={handleCancel}>
               {t.cancel}
             </button>
-            <button type="submit" disabled={saving} className="center-profile-btn center-profile-btn-save">
-              {saving ? "..." : t.saveChanges}
+            <button
+              type="submit"
+              disabled={saving}
+              aria-busy={saving}
+              className="center-profile-btn center-profile-btn-save"
+            >
+              {saving ? (
+                <>
+                  {/* An ellipsis on its own is read as punctuation or skipped. */}
+                  <span aria-hidden="true">...</span>
+                  <span className="sr-only">{t.saving}</span>
+                </>
+              ) : (
+                t.saveChanges
+              )}
             </button>
           </div>
         </form>

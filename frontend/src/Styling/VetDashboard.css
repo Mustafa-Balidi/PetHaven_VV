@@ -21,9 +21,9 @@ html:has(.vet-dashboard-header) {
   z-index: 50;
   width: 100%;
   backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid #e0e3e5;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--theme-header-bg);
+  border-bottom: 1px solid var(--theme-border);
+  box-shadow: var(--theme-shadow);
 }
 
 .vet-dashboard-header__inner {
@@ -80,29 +80,29 @@ html:has(.vet-dashboard-header) {
   font-weight: 600;
   letter-spacing: 0.01em;
   border-bottom: 2px solid transparent;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   background: none;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .vet-dashboard-header__nav-link:hover {
-  color: #00685f;
+  color: var(--theme-accent);
 }
 
 .vet-dashboard-header__nav-link--active {
-  color: #00685f;
+  color: var(--theme-accent);
   font-weight: 700;
-  border-bottom: 2px solid #00685f;
+  border-bottom: 2px solid var(--theme-accent);
 }
 
 .vet-dashboard-header__nav-link--disabled {
-  color: #bcc9c6;
+  color: var(--theme-border);
   cursor: not-allowed;
 }
 
 .vet-dashboard-header__nav-link--disabled:hover {
-  color: #bcc9c6;
+  color: var(--theme-border);
 }
 
 .vet-dashboard-header__actions {
@@ -117,7 +117,7 @@ html:has(.vet-dashboard-header) {
   justify-content: center;
   padding: 8px;
   border-radius: 9999px;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   background: none;
   border: none;
   cursor: pointer;
@@ -125,8 +125,8 @@ html:has(.vet-dashboard-header) {
 }
 
 .vet-dashboard-header__icon-btn:hover {
-  background-color: #e6e8ea;
-  color: #00685f;
+  background-color: var(--theme-icon-bg);
+  color: var(--theme-accent);
 }
 
 .vet-dashboard-header__icon-btn:disabled {
@@ -136,13 +136,13 @@ html:has(.vet-dashboard-header) {
 
 .vet-dashboard-header__icon-btn:disabled:hover {
   background: none;
-  color: #3d4947;
+  color: var(--theme-text-muted);
 }
 
 .vet-dashboard-header__avatar-wrap {
   position: relative;
   margin-inline-start: 8px;
-  border-inline-start: 1px solid #e0e3e5;
+  border-inline-start: 1px solid var(--theme-border);
   padding-inline-start: 16px;
 }
 
@@ -165,7 +165,7 @@ html:has(.vet-dashboard-header) {
 
 .vet-dashboard-header__avatar-icon {
   font-size: 32px !important;
-  color: #3d4947;
+  color: var(--theme-text-muted);
 }
 
 .vet-dashboard-header__dropdown-icon {
@@ -177,10 +177,10 @@ html:has(.vet-dashboard-header) {
   inset-inline-end: 0;
   margin-top: 8px;
   min-width: 160px;
-  background: #ffffff;
+  background: var(--theme-surface);
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--theme-border);
   overflow: hidden;
   z-index: 60;
 }
@@ -193,7 +193,7 @@ html:has(.vet-dashboard-header) {
   text-align: start;
   padding: 10px 16px;
   font-size: 14px;
-  color: #191c1e;
+  color: var(--theme-text);
   background: none;
   border: none;
   text-decoration: none;
@@ -202,7 +202,7 @@ html:has(.vet-dashboard-header) {
 }
 
 .vet-dashboard-header__dropdown-item:hover {
-  background-color: #f2f4f6;
+  background-color: var(--theme-surface-2);
 }
 
 .vet-dashboard-header__hamburger {
@@ -214,33 +214,33 @@ html:has(.vet-dashboard-header) {
   padding: 8px;
   margin-inline-start: 8px;
   border-radius: 50%;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   cursor: pointer;
 }
 
 .vet-dashboard-header__hamburger:hover {
-  color: #00685f;
-  background-color: #f2f4f6;
+  color: var(--theme-accent);
+  background-color: var(--theme-surface-2);
 }
 
 .vet-dashboard-header__mobile-panel {
   display: flex;
   flex-direction: column;
   padding: 8px 16px 16px;
-  border-top: 1px solid #e0e3e5;
-  background-color: #ffffff;
+  border-top: 1px solid var(--theme-border);
+  background-color: var(--theme-surface);
 }
 
 .vet-dashboard-header__mobile-link {
   padding: 12px 4px;
   font-size: 14px;
   font-weight: 500;
-  color: #3d4947;
+  color: var(--theme-text-muted);
   background: none;
   border: none;
   text-align: start;
   text-decoration: none;
-  border-bottom: 1px solid #eceef0;
+  border-bottom: 1px solid var(--theme-border);
   cursor: pointer;
 }
 

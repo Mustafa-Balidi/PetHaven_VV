@@ -21,21 +21,21 @@ export default function Wishlist({ items = [], loading = false, error = null, on
 
       {loading ? (
         <div className="wishlist-state-card" aria-live="polite">
-          <span className="material-symbols-outlined wishlist-state-icon">
+          <span className="material-symbols-outlined wishlist-state-icon" aria-hidden="true">
             progress_activity
           </span>
           <p>{t("adopter.dashboard.wishlist.loading")}</p>
         </div>
       ) : error ? (
         <div className="wishlist-state-card wishlist-state-card--error" role="alert">
-          <span className="material-symbols-outlined wishlist-state-icon">error</span>
+          <span className="material-symbols-outlined wishlist-state-icon" aria-hidden="true">error</span>
           <p>{t("adopter.dashboard.wishlist.loadError", { message: error })}</p>
           <button type="button" className="dashboard-retry-button" onClick={onRetry}>{t("adopter.dashboard.retry")}</button>
         </div>
       ) : items.length === 0 ? (
         <div className="wishlist-state-card wishlist-state-card--empty">
           <div className="wishlist-state-icon-wrap" aria-hidden="true">
-            <span className="material-symbols-outlined wishlist-state-icon">
+            <span className="material-symbols-outlined wishlist-state-icon" aria-hidden="true">
               bookmark_border
             </span>
           </div>
@@ -64,7 +64,7 @@ export default function Wishlist({ items = [], loading = false, error = null, on
                   {item.image ? (
                     <img alt={item.name} src={item.image} />
                   ) : (
-                    <span className="material-symbols-outlined wishlist-icon">
+                    <span className="material-symbols-outlined wishlist-icon" aria-hidden="true">
                       inventory_2
                     </span>
                   )}

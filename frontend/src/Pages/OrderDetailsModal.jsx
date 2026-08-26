@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import '../Styling/OrderDetailsModal.css';
 import { useTranslation } from 'react-i18next';
 
@@ -8,11 +8,14 @@ import ModalFooter from '../Components/OrderDetailsModal/ModalFooter';
 import { getOrderConfirmation } from '../api/orderApi.js';
 import OrderTotals from '../Components/OrderConfirmed/OrderTotals';
 import OrderSummaryItem from '../Components/OrderConfirmed/OrderSummaryItem';
+import useModalA11y from '../hooks/useModalA11y.js';
 
 export default function OrderDetailsModal({ orderId, onClose }) {
   const { t } = useTranslation();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState('');
+  const titleId = useId();
+  const dialogRef = useModalA11y({ onClose });
 
   useEffect(() => {
     let active = true;
@@ -30,15 +33,17 @@ export default function OrderDetailsModal({ orderId, onClose }) {
   }, [orderId, t]);
 
   return (
-    <div className="odm-backdrop" onClick={onClose}>
+    <div className="odm-backdrop" role="presentation" onClick={onClose}>
       <div
         className="odm-container"
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="odm-title"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
       >
-        <ModalHeader title={t('adopter.orders.details')} onClose={onClose} />
+        <ModalHeader titleId={titleId} title={t('adopter.orders.details')} onClose={onClose} />
 
         <div className="odm-content">
           {!order && <p role={error ? 'alert' : 'status'}>{error || t('adopter.orders.loading')}</p>}

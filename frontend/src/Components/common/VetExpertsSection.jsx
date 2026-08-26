@@ -14,14 +14,14 @@ export default function VetExpertsSection({ requireAuth }) {
   }
 
   return (
-    <section id="vets" className="vet">
+    <section id="vets" className="vet" aria-labelledby="public-vet-title">
       <div className="vet__grid">
         <div className="vet__content">
           <div className="vet__badge">
             <Icon name="verified_user" className="vet__badge-icon" />
             <span>{t("vet.badge")}</span>
           </div>
-          <h2 className="vet__title">
+          <h2 id="public-vet-title" className="vet__title">
             {t("vet.titlePrefix")}
             <span className="vet__title-highlight">{t("vet.titleHighlight")}</span>
           </h2>
@@ -37,7 +37,7 @@ export default function VetExpertsSection({ requireAuth }) {
             ))}
           </ul>
           <div className="vet__actions">
-            <button onClick={handleFindVet} className="vet__cta">
+            <button type="button" onClick={handleFindVet} className="vet__cta">
               {t("vet.cta")}
             </button>
           </div>

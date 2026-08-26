@@ -26,18 +26,18 @@ export default function MyPets({ pets = [], loading = false, error = null, onRet
 
       {loading ? (
         <div className="pets-state-card" aria-live="polite">
-          <span className="material-symbols-outlined pets-state-icon">progress_activity</span>
+          <span className="material-symbols-outlined pets-state-icon" aria-hidden="true">progress_activity</span>
           <p>{t("adopter.dashboard.pets.loading")}</p>
         </div>
       ) : error ? (
         <div className="pets-state-card pets-state-card--error" role="alert">
-          <span className="material-symbols-outlined pets-state-icon">error</span>
+          <span className="material-symbols-outlined pets-state-icon" aria-hidden="true">error</span>
           <p>{t("adopter.dashboard.pets.loadError", { message: error })}</p>
           <button type="button" className="dashboard-retry-button" onClick={onRetry}>{t("adopter.dashboard.retry")}</button>
         </div>
       ) : pets.length === 0 ? (
         <div className="pets-state-card">
-          <span className="material-symbols-outlined pets-state-icon">pets</span>
+          <span className="material-symbols-outlined pets-state-icon" aria-hidden="true">pets</span>
           <h3>{t("adopter.dashboard.pets.emptyTitle")}</h3>
           <p>{t("adopter.dashboard.pets.emptyText")}</p>
           <Link to="/adopter/adoption-hub" className="pets-browse-link">
@@ -60,7 +60,7 @@ export default function MyPets({ pets = [], loading = false, error = null, onRet
                 {pet.image ? (
                   <img alt={pet.name} src={pet.image} />
                 ) : (
-                  <span className="material-symbols-outlined pet-avatar-placeholder">
+                  <span className="material-symbols-outlined pet-avatar-placeholder" aria-hidden="true">
                     pets
                   </span>
                 )}
@@ -107,7 +107,7 @@ export default function MyPets({ pets = [], loading = false, error = null, onRet
                 <span className="pet-view-label">
                   {t("adopter.dashboard.pets.details")}
                 </span>
-                <span className="material-symbols-outlined pet-chevron">
+                <span className="material-symbols-outlined pet-chevron" aria-hidden="true">
                   chevron_right
                 </span>
               </span>

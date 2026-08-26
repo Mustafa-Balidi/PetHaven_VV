@@ -214,7 +214,11 @@ export default function ProductReviews({ productId, onSummaryChange }) {
                 <div className="product-review-card__header">
                   <div>
                     <h3>{review.adopterName || t("adopter.product.review.anonymous")}</h3>
-                    <StarRating count={review.rating} size="18px" />
+                    <StarRating
+                      count={review.rating}
+                      size="18px"
+                      ariaLabel={t("adopter.product.review.starLabel", { count: review.rating })}
+                    />
                   </div>
                   <time dateTime={review.createdAt}>
                     {formatLocalizedDate(review.createdAt, i18n.resolvedLanguage, {

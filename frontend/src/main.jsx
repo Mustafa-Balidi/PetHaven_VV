@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import i18n from './i18n/index.js'
 import './index.css'
+import './Styling/a11y.css'
+import './Styling/Theme.css'
 
 function syncDocumentLanguage(language) {
   const normalizedLanguage = language?.startsWith('ar') ? 'ar' : 'en'

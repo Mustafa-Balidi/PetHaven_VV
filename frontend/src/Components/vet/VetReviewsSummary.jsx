@@ -10,12 +10,14 @@ const BAR_COLOR = {
 };
 
 function RatingStars({ value }) {
+  const { t } = useTranslation();
   const full = Math.floor(value);
   const hasHalf = value - full >= 0.5;
   const empty = 5 - full - (hasHalf ? 1 : 0);
 
+  // Every star is an aria-hidden icon, so the row states the score itself.
   return (
-    <div className="vet-reviews-stars">
+    <div className="vet-reviews-stars" role="img" aria-label={t("vetReviews.card.ratingLabel", { value: Math.round(value * 10) / 10 })}>
       {Array.from({ length: full }).map((_, i) => (
         <Icon key={`full-${i}`} name="star" filled className="vet-reviews-star vet-reviews-star--filled" />
       ))}
@@ -51,6 +53,7 @@ export default function VetReviewsSummary({ stats }) {
               <div key={star} className="vet-reviews-summary__bar-row">
                 <span className="vet-reviews-summary__bar-star">{star}</span>
                 <Icon name="star" filled className="vet-reviews-summary__bar-star-icon" />
+                <span className="sr-only">{t("vetReviews.summary.starsLabel", { count: star })}</span>
                 <div className="vet-reviews-summary__bar-track">
                   <div
                     className="vet-reviews-summary__bar-fill"

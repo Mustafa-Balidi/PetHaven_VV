@@ -1,4 +1,29 @@
 {
+  "a11y": {
+    "skipToContent": "Skip to main content",
+    "mainContent": "Main content",
+    "mainNavigation": "Main navigation",
+    "sidebarNavigation": "Sidebar navigation",
+    "loading": "Loading",
+    "required": "required",
+    "alt": {
+      "logo": "Pet Haven",
+      "avatar": "Profile picture",
+      "userAvatar": "Profile picture of {{name}}",
+      "petPhoto": "Photo of {{name}}",
+      "pet": "Pet photo",
+      "productPhoto": "Photo of {{name}}",
+      "product": "Product photo",
+      "reportAttachment": "Report attachment",
+      "appointmentPet": "Photo of the pet for this appointment"
+    },
+    "noValue": "Not available",
+    "pageTitle": "{{page}} — Pet Haven"
+  },
+  "theme": {
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
+  },
   "header": {
     "nav": {
       "home": "Home",
@@ -12,7 +37,8 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "navigation": "Main navigation"
   },
   "adopter": {
     "header": {
@@ -574,6 +600,7 @@
       "productCard": {
         "addToCart": "Add to cart",
         "wishlist": "Toggle wishlist",
+        "viewProduct": "View {{name}}",
         "save": "Save {{percent}}%",
         "lowStock": "Low Stock",
         "imageUnavailable": "Image unavailable"
@@ -811,7 +838,11 @@
       "messages": {
         "1": "Hi! I'm here to help you check on Daisy. Can you describe what you've noticed about her limp?",
         "2": "She started limping on her back right leg this morning after her walk. She still eats fine and seems happy otherwise."
-      }
+      },
+      "petsLoading": "Loading your pets...",
+      "petsError": "Could not load your pets right now.",
+      "noPets": "No adopted pets yet. You can still ask questions - adopting or selecting a pet gives you animal-specific answers.",
+      "chattingAbout": "Chatting about"
     },
     "vets": {
       "retry": "Try again",
@@ -990,6 +1021,7 @@
     "description": "The all-in-one platform for pet adoption, supplies, veterinary care, and AI-powered health insights. Experience a seamless journey for you and your furry companions.",
     "ctaAdopt": "Adopt a Friend",
     "ctaShop": "Shop Supplies",
+    "statsLabel": "Adoption highlights",
     "stats": [
       {
         "value": "500+",
@@ -1005,6 +1037,7 @@
     "badgeSubtitle": "100% Safe & Healthy"
   },
   "impactStats": {
+    "regionLabel": "Our impact in numbers",
     "items": [
       {
         "value": "12,000+",
@@ -1045,6 +1078,7 @@
     "title": "Meet Your New Best Friend",
     "viewAll": "View all pets →",
     "cta": "View Profile",
+    "ctaAria": "View profile of {{name}}",
     "pets": [
       {
         "name": "Buddy",
@@ -1073,6 +1107,7 @@
     "viewAll": "View all products →",
     "sale": "Sale",
     "addToCart": "Add to cart",
+    "addToCartAria": "Add {{name}} to cart",
     "products": [
       {
         "name": "Premium Kibble",
@@ -1112,6 +1147,7 @@
   "events": {
     "title": "Upcoming Pet Events",
     "viewAll": "View full calendar →",
+    "ctaAria": "{{cta}}: {{title}}",
     "items": [
       {
         "title": "Mega Adoption Drive",
@@ -1177,6 +1213,7 @@
     ]
   },
   "testimonials": {
+    "regionLabel": "What adopters say",
     "quote": "\"Adopting Bella through Pet Haven was the best decision of our lives. The process was incredibly smooth, and being able to buy all her supplies in the same place saved us so much time!\"",
     "author": "Sarah J.",
     "role": "Proud owner of Bella"
@@ -1203,7 +1240,8 @@
   "productModal": {
     "description": "A customer favorite with {{reviews}} reviews. Quality checked and ready to ship to your pet's new home.",
     "addToCart": "Add to Cart",
-    "close": "Close"
+    "close": "Close",
+    "ratingLabel": "Rated {{rating}} out of 5"
   },
   "authModal": {
     "signIn": "Sign In",
@@ -1247,7 +1285,8 @@
         "label": "Admin",
         "description": "Manage the platform"
       }
-    ]
+    ],
+    "tabsLabel": "Sign in or create an account"
   },
   "contactModal": {
     "title": "Contact Us",
@@ -1279,7 +1318,8 @@
       "profileLink": "Profile",
       "logout": "Logout",
       "openMenu": "Open menu",
-      "closeMenu": "Close menu"
+      "closeMenu": "Close menu",
+      "navigation": "Adoption center navigation"
     },
     "status": {
       "Available": "Available",
@@ -1373,6 +1413,7 @@
       },
       "cancel": "Cancel",
       "saveChanges": "Save Changes",
+      "saving": "Saving changes",
       "saveSuccess": "Center profile updated successfully.",
       "saveError": "Failed to save changes. Please try again."
     },
@@ -1421,6 +1462,7 @@
       "orders": {
         "title": "Latest Store Orders",
         "seeAll": "See all",
+        "tableLabel": "Latest store orders",
         "columns": {
           "orderId": "Order ID",
           "customer": "Customer",
@@ -1443,12 +1485,16 @@
       },
       "overallRating": {
         "title": "Overall Rating",
-        "basedOn": "Based on {{count}} reviews"
+        "basedOn": "Based on {{count}} reviews",
+        "ratingLabel": "{{rating}} out of 5 stars",
+        "barLabel": "{{stars}} stars: {{percent}}% of reviews"
       },
       "filters": {
         "allReviews": "All Reviews",
         "stars": "{{count}} stars",
-        "searchPlaceholder": "Search by product, reviewer, or comment..."
+        "searchPlaceholder": "Search by product, reviewer, or comment...",
+        "searchLabel": "Search product reviews",
+        "groupLabel": "Filter reviews by rating"
       },
       "card": {
         "ratingOnly": "Rating only"
@@ -1460,7 +1506,9 @@
         "showing": "Showing",
         "to": "to",
         "of": "of",
-        "reviewsWord": "reviews"
+        "reviewsWord": "reviews",
+        "label": "Review pages",
+        "page": "Page {{number}}"
       }
     },
     "inventory": {
@@ -1476,7 +1524,8 @@
       },
       "tabs": {
         "animals": "Animals",
-        "products": "Products"
+        "products": "Products",
+        "groupLabel": "Inventory sections"
       },
       "pagination": {
         "showing": "Showing",
@@ -1842,6 +1891,8 @@
       },
       "blacklist": {
         "searchPlaceholder": "Search blacklisted adopters...",
+        "searchLabel": "Search blacklisted adopters",
+        "tableLabel": "Blacklisted adopters",
         "loading": "Loading blacklist…",
         "empty": "No blacklisted adopters.",
         "retry": "Try again",
@@ -1855,13 +1906,15 @@
       },
       "toolbar": {
         "searchPlaceholder": "Search applicant or pet name...",
+        "searchLabel": "Search applications by applicant or pet name",
         "filter": "Filter"
       },
       "tabs": {
         "all": "All",
         "pending": "Pending",
         "approved": "Approved",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "groupLabel": "Filter applications by status"
       },
       "card": {
         "appliedLabel": "Applied",
@@ -1869,11 +1922,17 @@
         "reviewButton": "Review Application",
         "rejectButton": "Reject",
         "viewRecordButton": "View Record",
+        "applicantLabel": "Applicant",
+        "reviewButtonFor": "Review {{applicant}}'s application for {{pet}}",
+        "rejectButtonFor": "Reject {{applicant}}'s application for {{pet}}",
+        "viewRecordButtonFor": "View the record of {{applicant}}'s application for {{pet}}",
         "statusPending": "Pending",
         "statusApproved": "Approved",
         "statusRejected": "Rejected"
       },
       "empty": "No adoption requests found.",
+      "results": "{{count}} adoption request",
+      "results_other": "{{count}} adoption requests",
       "review": {
         "titlePrefix": "Review Application -",
         "pendingReviewBadge": "Pending Review",
@@ -1926,13 +1985,16 @@
       "dismiss": "Dismiss",
       "processing": "Processing…",
       "actionFailed": "The request could not be completed.",
-      "notProvided": "Not provided"
+      "notProvided": "Not provided",
+      "pageTitle": "{{page}} — Pet Haven Admin"
     },
     "navbar": {
       "workspace": "Admin Workspace",
       "switchLanguage": "Switch language",
       "profileTitle": "Admin profile",
-      "profileError": "Profile unavailable"
+      "profileError": "Profile unavailable",
+      "switchToEnglish": "Switch language to English",
+      "switchToArabic": "Switch language to Arabic"
     },
     "sidebar": {
       "logoAlt": "Pet Haven Logo",
@@ -1960,7 +2022,8 @@
         "subtitle": "Veterinarian accounts waiting for verification.",
         "manage": "Review approvals",
         "awaiting": "awaiting review",
-        "more": "+{{remaining}} more waiting in the approvals queue."
+        "more": "+{{remaining}} more waiting in the approvals queue.",
+        "listLabel": "Veterinarians waiting for approval"
       }
     },
     "vetApprovals": {
@@ -1970,6 +2033,9 @@
       "idLabel": "Vet ID {{id}}",
       "empty": "No veterinarians are waiting for approval.",
       "emptyHint": "New submissions appear here as soon as a veterinarian registers.",
+      "listLabel": "Veterinarians pending approval",
+      "verifyFor": "Verify {{name}}",
+      "rejectFor": "Reject {{name}}",
       "loadFailed": "The pending veterinarians list could not be loaded.",
       "verify": "Verify",
       "verifying": "Verifying…",
@@ -2048,7 +2114,8 @@
       "profile": "Profile",
       "logout": "Logout",
       "openMenu": "Open menu",
-      "closeMenu": "Close menu"
+      "closeMenu": "Close menu",
+      "navigation": "Veterinarian navigation"
     },
     "welcome": {
       "morning": "Good morning, {{name}}",
@@ -2077,7 +2144,9 @@
       "loading": "Loading clinic activity...",
       "weekly": "Weekly",
       "monthly": "Monthly",
-      "empty": "No appointment activity for this period yet."
+      "empty": "No appointment activity for this period yet.",
+      "periodLabel": "Activity period",
+      "dataLabel": "Appointments per period"
     },
     "breakdown": {
       "title": "Appointment Breakdown",
@@ -2114,7 +2183,10 @@
         "breed": "Breed/Species",
         "lastVisit": "Last Visit",
         "action": "Action"
-      }
+      },
+      "searchLabel": "Search recent patients",
+      "tableLabel": "Recent patients",
+      "viewRecordsFor": "View records for {{name}}"
     }
   },
   "vetProfile": {
@@ -2160,12 +2232,15 @@
       "title": "Overall Rating",
       "empty": "You haven't received any reviews yet.",
       "basedOn": "Based on {{count}} review",
-      "basedOn_other": "Based on {{count}} reviews"
+      "basedOn_other": "Based on {{count}} reviews",
+      "starsLabel": "{{count}} star",
+      "starsLabel_other": "{{count}} stars"
     },
     "toolbar": {
       "searchPlaceholder": "Search reviews by name or keyword...",
       "all": "All Reviews",
-      "ratingOnly": "Rating Only ({{count}})"
+      "ratingOnly": "Rating Only ({{count}})",
+      "searchLabel": "Search reviews"
     },
     "list": {
       "loading": "Loading reviews...",
@@ -2174,12 +2249,15 @@
     },
     "card": {
       "anonymous": "Anonymous",
-      "noComment": "No written comment — rating only."
+      "noComment": "No written comment — rating only.",
+      "ratingLabel": "Rated {{value}} out of 5"
     },
     "pagination": {
       "showing": "Showing {{start}} to {{end}} of {{total}} reviews",
       "previous": "Previous page",
-      "next": "Next page"
+      "next": "Next page",
+      "label": "Review pages",
+      "page": "Page {{number}}"
     }
   },
   "vetPatients": {
@@ -2199,7 +2277,10 @@
         "dog": "Dogs",
         "cat": "Cats",
         "bird": "Birds"
-      }
+      },
+      "speciesGroupLabel": "Filter by species",
+      "searchLabel": "Search patients",
+      "statusFilterLabel": "Filter by status"
     },
     "status": {
       "healthy": "Healthy",
@@ -2211,16 +2292,21 @@
       "owner": "Owner",
       "lastVisit": "Last Visit",
       "visitCount": "Visits",
-      "viewRecords": "View Records"
+      "viewRecords": "View Records",
+      "viewRecordsFor": "View the records of {{name}}"
     },
     "list": {
       "loading": "Loading patients...",
       "empty": "No patients found yet.",
-      "noMatches": "No patients match your search or filters."
+      "noMatches": "No patients match your search or filters.",
+      "results": "{{count}} patient found",
+      "results_other": "{{count}} patients found"
     },
     "pagination": {
       "previous": "Previous page",
-      "next": "Next page"
+      "next": "Next page",
+      "label": "Patient pages",
+      "page": "Page {{number}}"
     },
     "modal": {
       "close": "Close",
@@ -2230,7 +2316,8 @@
       "age": "Age",
       "gender": "Gender",
       "medicalHistory": "Medical History",
-      "noMedicalHistory": "No medical history recorded yet."
+      "noMedicalHistory": "No medical history recorded yet.",
+      "title": "Patient record"
     }
   },
   "vetAppointments": {
@@ -2244,7 +2331,8 @@
       "previous": "Previous day",
       "next": "Next day",
       "today": "Today",
-      "pickDate": "Pick a date"
+      "pickDate": "Pick a date",
+      "label": "Selected day"
     },
     "summary": {
       "loading": "Loading stats...",
@@ -2289,7 +2377,11 @@
       "confirm": "Accept",
       "complete": "Mark as completed",
       "cancel": "Cancel",
-      "reschedule": "Reschedule"
+      "reschedule": "Reschedule",
+      "confirmFor": "Confirm the appointment for {{name}}",
+      "completeFor": "Complete the appointment for {{name}}",
+      "rescheduleFor": "Reschedule the appointment for {{name}}",
+      "cancelFor": "Cancel the appointment for {{name}}"
     },
     "cancelConfirm": {
       "message": "Cancel this appointment? This cannot be undone.",
@@ -2316,10 +2408,13 @@
       "loading": "Loading calendar...",
       "dayError": "Failed to load this day.",
       "moreEvents": "+{{count}} more",
-      "showLess": "Show less"
+      "showLess": "Show less",
+      "dayEvents": "{{count}} appointment",
+      "dayEvents_other": "{{count}} appointments"
     },
     "modal": {
-      "close": "Close"
+      "close": "Close",
+      "title": "Appointment details"
     }
   },
   "vetVerification": {
@@ -2329,7 +2424,8 @@
       "title": "Click to upload or drag and drop",
       "hint": "PDF, JPG, or PNG (Max 10MB)",
       "selected": "Selected: {{name}}",
-      "remove": "Remove"
+      "remove": "Remove",
+      "dropzoneLabel": "Choose the licence document to upload"
     },
     "form": {
       "licenseNumber": "License Number",

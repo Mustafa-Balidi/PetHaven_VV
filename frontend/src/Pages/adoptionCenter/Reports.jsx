@@ -25,8 +25,8 @@ export default function Reports() {
     <div className="center-vacc-page-page">
       <CenterHeader />
 
-      <div className="center-vacc-page-body">
-        <div className="center-vacc-page-grid-bg" />
+      <main id="main-content" tabIndex={-1} className="center-vacc-page-body">
+        <div className="center-vacc-page-grid-bg" aria-hidden="true" />
 
         <div className="center-vacc-page-content">
           <div className="center-vacc-page-header">
@@ -43,7 +43,7 @@ export default function Reports() {
             onBlock={blockAdopter}
           />
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

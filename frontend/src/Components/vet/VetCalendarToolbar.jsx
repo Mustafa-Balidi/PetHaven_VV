@@ -28,12 +28,19 @@ export default function VetCalendarToolbar({
             <Icon name="chevron_right" />
           </button>
         </div>
-        <h2 className="vet-calendar-toolbar__title">{monthLabel}</h2>
+        {/* Only this label reports which month the grid is showing. */}
+        <h2 className="vet-calendar-toolbar__title" aria-live="polite">
+          {monthLabel}
+        </h2>
       </div>
 
       <div className="vet-calendar-toolbar__filter">
-        <span>{t("vetAppointments.toolbar.filterLabel")}</span>
-        <select value={statusFilter} onChange={(event) => onStatusFilterChange(event.target.value)}>
+        <span id="vet-calendar-filter-label">{t("vetAppointments.toolbar.filterLabel")}</span>
+        <select
+          aria-labelledby="vet-calendar-filter-label"
+          value={statusFilter}
+          onChange={(event) => onStatusFilterChange(event.target.value)}
+        >
           <option value="">{t("vetAppointments.toolbar.allStatuses")}</option>
           {STATUS_OPTIONS.map((option) => (
             <option key={option} value={option}>

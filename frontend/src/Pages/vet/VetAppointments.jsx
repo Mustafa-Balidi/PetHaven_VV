@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import Icon from "../../Components/Icon.jsx";
 import VetAppointmentsSummary from "../../Components/vet/VetAppointmentsSummary.jsx";
 import VetAppointmentsList from "../../Components/vet/VetAppointmentsList.jsx";
@@ -24,6 +25,7 @@ function startOfDay(date) {
 
 export default function VetAppointments() {
   const { t, i18n } = useTranslation();
+  useDocumentTitle(t("vetAppointments.title"));
 
   const [selectedDate, setSelectedDate] = useState(() => startOfDay(new Date()));
   const [summary, setSummary] = useState(null);
@@ -146,7 +148,7 @@ export default function VetAppointments() {
     <div className="vet-appointments-page">
       <VetHeader />
 
-      <main className="vet-appointments-main">
+      <main id="main-content" tabIndex={-1} className="vet-appointments-main">
         <div className="vet-appointments-heading">
           <div>
             <h1 className="vet-appointments-title">{t("vetAppointments.title")}</h1>
@@ -154,7 +156,11 @@ export default function VetAppointments() {
           </div>
 
           <div className="vet-appointments-view-toggle">
-            <button type="button" className="vet-appointments-view-toggle__btn vet-appointments-view-toggle__btn--active">
+            <button
+              type="button"
+              className="vet-appointments-view-toggle__btn vet-appointments-view-toggle__btn--active"
+              aria-current="page"
+            >
               <Icon name="calendar_view_day" className="vet-appointments-view-toggle__icon" />
               {t("vetAppointments.viewToggle.list")}
             </button>
@@ -165,14 +171,18 @@ export default function VetAppointments() {
           </div>
         </div>
 
-        <div className="vet-appointments-date-nav">
+        {/* The label is the only thing that changes when the day moves, so
+            it announces itself. */}
+        <div className="vet-appointments-date-nav" role="group" aria-label={t("vetAppointments.dateNav.label")}>
           <button type="button" className="vet-appointments-date-nav__btn" onClick={goPrevDay} aria-label={t("vetAppointments.dateNav.previous")}>
             <Icon name="chevron_left" />
           </button>
           <button type="button" className="vet-appointments-date-nav__today" onClick={goToday} disabled={isToday}>
             {t("vetAppointments.dateNav.today")}
           </button>
-          <span className="vet-appointments-date-nav__label">{dateLabel}</span>
+          <span className="vet-appointments-date-nav__label" aria-live="polite">
+            {dateLabel}
+          </span>
           <input
             type="date"
             className="vet-appointments-date-nav__input"
@@ -190,7 +200,7 @@ export default function VetAppointments() {
             <span>{summaryError}</span>
           </div>
         ) : summaryLoading ? (
-          <p className="vet-appointments-empty">{t("vetAppointments.summary.loading")}</p>
+          <p className="vet-appointments-empty" role="status">{t("vetAppointments.summary.loading")}</p>
         ) : (
           <VetAppointmentsSummary summary={summary} />
         )}
