@@ -1,0 +1,2356 @@
+{
+  "header": {
+    "nav": {
+      "home": "Home",
+      "adoption": "Adoption",
+      "shop": "Shop",
+      "vets": "Vets",
+      "aiChecker": "AI Checker"
+    },
+    "switchLanguage": "Switch Language",
+    "userMenu": "User Menu",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "adopter": {
+    "header": {
+      "logoAlt": "Pet Haven Logo",
+      "navigation": "Pet adopter navigation",
+      "nav": {
+        "dashboard": "Dashboard",
+        "store": "Store",
+        "adoption": "Adoption",
+        "health": "Health",
+        "vets": "Vets"
+      },
+      "language": "Language",
+      "languages": {
+        "english": "English",
+        "arabic": "Arabic"
+      },
+      "userMenu": "User Menu",
+      "avatarAlt": "{{name}} profile picture",
+      "defaultUser": "Pet Adopter",
+      "profile": "Profile",
+      "logout": "Log out",
+      "cart": "Cart",
+      "notifications": "Notifications",
+      "notificationsUnavailable": "Notifications are unavailable because the backend does not provide them yet",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "common": {
+      "close": "Close",
+      "pet": "Pet",
+      "ageYears": "{{count}} year",
+      "ageYears_other": "{{count}} years",
+      "genders": {
+        "female": "Female",
+        "male": "Male"
+      },
+      "stages": {
+        "puppy": "Puppy",
+        "adult": "Adult",
+        "young": "Young",
+        "senior": "Senior"
+      },
+      "healthStatuses": {
+        "healthy": "Healthy",
+        "good": "Good",
+        "excellent": "Excellent",
+        "needs_attention": "Needs Attention",
+        "under_treatment": "Under Treatment",
+        "warning": "Needs Attention"
+      },
+      "petTraits": {
+        "available": "Available",
+        "healthy": "Healthy",
+        "good": "Good",
+        "dog": "Dog",
+        "cat": "Cat"
+      }
+    },
+    "profile": {
+      "loading": "Loading your profile…",
+      "loadError": "We couldn't load your profile.",
+      "retry": "Try Again",
+      "backToDashboard": "Back to Dashboard",
+      "title": "My Profile",
+      "subtitle": "Manage your personal information and adoption preferences.",
+      "photo": {
+        "title": "Profile Photo",
+        "upload": "Upload Photo",
+        "change": "Change Photo",
+        "hint": "JPG or PNG. The preview is stored only for this session until photo upload is supported."
+      },
+      "personal": {
+        "title": "Personal Information",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "Enter your full name",
+        "email": "Email",
+        "emailHint": "Email cannot be changed here.",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter your phone number",
+        "address": "Address",
+        "addressPlaceholder": "Enter your address"
+      },
+      "preferences": {
+        "title": "Adoption Preferences",
+        "housingType": "Housing Type",
+        "selectHousing": "Select housing type",
+        "housingOptions": {
+          "Apartment": "Apartment",
+          "Department": "Department",
+          "House": "House",
+          "Villa": "Villa"
+        },
+        "experienceLevel": "Experience Level",
+        "selectExperience": "Select experience level",
+        "experienceOptions": {
+          "Beginner": "Beginner",
+          "Intermediate": "Intermediate",
+          "Expert": "Expert"
+        },
+        "freeHours": "Free Hours Per Day",
+        "freeHoursHint": "How many hours can you dedicate to pet care each day?"
+      },
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "saving": "Saving…",
+      "saveSuccess": "Your profile was updated successfully.",
+      "saveError": "We couldn't update your profile. Please try again."
+    },
+    "dashboard": {
+      "loading": "Loading your dashboard…",
+      "loadError": "Unable to load the dashboard: {{message}}",
+      "retry": "Try again",
+      "profileLoading": "Loading your profile…",
+      "profileUnavailable": "Your profile name is temporarily unavailable.",
+      "welcomeGeneric": "Welcome back!",
+      "welcome": "Welcome back, {{name}}!",
+      "kpis": {
+        "pendingAdoptions": "Pending Adoptions",
+        "adoptedPets": "Adopted Pets",
+        "recentOrders": "Store Orders"
+      },
+      "wallet": {
+        "title": "My Wallet",
+        "balanceLabel": "Available balance",
+        "description": "Use your wallet balance for Pet Haven store purchases.",
+        "loading": "Loading balance…",
+        "unavailable": "Unavailable",
+        "loadError": "We couldn't load your wallet balance.",
+        "shopNow": "Shop now"
+      },
+      "milestone": {
+        "title": "Adoption Milestone",
+        "text": "It's been {{days}} days since you adopted {{petName}}. Please share an update photo to reassure the center.",
+        "uploadNow": "Upload Update Now",
+        "resolvingRequest": "Preparing report…",
+        "dismiss": "Dismiss",
+        "missingRequest": "We couldn't find the adoption request linked to this pet.",
+        "requestLookupError": "We couldn't verify the adoption request for this pet.",
+        "reportSuccess": "Your pet update was sent successfully.",
+        "reportError": "We couldn't send the pet update."
+      },
+      "quickActions": {
+        "browseAnimals": {
+          "title": "Browse Animals",
+          "description": "Find your new best friend."
+        },
+        "aiDiagnosis": {
+          "title": "Smart AI Diagnosis",
+          "description": "Run a quick health check for your pet."
+        },
+        "bookVet": {
+          "title": "Book a Vet Visit",
+          "description": "Schedule a professional consultation."
+        }
+      },
+      "calendar": {
+        "careTitle": "Pet Care Calendar",
+        "loading": "Loading upcoming appointments…",
+        "loadError": "Unable to load appointments: {{message}}",
+        "emptyTitle": "No upcoming appointments",
+        "emptyText": "Your scheduled vet visits will appear here.",
+        "unknownVet": "Veterinarian",
+        "unknownStatus": "Scheduled",
+        "noReason": "No reason provided",
+        "bookVisit": "Book a vet visit"
+      },
+      "pets": {
+        "title": "My Pets",
+        "count": "{{count}} pet",
+        "count_other": "{{count}} pets",
+        "loading": "Loading pets…",
+        "loadError": "Unable to load pets: {{message}}",
+        "emptyTitle": "You haven't adopted any pets yet",
+        "emptyText": "Once you adopt a pet, it will appear here so you can track its care, vaccines, and more.",
+        "browse": "Browse pets available for adoption →",
+        "adoptedFrom": "Adopted from {{center}}",
+        "details": "View",
+        "viewProfile": "View {{name}}'s profile"
+      },
+      "wishlist": {
+        "title": "Wishlist",
+        "count": "{{count}} item",
+        "count_other": "{{count}} items",
+        "loading": "Loading your wishlist…",
+        "loadError": "Unable to load your wishlist: {{message}}",
+        "emptyTitle": "Your wishlist is empty",
+        "emptyText": "Items you save will appear here so you can find them easily later.",
+        "explore": "Explore the store",
+        "browseStore": "Browse more products →",
+        "priceUnavailable": "Price unavailable",
+        "viewProduct": "View {{name}}"
+      },
+      "milestoneModal": {
+        "close": "Close modal",
+        "title": "Share a Milestone Photo",
+        "description": "Help us celebrate {{petName}}'s adoption anniversary by sharing a quick update with the center.",
+        "healthStatus": "Health status",
+        "healthOptions": {
+          "healthy": "Healthy",
+          "good": "Good",
+          "needsAttention": "Needs attention"
+        },
+        "imageUrl": "Photo URL",
+        "imageUrlPlaceholder": "https://example.com/pet-update.jpg",
+        "imageUrlHint": "Enter a direct image URL. File upload is not available because there is no upload endpoint.",
+        "note": "Add a quick note",
+        "optional": "Optional",
+        "notePlaceholder": "How has life been with your pet?",
+        "cancel": "Cancel",
+        "sending": "Sending…",
+        "send": "Send Update"
+      }
+    },
+    "adoptionHub": {
+      "title": "Adoption Hub",
+      "subtitle": "Find your perfect companion or manage your adoption requests and success stories.",
+      "tabs": {
+        "catalog": "Pet Catalog",
+        "requests": "My Requests"
+      },
+      "loadingPets": "Loading pets…",
+      "petsError": "Unable to load pets. Please try again.",
+      "retry": "Try again",
+      "noQuizMatches": "We found recommendations, but no pets from the suggested breeds are currently available.",
+      "quizError": "Unable to get quiz recommendations.",
+      "applicationSuccess": "Your adoption application was sent successfully!",
+      "applicationError": "Unable to send your adoption application. Please try again.",
+      "ageYears": "{{count}} year",
+      "ageYears_other": "{{count}} years",
+      "available": "Available",
+      "banner": {
+        "badge": "Compatibility Quiz",
+        "title": "Find Your Perfect Match",
+        "text": "Take our 2-minute compatibility quiz to discover pets that fit your lifestyle and home.",
+        "start": "Start Quiz"
+      },
+      "catalog": {
+        "title": "All Available Pets",
+        "search": "Search breeds or names…",
+        "searchLabel": "Search available pets",
+        "filters": "Filters",
+        "results": "{{count}} pet",
+        "results_other": "{{count}} pets",
+        "species": "Species",
+        "gender": "Gender",
+        "healthStatus": "Health status",
+        "center": "Adoption center",
+        "allSpecies": "All species",
+        "allGenders": "All genders",
+        "allHealthStatuses": "All health statuses",
+        "sortBy": "Sort by",
+        "sortNameAsc": "Name: A–Z",
+        "sortNameDesc": "Name: Z–A",
+        "sortAgeAsc": "Age: youngest first",
+        "sortAgeDesc": "Age: oldest first",
+        "paginationLabel": "Pet catalog pages",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{page}} of {{pageCount}}",
+        "empty": "No available pets were returned by the backend.",
+        "noMatches": "No pets match your search and filters.",
+        "clearFilters": "Clear filters",
+        "notProvided": "Not provided",
+        "viewProfile": "View Details",
+        "adoptNow": "Adopt Now"
+      },
+      "recommended": {
+        "title": "Recommended for You",
+        "match": "{{percent}}% Match",
+        "viewProfile": "View Profile",
+        "adoptNow": "Adopt Now"
+      },
+      "requests": {
+        "title": "Adoption Request Status",
+        "loading": "Loading your adoption requests…",
+        "loadError": "Unable to load your adoption requests.",
+        "empty": "You have not submitted any adoption requests.",
+        "requestedOn": "Requested on {{date}}",
+        "dateUnavailable": "Date unavailable",
+        "score": "Application score: {{score}}",
+        "centerNotes": "Center notes: {{notes}}",
+        "statuses": {
+          "pending": "Pending Review",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "actions": {
+          "viewDetails": "View Details",
+          "feedback": "Feedback"
+        }
+      },
+      "adoptedPets": {
+        "title": "My Adopted Pets",
+        "loading": "Loading adopted pets…",
+        "loadError": "Unable to load adopted pets.",
+        "empty": "You do not have any adopted pets yet.",
+        "viewDetails": "View Pet Details"
+      },
+      "quiz": {
+        "closeQuiz": "Close quiz",
+        "close": "Close",
+        "kicker": "Compatibility Quiz",
+        "title": "Find Your Perfect Match",
+        "description": "Answer these lifestyle questions and Pet Haven will find suitable breeds using the recommendation service.",
+        "questions": {
+          "housing_type": "What type of home do you live in?",
+          "outdoor_space": "How much outdoor space do you have?",
+          "family_type": "Who lives in your household?",
+          "hours_available": "How much time can you spend with a pet each day?",
+          "weekend_time": "How much free time do you usually have on weekends?",
+          "experience_level": "What is your pet-care experience level?",
+          "training_ability": "How much training can you provide?",
+          "activity_level": "How active is your lifestyle?",
+          "noise_tolerance": "What is your tolerance for pet noise?",
+          "budget_level": "What budget level can you dedicate to pet care?",
+          "maintenance_tolerance": "How much daily maintenance are you comfortable with?",
+          "size_preference": "What pet size do you prefer?",
+          "grooming_tolerance": "How much grooming are you comfortable doing?",
+          "energy_preference": "What energy level do you prefer in a pet?",
+          "affection_preference": "How affectionate would you like your pet to be?"
+        },
+        "options": {
+          "apartment": "Apartment",
+          "house": "House",
+          "condo": "Condo",
+          "farm": "Farm",
+          "none": "None",
+          "small": "Small",
+          "medium": "Medium",
+          "large": "Large",
+          "single": "Single",
+          "couple": "Couple",
+          "family_with_children": "Family with children",
+          "low": "Low",
+          "high": "High",
+          "beginner": "Beginner",
+          "intermediate": "Intermediate",
+          "expert": "Expert",
+          "independent": "Independent",
+          "balanced": "Balanced",
+          "very_affectionate": "Very affectionate"
+        },
+        "stepTitles": {
+          "home": "Your Home",
+          "lifestyle": "Your Lifestyle",
+          "preferences": "Pet Preferences"
+        },
+        "stepOf": "Step {{current}} of {{total}}",
+        "back": "Back",
+        "next": "Next",
+        "recommendedType": "Your recommended pet type: {{animalType}}",
+        "pet": "Pet",
+        "resultSource": "These recommendations came directly from the recommendation service.",
+        "match": "{{percent}}% match",
+        "viewMatches": "View Matching Pets",
+        "cancel": "Cancel",
+        "finding": "Finding Matches…",
+        "getMatches": "Get My Matches"
+      },
+      "application": {
+        "title": "Adoption Application",
+        "subtitleWithPet": "You're one step closer to bringing {{petName}} home.",
+        "subtitle": "You're one step closer to finding a lifelong companion.",
+        "close": "Close",
+        "adopterProfile": "Adoption Profile",
+        "housingType": "Housing type",
+        "selectHousingType": "Select housing type",
+        "house": "House",
+        "apartment": "Apartment",
+        "otherHousing": "Other",
+        "experienceLevel": "Pet-care experience",
+        "selectExperience": "Select experience level",
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "expert": "Expert",
+        "freeHours": "Free hours per day",
+        "hasPetBefore": "I have cared for a pet before",
+        "basicInfo": "Basic Information",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "John Doe",
+        "phone": "Phone Number",
+        "phonePlaceholder": "+1 (555) 000-0000",
+        "email": "Email Address",
+        "emailPlaceholder": "john@example.com",
+        "dob": "Date of Birth",
+        "previousExperience": "Do you have previous experience with adoption?",
+        "identity": "Proof of Identity",
+        "identityUpload": "Click or drag a photo ID or passport to upload",
+        "identityHint": "PDF, JPG, or PNG (max. 5MB)",
+        "references": "Personal References",
+        "reference": "Reference {{number}}",
+        "namePlaceholder": "Name",
+        "referencePhonePlaceholder": "Phone",
+        "notes": "Additional Notes (Optional)",
+        "notesPlaceholder": "Tell us why you want to adopt this pet or about any special requirements…",
+        "consents": "Mandatory Consents",
+        "termsConsent": "I agree to the adoption terms and privacy policy.",
+        "careConsent": "I commit to the lifelong care and well-being of this animal.",
+        "visitConsent": "I consent to a home visit by Pet Haven staff before final delivery.",
+        "followUpConsent": "I commit to uploading a health and well-being report every 6 months as part of the post-adoption follow-up program.",
+        "cancel": "Cancel",
+        "submitting": "Submitting…",
+        "submit": "Submit Application"
+      }
+    },
+    "applicationDetails": {
+      "back": "Back to My Requests",
+      "title": "Application Details",
+      "reference": "Reference #{{id}}",
+      "loading": "Loading application details…",
+      "retry": "Try again",
+      "loadErrorTitle": "Unable to load this request",
+      "loadError": "The request could not be loaded.",
+      "notFoundTitle": "Request not found",
+      "notFound": "This adoption request does not exist.",
+      "forbiddenTitle": "Access denied",
+      "forbidden": "This adoption request belongs to another adopter.",
+      "notProvided": "Not provided",
+      "invalidRequestTitle": "Invalid request",
+      "invalidRequest": "This application-details link does not contain a valid request ID.",
+      "statuses": {
+        "pending": "Pending Review",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "fields": {
+        "species": "Species",
+        "breed": "Breed",
+        "age": "Age",
+        "gender": "Gender",
+        "healthStatus": "Health status",
+        "center": "Adoption center"
+      },
+      "request": {
+        "title": "Request information",
+        "submittedAt": "Submitted at",
+        "score": "Application score",
+        "status": "Backend status",
+        "centerNotes": "Center notes"
+      },
+      "animal": {
+        "match": "{{percent}}% Match",
+        "yearsOld": "{{count}} Years Old",
+        "viewProfile": "View Profile",
+        "imageAlt": "{{name}}, a {{breed}}"
+      },
+      "bottomNav": {
+        "home": "Home",
+        "adopt": "Adopt",
+        "shop": "Shop",
+        "health": "AI Health"
+      }
+    },
+    "petProfile": {
+      "back": "Back",
+      "backToCatalog": "Back to Pet Catalog",
+      "loading": "Loading pet details…",
+      "loadError": "Unable to load this pet's details.",
+      "missingId": "No pet was selected.",
+      "notFound": "This pet could not be found.",
+      "browsePets": "Browse available pets",
+      "notProvided": "Not provided",
+      "adopt": "Adopt Now",
+      "center": "Adoption Center",
+      "description": "About this pet",
+      "imageAlt": "{{name}}, a {{breed}}",
+      "tabs": {
+        "medical": "Medical History",
+        "vaccinations": "Vaccinations"
+      },
+      "noVaccinations": "No vaccination records yet.",
+      "vaccinationsPlaceholder": "Vaccination records will appear here.",
+      "editProfile": "Edit Profile",
+      "age": "Age",
+      "weight": "Weight",
+      "weightValue": "{{value}} kg",
+      "sex": "Sex",
+      "medicalTimeline": "Medical Timeline",
+      "upcoming": "Upcoming",
+      "addAppointment": "Add appointment",
+      "health": {
+        "Healthy": "Healthy"
+      },
+      "medicalEntries": {
+        "annualTitle": "Annual Checkup",
+        "annualDate": "Oct 12, 2023",
+        "annualDescription": "General wellness exam. Weight is stable. Dental health is good; continuing the current diet was recommended.",
+        "earTitle": "Minor Ear Infection",
+        "earDate": "Jul 04, 2023",
+        "earDescription": "Otomax drops were prescribed for 7 days. Follow-up confirmed recovery."
+      },
+      "appointment": {
+        "title": "Dental Cleaning",
+        "month": "Nov",
+        "location": "Pet Haven Clinic"
+      }
+    },
+    "store": {
+      "hero": {
+        "tag": "Spring Sale Event",
+        "title": "Pet Care Essentials",
+        "description": "Stock up on premium nutrition, engaging toys, and wellness products. Enjoy up to 30% off selected brands.",
+        "cta": "Shop Now",
+        "imageAlt": "Happy pets together"
+      },
+      "trust": {
+        "shipping": {
+          "title": "Fast, Free Delivery",
+          "description": "On orders over $50"
+        },
+        "vet": {
+          "title": "Vet-Approved",
+          "description": "Expertly curated selection"
+        },
+        "returns": {
+          "title": "Easy Returns",
+          "description": "30-day money-back guarantee"
+        }
+      },
+      "categories": {
+        "title": "Shop by Category",
+        "clear": "Clear filter"
+      },
+      "messages": {
+        "loginRequired": "You must be logged in.",
+        "addedToCart": "Added to cart successfully.",
+        "cartError": "Unable to add the product. Please try again later.",
+        "addedToWishlist": "Added to your wishlist successfully.",
+        "removedFromWishlist": "Removed from your wishlist successfully.",
+        "wishlistError": "Unable to update your wishlist."
+      },
+      "loadingProducts": "Loading products…",
+      "productsError": "We couldn't load the products. Please try again.",
+      "emptyProducts": "No products match the selected filters.",
+      "results": "Showing {{from}}-{{to}} of {{total}} products",
+      "sort": {
+        "label": "Sort by:",
+        "popular": "Most Popular",
+        "priceAsc": "Price: Low to High",
+        "priceDesc": "Price: High to Low",
+        "rating": "Highest Rated",
+        "newest": "Newest Arrivals"
+      },
+      "sidebar": {
+        "filters": "Filters",
+        "openFilters": "Open filters",
+        "closeFilters": "Close filters",
+        "clearAll": "Clear All",
+        "categories": "Categories",
+        "priceRange": "Price Range",
+        "min": "Min",
+        "max": "Max",
+        "minPrice": "Minimum price",
+        "maxPrice": "Maximum price",
+        "brands": "Brands",
+        "orders": "My Orders"
+      },
+      "productCard": {
+        "addToCart": "Add to cart",
+        "wishlist": "Toggle wishlist",
+        "save": "Save {{percent}}%",
+        "lowStock": "Low Stock",
+        "imageUnavailable": "Image unavailable"
+      },
+      "order": {
+        "imageAlt": "Order item",
+        "statuses": {
+          "Pending": "Pending",
+          "Processing": "Processing",
+          "Shipped": "Shipped",
+          "Completed": "Completed",
+          "Cancelled": "Cancelled",
+          "Delivered": "Delivered"
+        }
+      }
+    },
+    "product": {
+      "backToStore": "Back to Store",
+      "detailsTitle": "Product Details",
+      "loading": "Loading product…",
+      "loadError": "Couldn't load product details.",
+      "reviews": "{{rating}}/5 ({{count}} reviews)",
+      "loginRequired": "Please sign in before adding a product to your cart.",
+      "addError": "Something went wrong. Please try again.",
+      "adding": "Adding…",
+      "addToCart": "Add to Cart",
+      "addSuccess": "Product added to your cart.",
+      "noDescription": "No description is available for this product.",
+      "imageUnavailable": "Product image unavailable",
+      "inStock": "{{count}} in stock",
+      "outOfStock": "Out of stock",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "vetApproved": "Vet-Approved",
+      "galleryLoading": "Loading gallery…",
+      "galleryError": "Couldn't load product images.",
+      "imageAlt": "Product image",
+      "bestseller": "Bestseller",
+      "thumbnailAlt": "Product thumbnail {{number}}",
+      "review": {
+        "title": "Ratings & Reviews",
+        "subtitle": "Share your experience and help other pet adopters choose confidently.",
+        "reviewCount": "{{count}} review",
+        "reviewCount_other": "{{count}} reviews",
+        "formTitle": "Write a review",
+        "selectRating": "Select your rating",
+        "starLabel": "{{count}} star",
+        "starLabel_other": "{{count}} stars",
+        "commentLabel": "Your comment",
+        "optional": "Optional",
+        "commentPlaceholder": "What did you like or dislike about this product?",
+        "characterCount": "{{count}}/{{max}} characters",
+        "submit": "Submit review",
+        "submitting": "Submitting…",
+        "success": "Your review was submitted successfully.",
+        "ratingRequired": "Please select a star rating.",
+        "loginRequired": "Please sign in with an adopter account to submit a review.",
+        "alreadyRated": "You have already reviewed this product.",
+        "submitError": "We couldn't submit your review. Please try again.",
+        "loading": "Loading reviews…",
+        "loadError": "We couldn't load the reviews.",
+        "empty": "No reviews yet. Be the first to review this product.",
+        "anonymous": "Pet Adopter"
+      },
+      "accordion": {
+        "ingredients-nutrition": {
+          "title": "Ingredients & Nutrition",
+          "description": "Made with high-quality real salmon as the first ingredient, this grain-free kibble provides essential amino acids for strong muscles. Sweet potatoes and peas provide digestible energy alongside vitamins, minerals, and antioxidants.",
+          "facts": [
+            {
+              "label": "Crude Protein (min)",
+              "value": "30%"
+            },
+            {
+              "label": "Crude Fat (min)",
+              "value": "15%"
+            },
+            {
+              "label": "Crude Fiber (max)",
+              "value": "4.5%"
+            },
+            {
+              "label": "Moisture (max)",
+              "value": "10%"
+            }
+          ]
+        },
+        "feeding-guide": {
+          "title": "Feeding Guide",
+          "description": "Adjust feeding amounts to maintain an optimal weight. Ask your veterinarian if you are unsure. Transition over 7 days by gradually increasing the new food and decreasing the old food."
+        },
+        "storage-instructions": {
+          "title": "Storage Instructions",
+          "description": "Store in a cool, dry place. Keep the bag securely sealed after opening to maintain freshness and protect it from pests."
+        }
+      }
+    },
+    "cart": {
+      "loading": "Loading your cart…",
+      "retry": "Try again",
+      "empty": "Your cart is empty.",
+      "emptyDescription": "You haven't added any products yet. Browse the store to find something your pet will love.",
+      "browseStore": "Browse Store",
+      "backToStore": "Back to store",
+      "title": "Your Cart",
+      "itemCount": "{{count}} items",
+      "remove": "Remove",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity",
+      "loginRequired": "Please sign in to view your cart.",
+      "signIn": "Sign in",
+      "summary": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Estimated Shipping",
+      "tax": "Estimated Tax",
+      "total": "Total",
+      "checkout": "Proceed to Checkout",
+      "clear": "Clear cart",
+      "secure": "Secure SSL Encrypted Checkout"
+    },
+    "checkout": {
+      "loading": "Loading checkout…",
+      "cartEmpty": "Your cart is empty.",
+      "paymentFailed": "Order #{{orderId}} was created, but payment failed: {{message}}",
+      "goBack": "Go back",
+      "title": "Secure Checkout",
+      "encryption": "256-bit SSL encryption applied.",
+      "paymentMethod": "Payment Method",
+      "shamCashLogo": "ShamCash logo",
+      "cardNumber": "Card Number",
+      "expiryDate": "Expiry Date",
+      "expiryPlaceholder": "MM / YY",
+      "cvv": "CVV",
+      "nameOnCard": "Name on Card",
+      "namePlaceholder": "John Doe",
+      "summary": "Order Summary",
+      "quantity": "Qty: {{count}}",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "taxes": "Taxes",
+      "total": "Total",
+      "processing": "Processing…",
+      "retryPayment": "Retry Payment",
+      "payNow": "Pay Now",
+      "secure": "Secure SSL Encrypted Checkout",
+      "terms": "By clicking “Pay Now”, you agree to our Terms of Service and Privacy Policy."
+    },
+    "orders": {
+      "loading": "Loading order…",
+      "loadError": "Unable to load this order.",
+      "summary": "Order Summary",
+      "confirmed": "Order Confirmed!",
+      "thankYou": "Thank you for your order, {{name}}!",
+      "thankYouGeneric": "Thank you for your order!",
+      "number": "Order #{{number}}",
+      "copyNumber": "Copy order number",
+      "estimatedDelivery": "Estimated Delivery",
+      "deliveryPending": "Delivery estimate pending",
+      "shippingAddress": "Shipping Address",
+      "addressUnavailable": "Shipping address unavailable",
+      "size": "Size: {{value}}",
+      "color": "Color: {{value}}",
+      "quantity": "Qty: {{count}}",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "taxes": "Taxes",
+      "total": "Total",
+      "continueShopping": "Continue Shopping",
+      "viewHistory": "View Order History",
+      "details": "Order Details",
+      "close": "Close order details",
+      "orderId": "Order ID",
+      "datePlaced": "Date Placed",
+      "itemsTitle": "Items in this Order",
+      "itemCount": "{{count}} items",
+      "downloadInvoice": "Download Invoice",
+      "buyAgain": "Buy Again",
+      "statuses": {
+        "Pending": "Pending",
+        "Processing": "Processing",
+        "Shipped": "Shipped",
+        "Completed": "Completed",
+        "Cancelled": "Cancelled",
+        "Delivered": "Delivered"
+      },
+      "shippingTypes": {
+        "standard_shipping": "Standard Shipping",
+        "express_shipping": "Express Shipping",
+        "free_shipping": "Free Shipping"
+      }
+    },
+    "health": {
+      "historyTitle": "Chat sessions",
+      "sessionsTitle": "Chat sessions",
+      "newChat": "New chat",
+      "recentChats": "Recent chats",
+      "noSessions": "No chat sessions yet.",
+      "now": "Now",
+      "moreOptions": "More options",
+      "attach": "Attach a file",
+      "placeholder": "Ask about your pet's health…",
+      "send": "Send message",
+      "disclaimer": "This assistant does not replace professional veterinary care.",
+      "emptyTitle": "How can I help with your pet today?",
+      "emptyDescription": "Describe a symptom, behavior, or health concern to start a conversation.",
+      "assistant": {
+        "name": "Health Assistant",
+        "status": "Online"
+      },
+      "history": {
+        "1": {
+          "title": "Daisy's Limp",
+          "type": "AI Check",
+          "date": "Oct 12"
+        },
+        "2": {
+          "title": "Luna's Sneezing",
+          "type": "Vet Visit",
+          "date": "Sep 5"
+        },
+        "3": {
+          "title": "Annual Boosters",
+          "type": "Routine",
+          "date": "Aug 20"
+        }
+      },
+      "pets": {
+        "daisy": {
+          "breed": "Beagle"
+        },
+        "luna": {
+          "breed": "Mixed Cat"
+        }
+      },
+      "messages": {
+        "1": "Hi! I'm here to help you check on Daisy. Can you describe what you've noticed about her limp?",
+        "2": "She started limping on her back right leg this morning after her walk. She still eats fine and seems happy otherwise."
+      }
+    },
+    "vets": {
+      "retry": "Try again",
+      "tabs": {
+        "book": "Book an Appointment",
+        "visits": "My Visits"
+      },
+      "hub": {
+        "eyebrow": "Veterinary care",
+        "title": "Find a Veterinarian",
+        "subtitle": "Discover trusted professional veterinary care near you and book an appointment with a verified clinic.",
+        "searchPlaceholder": "Search by vet, clinic, address, or specialization...",
+        "useLocation": "Use my location",
+        "locating": "Locating…",
+        "locationReady": "Location ready",
+        "locationUnsupported": "Location is not supported by this browser.",
+        "locationDenied": "Location permission was denied. You can still search and sort without distance.",
+        "locationUnavailable": "Your location could not be determined. Please try again.",
+        "locationPlaceholder": "Location e.g. Mezzeh",
+        "search": "Search",
+        "all": "All",
+        "availableToday": "Available Today",
+        "myAppointments": "My Appointments",
+        "sortBy": "Sort by:",
+        "highestRated": "Highest Rated",
+        "nearest": "Nearest",
+        "experienced": "Most Experienced",
+        "loading": "Loading veterinarians…",
+        "empty": "No veterinarians match your search.",
+        "whyTitle": "Why Choose Our Vets",
+        "values": {
+          "verified": {
+            "title": "Verified Professionals",
+            "text": "Every veterinarian is reviewed for licensing and clinic readiness."
+          },
+          "facilities": {
+            "title": "Modern Facilities",
+            "text": "Partner clinics provide routine care, diagnostics, and treatment planning."
+          },
+          "ai": {
+            "title": "AI-Powered Diagnostics",
+            "text": "Clinical workflows can pair with smart symptom insights where available."
+          }
+        },
+        "storiesTitle": "Recent Success Stories",
+        "storyText": "Fast scheduling, clear care instructions, and a calm clinic experience."
+      },
+      "card": {
+        "verified": "Verified",
+        "notRated": "Not rated",
+        "experience": "{{years}} years experience",
+        "license": "License {{license}}",
+        "clinicUnavailable": "Clinic information not provided",
+        "addressUnavailable": "Clinic address not provided",
+        "specializationUnavailable": "Specialization not provided",
+        "away": "{{distance}} km away",
+        "requestAppointment": "Request Appointment"
+      },
+      "visits": {
+        "title": "My Visits",
+        "subtitle": "Appointment access for your adopter account.",
+        "loading": "Loading visits…",
+        "upcoming": "Upcoming Appointments",
+        "cancelledSuccess": "Appointment cancelled successfully.",
+        "booked": "Appointment request #{{id}} was submitted successfully.",
+        "cancelLatest": "Cancel this appointment request",
+        "cancelling": "Cancelling…",
+        "backToVets": "Browse Veterinarians",
+        "history": "Visit History",
+        "showLess": "Show Less",
+        "viewRecords": "View Full Records",
+        "empty": "No visits found. Book your first appointment from the Vet page.",
+        "veterinarian": "Veterinarian",
+        "dateTime": "Date & Time",
+        "reschedule": "Reschedule",
+        "cancel": "Cancel",
+        "cancelled": "Cancelled",
+        "completed": "Completed",
+        "withVet": "{{date}} with {{vet}}",
+        "noUpcoming": "You have no upcoming appointments.",
+        "noHistory": "You have no completed or cancelled appointments.",
+        "details": "Details",
+        "loadingDetails": "Loading appointment details…",
+        "appointmentId": "Appointment ID",
+        "pet": "Pet",
+        "reason": "Reason",
+        "rescheduling": "Rescheduling…",
+        "saveSchedule": "Save new time",
+        "rescheduledSuccess": "Appointment rescheduled successfully.",
+        "rateVet": "Rate Vet",
+        "rating": "Rating",
+        "stars_one": "{{count}} star",
+        "stars_other": "{{count}} stars",
+        "review": "Review (optional)",
+        "submitRating": "Submit review",
+        "submittingRating": "Submitting…",
+        "ratingSuccess": "Your Vet review was submitted successfully."
+      },
+      "booking": {
+        "loading": "Loading appointment…",
+        "back": "Back to Book an Appointment",
+        "petService": "1. Pet & Service",
+        "done": "Done",
+        "edit": "Edit",
+        "selectedPet": "Selected Pet",
+        "petOption": "{{name}} the {{breed}}",
+        "selectedService": "Selected Service",
+        "dateTime": "2. Choose Date & Time",
+        "summary": "Scheduling Summary",
+        "veterinarian": "Veterinarian",
+        "service": "Service",
+        "date": "Date",
+        "time": "Time",
+        "ratingNote": "Ratings and feedback are unlocked only after a completed visit.",
+        "availabilityLoading": "Loading available times…",
+        "availabilityEmpty": "No available appointments on this date.",
+        "availabilityError": "Unable to load available times.",
+        "noPets": "No adopted pets are available for booking",
+        "confirm": "Confirm Booking",
+        "protected": "Your data is protected and secure.",
+        "steps": {
+          "service": "Service",
+          "date": "Date",
+          "confirm": "Confirm"
+        },
+        "services": {
+          "general": "General Consultation",
+          "annual": "Annual Check-up & Vaccinations",
+          "dental": "Dental Care",
+          "emergency": "Emergency Review"
+        },
+        "previousDates": "Previous dates",
+        "nextDates": "Next dates",
+        "weekdays": [
+          "Su",
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr",
+          "Sa"
+        ],
+        "availableTimes": "Available Times",
+        "onDate": "on {{date}}"
+      },
+      "confirm": {
+        "missing": "Appointment details are missing. Please choose a veterinarian and booking time again.",
+        "back": "Back to Book an Appointment",
+        "title": "Review & Confirm",
+        "subtitle": "Please review the details below before finalizing your appointment.",
+        "when": "When",
+        "where": "Where",
+        "patientService": "Patient & Service",
+        "patientMeta": "{{breed}} - {{gender}} - {{age}}",
+        "requestedService": "Requested service",
+        "policyTitle": "Cancellation Policy",
+        "policyText": "You can cancel or reschedule this appointment anytime from My Visits. The clinic does not publish a cancellation deadline, so contact them directly for urgent schedule changes.",
+        "confirming": "Confirming…",
+        "action": "Confirm Appointment"
+      },
+      "statuses": {
+        "Pending": "Pending",
+        "Confirmed": "Confirmed",
+        "Accepted": "Accepted",
+        "Rejected": "Rejected",
+        "Completed": "Completed",
+        "Cancelled": "Cancelled"
+      },
+      "notScheduled": "Not scheduled"
+    }
+  },
+  "hero": {
+    "badge": "Your Pet's Best Life Starts Here",
+    "titlePrefix": "Every Paw Deserves a ",
+    "titleHighlight": "Happy Haven.",
+    "description": "The all-in-one platform for pet adoption, supplies, veterinary care, and AI-powered health insights. Experience a seamless journey for you and your furry companions.",
+    "ctaAdopt": "Adopt a Friend",
+    "ctaShop": "Shop Supplies",
+    "stats": [
+      {
+        "value": "500+",
+        "label": "Pets Adopted"
+      },
+      {
+        "value": "4.9/5",
+        "label": "Top Rated Vets"
+      }
+    ],
+    "imageAlt": "A happy golden retriever running through a sunny green park.",
+    "badgeTitle": "AI Health Checked",
+    "badgeSubtitle": "100% Safe & Healthy"
+  },
+  "impactStats": {
+    "items": [
+      {
+        "value": "12,000+",
+        "label": "Pets Rescued"
+      },
+      {
+        "value": "2,500+",
+        "label": "Verified Vets"
+      },
+      {
+        "value": "98%",
+        "label": "Happy Rehoming"
+      }
+    ]
+  },
+  "categories": {
+    "title": "Everything You Need",
+    "items": [
+      {
+        "title": "Adopt a Pet",
+        "description": "Find your perfect companion from local shelters."
+      },
+      {
+        "title": "Pet Supplies",
+        "description": "High-quality food, toys, and accessories for your pet."
+      },
+      {
+        "title": "Vet Consults",
+        "description": "Book appointments with top-rated local veterinarians."
+      },
+      {
+        "title": "AI Health Checker",
+        "description": "Get instant AI-powered health insights for peace of mind."
+      }
+    ]
+  },
+  "featuredPets": {
+    "title": "Meet Your New Best Friend",
+    "viewAll": "View all pets →",
+    "cta": "View Profile",
+    "pets": [
+      {
+        "name": "Buddy",
+        "meta": "2 yrs • Beagle Mix",
+        "alt": "Beagle puppy"
+      },
+      {
+        "name": "Luna",
+        "meta": "1 yr • Domestic Shorthair",
+        "alt": "Orange tabby cat"
+      },
+      {
+        "name": "Charlie",
+        "meta": "3 mos • Golden Retriever",
+        "alt": "Golden Retriever puppy"
+      },
+      {
+        "name": "Milo",
+        "meta": "4 yrs • Maine Coon",
+        "alt": "Maine Coon cat"
+      }
+    ]
+  },
+  "trendingProducts": {
+    "title": "Trending in Shop",
+    "viewAll": "View all products →",
+    "sale": "Sale",
+    "addToCart": "Add to cart",
+    "products": [
+      {
+        "name": "Premium Kibble",
+        "alt": "Premium Pet Food"
+      },
+      {
+        "name": "Tough Chew Bone",
+        "alt": "Interactive Dog Toy"
+      },
+      {
+        "name": "GPS Tracker Collar",
+        "alt": "Smart Pet Collar"
+      },
+      {
+        "name": "Luxury Cat Tower",
+        "alt": "Cat Tree"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "steps": [
+      {
+        "title": "Search",
+        "description": "Browse through hundreds of verified pets looking for a home."
+      },
+      {
+        "title": "Connect",
+        "description": "Reach out to shelters and arrange a meet-and-greet."
+      },
+      {
+        "title": "Bring Home",
+        "description": "Complete the adoption process and welcome your new friend."
+      }
+    ]
+  },
+  "events": {
+    "title": "Upcoming Pet Events",
+    "viewAll": "View full calendar →",
+    "items": [
+      {
+        "title": "Mega Adoption Drive",
+        "time": "10:00 AM - 4:00 PM",
+        "location": "Central Park Pavilion",
+        "cta": "Learn more"
+      },
+      {
+        "title": "Puppy Training Workshop",
+        "time": "1:00 PM - 3:00 PM",
+        "location": "Pet Haven Center",
+        "cta": "Register now"
+      },
+      {
+        "title": "Senior Pet Care Seminar",
+        "time": "6:00 PM - 7:30 PM",
+        "location": "Online Webinar",
+        "cta": "RSVP"
+      }
+    ]
+  },
+  "vet": {
+    "badge": "Certified Care",
+    "titlePrefix": "Meet Our ",
+    "titleHighlight": "Certified Veterinary Experts.",
+    "description": "Your pet's health is in safe hands. Every veterinarian on our platform is strictly certified because their qualifications have been meticulously verified for high-quality care.",
+    "features": [
+      "Background Checked",
+      "License Verified",
+      "Top-Rated Facilities"
+    ],
+    "cta": "Find a Vet Near You",
+    "imageAlt": "Professional female veterinarian in a modern clinic"
+  },
+  "blog": {
+    "title": "Health & Care Tips",
+    "viewAll": "Read more articles →",
+    "readArticle": "Read article",
+    "articles": [
+      {
+        "tag": "Seasonal Care",
+        "title": "Summer Pet Care: Keeping Your Furry Friend Cool",
+        "description": "Essential tips to prevent heatstroke and ensure your pet stays comfortable during the hot summer months.",
+        "alt": "Dog panting in summer"
+      },
+      {
+        "tag": "Behavior",
+        "title": "Understanding Your Cat's Body Language",
+        "description": "Decode what your feline friend is trying to tell you through their tail movements, ear positions, and posture.",
+        "alt": "Cat looking curiously"
+      },
+      {
+        "tag": "Health",
+        "title": "When to Use the AI Health Checker vs. Visiting a Vet",
+        "description": "A practical guide on utilizing our AI tools for minor concerns and recognizing emergencies that require immediate care.",
+        "alt": "Vet examining dog"
+      },
+      {
+        "tag": "AI Assistant",
+        "title": "Personalized Care with AI Chat",
+        "description": "Chat with our intelligent assistant for instant advice on nutrition, training, and daily wellness habits tailored to your pet."
+      }
+    ]
+  },
+  "testimonials": {
+    "quote": "\"Adopting Bella through Pet Haven was the best decision of our lives. The process was incredibly smooth, and being able to buy all her supplies in the same place saved us so much time!\"",
+    "author": "Sarah J.",
+    "role": "Proud owner of Bella"
+  },
+  "newsletter": {
+    "title": "Join the Haven Community",
+    "description": "Get weekly pet care tips, exclusive shop discounts, and inspiring adoption stories delivered right to your inbox.",
+    "placeholder": "Enter your email address",
+    "cta": "Subscribe",
+    "privacy": "We respect your privacy. No spam, ever."
+  },
+  "footer": {
+    "logoAlt": "Pet Haven Logo",
+    "copyright": "© 2024 Pet Haven. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "contactUs": "Contact Us"
+  },
+  "petModal": {
+    "description": "{{name}} is looking for a loving forever home. Reach out to learn more about adoption steps, health records, and how to schedule a meet-and-greet.",
+    "viewFullProfile": "View Full Profile",
+    "close": "Close"
+  },
+  "productModal": {
+    "description": "A customer favorite with {{reviews}} reviews. Quality checked and ready to ship to your pet's new home.",
+    "addToCart": "Add to Cart",
+    "close": "Close"
+  },
+  "authModal": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "welcomeBack": "Welcome Back",
+    "signInSubtitle": "Sign in to continue to Pet Haven",
+    "joinPetHaven": "Join Pet Haven",
+    "signUpSubtitleStep1": "Create your account and start your journey",
+    "signUpSubtitleStep2": "One last step — pick your role",
+    "googleSignIn": "Sign in with Google",
+    "googleSignUp": "Sign up with Google",
+    "or": "or",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "signingIn": "Signing In...",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "fullNamePlaceholder": "Full Name",
+    "usernamePlaceholder": "Username",
+    "phonePlaceholder": "Phone Number",
+    "next": "Next",
+    "signingUp": "Signing Up...",
+    "iAmA": "I am a...",
+    "back": "Back",
+    "selectRoleError": "Please select your role",
+    "close": "Close",
+    "roles": [
+      {
+        "label": "Pet Adopter",
+        "description": "Find and adopt a pet"
+      },
+      {
+        "label": "Adoption Center",
+        "description": "List pets for adoption"
+      },
+      {
+        "label": "Vet",
+        "description": "Offer veterinary services"
+      },
+      {
+        "label": "Admin",
+        "description": "Manage the platform"
+      }
+    ]
+  },
+  "contactModal": {
+    "title": "Contact Us",
+    "successMessage": "Message sent!",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "Email",
+    "subjectPlaceholder": "Subject",
+    "messagePlaceholder": "Message",
+    "send": "Send",
+    "close": "Close"
+  },
+  "articleModal": {
+    "close": "Close"
+  },
+  "center": {
+    "header": {
+      "logoAlt": "Pet Haven Logo",
+      "nav": {
+        "dashboard": "Dashboard",
+        "adoptions": "Adoptions",
+        "inventory": "Inventory",
+        "vaccinations": "Reports",
+        "reviews": "Reviews"
+      },
+      "language": "Change Language",
+      "notifications": "Notifications",
+      "userMenu": "User Menu",
+      "avatarAlt": "User Avatar",
+      "profileLink": "Profile",
+      "logout": "Logout",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "status": {
+      "Available": "Available",
+      "Pending": "Pending",
+      "Adopted": "Adopted",
+      "Active": "Active",
+      "Inactive": "Inactive",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "Completed": "Completed",
+      "Processing": "Processing",
+      "Due Soon": "Due Soon",
+      "Overdue": "Overdue"
+    },
+    "petOptions": {
+      "species": {
+        "Dog": "Dog",
+        "Cat": "Cat",
+        "Bird": "Bird",
+        "Small Mammal": "Small Mammal",
+        "Other": "Other"
+      },
+      "sizes": {
+        "Small (Under 25 lbs)": "Small (Under 25 lbs)",
+        "Medium (25-60 lbs)": "Medium (25-60 lbs)",
+        "Large (61-100 lbs)": "Large (61-100 lbs)",
+        "Extra Large (Over 100 lbs)": "Extra Large (Over 100 lbs)"
+      },
+      "healthStatuses": {
+        "Healthy": "Healthy",
+        "Minor Issues": "Minor Issues",
+        "Requires Treatment": "Requires Treatment",
+        "Critical": "Critical"
+      },
+      "genders": {
+        "Male": "Male",
+        "Female": "Female",
+        "Unknown": "Unknown"
+      },
+      "ageUnits": {
+        "years": "Years",
+        "months": "Months",
+        "weeks": "Weeks"
+      },
+      "vaccines": {
+        "Rabies": "Rabies",
+        "DHPP": "DHPP",
+        "Bordetella": "Bordetella"
+      }
+    },
+    "productCategories": {
+      "Food": "Food",
+      "Toys": "Toys",
+      "Bedding": "Bedding",
+      "Medical": "Medical"
+    },
+    "profile": {
+      "loading": "Loading center profile…",
+      "backToDashboard": "Back to Dashboard",
+      "title": "Center Profile",
+      "subtitle": "Manage your adoption center's public information, working hours, and operational details.",
+      "basicInfo": {
+        "title": "Basic Information",
+        "centerName": "Center Name",
+        "centerNamePlaceholder": "Your adoption center's name",
+        "licenseNumber": "License Number",
+        "licenseNumberPlaceholder": "Your center's official license number",
+        "phoneNumber": "Phone Number",
+        "phoneNumberPlaceholder": "Contact phone number for adopters",
+        "physicalAddress": "Physical Address",
+        "addressPlaceholder": "Street address, city, and state",
+        "useGps": "Use GPS",
+        "locating": "Locating...",
+        "gpsUnsupported": "Location services are not supported by your browser.",
+        "gpsError": "Could not detect your address. Please enter it manually."
+      },
+      "security": {
+        "title": "Security",
+        "password": "Password",
+        "passwordPlaceholder": "Enter new password",
+        "passwordHint": "Keep your account secure with a strong password."
+      },
+      "mission": {
+        "title": "Mission & Background",
+        "description": "Center Description",
+        "descriptionHint": "Briefly describe your center's mission. Max 500 characters."
+      },
+      "workingHours": {
+        "title": "Working Hours",
+        "closed": "Closed"
+      },
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "saveSuccess": "Center profile updated successfully.",
+      "saveError": "Failed to save changes. Please try again."
+    },
+    "dashboard": {
+      "loading": "Loading dashboard…",
+      "welcome": {
+        "titlePrefix": "Welcome back, ",
+        "defaultName": "Haven Manager",
+        "subtitle": "Here's what's happening at the adoption center today."
+      },
+      "actions": {
+        "exportReport": "Export Report",
+        "addNewPet": "Add New Pet"
+      },
+      "kpi": {
+        "availablePets": "Available Pets",
+        "pendingRequests": "Pending Requests",
+        "successfulAdoptions": "Successful Adoptions",
+        "storeSales": "Store Sales (Today)"
+      },
+      "alerts": {
+        "title": "Alerts & Follow-ups",
+        "subtitle": "Immediate administrative attention required for pet health and compliance.",
+        "vaccinationsDue": "Vaccinations Due",
+        "overdueReports": "Overdue Reports",
+        "contact": "Contact",
+        "sendReminder": "Send Reminder"
+      },
+      "activity": {
+        "title": "Recent Activity",
+        "viewAll": "View all applications",
+        "match": "Match"
+      },
+      "wallet": {
+        "title": "Wallet",
+        "balanceLabel": "Available Balance",
+        "viewAll": "View All Transactions",
+        "noTransactions": "No transactions yet.",
+        "credit": "Credit",
+        "debit": "Debit"
+      },
+      "obligations": {
+        "title": "Completed Obligations",
+        "viewAll": "View All Obligations"
+      },
+      "orders": {
+        "title": "Latest Store Orders",
+        "seeAll": "See all",
+        "columns": {
+          "orderId": "Order ID",
+          "customer": "Customer",
+          "items": "Items",
+          "total": "Total",
+          "status": "Status"
+        }
+      },
+      "export": {
+        "metric": "Metric",
+        "value": "Value",
+        "trend": "Trend"
+      }
+    },
+    "reviews": {
+      "loading": "Loading product reviews…",
+      "header": {
+        "title": "Product Reviews",
+        "subtitle": "Customer feedback on your products"
+      },
+      "overallRating": {
+        "title": "Overall Rating",
+        "basedOn": "Based on {{count}} reviews"
+      },
+      "filters": {
+        "allReviews": "All Reviews",
+        "stars": "{{count}} stars",
+        "searchPlaceholder": "Search by product, reviewer, or comment..."
+      },
+      "card": {
+        "ratingOnly": "Rating only"
+      },
+      "empty": "No product reviews yet.",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "reviewsWord": "reviews"
+      }
+    },
+    "inventory": {
+      "loading": "Loading inventory…",
+      "title": "Inventory Management",
+      "subtitle": {
+        "animals": "Oversee shelter residents and retail supplies.",
+        "products": "Manage adoption center supplies and merchandise."
+      },
+      "addButton": {
+        "animals": "Add New Record",
+        "products": "Add New Product"
+      },
+      "tabs": {
+        "animals": "Animals",
+        "products": "Products"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "entries": "entries",
+        "prev": "Prev",
+        "next": "Next"
+      },
+      "edit": "Edit",
+      "delete": "Delete",
+      "product": {
+        "quickStats": {
+          "title": "Quick Stats",
+          "totalStockValue": "Total Stock Value",
+          "lowStockItems": "Low Stock Items",
+          "totalSalesToday": "Total Sales (Today)"
+        },
+        "categories": {
+          "title": "Categories"
+        },
+        "recentSales": {
+          "title": "Recent Product Sales",
+          "viewAll": "View All Sales"
+        },
+        "toolbar": {
+          "searchPlaceholder": "Search products...",
+          "categoryAll": "All Categories",
+          "ratingAll": "All Ratings",
+          "rating4": "4 Stars & Up",
+          "rating3": "3 Stars & Up",
+          "rating2": "2 Stars & Up"
+        },
+        "columns": {
+          "name": "Product Name",
+          "category": "Category",
+          "inStock": "In Stock",
+          "price": "Price",
+          "rating": "Rating",
+          "actions": "Actions"
+        },
+        "low": "(Low)",
+        "empty": "No products found."
+      },
+      "adoption": {
+        "quickStats": {
+          "title": "Quick Stats",
+          "totalAnimals": "Total Animals",
+          "lowStockAlerts": "Low Stock Alerts",
+          "pendingAdoptions": "Pending Adoptions"
+        },
+        "activeRequests": {
+          "title": "Active Requests"
+        },
+        "recentAdoptions": {
+          "title": "Recent Adoptions",
+          "viewAll": "View All Adoptions",
+          "adoptedOnPrefix": "Adopted"
+        },
+        "toolbar": {
+          "searchPlaceholder": "Search animals by name or breed...",
+          "statusAll": "All Statuses",
+          "ageAll": "All Ages",
+          "ageBaby": "Baby (Under 1 yr)",
+          "ageYoung": "Young (1-3 yrs)",
+          "ageAdult": "Adult (3-7 yrs)",
+          "ageSenior": "Senior (7+ yrs)"
+        },
+        "columns": {
+          "name": "Pet Name",
+          "breed": "Breed",
+          "age": "Age",
+          "arrivalDate": "Arrival Date",
+          "status": "Status",
+          "action": "Action"
+        },
+        "changeStatus": "Change Status",
+        "viewRecord": "View Record",
+        "modal": {
+          "title": "All Recent Adoptions",
+          "searchPlaceholder": "Search by pet or adopter name...",
+          "filter": "Filter",
+          "columns": {
+            "pet": "Pet",
+            "breed": "Breed",
+            "date": "Adoption Date",
+            "adopter": "Adopter"
+          },
+          "close": "Close"
+        }
+      }
+    },
+    "vaccinations": {
+      "loading": "Loading vaccinations…",
+      "header": {
+        "title": "Vaccination & Reports",
+        "subtitle": "Manage immunizations and generate health reports."
+      },
+      "tabs": {
+        "vaccinations": "Vaccinations",
+        "reports": "6-Month Reports"
+      },
+      "toolbar": {
+        "searchPlaceholder": "Search pet or owner...",
+        "statusAll": "All Statuses",
+        "statusCompleted": "Completed",
+        "statusDueSoon": "Due Soon",
+        "statusOverdue": "Overdue",
+        "exportPdf": "Export PDF",
+        "recordVaccine": "Record Vaccine"
+      },
+      "columns": {
+        "pet": "Pet Profile",
+        "vaccineType": "Vaccine Type",
+        "dueDate": "Due Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "editRecord": "Edit Record",
+      "viewHistory": "View History",
+      "pagination": {
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "entries": "entries",
+        "prev": "Prev",
+        "next": "Next"
+      },
+      "modal": {
+        "title": "Record New Vaccination",
+        "patientInfoLabel": "Patient Information",
+        "nameLabel": "Name",
+        "namePlaceholder": "e.g. Barnaby",
+        "speciesBreedLabel": "Species / Breed",
+        "speciesBreedPlaceholder": "e.g. Dog - Beagle Mix",
+        "vaccineTypeLabel": "Vaccine Type",
+        "vaccineTypePlaceholder": "Select vaccine",
+        "adminDateLabel": "Date Administered",
+        "nextDoseLabel": "Next Dose Due",
+        "nextDoseBadge": "Calculated",
+        "nextDoseHint": "+1 year protocol",
+        "batchNumberLabel": "Batch / Lot Number",
+        "batchNumberPlaceholder": "e.g. LOT-8492",
+        "cancel": "Cancel",
+        "saveButton": "Save Record",
+        "vaccineOptions": [
+          {
+            "value": "Rabies",
+            "label": "Rabies",
+            "subtype": "Annual Booster"
+          },
+          {
+            "value": "DHPP",
+            "label": "DHPP (Distemper, Hepatitis, Parainfluenza, Parvovirus)",
+            "subtype": "Core Vaccine"
+          },
+          {
+            "value": "Bordetella",
+            "label": "Bordetella (Kennel Cough)",
+            "subtype": "Kennel Cough"
+          },
+          {
+            "value": "Leptospirosis",
+            "label": "Leptospirosis",
+            "subtype": "Core Vaccine"
+          },
+          {
+            "value": "Lyme Disease",
+            "label": "Lyme Disease",
+            "subtype": "Core Vaccine"
+          }
+        ]
+      }
+    },
+    "reports": {
+      "loading": "Loading reports…",
+      "submitted": {
+        "title": "Reports Submitted",
+        "empty": "No reports submitted.",
+        "submittedLabel": "Submitted:",
+        "healthConditionLabel": "Health Condition:",
+        "requestClarification": "Request Clarification",
+        "reportToManagement": "Block",
+        "adopterOf": "Adopter of",
+        "viewDetails": "View Details"
+      },
+      "block": {
+        "title": "Block adopter",
+        "confirmation": "Block this adopter?",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Enter the reason for blocking this adopter...",
+        "cancel": "Cancel",
+        "confirm": "Confirm Block",
+        "blocking": "Blocking…",
+        "invalidAdopter": "This report does not contain a valid adopter identifier.",
+        "success": "Adopter added to the blacklist."
+      },
+      "dueForReport": {
+        "title": "Due for Report",
+        "columns": {
+          "animalName": "Animal Name",
+          "adopter": "Adopter",
+          "adoptionDate": "Adoption Date",
+          "status": "Status"
+        }
+      },
+      "details": {
+        "title": "6-Month Report Details",
+        "adopterOfPrefix": "Adopter of",
+        "submittedLabel": "Submitted:",
+        "healthAssessmentTitle": "Health Assessment",
+        "milestoneTitle": "Milestone Update",
+        "close": "Close"
+      }
+    },
+    "modals": {
+      "close": "Close",
+      "cancel": "Cancel",
+      "deleteProduct": {
+        "title": "Delete Product",
+        "confirmPrefix": "Are you sure you want to delete",
+        "confirmSuffix": "This action cannot be undone and will remove the item from both the inventory and the store catalog.",
+        "confirmButton": "Delete Product",
+        "deleting": "Deleting…",
+        "deleteError": "Couldn't delete the product. Please try again."
+      },
+      "deletePet": {
+        "title": "Delete Pet",
+        "confirmPrefix": "Are you sure you want to delete",
+        "confirmSuffix": "This action cannot be undone and will remove the pet from the adoption inventory.",
+        "confirmButton": "Delete Pet"
+      },
+      "editProduct": {
+        "title": "Edit Product",
+        "changePhoto": "Change",
+        "nameLabel": "Product Name",
+        "namePlaceholder": "Enter product name",
+        "categoryLabel": "Category",
+        "stockLabel": "In Stock",
+        "priceLabel": "Price",
+        "statusLabel": "Stock Status",
+        "activeListing": "Active Listing",
+        "inactiveListing": "Inactive Listing",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Provide a detailed description of the product and its benefits...",
+        "discountLabel": "Discount (%)",
+        "saveError": "Couldn't save the product. Please try again.",
+        "saving": "Saving…",
+        "saveButton": "Save Changes"
+      },
+      "addProduct": {
+        "title": "Add New Product",
+        "changePhoto": "Upload Photo",
+        "uploadPrompt": "Click to upload photo",
+        "nameLabel": "Product Name",
+        "namePlaceholder": "Enter product name",
+        "categoryLabel": "Category",
+        "stockLabel": "In Stock",
+        "priceLabel": "Price",
+        "statusLabel": "Stock Status",
+        "activeListing": "Active Listing",
+        "inactiveListing": "Inactive Listing",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Provide a detailed description of the product and its benefits...",
+        "discountLabel": "Discount (%)",
+        "saveError": "Couldn't add the product. Please try again.",
+        "saving": "Adding…",
+        "saveButton": "Add Product"
+      },
+      "addPet": {
+        "title": "Add New Pet",
+        "media": "Media",
+        "uploadPhoto": "Choose Photo",
+        "photoHint": "Local preview only. Persistent uploads require backend file storage.",
+        "basicInfo": "Basic Information",
+        "nameLabel": "Pet Name *",
+        "namePlaceholder": "e.g. Bella",
+        "speciesLabel": "Species *",
+        "speciesPlaceholder": "Select species",
+        "breedLabel": "Primary Breed",
+        "breedPlaceholder": "e.g. Golden Retriever",
+        "ageLabel": "Age",
+        "genderLabel": "Gender *",
+        "sizeLabel": "Estimated Size",
+        "sizePlaceholder": "Select size",
+        "colorLabel": "Primary Color / Markings",
+        "colorPlaceholder": "e.g. Black with white chest",
+        "medicalRecords": "Medical Records",
+        "healthStatusLabel": "Current Health Status",
+        "vaccinationsLabel": "Vaccinations",
+        "adoptionDetails": "Adoption Details",
+        "availabilityLabel": "Availability Status",
+        "characterNotes": "Character & Notes",
+        "characterLabel": "Personality Traits & Behavioral Notes",
+        "characterPlaceholder": "Describe the pet's temperament, likes/dislikes, and any behavioral considerations...",
+        "saveButton": "Add Pet"
+      },
+      "editPet": {
+        "title": "Edit Pet Profile",
+        "media": "Media",
+        "changePhoto": "Change Photo",
+        "photoHint": "Recommended size: 800x800px (JPG or PNG)",
+        "basicInfo": "Basic Information",
+        "nameLabel": "Name",
+        "speciesLabel": "Species",
+        "breedLabel": "Breed",
+        "ageLabel": "Age (Years)",
+        "genderLabel": "Gender",
+        "sizeLabel": "Size",
+        "colorLabel": "Color & Markings",
+        "medical": "Medical",
+        "healthStatusLabel": "Health Status",
+        "vaccinationsLabel": "Vaccinations",
+        "adoptionDetails": "Adoption Details",
+        "availabilityLabel": "Availability Status",
+        "character": "Character",
+        "characterLabel": "Personality Traits & Notes",
+        "characterPlaceholder": "Describe the pet's behavior, likes, dislikes, and ideal home environment...",
+        "saveButton": "Save Changes"
+      },
+      "viewSales": {
+        "title": "Recent Product Sales",
+        "searchPlaceholder": "Search sales...",
+        "columns": {
+          "product": "Product",
+          "date": "Date",
+          "customer": "Customer",
+          "price": "Price"
+        },
+        "empty": "No sales found."
+      },
+      "viewPetRecord": {
+        "title": "Pet Record",
+        "basicInfo": "Basic Information",
+        "nameLabel": "Name",
+        "speciesLabel": "Species",
+        "breedLabel": "Breed",
+        "ageLabel": "Age",
+        "genderLabel": "Gender",
+        "sizeLabel": "Size",
+        "colorLabel": "Color & Markings",
+        "medical": "Medical",
+        "healthStatusLabel": "Health Status",
+        "vaccinationsLabel": "Vaccinations",
+        "noneRecorded": "None recorded",
+        "adoptionDetails": "Adoption Details",
+        "statusLabel": "Status",
+        "arrivalDateLabel": "Arrival Date",
+        "character": "Character",
+        "characterLabel": "Personality Traits & Notes"
+      }
+    },
+    "adoptionRequests": {
+      "loading": "Loading adoption requests…",
+      "header": {
+        "title": "Adoption Requests",
+        "subtitle": "Manage incoming applications and review potential matches."
+      },
+      "viewTabs": {
+        "label": "Adoption request sections",
+        "applications": "Applications",
+        "blacklist": "Blacklist"
+      },
+      "blacklist": {
+        "searchPlaceholder": "Search blacklisted adopters...",
+        "loading": "Loading blacklist…",
+        "empty": "No blacklisted adopters.",
+        "retry": "Try again",
+        "active": "Active",
+        "columns": {
+          "adopter": "Adopter name",
+          "reason": "Reason",
+          "date": "Date blocked",
+          "status": "Status"
+        }
+      },
+      "toolbar": {
+        "searchPlaceholder": "Search applicant or pet name...",
+        "filter": "Filter"
+      },
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "card": {
+        "appliedLabel": "Applied",
+        "housingLabel": "Housing & Experience",
+        "reviewButton": "Review Application",
+        "rejectButton": "Reject",
+        "viewRecordButton": "View Record",
+        "statusPending": "Pending",
+        "statusApproved": "Approved",
+        "statusRejected": "Rejected"
+      },
+      "empty": "No adoption requests found.",
+      "review": {
+        "titlePrefix": "Review Application -",
+        "pendingReviewBadge": "Pending Review",
+        "approvedBadge": "Approved",
+        "rejectedBadge": "Rejected",
+        "petProfileLink": "View Pet Profile",
+        "appliedLabel": "Applied",
+        "motivationTitle": "Adoption Motivation",
+        "detailsTitle": "Application Details",
+        "proofOfIdentity": "Proof of Identity",
+        "adoptionExperience": "Adoption Experience",
+        "dateOfBirth": "Date of Birth",
+        "ageVerifiedPrefix": "Age verified:",
+        "yearsSuffix": "years",
+        "reference1": "Personal Reference 1",
+        "reference2": "Personal Reference 2",
+        "consentsTitle": "Mandatory Consents",
+        "consentTerms": "Agreed to Terms & Privacy Policy",
+        "consentCare": "Commitment to Lifelong Care",
+        "consentHomeVisit": "Agreement to Home Visit",
+        "consentFollowUp": "6-month Follow-up Reports",
+        "requestMoreInfo": "Request More Info",
+        "rejectButton": "Reject Application",
+        "approveButton": "Approve for Interview"
+      },
+      "reject": {
+        "title": "Reason for Rejection",
+        "description": "Please specify why this adoption application cannot be approved. This feedback will be emailed directly to the applicant to help them understand the decision.",
+        "reasonLabel": "Detailed Reason",
+        "reasonPlaceholder": "Please provide a detailed reason for the applicant (this will be shared with them)...",
+        "charCountSuffix": "characters",
+        "quickInsertLabel": "Quick Insert:",
+        "quickReasons": [
+          "Housing Restrictions",
+          "Incomplete Fencing",
+          "Pet Incompatibility"
+        ],
+        "cancel": "Cancel",
+        "confirmButton": "Confirm Rejection"
+      }
+    }
+  },
+  "admin": {
+    "common": {
+      "loading": "Loading…",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing…",
+      "retry": "Try again",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss",
+      "processing": "Processing…",
+      "actionFailed": "The request could not be completed.",
+      "notProvided": "Not provided"
+    },
+    "navbar": {
+      "workspace": "Admin Workspace",
+      "switchLanguage": "Switch language",
+      "profileTitle": "Admin profile",
+      "profileError": "Profile unavailable"
+    },
+    "sidebar": {
+      "logoAlt": "Pet Haven Logo",
+      "navLabel": "Admin navigation",
+      "dashboard": "Dashboard",
+      "vetApprovals": "Vet Approvals",
+      "userManagement": "User Management"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "subtitle": "Live platform counters served by the Pet Haven backend.",
+      "statsSection": "Platform statistics",
+      "statsUnavailable": "Statistics could not be loaded.",
+      "stats": {
+        "totalUsers": "Total Users",
+        "adopters": "Adopters",
+        "centers": "Adoption Centers",
+        "vets": "Veterinarians",
+        "admins": "Admins",
+        "totalPets": "Total Pets",
+        "bannedUsers": "Banned Users"
+      },
+      "pendingVets": {
+        "title": "Pending Vet Approvals",
+        "subtitle": "Veterinarian accounts waiting for verification.",
+        "manage": "Review approvals",
+        "awaiting": "awaiting review",
+        "more": "+{{remaining}} more waiting in the approvals queue."
+      }
+    },
+    "vetApprovals": {
+      "title": "Vet Approvals",
+      "subtitle": "Verify or reject veterinarian accounts submitted for review.",
+      "pendingCount": "{{total}} pending",
+      "idLabel": "Vet ID {{id}}",
+      "empty": "No veterinarians are waiting for approval.",
+      "emptyHint": "New submissions appear here as soon as a veterinarian registers.",
+      "loadFailed": "The pending veterinarians list could not be loaded.",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "verifySuccess": "{{name}} has been verified.",
+      "reject": "Reject",
+      "rejecting": "Rejecting…",
+      "rejectSuccess": "{{name}} has been rejected.",
+      "yearsValue": "{{years}} years of experience",
+      "fields": {
+        "specialization": "Specialization",
+        "clinicName": "Clinic name",
+        "clinicAddress": "Clinic address",
+        "licenseNumber": "License number",
+        "experienceYears": "Experience",
+        "createdAt": "Submitted on"
+      },
+      "rejectConfirm": {
+        "title": "Reject this veterinarian?",
+        "message": "You are about to reject {{name}}.",
+        "warning": "This permanently deletes the veterinarian account from the platform. The action cannot be undone.",
+        "confirm": "Reject and delete"
+      }
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Ban or unban platform accounts.",
+      "notice": {
+        "title": "Actions are performed by User ID",
+        "text": "The backend exposes ban and unban endpoints only — there is no user listing endpoint — so accounts are targeted by their numeric User ID. Admin accounts cannot be banned."
+      },
+      "fields": {
+        "userId": "User ID",
+        "userIdPlaceholder": "e.g. 42",
+        "reason": "Reason",
+        "reasonPlaceholder": "Describe why this account is being banned",
+        "reasonHint": "Sent to the backend together with the ban request."
+      },
+      "errors": {
+        "invalidUserId": "Enter a valid numeric User ID."
+      },
+      "ban": {
+        "title": "Ban User",
+        "subtitle": "Blocks the account from signing in to Pet Haven.",
+        "submit": "Ban user",
+        "submitting": "Banning…",
+        "success": "User {{userId}} has been banned.",
+        "confirmTitle": "Ban this user?",
+        "confirmMessage": "User ID {{userId}} will lose access to the platform."
+      },
+      "unban": {
+        "title": "Unban User",
+        "subtitle": "Restores access for a previously banned account.",
+        "submit": "Unban user",
+        "submitting": "Unbanning…",
+        "success": "User {{userId}} has been unbanned.",
+        "confirmTitle": "Unban this user?",
+        "confirmMessage": "User ID {{userId}} will regain access to the platform."
+      }
+    }
+  },
+  "vetDashboard": {
+    "loading": "Loading your dashboard...",
+    "comingSoon": "Coming soon",
+    "header": {
+      "logoAlt": "Pet Haven Logo",
+      "nav": {
+        "dashboard": "Dashboard",
+        "patients": "Patients",
+        "appointments": "Appointments",
+        "reviews": "Reviews"
+      },
+      "language": "Change Language",
+      "notifications": "Notifications",
+      "userMenu": "User Menu",
+      "avatarAlt": "User Avatar",
+      "profile": "Profile",
+      "logout": "Logout",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "welcome": {
+      "morning": "Good morning, {{name}}",
+      "afternoon": "Good afternoon, {{name}}",
+      "evening": "Good evening, {{name}}",
+      "subtitle": "Here is what's happening at your clinic today.",
+      "doctorPrefix": "Dr. {{name}}",
+      "defaultDoctor": "Doctor"
+    },
+    "stats": {
+      "totalPatients": {
+        "label": "Total Patients",
+        "hint": "All-time patients"
+      },
+      "appointmentsToday": {
+        "label": "Appointments Today",
+        "hint": "{{count}} remaining"
+      },
+      "reviews": {
+        "label": "Total Reviews",
+        "hint": "Total reviews received"
+      }
+    },
+    "activity": {
+      "title": "Clinic Activity",
+      "loading": "Loading clinic activity...",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "empty": "No appointment activity for this period yet."
+    },
+    "breakdown": {
+      "title": "Appointment Breakdown",
+      "empty": "No categorized appointments yet.",
+      "categories": {
+        "checkups": "Check-ups",
+        "vaccinations": "Vaccinations",
+        "surgeries": "Surgeries",
+        "other": "Other"
+      }
+    },
+    "breeds": {
+      "title": "Top Pet Breeds",
+      "empty": "No patient breed data yet."
+    },
+    "schedule": {
+      "title": "Today's Schedule",
+      "viewCalendar": "View Calendar",
+      "empty": "No appointments scheduled for today.",
+      "owner": "Owner: {{name}}",
+      "status": {
+        "Completed": "Completed",
+        "Cancelled": "Cancelled"
+      }
+    },
+    "patients": {
+      "title": "Recent Patients",
+      "searchPlaceholder": "Search patients...",
+      "loading": "Loading patients...",
+      "empty": "No recent patients found.",
+      "viewRecords": "View Records",
+      "columns": {
+        "patient": "Patient",
+        "breed": "Breed/Species",
+        "lastVisit": "Last Visit",
+        "action": "Action"
+      }
+    }
+  },
+  "vetProfile": {
+    "loading": "Loading your profile...",
+    "backToDashboard": "Back to Dashboard",
+    "title": "Vet Profile",
+    "subtitle": "Manage your profile and contact information.",
+    "identity": {
+      "unnamed": "Unnamed Veterinarian",
+      "verified": "Verified",
+      "pendingVerification": "Pending Verification",
+      "noEmail": "No email on file"
+    },
+    "basicInfo": {
+      "title": "Basic Information",
+      "fullName": "Vet Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "address": "Clinic Address",
+      "addressPlaceholder": "Use GPS or enter the clinic address",
+      "useGps": "Use GPS",
+      "locating": "Locating…",
+      "gpsHint": "GPS fills the address and saves the clinic coordinates for nearby searches.",
+      "gpsSuccess": "Clinic location detected. Save changes to update your profile.",
+      "gpsUnsupported": "Location services are not supported by this browser.",
+      "gpsError": "Unable to detect the clinic address. Check location permission or enter it manually.",
+      "experienceYears": "Years of Experience",
+      "specialization": "Specialization",
+      "clinicName": "Clinic Name",
+      "licenseNumber": "License Number"
+    },
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "saveSuccess": "Profile updated successfully.",
+    "saveError": "Failed to save changes. Please try again."
+  },
+  "vetReviews": {
+    "loading": "Loading your reviews...",
+    "title": "Client Reviews",
+    "subtitle": "See what pet owners are saying about your care.",
+    "summary": {
+      "title": "Overall Rating",
+      "empty": "You haven't received any reviews yet.",
+      "basedOn": "Based on {{count}} review",
+      "basedOn_other": "Based on {{count}} reviews"
+    },
+    "toolbar": {
+      "searchPlaceholder": "Search reviews by name or keyword...",
+      "all": "All Reviews",
+      "ratingOnly": "Rating Only ({{count}})"
+    },
+    "list": {
+      "loading": "Loading reviews...",
+      "empty": "No reviews yet.",
+      "noMatches": "No reviews match your search."
+    },
+    "card": {
+      "anonymous": "Anonymous",
+      "noComment": "No written comment — rating only."
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} reviews",
+      "previous": "Previous page",
+      "next": "Next page"
+    }
+  },
+  "vetPatients": {
+    "title": "Patient Directory",
+    "subtitle": "Manage medical records, appointments, and general health status.",
+    "summary": {
+      "loading": "Loading stats...",
+      "totalPatients": "Total Patients",
+      "activeCases": "Active Cases",
+      "recentlyAdded": "Recently Added (30d)"
+    },
+    "toolbar": {
+      "searchPlaceholder": "Search by name, breed, or species...",
+      "allSpecies": "All Species",
+      "allStatus": "Status: All",
+      "species": {
+        "dog": "Dogs",
+        "cat": "Cats",
+        "bird": "Birds"
+      }
+    },
+    "status": {
+      "healthy": "Healthy",
+      "followup": "Requires Follow-up",
+      "vaccine": "Upcoming Vaccine",
+      "default": "Unknown"
+    },
+    "card": {
+      "owner": "Owner",
+      "lastVisit": "Last Visit",
+      "visitCount": "Visits",
+      "viewRecords": "View Records"
+    },
+    "list": {
+      "loading": "Loading patients...",
+      "empty": "No patients found yet.",
+      "noMatches": "No patients match your search or filters."
+    },
+    "pagination": {
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "modal": {
+      "close": "Close",
+      "loading": "Loading patient record...",
+      "recordSections": "Patient record sections",
+      "overview": "Overview",
+      "age": "Age",
+      "gender": "Gender",
+      "medicalHistory": "Medical History",
+      "noMedicalHistory": "No medical history recorded yet."
+    }
+  },
+  "vetAppointments": {
+    "title": "Clinic Appointments",
+    "subtitle": "Manage your schedule and upcoming patient visits.",
+    "viewToggle": {
+      "list": "List View",
+      "calendar": "Calendar"
+    },
+    "dateNav": {
+      "previous": "Previous day",
+      "next": "Next day",
+      "today": "Today",
+      "pickDate": "Pick a date"
+    },
+    "summary": {
+      "loading": "Loading stats...",
+      "total": {
+        "label": "Total Appointments Today",
+        "caption": "For the selected day"
+      },
+      "confirmed": {
+        "label": "Confirmed",
+        "caption": "Scheduled"
+      },
+      "pending": {
+        "label": "Pending Requests",
+        "caption": "Requires action"
+      },
+      "cancelled": {
+        "label": "Cancellations",
+        "caption": "For the selected day"
+      }
+    },
+    "toolbar": {
+      "filterLabel": "Filter:",
+      "allStatuses": "All Statuses"
+    },
+    "status": {
+      "Pending": "Pending",
+      "Confirmed": "Confirmed",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled"
+    },
+    "list": {
+      "title": "Today's Schedule",
+      "loading": "Loading appointments...",
+      "empty": "No appointments scheduled for this day.",
+      "noMatches": "No appointments match this filter."
+    },
+    "card": {
+      "owner": "Owner: {{name}}",
+      "noReason": "No reason provided."
+    },
+    "actions": {
+      "confirm": "Accept",
+      "complete": "Mark as completed",
+      "cancel": "Cancel",
+      "reschedule": "Reschedule"
+    },
+    "cancelConfirm": {
+      "message": "Cancel this appointment? This cannot be undone.",
+      "yes": "Yes, cancel",
+      "no": "No"
+    },
+    "reschedule": {
+      "dateLabel": "New date",
+      "timeLabel": "New time",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "pastDate": "Please choose a date and time in the future."
+    }
+  },
+  "vetCalendar": {
+    "title": "Clinic Calendar",
+    "subtitle": "Manage veterinary appointments and schedules.",
+    "toolbar": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month"
+    },
+    "grid": {
+      "loading": "Loading calendar...",
+      "dayError": "Failed to load this day.",
+      "moreEvents": "+{{count}} more",
+      "showLess": "Show less"
+    },
+    "modal": {
+      "close": "Close"
+    }
+  },
+  "vetVerification": {
+    "title": "Professional Verification",
+    "subtitle": "Upload your veterinary license or board certification to complete your profile and access clinic tools.",
+    "upload": {
+      "title": "Click to upload or drag and drop",
+      "hint": "PDF, JPG, or PNG (Max 10MB)",
+      "selected": "Selected: {{name}}",
+      "remove": "Remove"
+    },
+    "form": {
+      "licenseNumber": "License Number",
+      "licenseNumberPlaceholder": "e.g. VET-987654321",
+      "issueDate": "Issue Date"
+    },
+    "errors": {
+      "licenseRequired": "License number is required.",
+      "fileRequired": "Please upload your license or certification document."
+    },
+    "actions": {
+      "saveForLater": "Save for Later",
+      "submit": "Submit Verification"
+    }
+  },
+  "vetPendingApproval": {
+    "title": "Account Under Review",
+    "message": "Your professional account is currently under review for license verification.",
+    "note": "You cannot manage your clinic or receive bookings until Admin approval. We will notify you via email once your status is updated.",
+    "logOut": "Log Out",
+    "contactSupport": "Contact Support",
+    "applicationIdLabel": "Application ID:"
+  }
+}

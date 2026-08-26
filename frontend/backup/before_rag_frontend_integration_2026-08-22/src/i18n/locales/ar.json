@@ -1,0 +1,2382 @@
+{
+  "header": {
+    "nav": {
+      "home": "الرئيسية",
+      "adoption": "التبني",
+      "shop": "المتجر",
+      "vets": "الأطباء البيطريون",
+      "aiChecker": "فاحص الذكاء الاصطناعي"
+    },
+    "switchLanguage": "تبديل اللغة",
+    "userMenu": "قائمة المستخدم",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
+  },
+  "adopter": {
+    "header": {
+      "logoAlt": "شعار بيت هافن",
+      "navigation": "تنقل المتبنّي",
+      "nav": {
+        "dashboard": "لوحة التحكم",
+        "store": "المتجر",
+        "adoption": "التبني",
+        "health": "الصحة",
+        "vets": "الأطباء البيطريون"
+      },
+      "language": "اللغة",
+      "languages": {
+        "english": "الإنجليزية",
+        "arabic": "العربية"
+      },
+      "userMenu": "قائمة المستخدم",
+      "avatarAlt": "الصورة الشخصية لـ {{name}}",
+      "defaultUser": "متبنّي حيوانات",
+      "profile": "الملف الشخصي",
+      "logout": "تسجيل الخروج",
+      "cart": "السلة",
+      "notifications": "الإشعارات",
+      "notificationsUnavailable": "الإشعارات غير متاحة لأن الخادم لا يوفرها حاليًا",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "common": {
+      "close": "إغلاق",
+      "pet": "حيوان أليف",
+      "ageYears": "{{count}} سنة",
+      "ageYears_zero": "أقل من سنة",
+      "ageYears_one": "سنة واحدة",
+      "ageYears_two": "سنتان",
+      "ageYears_few": "{{count}} سنوات",
+      "ageYears_many": "{{count}} سنة",
+      "ageYears_other": "{{count}} سنة",
+      "genders": {
+        "female": "أنثى",
+        "male": "ذكر"
+      },
+      "stages": {
+        "puppy": "صغير",
+        "adult": "بالغ",
+        "young": "يافع",
+        "senior": "كبير السن"
+      },
+      "healthStatuses": {
+        "healthy": "بصحة جيدة",
+        "good": "جيدة",
+        "excellent": "ممتازة",
+        "needs_attention": "يحتاج إلى متابعة",
+        "under_treatment": "قيد العلاج",
+        "warning": "يحتاج إلى متابعة"
+      },
+      "petTraits": {
+        "available": "متاح",
+        "healthy": "بصحة جيدة",
+        "good": "جيد",
+        "dog": "كلب",
+        "cat": "قط"
+      }
+    },
+    "profile": {
+      "loading": "جارٍ تحميل ملفك الشخصي…",
+      "loadError": "تعذّر تحميل ملفك الشخصي.",
+      "retry": "إعادة المحاولة",
+      "backToDashboard": "العودة إلى لوحة التحكم",
+      "title": "ملفي الشخصي",
+      "subtitle": "إدارة معلوماتك الشخصية وتفضيلات التبني.",
+      "photo": {
+        "title": "الصورة الشخصية",
+        "upload": "رفع صورة",
+        "change": "تغيير الصورة",
+        "hint": "صيغة JPG أو PNG. تُعرض المعاينة خلال هذه الجلسة فقط إلى أن تتوفر خدمة رفع الصور."
+      },
+      "personal": {
+        "title": "المعلومات الشخصية",
+        "fullName": "الاسم الكامل",
+        "fullNamePlaceholder": "أدخل اسمك الكامل",
+        "email": "البريد الإلكتروني",
+        "emailHint": "لا يمكن تغيير البريد الإلكتروني من هنا.",
+        "phone": "رقم الهاتف",
+        "phonePlaceholder": "أدخل رقم هاتفك",
+        "address": "العنوان",
+        "addressPlaceholder": "أدخل عنوانك"
+      },
+      "preferences": {
+        "title": "تفضيلات التبني",
+        "housingType": "نوع السكن",
+        "selectHousing": "اختر نوع السكن",
+        "housingOptions": {
+          "Apartment": "شقة",
+          "Department": "قسم سكني",
+          "House": "منزل",
+          "Villa": "فيلا"
+        },
+        "experienceLevel": "مستوى الخبرة",
+        "selectExperience": "اختر مستوى الخبرة",
+        "experienceOptions": {
+          "Beginner": "مبتدئ",
+          "Intermediate": "متوسط",
+          "Expert": "خبير"
+        },
+        "freeHours": "الساعات المتاحة يوميًا",
+        "freeHoursHint": "كم ساعة يمكنك تخصيصها لرعاية الحيوان الأليف يوميًا؟"
+      },
+      "cancel": "إلغاء",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ…",
+      "saveSuccess": "تم تحديث ملفك الشخصي بنجاح.",
+      "saveError": "تعذّر تحديث ملفك الشخصي. يرجى المحاولة مجددًا."
+    },
+    "dashboard": {
+      "loading": "جارٍ تحميل لوحة التحكم…",
+      "loadError": "تعذّر تحميل لوحة التحكم: {{message}}",
+      "retry": "إعادة المحاولة",
+      "profileLoading": "جارٍ تحميل ملفك الشخصي…",
+      "profileUnavailable": "اسم ملفك الشخصي غير متاح مؤقتًا.",
+      "welcomeGeneric": "مرحبًا بعودتك!",
+      "welcome": "مرحبًا بعودتك، {{name}}!",
+      "kpis": {
+        "pendingAdoptions": "طلبات التبني المعلقة",
+        "adoptedPets": "الحيوانات المتبنّاة",
+        "recentOrders": "طلبات المتجر"
+      },
+      "wallet": {
+        "title": "محفظتي",
+        "balanceLabel": "الرصيد المتاح",
+        "description": "استخدم رصيد محفظتك للشراء من متجر بيت هيفن.",
+        "loading": "جارٍ تحميل الرصيد…",
+        "unavailable": "غير متوفر",
+        "loadError": "تعذّر تحميل رصيد محفظتك.",
+        "shopNow": "تسوّق الآن"
+      },
+      "milestone": {
+        "title": "محطة في رحلة التبني",
+        "text": "مرّ {{days}} يومًا منذ تبنّيت {{petName}}. شارك صورة حديثة لطمأنة المركز.",
+        "uploadNow": "رفع تحديث الآن",
+        "resolvingRequest": "جارٍ تجهيز التقرير…",
+        "dismiss": "إغلاق",
+        "missingRequest": "تعذّر العثور على طلب التبني المرتبط بهذا الحيوان.",
+        "requestLookupError": "تعذّر التحقق من طلب التبني المرتبط بهذا الحيوان.",
+        "reportSuccess": "تم إرسال تحديث الحيوان بنجاح.",
+        "reportError": "تعذّر إرسال تحديث الحيوان."
+      },
+      "quickActions": {
+        "browseAnimals": {
+          "title": "تصفح الحيوانات",
+          "description": "اعثر على صديقك الجديد."
+        },
+        "aiDiagnosis": {
+          "title": "التشخيص الذكي",
+          "description": "نفّذ فحصًا صحيًا سريعًا لحيوانك."
+        },
+        "bookVet": {
+          "title": "حجز زيارة بيطرية",
+          "description": "احجز استشارة مع مختص."
+        }
+      },
+      "calendar": {
+        "careTitle": "تقويم رعاية الحيوانات",
+        "loading": "جارٍ تحميل المواعيد القادمة…",
+        "loadError": "تعذّر تحميل المواعيد: {{message}}",
+        "emptyTitle": "لا توجد مواعيد قادمة",
+        "emptyText": "ستظهر زيارات الطبيب البيطري المجدولة هنا.",
+        "unknownVet": "طبيب بيطري",
+        "unknownStatus": "مجدول",
+        "noReason": "لم يُذكر سبب للموعد",
+        "bookVisit": "احجز زيارة بيطرية"
+      },
+      "pets": {
+        "title": "حيواناتي",
+        "count": "حيوان واحد",
+        "count_zero": "لا حيوانات",
+        "count_two": "حيوانان",
+        "count_few": "{{count}} حيوانات",
+        "count_many": "{{count}} حيوانًا",
+        "count_other": "{{count}} حيوان",
+        "loading": "جارٍ تحميل الحيوانات…",
+        "loadError": "تعذّر تحميل الحيوانات: {{message}}",
+        "emptyTitle": "لم تتبنَّ أي حيوان بعد",
+        "emptyText": "عندما تتبنّى حيوانًا سيظهر هنا لتتمكن من متابعة رعايته ولقاحاته والمزيد.",
+        "browse": "تصفح الحيوانات المتاحة للتبني ←",
+        "adoptedFrom": "تم التبنّي من {{center}}",
+        "details": "عرض",
+        "viewProfile": "عرض ملف {{name}}"
+      },
+      "wishlist": {
+        "title": "قائمة الأمنيات",
+        "count": "عنصر واحد",
+        "count_zero": "لا عناصر",
+        "count_two": "عنصران",
+        "count_few": "{{count}} عناصر",
+        "count_many": "{{count}} عنصرًا",
+        "count_other": "{{count}} عنصر",
+        "loading": "جارٍ تحميل قائمة الأمنيات…",
+        "loadError": "تعذّر تحميل قائمة الأمنيات: {{message}}",
+        "emptyTitle": "قائمة أمنياتك فارغة",
+        "emptyText": "ستظهر العناصر التي تحفظها هنا لتتمكن من العثور عليها بسهولة لاحقًا.",
+        "explore": "استكشف المتجر",
+        "browseStore": "تصفح المزيد من المنتجات ←",
+        "priceUnavailable": "السعر غير متاح",
+        "viewProduct": "عرض {{name}}"
+      },
+      "milestoneModal": {
+        "close": "إغلاق النافذة",
+        "title": "شارك صورة لمحطة مميزة",
+        "description": "ساعدنا في الاحتفال بذكرى تبنّي {{petName}} عبر مشاركة تحديث سريع مع المركز.",
+        "healthStatus": "الحالة الصحية",
+        "healthOptions": {
+          "healthy": "بصحة جيدة",
+          "good": "جيدة",
+          "needsAttention": "يحتاج إلى متابعة"
+        },
+        "imageUrl": "رابط الصورة",
+        "imageUrlPlaceholder": "https://example.com/pet-update.jpg",
+        "imageUrlHint": "أدخل رابطًا مباشرًا للصورة. رفع الملفات غير متاح لعدم وجود واجهة رفع في الخادم.",
+        "note": "أضف ملاحظة سريعة",
+        "optional": "اختياري",
+        "notePlaceholder": "كيف تسير الحياة مع حيوانك الأليف؟",
+        "cancel": "إلغاء",
+        "sending": "جارٍ الإرسال…",
+        "send": "إرسال التحديث"
+      }
+    },
+    "adoptionHub": {
+      "title": "مركز التبني",
+      "subtitle": "اعثر على رفيقك المثالي أو أدر طلبات التبني وقصص النجاح الخاصة بك.",
+      "tabs": {
+        "catalog": "دليل الحيوانات",
+        "requests": "طلباتي"
+      },
+      "loadingPets": "جارٍ تحميل الحيوانات…",
+      "petsError": "تعذّر تحميل الحيوانات. يرجى المحاولة مجددًا.",
+      "retry": "إعادة المحاولة",
+      "noQuizMatches": "حصلنا على توصيات، لكن لا تتوفر حاليًا حيوانات من السلالات المقترحة.",
+      "quizError": "تعذّر الحصول على توصيات الاختبار.",
+      "applicationSuccess": "تم إرسال طلب التبني بنجاح!",
+      "applicationError": "تعذّر إرسال طلب التبني. يرجى المحاولة مجددًا.",
+      "ageYears": "سنة واحدة",
+      "ageYears_two": "سنتان",
+      "ageYears_few": "{{count}} سنوات",
+      "ageYears_many": "{{count}} سنة",
+      "ageYears_other": "{{count}} سنة",
+      "available": "متاح",
+      "banner": {
+        "badge": "اختبار التوافق",
+        "title": "اعثر على رفيقك المثالي",
+        "text": "أجرِ اختبار التوافق خلال دقيقتين لاكتشاف الحيوانات المناسبة لنمط حياتك ومنزلك.",
+        "start": "ابدأ الاختبار"
+      },
+      "catalog": {
+        "title": "كل الحيوانات المتاحة",
+        "search": "ابحث بالاسم أو السلالة…",
+        "searchLabel": "البحث في الحيوانات المتاحة",
+        "filters": "الفلاتر",
+        "results": "{{count}} حيوان",
+        "species": "النوع",
+        "gender": "الجنس",
+        "healthStatus": "الحالة الصحية",
+        "center": "مركز التبني",
+        "allSpecies": "كل الأنواع",
+        "allGenders": "كل الأجناس",
+        "allHealthStatuses": "كل الحالات الصحية",
+        "sortBy": "الترتيب حسب",
+        "sortNameAsc": "الاسم: أ–ي",
+        "sortNameDesc": "الاسم: ي–أ",
+        "sortAgeAsc": "العمر: الأصغر أولاً",
+        "sortAgeDesc": "العمر: الأكبر أولاً",
+        "paginationLabel": "صفحات دليل الحيوانات",
+        "previous": "السابق",
+        "next": "التالي",
+        "page": "الصفحة {{page}} من {{pageCount}}",
+        "empty": "لم تُرجع الواجهة الخلفية أي حيوانات متاحة.",
+        "noMatches": "لا توجد حيوانات تطابق البحث والفلاتر.",
+        "clearFilters": "مسح الفلاتر",
+        "notProvided": "غير متوفر",
+        "viewProfile": "عرض التفاصيل",
+        "adoptNow": "تبنَّ الآن"
+      },
+      "recommended": {
+        "title": "موصى بها لك",
+        "match": "توافق {{percent}}٪",
+        "viewProfile": "عرض الملف",
+        "adoptNow": "تبنَّ الآن"
+      },
+      "requests": {
+        "title": "حالة طلبات التبني",
+        "loading": "جارٍ تحميل طلبات التبني…",
+        "loadError": "تعذّر تحميل طلبات التبني.",
+        "empty": "لم ترسل أي طلب تبنٍّ بعد.",
+        "requestedOn": "تم الطلب في {{date}}",
+        "dateUnavailable": "التاريخ غير متاح",
+        "score": "درجة الطلب: {{score}}",
+        "centerNotes": "ملاحظات المركز: {{notes}}",
+        "statuses": {
+          "pending": "قيد المراجعة",
+          "approved": "مقبول",
+          "rejected": "مرفوض"
+        },
+        "actions": {
+          "viewDetails": "عرض التفاصيل",
+          "feedback": "الملاحظات"
+        }
+      },
+      "adoptedPets": {
+        "title": "حيواناتي المتبنّاة",
+        "loading": "جارٍ تحميل الحيوانات المتبنّاة…",
+        "loadError": "تعذّر تحميل الحيوانات المتبنّاة.",
+        "empty": "ليس لديك حيوانات متبنّاة بعد.",
+        "viewDetails": "عرض تفاصيل الحيوان"
+      },
+      "quiz": {
+        "closeQuiz": "إغلاق الاختبار",
+        "close": "إغلاق",
+        "kicker": "اختبار التوافق",
+        "title": "اعثر على رفيقك المثالي",
+        "description": "أجب عن أسئلة نمط الحياة وسيجد بيت هافن السلالات المناسبة عبر خدمة التوصيات.",
+        "questions": {
+          "housing_type": "ما نوع المنزل الذي تعيش فيه؟",
+          "outdoor_space": "ما مساحة المكان الخارجي المتوفر لديك؟",
+          "family_type": "من يعيش في منزلك؟",
+          "hours_available": "كم من الوقت يمكنك قضاؤه مع الحيوان يوميًا؟",
+          "weekend_time": "كم وقت الفراغ المتاح لديك عادة في العطلة؟",
+          "experience_level": "ما مستوى خبرتك في رعاية الحيوانات؟",
+          "training_ability": "ما مقدار التدريب الذي يمكنك تقديمه؟",
+          "activity_level": "ما مدى نشاط نمط حياتك؟",
+          "noise_tolerance": "ما مدى تقبلك لأصوات الحيوانات؟",
+          "budget_level": "ما مستوى الميزانية التي يمكنك تخصيصها للرعاية؟",
+          "maintenance_tolerance": "ما مقدار العناية اليومية المناسب لك؟",
+          "size_preference": "ما حجم الحيوان الذي تفضله؟",
+          "grooming_tolerance": "ما مقدار العناية بالمظهر التي يمكنك تقديمها؟",
+          "energy_preference": "ما مستوى الطاقة الذي تفضله في الحيوان؟",
+          "affection_preference": "ما مقدار الألفة التي تفضلها في حيوانك؟"
+        },
+        "options": {
+          "apartment": "شقة",
+          "house": "منزل",
+          "condo": "شقة تمليك",
+          "farm": "مزرعة",
+          "none": "لا يوجد",
+          "small": "صغير",
+          "medium": "متوسط",
+          "large": "كبير",
+          "single": "فرد واحد",
+          "couple": "زوجان",
+          "family_with_children": "عائلة مع أطفال",
+          "low": "منخفض",
+          "high": "مرتفع",
+          "beginner": "مبتدئ",
+          "intermediate": "متوسط",
+          "expert": "خبير",
+          "independent": "مستقل",
+          "balanced": "متوازن",
+          "very_affectionate": "ودود جدًا"
+        },
+        "stepTitles": {
+          "home": "منزلك",
+          "lifestyle": "نمط حياتك",
+          "preferences": "تفضيلات الحيوان"
+        },
+        "stepOf": "الخطوة {{current}} من {{total}}",
+        "back": "رجوع",
+        "next": "التالي",
+        "recommendedType": "نوع الحيوان الموصى به: {{animalType}}",
+        "pet": "حيوان أليف",
+        "resultSource": "جاءت هذه التوصيات مباشرة من خدمة التوصيات.",
+        "match": "توافق {{percent}}٪",
+        "viewMatches": "عرض الحيوانات المتوافقة",
+        "cancel": "إلغاء",
+        "finding": "جارٍ إيجاد النتائج…",
+        "getMatches": "اعرض نتائج التوافق"
+      },
+      "application": {
+        "title": "طلب تبنٍّ",
+        "subtitleWithPet": "أصبحت على بُعد خطوة من اصطحاب {{petName}} إلى منزلك.",
+        "subtitle": "أصبحت على بُعد خطوة من العثور على رفيق مدى الحياة.",
+        "close": "إغلاق",
+        "adopterProfile": "ملف التبني",
+        "housingType": "نوع السكن",
+        "selectHousingType": "اختر نوع السكن",
+        "house": "منزل",
+        "apartment": "شقة",
+        "otherHousing": "أخرى",
+        "experienceLevel": "الخبرة في رعاية الحيوانات",
+        "selectExperience": "اختر مستوى الخبرة",
+        "beginner": "مبتدئ",
+        "intermediate": "متوسط",
+        "expert": "خبير",
+        "freeHours": "ساعات الفراغ يوميًا",
+        "hasPetBefore": "سبق لي رعاية حيوان أليف",
+        "basicInfo": "المعلومات الأساسية",
+        "fullName": "الاسم الكامل",
+        "fullNamePlaceholder": "الاسم الكامل",
+        "phone": "رقم الهاتف",
+        "phonePlaceholder": "+1 (555) 000-0000",
+        "email": "البريد الإلكتروني",
+        "emailPlaceholder": "name@example.com",
+        "dob": "تاريخ الميلاد",
+        "previousExperience": "هل لديك خبرة سابقة في التبني؟",
+        "identity": "إثبات الهوية",
+        "identityUpload": "انقر أو اسحب صورة الهوية أو جواز السفر للرفع",
+        "identityHint": "PDF أو JPG أو PNG (بحد أقصى 5MB)",
+        "references": "المراجع الشخصية",
+        "reference": "المرجع {{number}}",
+        "namePlaceholder": "الاسم",
+        "referencePhonePlaceholder": "الهاتف",
+        "notes": "ملاحظات إضافية (اختياري)",
+        "notesPlaceholder": "أخبرنا لماذا ترغب في تبني هذا الحيوان أو عن أي متطلبات خاصة…",
+        "consents": "الموافقات الإلزامية",
+        "termsConsent": "أوافق على شروط التبني وسياسة الخصوصية.",
+        "careConsent": "ألتزم برعاية هذا الحيوان ورفاهيته طوال حياته.",
+        "visitConsent": "أوافق على زيارة منزلية من فريق بيت هافن قبل التسليم النهائي.",
+        "followUpConsent": "ألتزم برفع تقرير عن صحة الحيوان ورفاهيته كل 6 أشهر ضمن برنامج المتابعة بعد التبني.",
+        "cancel": "إلغاء",
+        "submitting": "جارٍ الإرسال…",
+        "submit": "إرسال الطلب"
+      }
+    },
+    "applicationDetails": {
+      "back": "العودة إلى طلباتي",
+      "title": "تفاصيل الطلب",
+      "reference": "المرجع رقم {{id}}",
+      "loading": "جارٍ تحميل تفاصيل الطلب…",
+      "retry": "إعادة المحاولة",
+      "loadErrorTitle": "تعذّر تحميل الطلب",
+      "loadError": "تعذّر تحميل طلب التبني.",
+      "notFoundTitle": "الطلب غير موجود",
+      "notFound": "طلب التبني هذا غير موجود.",
+      "forbiddenTitle": "الوصول مرفوض",
+      "forbidden": "طلب التبني هذا يخص متبنّيًا آخر.",
+      "notProvided": "غير متوفر",
+      "invalidRequestTitle": "طلب غير صالح",
+      "invalidRequest": "رابط تفاصيل الطلب هذا لا يحتوي على معرّف طلب صالح.",
+      "statuses": {
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "fields": {
+        "species": "النوع",
+        "breed": "السلالة",
+        "age": "العمر",
+        "gender": "الجنس",
+        "healthStatus": "الحالة الصحية",
+        "center": "مركز التبني"
+      },
+      "request": {
+        "title": "معلومات الطلب",
+        "submittedAt": "تاريخ الإرسال",
+        "score": "درجة الطلب",
+        "status": "حالة الخادم",
+        "centerNotes": "ملاحظات المركز"
+      },
+      "animal": {
+        "match": "توافق {{percent}}٪",
+        "yearsOld": "العمر {{count}} سنة",
+        "viewProfile": "عرض الملف",
+        "imageAlt": "{{name}} من سلالة {{breed}}"
+      },
+      "bottomNav": {
+        "home": "الرئيسية",
+        "adopt": "التبني",
+        "shop": "المتجر",
+        "health": "الصحة الذكية"
+      }
+    },
+    "petProfile": {
+      "back": "رجوع",
+      "backToCatalog": "العودة إلى دليل الحيوانات",
+      "loading": "جارٍ تحميل تفاصيل الحيوان…",
+      "loadError": "تعذّر تحميل تفاصيل هذا الحيوان.",
+      "missingId": "لم يتم اختيار حيوان.",
+      "notFound": "تعذّر العثور على هذا الحيوان.",
+      "browsePets": "تصفح الحيوانات المتاحة",
+      "notProvided": "غير متوفر",
+      "adopt": "تبنَّ الآن",
+      "center": "مركز التبني",
+      "description": "عن هذا الحيوان",
+      "imageAlt": "{{name}} من سلالة {{breed}}",
+      "tabs": {
+        "medical": "التاريخ الطبي",
+        "vaccinations": "اللقاحات"
+      },
+      "noVaccinations": "لا توجد سجلات لقاحات بعد.",
+      "vaccinationsPlaceholder": "ستظهر سجلات اللقاحات هنا.",
+      "editProfile": "تعديل الملف",
+      "age": "العمر",
+      "weight": "الوزن",
+      "weightValue": "{{value}} كغ",
+      "sex": "الجنس",
+      "medicalTimeline": "السجل الطبي",
+      "upcoming": "المواعيد القادمة",
+      "addAppointment": "إضافة موعد",
+      "health": {
+        "Healthy": "بصحة جيدة"
+      },
+      "medicalEntries": {
+        "annualTitle": "الفحص السنوي",
+        "annualDate": "12 أكتوبر 2023",
+        "annualDescription": "فحص صحي عام. الوزن مستقر وصحة الأسنان جيدة، ويوصى بالاستمرار على النظام الغذائي الحالي.",
+        "earTitle": "التهاب بسيط في الأذن",
+        "earDate": "4 يوليو 2023",
+        "earDescription": "وُصفت قطرات أوتوماكس لمدة 7 أيام وأكدت المتابعة التعافي."
+      },
+      "appointment": {
+        "title": "تنظيف الأسنان",
+        "month": "نوفمبر",
+        "location": "عيادة بيت هافن"
+      }
+    },
+    "store": {
+      "hero": {
+        "tag": "تخفيضات الربيع",
+        "title": "أساسيات رعاية الحيوانات",
+        "description": "تسوّق الأغذية الممتازة والألعاب الممتعة ومنتجات العناية، واستمتع بخصم يصل إلى 30٪ على علامات مختارة.",
+        "cta": "تسوّق الآن",
+        "imageAlt": "مجموعة حيوانات أليفة سعيدة"
+      },
+      "trust": {
+        "shipping": {
+          "title": "توصيل سريع ومجاني",
+          "description": "للطلبات التي تتجاوز 50 دولارًا"
+        },
+        "vet": {
+          "title": "معتمد بيطريًا",
+          "description": "تشكيلة منتقاة بعناية من الخبراء"
+        },
+        "returns": {
+          "title": "إرجاع سهل",
+          "description": "ضمان استرداد المال خلال 30 يومًا"
+        }
+      },
+      "categories": {
+        "title": "تسوّق حسب الفئة",
+        "clear": "مسح الفلتر"
+      },
+      "messages": {
+        "loginRequired": "يجب تسجيل الدخول أولًا.",
+        "addedToCart": "تمت الإضافة إلى السلة بنجاح.",
+        "cartError": "تعذّرت إضافة المنتج. يرجى المحاولة لاحقًا.",
+        "addedToWishlist": "تمت الإضافة إلى قائمة الأمنيات بنجاح.",
+        "removedFromWishlist": "تمت الإزالة من قائمة الأمنيات بنجاح.",
+        "wishlistError": "تعذّر تحديث قائمة الأمنيات."
+      },
+      "loadingProducts": "جارٍ تحميل المنتجات…",
+      "productsError": "تعذّر تحميل المنتجات. يرجى المحاولة مجددًا.",
+      "emptyProducts": "لا توجد منتجات تطابق الفلاتر المحددة.",
+      "results": "عرض {{from}}-{{to}} من أصل {{total}} منتج",
+      "sort": {
+        "label": "الترتيب حسب:",
+        "popular": "الأكثر شيوعًا",
+        "priceAsc": "السعر: من الأقل إلى الأعلى",
+        "priceDesc": "السعر: من الأعلى إلى الأقل",
+        "rating": "الأعلى تقييمًا",
+        "newest": "الأحدث"
+      },
+      "sidebar": {
+        "filters": "الفلاتر",
+        "openFilters": "فتح الفلاتر",
+        "closeFilters": "إغلاق الفلاتر",
+        "clearAll": "مسح الكل",
+        "categories": "الفئات",
+        "priceRange": "نطاق السعر",
+        "min": "الأدنى",
+        "max": "الأعلى",
+        "minPrice": "الحد الأدنى للسعر",
+        "maxPrice": "الحد الأعلى للسعر",
+        "brands": "العلامات التجارية",
+        "orders": "طلباتي"
+      },
+      "productCard": {
+        "addToCart": "إضافة إلى السلة",
+        "wishlist": "تبديل حالة قائمة الأمنيات",
+        "save": "وفّر {{percent}}٪",
+        "lowStock": "مخزون منخفض",
+        "imageUnavailable": "الصورة غير متوفرة"
+      },
+      "order": {
+        "imageAlt": "عنصر الطلب",
+        "statuses": {
+          "Pending": "قيد الانتظار",
+          "Processing": "قيد المعالجة",
+          "Shipped": "تم الشحن",
+          "Completed": "مكتمل",
+          "Cancelled": "ملغي",
+          "Delivered": "تم التوصيل"
+        }
+      }
+    },
+    "product": {
+      "backToStore": "العودة إلى المتجر",
+      "detailsTitle": "تفاصيل المنتج",
+      "loading": "جارٍ تحميل المنتج…",
+      "loadError": "تعذّر تحميل تفاصيل المنتج.",
+      "reviews": "{{rating}} من 5 ({{count}} تقييمًا)",
+      "loginRequired": "يرجى تسجيل الدخول قبل إضافة منتج إلى السلة.",
+      "addError": "حدث خطأ. يرجى المحاولة مجددًا.",
+      "adding": "جارٍ الإضافة…",
+      "addToCart": "إضافة إلى السلة",
+      "addSuccess": "تمت إضافة المنتج إلى سلتك.",
+      "noDescription": "لا يوجد وصف متاح لهذا المنتج.",
+      "imageUnavailable": "صورة المنتج غير متوفرة",
+      "inStock": "متوفر في المخزون: {{count}}",
+      "outOfStock": "غير متوفر في المخزون",
+      "decreaseQuantity": "تقليل الكمية",
+      "increaseQuantity": "زيادة الكمية",
+      "vetApproved": "معتمد بيطريًا",
+      "galleryLoading": "جارٍ تحميل الصور…",
+      "galleryError": "تعذّر تحميل صور المنتج.",
+      "imageAlt": "صورة المنتج",
+      "bestseller": "الأكثر مبيعًا",
+      "thumbnailAlt": "صورة مصغرة للمنتج {{number}}",
+      "review": {
+        "title": "التقييمات والمراجعات",
+        "subtitle": "شارك تجربتك وساعد المتبنين الآخرين على الاختيار بثقة.",
+        "reviewCount": "تقييم واحد",
+        "reviewCount_zero": "لا تقييمات",
+        "reviewCount_two": "تقييمان",
+        "reviewCount_few": "{{count}} تقييمات",
+        "reviewCount_many": "{{count}} تقييمًا",
+        "reviewCount_other": "{{count}} تقييم",
+        "formTitle": "اكتب مراجعة",
+        "selectRating": "اختر تقييمك",
+        "starLabel": "نجمة واحدة",
+        "starLabel_two": "نجمتان",
+        "starLabel_few": "{{count}} نجوم",
+        "starLabel_many": "{{count}} نجمة",
+        "starLabel_other": "{{count}} نجمة",
+        "commentLabel": "تعليقك",
+        "optional": "اختياري",
+        "commentPlaceholder": "ما الذي أعجبك أو لم يعجبك في هذا المنتج؟",
+        "characterCount": "{{count}}/{{max}} حرف",
+        "submit": "إرسال المراجعة",
+        "submitting": "جارٍ الإرسال…",
+        "success": "تم إرسال مراجعتك بنجاح.",
+        "ratingRequired": "يرجى اختيار عدد النجوم.",
+        "loginRequired": "يرجى تسجيل الدخول بحساب متبنٍ لإرسال مراجعة.",
+        "alreadyRated": "لقد قيّمت هذا المنتج مسبقًا.",
+        "submitError": "تعذّر إرسال مراجعتك. يرجى المحاولة مجددًا.",
+        "loading": "جارٍ تحميل المراجعات…",
+        "loadError": "تعذّر تحميل المراجعات.",
+        "empty": "لا توجد مراجعات بعد. كن أول من يقيّم هذا المنتج.",
+        "anonymous": "متبنّي حيوان"
+      },
+      "accordion": {
+        "ingredients-nutrition": {
+          "title": "المكونات والقيم الغذائية",
+          "description": "مصنوع من سمك السلمون الحقيقي عالي الجودة كمكوّن أول، ويوفر هذا الطعام الخالي من الحبوب الأحماض الأمينية الضرورية للعضلات. كما توفر البطاطا الحلوة والبازلاء طاقة سهلة الهضم إلى جانب الفيتامينات والمعادن ومضادات الأكسدة.",
+          "facts": [
+            {
+              "label": "البروتين الخام (الحد الأدنى)",
+              "value": "30٪"
+            },
+            {
+              "label": "الدهون الخام (الحد الأدنى)",
+              "value": "15٪"
+            },
+            {
+              "label": "الألياف الخام (الحد الأقصى)",
+              "value": "4.5٪"
+            },
+            {
+              "label": "الرطوبة (الحد الأقصى)",
+              "value": "10٪"
+            }
+          ]
+        },
+        "feeding-guide": {
+          "title": "دليل التغذية",
+          "description": "اضبط كميات الطعام للحفاظ على وزن مثالي واستشر الطبيب البيطري عند الحاجة. انتقل إلى الطعام الجديد خلال 7 أيام بزيادة كميته تدريجيًا وتقليل الطعام القديم."
+        },
+        "storage-instructions": {
+          "title": "تعليمات التخزين",
+          "description": "يُحفظ في مكان بارد وجاف، مع إغلاق العبوة بإحكام بعد الفتح للحفاظ على النضارة وحمايتها من الآفات."
+        }
+      }
+    },
+    "cart": {
+      "loading": "جارٍ تحميل سلتك…",
+      "retry": "حاول مجددًا",
+      "empty": "سلتك فارغة.",
+      "emptyDescription": "لم تضف أي منتجات بعد. تصفح المتجر للعثور على ما سيحبه حيوانك الأليف.",
+      "browseStore": "تصفح المتجر",
+      "backToStore": "العودة إلى المتجر",
+      "title": "سلة التسوق",
+      "itemCount": "{{count}} عناصر",
+      "remove": "إزالة",
+      "decrease": "تقليل الكمية",
+      "increase": "زيادة الكمية",
+      "loginRequired": "يرجى تسجيل الدخول لعرض سلتك.",
+      "signIn": "تسجيل الدخول",
+      "summary": "ملخص الطلب",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن التقديري",
+      "tax": "الضريبة التقديرية",
+      "total": "الإجمالي",
+      "checkout": "المتابعة إلى الدفع",
+      "clear": "إفراغ السلة",
+      "secure": "دفع آمن ومشفّر عبر SSL"
+    },
+    "checkout": {
+      "loading": "جارٍ تحميل صفحة الدفع…",
+      "cartEmpty": "سلتك فارغة.",
+      "paymentFailed": "تم إنشاء الطلب رقم {{orderId}}، لكن عملية الدفع فشلت: {{message}}",
+      "goBack": "العودة",
+      "title": "دفع آمن",
+      "encryption": "تشفير SSL بمستوى 256 بت.",
+      "paymentMethod": "طريقة الدفع",
+      "shamCashLogo": "شعار شام كاش",
+      "cardNumber": "رقم البطاقة",
+      "expiryDate": "تاريخ الانتهاء",
+      "expiryPlaceholder": "شهر / سنة",
+      "cvv": "رمز CVV",
+      "nameOnCard": "الاسم على البطاقة",
+      "namePlaceholder": "الاسم الكامل",
+      "summary": "ملخص الطلب",
+      "quantity": "الكمية: {{count}}",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "taxes": "الضرائب",
+      "total": "الإجمالي",
+      "processing": "جارٍ التنفيذ…",
+      "retryPayment": "إعادة محاولة الدفع",
+      "payNow": "ادفع الآن",
+      "secure": "دفع آمن ومشفّر عبر SSL",
+      "terms": "بالنقر على «ادفع الآن»، فإنك توافق على شروط الخدمة وسياسة الخصوصية."
+    },
+    "orders": {
+      "loading": "جارٍ تحميل الطلب…",
+      "loadError": "تعذّر تحميل هذا الطلب.",
+      "summary": "ملخص الطلب",
+      "confirmed": "تم تأكيد الطلب!",
+      "thankYou": "شكرًا لطلبك، {{name}}!",
+      "thankYouGeneric": "شكرًا لطلبك!",
+      "number": "الطلب رقم {{number}}",
+      "copyNumber": "نسخ رقم الطلب",
+      "estimatedDelivery": "موعد التوصيل المتوقع",
+      "deliveryPending": "موعد التوصيل قيد التحديد",
+      "shippingAddress": "عنوان الشحن",
+      "addressUnavailable": "عنوان الشحن غير متوفر",
+      "size": "الحجم: {{value}}",
+      "color": "اللون: {{value}}",
+      "quantity": "الكمية: {{count}}",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "taxes": "الضرائب",
+      "total": "الإجمالي",
+      "continueShopping": "متابعة التسوق",
+      "viewHistory": "عرض سجل الطلبات",
+      "details": "تفاصيل الطلب",
+      "close": "إغلاق تفاصيل الطلب",
+      "orderId": "معرّف الطلب",
+      "datePlaced": "تاريخ الطلب",
+      "itemsTitle": "العناصر في هذا الطلب",
+      "itemCount": "{{count}} عناصر",
+      "downloadInvoice": "تنزيل الفاتورة",
+      "buyAgain": "الشراء مجددًا",
+      "statuses": {
+        "Pending": "قيد الانتظار",
+        "Processing": "قيد المعالجة",
+        "Shipped": "تم الشحن",
+        "Completed": "مكتمل",
+        "Cancelled": "ملغي",
+        "Delivered": "تم التوصيل"
+      },
+      "shippingTypes": {
+        "standard_shipping": "شحن عادي",
+        "express_shipping": "شحن سريع",
+        "free_shipping": "شحن مجاني"
+      }
+    },
+    "health": {
+      "historyTitle": "جلسات المحادثة",
+      "sessionsTitle": "جلسات المحادثة",
+      "newChat": "محادثة جديدة",
+      "recentChats": "المحادثات الأخيرة",
+      "noSessions": "لا توجد جلسات محادثة بعد.",
+      "now": "الآن",
+      "moreOptions": "خيارات إضافية",
+      "attach": "إرفاق ملف",
+      "placeholder": "اسأل عن صحة حيوانك الأليف…",
+      "send": "إرسال الرسالة",
+      "disclaimer": "هذا المساعد لا يغني عن الرعاية البيطرية المتخصصة.",
+      "emptyTitle": "كيف يمكنني مساعدتك بشأن حيوانك اليوم؟",
+      "emptyDescription": "صف الأعراض أو السلوك أو المشكلة الصحية لبدء المحادثة.",
+      "assistant": {
+        "name": "المساعد الصحي",
+        "status": "متصل"
+      },
+      "history": {
+        "1": {
+          "title": "عرج ديزي",
+          "type": "فحص بالذكاء الاصطناعي",
+          "date": "12 أكتوبر"
+        },
+        "2": {
+          "title": "عطاس لونا",
+          "type": "زيارة بيطرية",
+          "date": "5 سبتمبر"
+        },
+        "3": {
+          "title": "الجرعات التنشيطية السنوية",
+          "type": "رعاية دورية",
+          "date": "20 أغسطس"
+        }
+      },
+      "pets": {
+        "daisy": {
+          "breed": "بيغل"
+        },
+        "luna": {
+          "breed": "قطة مختلطة"
+        }
+      },
+      "messages": {
+        "1": "مرحبًا! أنا هنا لمساعدتك في الاطمئنان على ديزي. هل يمكنك وصف ما لاحظته بشأن عرجها؟",
+        "2": "بدأت تعرج بساقها الخلفية اليمنى هذا الصباح بعد التنزه. ما زالت تأكل جيدًا وتبدو سعيدة فيما عدا ذلك."
+      }
+    },
+    "vets": {
+      "retry": "إعادة المحاولة",
+      "tabs": {
+        "book": "حجز موعد",
+        "visits": "زياراتي"
+      },
+      "hub": {
+        "eyebrow": "الرعاية البيطرية",
+        "title": "ابحث عن طبيب بيطري",
+        "subtitle": "اكتشف رعاية بيطرية موثوقة بالقرب منك واحجز موعدًا لدى عيادة معتمدة.",
+        "searchPlaceholder": "ابحث باسم الطبيب أو العيادة أو العنوان أو الاختصاص...",
+        "useLocation": "استخدام موقعي",
+        "locating": "جارٍ تحديد الموقع…",
+        "locationReady": "تم تحديد الموقع",
+        "locationUnsupported": "تحديد الموقع غير مدعوم في هذا المتصفح.",
+        "locationDenied": "تم رفض إذن الموقع. لا يزال بإمكانك البحث والترتيب دون المسافة.",
+        "locationUnavailable": "تعذّر تحديد موقعك. يرجى المحاولة مجددًا.",
+        "locationPlaceholder": "الموقع، مثال: المزة",
+        "search": "بحث",
+        "all": "الكل",
+        "availableToday": "متاح اليوم",
+        "myAppointments": "مواعيدي",
+        "sortBy": "الترتيب حسب:",
+        "highestRated": "الأعلى تقييمًا",
+        "nearest": "الأقرب",
+        "experienced": "الأكثر خبرة",
+        "loading": "جارٍ تحميل الأطباء البيطريين…",
+        "empty": "لا يوجد أطباء بيطريون مطابقون لبحثك.",
+        "whyTitle": "لماذا تختار أطباءنا؟",
+        "values": {
+          "verified": {
+            "title": "مختصون موثّقون",
+            "text": "تتم مراجعة ترخيص كل طبيب بيطري وجاهزية عيادته."
+          },
+          "facilities": {
+            "title": "مرافق حديثة",
+            "text": "تقدم العيادات الشريكة الرعاية الدورية والتشخيص ووضع خطط العلاج."
+          },
+          "ai": {
+            "title": "تشخيص مدعوم بالذكاء الاصطناعي",
+            "text": "يمكن دعم سير العمل السريري بتحليل ذكي للأعراض عند توفره."
+          }
+        },
+        "storiesTitle": "أحدث قصص النجاح",
+        "storyText": "حجز سريع وتعليمات رعاية واضحة وتجربة هادئة داخل العيادة."
+      },
+      "card": {
+        "verified": "موثّق",
+        "notRated": "غير مقيّم",
+        "experience": "خبرة {{years}} سنوات",
+        "license": "الترخيص {{license}}",
+        "clinicUnavailable": "معلومات العيادة غير متوفرة",
+        "addressUnavailable": "عنوان العيادة غير متوفر",
+        "specializationUnavailable": "الاختصاص غير متوفر",
+        "away": "يبعد {{distance}} كم",
+        "requestAppointment": "طلب موعد"
+      },
+      "visits": {
+        "title": "زياراتي",
+        "subtitle": "الوصول إلى مواعيد حساب المتبنّي.",
+        "loading": "جارٍ تحميل الزيارات…",
+        "upcoming": "المواعيد القادمة",
+        "cancelledSuccess": "تم إلغاء الموعد بنجاح.",
+        "booked": "تم إرسال طلب الموعد رقم {{id}} بنجاح.",
+        "cancelLatest": "إلغاء طلب الموعد هذا",
+        "cancelling": "جارٍ الإلغاء…",
+        "backToVets": "تصفح الأطباء البيطريين",
+        "history": "سجل الزيارات",
+        "showLess": "عرض أقل",
+        "viewRecords": "عرض السجلات كاملة",
+        "empty": "لا توجد زيارات. احجز موعدك الأول من صفحة الأطباء.",
+        "veterinarian": "الطبيب البيطري",
+        "dateTime": "التاريخ والوقت",
+        "reschedule": "إعادة الجدولة",
+        "cancel": "إلغاء",
+        "cancelled": "ملغي",
+        "completed": "مكتمل",
+        "withVet": "{{date}} مع {{vet}}",
+        "noUpcoming": "لا توجد لديك مواعيد قادمة.",
+        "noHistory": "لا توجد لديك مواعيد مكتملة أو ملغاة.",
+        "details": "التفاصيل",
+        "loadingDetails": "جارٍ تحميل تفاصيل الموعد…",
+        "appointmentId": "معرّف الموعد",
+        "pet": "الحيوان",
+        "reason": "السبب",
+        "rescheduling": "جارٍ إعادة الجدولة…",
+        "saveSchedule": "حفظ الموعد الجديد",
+        "rescheduledSuccess": "تمت إعادة جدولة الموعد بنجاح.",
+        "rateVet": "تقييم الطبيب",
+        "rating": "التقييم",
+        "stars_zero": "{{count}} نجوم",
+        "stars_one": "نجمة واحدة",
+        "stars_two": "نجمتان",
+        "stars_few": "{{count}} نجوم",
+        "stars_many": "{{count}} نجمة",
+        "stars_other": "{{count}} نجمة",
+        "review": "المراجعة (اختيارية)",
+        "submitRating": "إرسال التقييم",
+        "submittingRating": "جارٍ الإرسال…",
+        "ratingSuccess": "تم إرسال تقييم الطبيب بنجاح."
+      },
+      "booking": {
+        "loading": "جارٍ تحميل الموعد…",
+        "back": "العودة إلى حجز موعد",
+        "petService": "1. الحيوان والخدمة",
+        "done": "تم",
+        "edit": "تعديل",
+        "selectedPet": "الحيوان المحدد",
+        "petOption": "{{name}}، {{breed}}",
+        "selectedService": "الخدمة المحددة",
+        "dateTime": "2. اختر التاريخ والوقت",
+        "summary": "ملخص الجدولة",
+        "veterinarian": "الطبيب البيطري",
+        "service": "الخدمة",
+        "date": "التاريخ",
+        "time": "الوقت",
+        "ratingNote": "تتاح التقييمات والملاحظات بعد إتمام الزيارة فقط.",
+        "availabilityLoading": "جارٍ تحميل الأوقات المتاحة…",
+        "availabilityEmpty": "لا توجد مواعيد متاحة في هذا التاريخ.",
+        "availabilityError": "تعذّر تحميل الأوقات المتاحة.",
+        "noPets": "لا توجد حيوانات متبناة متاحة للحجز",
+        "confirm": "تأكيد الحجز",
+        "protected": "بياناتك محمية وآمنة.",
+        "steps": {
+          "service": "الخدمة",
+          "date": "التاريخ",
+          "confirm": "التأكيد"
+        },
+        "services": {
+          "general": "استشارة عامة",
+          "annual": "فحص سنوي وتطعيمات",
+          "dental": "العناية بالأسنان",
+          "emergency": "مراجعة طارئة"
+        },
+        "previousDates": "التواريخ السابقة",
+        "nextDates": "التواريخ التالية",
+        "weekdays": [
+          "أح",
+          "اث",
+          "ثل",
+          "أر",
+          "خم",
+          "جم",
+          "سب"
+        ],
+        "availableTimes": "الأوقات المتاحة",
+        "onDate": "في {{date}}"
+      },
+      "confirm": {
+        "missing": "تفاصيل الموعد غير موجودة. يرجى اختيار الطبيب والموعد مجددًا.",
+        "back": "العودة إلى حجز موعد",
+        "title": "المراجعة والتأكيد",
+        "subtitle": "يرجى مراجعة التفاصيل أدناه قبل تثبيت موعدك.",
+        "when": "الموعد",
+        "where": "المكان",
+        "patientService": "الحيوان والخدمة",
+        "patientMeta": "{{breed}} - {{gender}} - {{age}}",
+        "requestedService": "الخدمة المطلوبة",
+        "policyTitle": "سياسة الإلغاء",
+        "policyText": "يمكنك إلغاء هذا الموعد أو إعادة جدولته في أي وقت من صفحة زياراتي. لا تحدد العيادة مهلة زمنية للإلغاء، لذا يرجى التواصل معها مباشرة لأي تغييرات عاجلة في الموعد.",
+        "confirming": "جارٍ التأكيد…",
+        "action": "تأكيد الموعد"
+      },
+      "statuses": {
+        "Pending": "قيد الانتظار",
+        "Confirmed": "مؤكد",
+        "Accepted": "مقبول",
+        "Rejected": "مرفوض",
+        "Completed": "مكتمل",
+        "Cancelled": "ملغي"
+      },
+      "notScheduled": "غير مجدول"
+    }
+  },
+  "hero": {
+    "badge": "أفضل حياة لأليفك تبدأ من هنا",
+    "titlePrefix": "كل حيوان أليف يستحق ",
+    "titleHighlight": "ملاذاً سعيداً.",
+    "description": "منصة شاملة لتبني الحيوانات الأليفة، ومستلزماتها، والرعاية البيطرية، ورؤى صحية مدعومة بالذكاء الاصطناعي. استمتع برحلة سلسة لك ولرفاقك الأليفين.",
+    "ctaAdopt": "تبنَّ صديقاً",
+    "ctaShop": "تسوّق المستلزمات",
+    "stats": [
+      {
+        "value": "+500",
+        "label": "حيوان تم تبنيه"
+      },
+      {
+        "value": "4.9/5",
+        "label": "أطباء بيطريون الأعلى تقييماً"
+      }
+    ],
+    "imageAlt": "كلب غولدن ريتريفر سعيد يركض في حديقة خضراء مشمسة.",
+    "badgeTitle": "تم فحصه صحياً بالذكاء الاصطناعي",
+    "badgeSubtitle": "آمن وصحي بنسبة 100%"
+  },
+  "impactStats": {
+    "items": [
+      {
+        "value": "+12,000",
+        "label": "حيوان تم إنقاذه"
+      },
+      {
+        "value": "+2,500",
+        "label": "طبيب بيطري موثّق"
+      },
+      {
+        "value": "98%",
+        "label": "نسبة رضا عن إعادة التوطين"
+      }
+    ]
+  },
+  "categories": {
+    "title": "كل ما تحتاجه",
+    "items": [
+      {
+        "title": "تبنَّ حيواناً أليفاً",
+        "description": "اعثر على الرفيق المثالي من الملاجئ المحلية."
+      },
+      {
+        "title": "مستلزمات الحيوانات الأليفة",
+        "description": "طعام وألعاب وإكسسوارات عالية الجودة لأليفك."
+      },
+      {
+        "title": "استشارات بيطرية",
+        "description": "احجز مواعيد مع أفضل الأطباء البيطريين المحليين."
+      },
+      {
+        "title": "فاحص الصحة بالذكاء الاصطناعي",
+        "description": "احصل على رؤى صحية فورية مدعومة بالذكاء الاصطناعي لراحة بالك."
+      }
+    ]
+  },
+  "featuredPets": {
+    "title": "تعرّف على صديقك الجديد",
+    "viewAll": "عرض كل الحيوانات ←",
+    "cta": "عرض الملف الشخصي",
+    "pets": [
+      {
+        "name": "Buddy",
+        "meta": "سنتان • بيغل مختلط",
+        "alt": "جرو بيغل"
+      },
+      {
+        "name": "Luna",
+        "meta": "سنة واحدة • قط منزلي قصير الشعر",
+        "alt": "قطة تابي برتقالية"
+      },
+      {
+        "name": "Charlie",
+        "meta": "3 أشهر • غولدن ريتريفر",
+        "alt": "جرو غولدن ريتريفر"
+      },
+      {
+        "name": "Milo",
+        "meta": "4 سنوات • مين كون",
+        "alt": "قطة مين كون"
+      }
+    ]
+  },
+  "trendingProducts": {
+    "title": "الأكثر رواجاً في المتجر",
+    "viewAll": "عرض كل المنتجات ←",
+    "sale": "تخفيض",
+    "addToCart": "أضف إلى السلة",
+    "products": [
+      {
+        "name": "كريات طعام فاخرة",
+        "alt": "طعام حيوانات أليفة فاخر"
+      },
+      {
+        "name": "عظمة مضغ متينة",
+        "alt": "لعبة كلب تفاعلية"
+      },
+      {
+        "name": "طوق تتبع GPS",
+        "alt": "طوق ذكي للحيوانات الأليفة"
+      },
+      {
+        "name": "برج قطط فاخر",
+        "alt": "شجرة قطط"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "كيف تعمل",
+    "steps": [
+      {
+        "title": "ابحث",
+        "description": "تصفح مئات الحيوانات الموثقة الباحثة عن منزل."
+      },
+      {
+        "title": "تواصل",
+        "description": "تواصل مع الملاجئ ورتب لقاء تعارف."
+      },
+      {
+        "title": "خذه إلى المنزل",
+        "description": "أكمل عملية التبني ورحّب برفيقك الجديد."
+      }
+    ]
+  },
+  "events": {
+    "title": "فعاليات الحيوانات الأليفة القادمة",
+    "viewAll": "عرض التقويم الكامل ←",
+    "items": [
+      {
+        "title": "حملة التبني الكبرى",
+        "time": "10:00 صباحاً - 4:00 مساءً",
+        "location": "جناح سنترال بارك",
+        "cta": "اعرف المزيد"
+      },
+      {
+        "title": "ورشة تدريب الجراء",
+        "time": "1:00 - 3:00 مساءً",
+        "location": "مركز بيت هافن",
+        "cta": "سجّل الآن"
+      },
+      {
+        "title": "ندوة رعاية الحيوانات المسنّة",
+        "time": "6:00 - 7:30 مساءً",
+        "location": "ندوة عبر الإنترنت",
+        "cta": "أكّد حضورك"
+      }
+    ]
+  },
+  "vet": {
+    "badge": "رعاية معتمدة",
+    "titlePrefix": "تعرّف على ",
+    "titleHighlight": "خبرائنا البيطريين المعتمدين.",
+    "description": "صحة أليفك بأيدٍ أمينة. كل طبيب بيطري على منصتنا معتمد بدقة لأن مؤهلاته تم التحقق منها بعناية لضمان رعاية عالية الجودة.",
+    "features": [
+      "تم التحقق من الخلفية",
+      "ترخيص موثّق",
+      "منشآت الأعلى تقييماً"
+    ],
+    "cta": "ابحث عن طبيب بيطري قريب منك",
+    "imageAlt": "طبيبة بيطرية محترفة في عيادة حديثة"
+  },
+  "blog": {
+    "title": "نصائح الصحة والرعاية",
+    "viewAll": "اقرأ المزيد من المقالات ←",
+    "readArticle": "اقرأ المقال",
+    "articles": [
+      {
+        "tag": "الرعاية الموسمية",
+        "title": "رعاية الحيوانات الأليفة في الصيف: حافظ على برودة صديقك الفروي",
+        "description": "نصائح أساسية للوقاية من ضربة الشمس وضمان راحة أليفك خلال أشهر الصيف الحارة.",
+        "alt": "كلب يلهث في الصيف"
+      },
+      {
+        "tag": "السلوك",
+        "title": "فهم لغة جسد قطتك",
+        "description": "فك رموز ما تحاول قطتك إخبارك به من خلال حركات الذيل ووضعية الأذنين والوقفة.",
+        "alt": "قطة تنظر بفضول"
+      },
+      {
+        "tag": "الصحة",
+        "title": "متى تستخدم فاحص الصحة بالذكاء الاصطناعي مقابل زيارة الطبيب البيطري",
+        "description": "دليل عملي لاستخدام أدواتنا الذكية للمخاوف البسيطة والتعرف على الحالات الطارئة التي تتطلب رعاية فورية.",
+        "alt": "طبيب بيطري يفحص كلباً"
+      },
+      {
+        "tag": "مساعد الذكاء الاصطناعي",
+        "title": "رعاية شخصية عبر الدردشة الذكية",
+        "description": "تحدث مع مساعدنا الذكي للحصول على نصائح فورية حول التغذية والتدريب وعادات العافية اليومية المخصصة لأليفك."
+      }
+    ]
+  },
+  "testimonials": {
+    "quote": "«كان تبني بيلا عبر بيت هافن أفضل قرار في حياتنا. كانت العملية سلسة للغاية، والقدرة على شراء كل مستلزماتها من نفس المكان وفّرت علينا الكثير من الوقت!»",
+    "author": "سارة ج.",
+    "role": "مالكة فخورة لبيلا"
+  },
+  "newsletter": {
+    "title": "انضم إلى مجتمع هافن",
+    "description": "احصل على نصائح أسبوعية لرعاية الحيوانات الأليفة، وخصومات حصرية على المتجر، وقصص تبني ملهمة تصل مباشرة إلى بريدك الإلكتروني.",
+    "placeholder": "أدخل بريدك الإلكتروني",
+    "cta": "اشترك",
+    "privacy": "نحترم خصوصيتك. لا رسائل مزعجة أبداً."
+  },
+  "footer": {
+    "logoAlt": "شعار بيت هافن",
+    "copyright": "© 2024 بيت هافن. جميع الحقوق محفوظة.",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsOfService": "شروط الخدمة",
+    "contactUs": "اتصل بنا"
+  },
+  "petModal": {
+    "description": "{{name}} يبحث عن منزل دائم مليء بالحب. تواصل معنا لمعرفة المزيد عن خطوات التبني والسجلات الصحية وكيفية تحديد موعد للقاء تعارف.",
+    "viewFullProfile": "عرض الملف الكامل",
+    "close": "إغلاق"
+  },
+  "productModal": {
+    "description": "منتج مفضل لدى العملاء بـ {{reviews}} تقييماً. تم فحص جودته وهو جاهز للشحن إلى منزل أليفك الجديد.",
+    "addToCart": "أضف إلى السلة",
+    "close": "إغلاق"
+  },
+  "authModal": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "welcomeBack": "مرحباً بعودتك",
+    "signInSubtitle": "سجّل الدخول للمتابعة إلى بيت هافن",
+    "joinPetHaven": "انضم إلى بيت هافن",
+    "signUpSubtitleStep1": "أنشئ حسابك وابدأ رحلتك",
+    "signUpSubtitleStep2": "خطوة أخيرة — اختر دورك",
+    "googleSignIn": "تسجيل الدخول عبر جوجل",
+    "googleSignUp": "إنشاء حساب عبر جوجل",
+    "or": "أو",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "passwordPlaceholder": "كلمة المرور",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "fullNamePlaceholder": "الاسم الكامل",
+    "usernamePlaceholder": "اسم المستخدم",
+    "phonePlaceholder": "رقم الهاتف",
+    "next": "التالي",
+    "signingUp": "جارٍ إنشاء الحساب...",
+    "iAmA": "أنا...",
+    "back": "رجوع",
+    "selectRoleError": "يرجى اختيار دورك",
+    "close": "إغلاق",
+    "roles": [
+      {
+        "label": "متبنّي حيوان أليف",
+        "description": "ابحث عن حيوان أليف وتبنَّه"
+      },
+      {
+        "label": "مركز تبني",
+        "description": "أدرج حيوانات للتبني"
+      },
+      {
+        "label": "طبيب بيطري",
+        "description": "قدّم خدمات بيطرية"
+      },
+      {
+        "label": "مسؤول",
+        "description": "أدر المنصة"
+      }
+    ]
+  },
+  "contactModal": {
+    "title": "اتصل بنا",
+    "successMessage": "تم إرسال الرسالة!",
+    "namePlaceholder": "الاسم",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "subjectPlaceholder": "الموضوع",
+    "messagePlaceholder": "الرسالة",
+    "send": "إرسال",
+    "close": "إغلاق"
+  },
+  "articleModal": {
+    "close": "إغلاق"
+  },
+  "center": {
+    "header": {
+      "logoAlt": "شعار بيت هافن",
+      "nav": {
+        "dashboard": "لوحة التحكم",
+        "adoptions": "التبني",
+        "inventory": "المخزون",
+        "vaccinations": "التقارير",
+        "reviews": "التقييمات"
+      },
+      "language": "تبديل اللغة",
+      "notifications": "الإشعارات",
+      "userMenu": "قائمة المستخدم",
+      "avatarAlt": "صورة المستخدم",
+      "profileLink": "الملف الشخصي",
+      "logout": "تسجيل الخروج",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "status": {
+      "Available": "متاح",
+      "Pending": "قيد الانتظار",
+      "Adopted": "تم تبنيه",
+      "Active": "نشط",
+      "Inactive": "غير نشط",
+      "Approved": "مقبول",
+      "Rejected": "مرفوض",
+      "Completed": "مكتمل",
+      "Processing": "قيد المعالجة",
+      "Due Soon": "يستحق قريباً",
+      "Overdue": "متأخر"
+    },
+    "petOptions": {
+      "species": {
+        "Dog": "كلب",
+        "Cat": "قطة",
+        "Bird": "طائر",
+        "Small Mammal": "ثديي صغير",
+        "Other": "أخرى"
+      },
+      "sizes": {
+        "Small (Under 25 lbs)": "صغير (أقل من 25 رطلاً)",
+        "Medium (25-60 lbs)": "متوسط (25-60 رطلاً)",
+        "Large (61-100 lbs)": "كبير (61-100 رطل)",
+        "Extra Large (Over 100 lbs)": "كبير جداً (أكثر من 100 رطل)"
+      },
+      "healthStatuses": {
+        "Healthy": "سليم",
+        "Minor Issues": "مشاكل بسيطة",
+        "Requires Treatment": "يحتاج علاجاً",
+        "Critical": "حالة حرجة"
+      },
+      "genders": {
+        "Male": "ذكر",
+        "Female": "أنثى",
+        "Unknown": "غير معروف"
+      },
+      "ageUnits": {
+        "years": "سنوات",
+        "months": "أشهر",
+        "weeks": "أسابيع"
+      },
+      "vaccines": {
+        "Rabies": "داء الكلب",
+        "DHPP": "DHPP",
+        "Bordetella": "بورديتيلا"
+      }
+    },
+    "productCategories": {
+      "Food": "طعام",
+      "Toys": "ألعاب",
+      "Bedding": "فراش",
+      "Medical": "مستلزمات طبية"
+    },
+    "profile": {
+      "loading": "جارٍ تحميل ملف المركز…",
+      "backToDashboard": "العودة إلى لوحة التحكم",
+      "title": "ملف المركز",
+      "subtitle": "أدر معلومات مركز التبني العامة وساعات العمل والتفاصيل التشغيلية.",
+      "basicInfo": {
+        "title": "المعلومات الأساسية",
+        "centerName": "اسم المركز",
+        "centerNamePlaceholder": "اسم مركز التبني الخاص بك",
+        "licenseNumber": "رقم الترخيص",
+        "licenseNumberPlaceholder": "رقم الترخيص الرسمي لمركزك",
+        "phoneNumber": "رقم الهاتف",
+        "phoneNumberPlaceholder": "رقم هاتف التواصل مع المتبنّين",
+        "physicalAddress": "العنوان الفعلي",
+        "addressPlaceholder": "الشارع، المدينة، والمحافظة",
+        "useGps": "استخدام GPS",
+        "locating": "جارٍ تحديد الموقع...",
+        "gpsUnsupported": "خدمات تحديد الموقع غير مدعومة في متصفحك.",
+        "gpsError": "تعذّر تحديد عنوانك. يرجى إدخاله يدوياً."
+      },
+      "security": {
+        "title": "الأمان",
+        "password": "كلمة المرور",
+        "passwordPlaceholder": "أدخل كلمة مرور جديدة",
+        "passwordHint": "حافظ على أمان حسابك بكلمة مرور قوية."
+      },
+      "mission": {
+        "title": "الرسالة والخلفية",
+        "description": "وصف المركز",
+        "descriptionHint": "صف رسالة مركزك باختصار. 500 حرف كحد أقصى."
+      },
+      "workingHours": {
+        "title": "ساعات العمل",
+        "closed": "مغلق"
+      },
+      "cancel": "إلغاء",
+      "saveChanges": "حفظ التغييرات",
+      "saveSuccess": "تم تحديث ملف المركز بنجاح.",
+      "saveError": "فشل حفظ التغييرات. يرجى المحاولة مرة أخرى."
+    },
+    "dashboard": {
+      "loading": "جارٍ تحميل لوحة التحكم…",
+      "welcome": {
+        "titlePrefix": "مرحباً بعودتك، ",
+        "defaultName": "مدير هافن",
+        "subtitle": "إليك ما يحدث في مركز التبني اليوم."
+      },
+      "actions": {
+        "exportReport": "تصدير التقرير",
+        "addNewPet": "إضافة حيوان جديد"
+      },
+      "kpi": {
+        "availablePets": "الحيوانات المتاحة",
+        "pendingRequests": "الطلبات قيد الانتظار",
+        "successfulAdoptions": "حالات التبني الناجحة",
+        "storeSales": "مبيعات المتجر (اليوم)"
+      },
+      "alerts": {
+        "title": "التنبيهات والمتابعات",
+        "subtitle": "تتطلب انتباهاً إدارياً فورياً لصحة الحيوانات والامتثال.",
+        "vaccinationsDue": "تطعيمات مستحقة",
+        "overdueReports": "تقارير متأخرة",
+        "contact": "تواصل",
+        "sendReminder": "إرسال تذكير"
+      },
+      "activity": {
+        "title": "النشاط الأخير",
+        "viewAll": "عرض كل الطلبات",
+        "match": "تطابق"
+      },
+      "wallet": {
+        "title": "المحفظة",
+        "balanceLabel": "الرصيد المتاح",
+        "viewAll": "عرض كل المعاملات",
+        "noTransactions": "لا توجد معاملات بعد.",
+        "credit": "إيداع",
+        "debit": "سحب"
+      },
+      "obligations": {
+        "title": "الالتزامات المكتملة",
+        "viewAll": "عرض كل الالتزامات"
+      },
+      "orders": {
+        "title": "أحدث طلبات المتجر",
+        "seeAll": "عرض الكل",
+        "columns": {
+          "orderId": "رقم الطلب",
+          "customer": "العميل",
+          "items": "العناصر",
+          "total": "الإجمالي",
+          "status": "الحالة"
+        }
+      },
+      "export": {
+        "metric": "المقياس",
+        "value": "القيمة",
+        "trend": "الاتجاه"
+      }
+    },
+    "reviews": {
+      "loading": "جارٍ تحميل تقييمات المنتجات…",
+      "header": {
+        "title": "تقييمات المنتجات",
+        "subtitle": "آراء العملاء حول منتجات المركز"
+      },
+      "overallRating": {
+        "title": "متوسط التقييم",
+        "basedOn": "بناءً على {{count}} تقييم"
+      },
+      "filters": {
+        "allReviews": "كل التقييمات",
+        "stars": "{{count}} نجوم",
+        "searchPlaceholder": "ابحث حسب المنتج أو اسم العميل أو التعليق..."
+      },
+      "card": {
+        "ratingOnly": "تقييم بدون تعليق"
+      },
+      "empty": "لا توجد تقييمات للمنتجات حتى الآن.",
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "showing": "عرض",
+        "to": "إلى",
+        "of": "من",
+        "reviewsWord": "تقييم"
+      }
+    },
+    "inventory": {
+      "loading": "جارٍ تحميل المخزون…",
+      "title": "إدارة المخزون",
+      "subtitle": {
+        "animals": "أشرف على نزلاء الملجأ ومستلزمات البيع.",
+        "products": "أدر مستلزمات وبضائع مركز التبني."
+      },
+      "addButton": {
+        "animals": "إضافة سجل جديد",
+        "products": "إضافة منتج جديد"
+      },
+      "tabs": {
+        "animals": "الحيوانات",
+        "products": "المنتجات"
+      },
+      "pagination": {
+        "showing": "عرض",
+        "to": "إلى",
+        "of": "من",
+        "entries": "إدخالات",
+        "prev": "السابق",
+        "next": "التالي"
+      },
+      "edit": "تعديل",
+      "delete": "حذف",
+      "product": {
+        "quickStats": {
+          "title": "إحصائيات سريعة",
+          "totalStockValue": "إجمالي قيمة المخزون",
+          "lowStockItems": "عناصر منخفضة المخزون",
+          "totalSalesToday": "إجمالي المبيعات (اليوم)"
+        },
+        "categories": {
+          "title": "الفئات"
+        },
+        "recentSales": {
+          "title": "أحدث مبيعات المنتجات",
+          "viewAll": "عرض كل المبيعات"
+        },
+        "toolbar": {
+          "searchPlaceholder": "ابحث عن منتجات...",
+          "categoryAll": "كل الفئات",
+          "ratingAll": "كل التقييمات",
+          "rating4": "4 نجوم فأكثر",
+          "rating3": "3 نجوم فأكثر",
+          "rating2": "2 نجوم فأكثر"
+        },
+        "columns": {
+          "name": "اسم المنتج",
+          "category": "الفئة",
+          "inStock": "المخزون",
+          "price": "السعر",
+          "rating": "التقييم",
+          "actions": "إجراءات"
+        },
+        "low": "(منخفض)",
+        "empty": "لا توجد منتجات."
+      },
+      "adoption": {
+        "quickStats": {
+          "title": "إحصائيات سريعة",
+          "totalAnimals": "إجمالي الحيوانات",
+          "lowStockAlerts": "تنبيهات المخزون المنخفض",
+          "pendingAdoptions": "طلبات تبني قيد الانتظار"
+        },
+        "activeRequests": {
+          "title": "الطلبات النشطة"
+        },
+        "recentAdoptions": {
+          "title": "حالات التبني الأخيرة",
+          "viewAll": "عرض كل حالات التبني",
+          "adoptedOnPrefix": "تم التبني في"
+        },
+        "toolbar": {
+          "searchPlaceholder": "ابحث عن حيوانات بالاسم أو السلالة...",
+          "statusAll": "كل الحالات",
+          "ageAll": "كل الأعمار",
+          "ageBaby": "صغير (أقل من سنة)",
+          "ageYoung": "يافع (1-3 سنوات)",
+          "ageAdult": "بالغ (3-7 سنوات)",
+          "ageSenior": "كبير السن (7+ سنوات)"
+        },
+        "columns": {
+          "name": "اسم الحيوان",
+          "breed": "السلالة",
+          "age": "العمر",
+          "arrivalDate": "تاريخ الوصول",
+          "status": "الحالة",
+          "action": "إجراء"
+        },
+        "changeStatus": "تغيير الحالة",
+        "viewRecord": "عرض السجل",
+        "modal": {
+          "title": "كل حالات التبني الأخيرة",
+          "searchPlaceholder": "ابحث باسم الحيوان أو المتبنّي...",
+          "filter": "تصفية",
+          "columns": {
+            "pet": "الحيوان",
+            "breed": "السلالة",
+            "date": "تاريخ التبني",
+            "adopter": "المتبنّي"
+          },
+          "close": "إغلاق"
+        }
+      }
+    },
+    "vaccinations": {
+      "loading": "جارٍ تحميل التطعيمات…",
+      "header": {
+        "title": "التطعيمات والتقارير",
+        "subtitle": "أدر التطعيمات وأنشئ التقارير الصحية."
+      },
+      "tabs": {
+        "vaccinations": "التطعيمات",
+        "reports": "تقارير الستة أشهر"
+      },
+      "toolbar": {
+        "searchPlaceholder": "ابحث عن حيوان أو مالك...",
+        "statusAll": "كل الحالات",
+        "statusCompleted": "مكتمل",
+        "statusDueSoon": "يستحق قريباً",
+        "statusOverdue": "متأخر",
+        "exportPdf": "تصدير PDF",
+        "recordVaccine": "تسجيل تطعيم"
+      },
+      "columns": {
+        "pet": "ملف الحيوان",
+        "vaccineType": "نوع التطعيم",
+        "dueDate": "تاريخ الاستحقاق",
+        "status": "الحالة",
+        "actions": "إجراءات"
+      },
+      "editRecord": "تعديل السجل",
+      "viewHistory": "عرض السجل التاريخي",
+      "pagination": {
+        "showing": "عرض",
+        "to": "إلى",
+        "of": "من",
+        "entries": "إدخالات",
+        "prev": "السابق",
+        "next": "التالي"
+      },
+      "modal": {
+        "title": "تسجيل تطعيم جديد",
+        "patientInfoLabel": "معلومات المريض",
+        "nameLabel": "الاسم",
+        "namePlaceholder": "مثال: بارنابي",
+        "speciesBreedLabel": "النوع / السلالة",
+        "speciesBreedPlaceholder": "مثال: كلب - بيغل مختلط",
+        "vaccineTypeLabel": "نوع التطعيم",
+        "vaccineTypePlaceholder": "اختر التطعيم",
+        "adminDateLabel": "تاريخ إعطاء الجرعة",
+        "nextDoseLabel": "الجرعة التالية مستحقة في",
+        "nextDoseBadge": "محسوبة تلقائياً",
+        "nextDoseHint": "بروتوكول +سنة واحدة",
+        "batchNumberLabel": "رقم الدفعة / التشغيلة",
+        "batchNumberPlaceholder": "مثال: LOT-8492",
+        "cancel": "إلغاء",
+        "saveButton": "حفظ السجل",
+        "vaccineOptions": [
+          {
+            "value": "Rabies",
+            "label": "داء الكلب",
+            "subtype": "جرعة معززة سنوية"
+          },
+          {
+            "value": "DHPP",
+            "label": "DHPP (الديستمبر، التهاب الكبد، نظير الإنفلونزا، البارفو)",
+            "subtype": "تطعيم أساسي"
+          },
+          {
+            "value": "Bordetella",
+            "label": "بورديتيلا (سعال الكلاب)",
+            "subtype": "سعال الكلاب"
+          },
+          {
+            "value": "Leptospirosis",
+            "label": "داء البريميات",
+            "subtype": "تطعيم أساسي"
+          },
+          {
+            "value": "Lyme Disease",
+            "label": "داء لايم",
+            "subtype": "تطعيم أساسي"
+          }
+        ]
+      }
+    },
+    "reports": {
+      "loading": "جارٍ تحميل التقارير…",
+      "submitted": {
+        "title": "التقارير المُرسلة",
+        "empty": "لا توجد تقارير مُرسلة.",
+        "submittedLabel": "أُرسل في:",
+        "healthConditionLabel": "الحالة الصحية:",
+        "requestClarification": "طلب توضيح",
+        "reportToManagement": "حظر",
+        "adopterOf": "متبنّي",
+        "viewDetails": "عرض التفاصيل"
+      },
+      "block": {
+        "title": "حظر المتبنّي",
+        "confirmation": "هل تريد حظر هذا المتبنّي؟",
+        "reasonLabel": "السبب",
+        "reasonPlaceholder": "أدخل سبب حظر هذا المتبنّي...",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد الحظر",
+        "blocking": "جارٍ الحظر…",
+        "invalidAdopter": "لا يحتوي هذا التقرير على معرّف متبنٍ صالح.",
+        "success": "تمت إضافة المتبنّي إلى قائمة الحظر."
+      },
+      "dueForReport": {
+        "title": "بانتظار التقرير",
+        "columns": {
+          "animalName": "اسم الحيوان",
+          "adopter": "المتبنّي",
+          "adoptionDate": "تاريخ التبني",
+          "status": "الحالة"
+        }
+      },
+      "details": {
+        "title": "تفاصيل تقرير الستة أشهر",
+        "adopterOfPrefix": "متبنّي",
+        "submittedLabel": "أُرسل في:",
+        "healthAssessmentTitle": "التقييم الصحي",
+        "milestoneTitle": "تحديث الإنجاز",
+        "close": "إغلاق"
+      }
+    },
+    "modals": {
+      "close": "إغلاق",
+      "cancel": "إلغاء",
+      "deleteProduct": {
+        "title": "حذف المنتج",
+        "confirmPrefix": "هل أنت متأكد من حذف",
+        "confirmSuffix": "لا يمكن التراجع عن هذا الإجراء، وسيتم إزالة العنصر من المخزون وكتالوج المتجر.",
+        "confirmButton": "حذف المنتج",
+        "deleting": "جارٍ الحذف…",
+        "deleteError": "تعذّر حذف المنتج. يرجى المحاولة مجددًا."
+      },
+      "deletePet": {
+        "title": "حذف الحيوان",
+        "confirmPrefix": "هل أنت متأكد من حذف",
+        "confirmSuffix": "لا يمكن التراجع عن هذا الإجراء، وستتم إزالة الحيوان من مخزون التبني.",
+        "confirmButton": "حذف الحيوان"
+      },
+      "editProduct": {
+        "title": "تعديل المنتج",
+        "changePhoto": "تغيير",
+        "nameLabel": "اسم المنتج",
+        "namePlaceholder": "أدخل اسم المنتج",
+        "categoryLabel": "الفئة",
+        "stockLabel": "المخزون",
+        "priceLabel": "السعر",
+        "statusLabel": "حالة المخزون",
+        "activeListing": "معروض نشط",
+        "inactiveListing": "معروض غير نشط",
+        "descriptionLabel": "الوصف",
+        "descriptionPlaceholder": "أضف وصفاً تفصيلياً للمنتج وفوائده...",
+        "discountLabel": "الخصم (٪)",
+        "saveError": "تعذّر حفظ المنتج. يرجى المحاولة مجددًا.",
+        "saving": "جارٍ الحفظ…",
+        "saveButton": "حفظ التغييرات"
+      },
+      "addProduct": {
+        "title": "إضافة منتج جديد",
+        "changePhoto": "رفع صورة",
+        "uploadPrompt": "اضغط لرفع صورة",
+        "nameLabel": "اسم المنتج",
+        "namePlaceholder": "أدخل اسم المنتج",
+        "categoryLabel": "الفئة",
+        "stockLabel": "المخزون",
+        "priceLabel": "السعر",
+        "statusLabel": "حالة المخزون",
+        "activeListing": "معروض نشط",
+        "inactiveListing": "معروض غير نشط",
+        "descriptionLabel": "الوصف",
+        "descriptionPlaceholder": "أضف وصفاً تفصيلياً للمنتج وفوائده...",
+        "discountLabel": "الخصم (٪)",
+        "saveError": "تعذّرت إضافة المنتج. يرجى المحاولة مجددًا.",
+        "saving": "جارٍ الإضافة…",
+        "saveButton": "إضافة المنتج"
+      },
+      "addPet": {
+        "title": "إضافة حيوان جديد",
+        "media": "الوسائط",
+        "uploadPhoto": "اختيار صورة",
+        "photoHint": "معاينة محلية فقط. يتطلب الحفظ الدائم دعم رفع الملفات من الخادم.",
+        "basicInfo": "المعلومات الأساسية",
+        "nameLabel": "اسم الحيوان *",
+        "namePlaceholder": "مثال: بيلا",
+        "speciesLabel": "النوع *",
+        "speciesPlaceholder": "اختر النوع",
+        "breedLabel": "السلالة الأساسية",
+        "breedPlaceholder": "مثال: غولدن ريتريفر",
+        "ageLabel": "العمر",
+        "genderLabel": "الجنس *",
+        "sizeLabel": "الحجم التقريبي",
+        "sizePlaceholder": "اختر الحجم",
+        "colorLabel": "اللون الأساسي / العلامات",
+        "colorPlaceholder": "مثال: أسود بصدر أبيض",
+        "medicalRecords": "السجلات الطبية",
+        "healthStatusLabel": "الحالة الصحية الحالية",
+        "vaccinationsLabel": "التطعيمات",
+        "adoptionDetails": "تفاصيل التبني",
+        "availabilityLabel": "حالة التوفر",
+        "characterNotes": "الطباع والملاحظات",
+        "characterLabel": "السمات الشخصية والملاحظات السلوكية",
+        "characterPlaceholder": "صف طبع الحيوان، ما يحب ويكره، وأي اعتبارات سلوكية...",
+        "saveButton": "إضافة الحيوان"
+      },
+      "editPet": {
+        "title": "تعديل ملف الحيوان",
+        "media": "الوسائط",
+        "changePhoto": "تغيير الصورة",
+        "photoHint": "الحجم الموصى به: 800×800 بكسل (JPG أو PNG)",
+        "basicInfo": "المعلومات الأساسية",
+        "nameLabel": "الاسم",
+        "speciesLabel": "النوع",
+        "breedLabel": "السلالة",
+        "ageLabel": "العمر (بالسنوات)",
+        "genderLabel": "الجنس",
+        "sizeLabel": "الحجم",
+        "colorLabel": "اللون والعلامات",
+        "medical": "الطب",
+        "healthStatusLabel": "الحالة الصحية",
+        "vaccinationsLabel": "التطعيمات",
+        "adoptionDetails": "تفاصيل التبني",
+        "availabilityLabel": "حالة التوفر",
+        "character": "الطباع",
+        "characterLabel": "السمات الشخصية والملاحظات",
+        "characterPlaceholder": "صف سلوك الحيوان، ما يحب ويكره، والبيئة المنزلية المثالية...",
+        "saveButton": "حفظ التغييرات"
+      },
+      "viewSales": {
+        "title": "أحدث مبيعات المنتجات",
+        "searchPlaceholder": "ابحث في المبيعات...",
+        "columns": {
+          "product": "المنتج",
+          "date": "التاريخ",
+          "customer": "العميل",
+          "price": "السعر"
+        },
+        "empty": "لا توجد مبيعات."
+      },
+      "viewPetRecord": {
+        "title": "سجل الحيوان",
+        "basicInfo": "المعلومات الأساسية",
+        "nameLabel": "الاسم",
+        "speciesLabel": "النوع",
+        "breedLabel": "السلالة",
+        "ageLabel": "العمر",
+        "genderLabel": "الجنس",
+        "sizeLabel": "الحجم",
+        "colorLabel": "اللون والعلامات",
+        "medical": "الطب",
+        "healthStatusLabel": "الحالة الصحية",
+        "vaccinationsLabel": "التطعيمات",
+        "noneRecorded": "لا يوجد تسجيل",
+        "adoptionDetails": "تفاصيل التبني",
+        "statusLabel": "الحالة",
+        "arrivalDateLabel": "تاريخ الوصول",
+        "character": "الطباع",
+        "characterLabel": "السمات الشخصية والملاحظات"
+      }
+    },
+    "adoptionRequests": {
+      "loading": "جارٍ تحميل طلبات التبني…",
+      "header": {
+        "title": "طلبات التبني",
+        "subtitle": "أدر الطلبات الواردة وراجع التطابقات المحتملة."
+      },
+      "viewTabs": {
+        "label": "أقسام طلبات التبني",
+        "applications": "الطلبات",
+        "blacklist": "قائمة الحظر"
+      },
+      "blacklist": {
+        "searchPlaceholder": "ابحث في قائمة المحظورين...",
+        "loading": "جارٍ تحميل قائمة الحظر…",
+        "empty": "لا يوجد متبنّون محظورون.",
+        "retry": "إعادة المحاولة",
+        "active": "نشط",
+        "columns": {
+          "adopter": "اسم المتبنّي",
+          "reason": "السبب",
+          "date": "تاريخ الحظر",
+          "status": "الحالة"
+        }
+      },
+      "toolbar": {
+        "searchPlaceholder": "ابحث باسم المتقدّم أو الحيوان...",
+        "filter": "تصفية"
+      },
+      "tabs": {
+        "all": "الكل",
+        "pending": "قيد الانتظار",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "card": {
+        "appliedLabel": "تاريخ التقديم",
+        "housingLabel": "السكن والخبرة",
+        "reviewButton": "مراجعة الطلب",
+        "rejectButton": "رفض",
+        "viewRecordButton": "عرض السجل",
+        "statusPending": "قيد الانتظار",
+        "statusApproved": "مقبول",
+        "statusRejected": "مرفوض"
+      },
+      "empty": "لا توجد طلبات تبني.",
+      "review": {
+        "titlePrefix": "مراجعة الطلب -",
+        "pendingReviewBadge": "قيد المراجعة",
+        "approvedBadge": "مقبول",
+        "rejectedBadge": "مرفوض",
+        "petProfileLink": "عرض ملف الحيوان",
+        "appliedLabel": "تاريخ التقديم",
+        "motivationTitle": "دافع التبني",
+        "detailsTitle": "تفاصيل الطلب",
+        "proofOfIdentity": "إثبات الهوية",
+        "adoptionExperience": "خبرة التبني السابقة",
+        "dateOfBirth": "تاريخ الميلاد",
+        "ageVerifiedPrefix": "العمر موثّق:",
+        "yearsSuffix": "سنة",
+        "reference1": "المرجع الشخصي 1",
+        "reference2": "المرجع الشخصي 2",
+        "consentsTitle": "الموافقات الإلزامية",
+        "consentTerms": "موافقة على الشروط وسياسة الخصوصية",
+        "consentCare": "التزام بالرعاية مدى الحياة",
+        "consentHomeVisit": "موافقة على زيارة منزلية",
+        "consentFollowUp": "تقارير متابعة كل 6 أشهر",
+        "requestMoreInfo": "طلب مزيد من المعلومات",
+        "rejectButton": "رفض الطلب",
+        "approveButton": "قبول للمقابلة"
+      },
+      "reject": {
+        "title": "سبب الرفض",
+        "description": "يرجى تحديد سبب عدم إمكانية قبول طلب التبني هذا. سيتم إرسال هذه الملاحظات مباشرة إلى المتقدّم عبر البريد الإلكتروني لمساعدته على فهم القرار.",
+        "reasonLabel": "سبب مفصّل",
+        "reasonPlaceholder": "يرجى كتابة سبب مفصّل للمتقدّم (سيتم مشاركته معه)...",
+        "charCountSuffix": "حرف",
+        "quickInsertLabel": "إدراج سريع:",
+        "quickReasons": [
+          "قيود السكن",
+          "سياج غير مكتمل",
+          "عدم توافق مع الحيوان"
+        ],
+        "cancel": "إلغاء",
+        "confirmButton": "تأكيد الرفض"
+      }
+    }
+  },
+  "admin": {
+    "common": {
+      "loading": "جارٍ التحميل…",
+      "refresh": "تحديث",
+      "refreshing": "جارٍ التحديث…",
+      "retry": "إعادة المحاولة",
+      "cancel": "إلغاء",
+      "dismiss": "إغلاق",
+      "processing": "جارٍ التنفيذ…",
+      "actionFailed": "تعذر إتمام الطلب.",
+      "notProvided": "غير متوفر"
+    },
+    "navbar": {
+      "workspace": "لوحة المدير",
+      "switchLanguage": "تغيير اللغة",
+      "profileTitle": "ملف المدير",
+      "profileError": "تعذر جلب الملف الشخصي"
+    },
+    "sidebar": {
+      "logoAlt": "شعار Pet Haven",
+      "navLabel": "تنقل المدير",
+      "dashboard": "لوحة التحكم",
+      "vetApprovals": "موافقات الأطباء",
+      "userManagement": "إدارة المستخدمين"
+    },
+    "dashboard": {
+      "title": "لوحة تحكم المدير",
+      "subtitle": "إحصاءات مباشرة من خوادم Pet Haven.",
+      "statsSection": "إحصاءات المنصة",
+      "statsUnavailable": "تعذر تحميل الإحصاءات.",
+      "stats": {
+        "totalUsers": "إجمالي المستخدمين",
+        "adopters": "المتبنون",
+        "centers": "مراكز التبني",
+        "vets": "الأطباء البيطريون",
+        "admins": "المدراء",
+        "totalPets": "إجمالي الحيوانات",
+        "bannedUsers": "المستخدمون المحظورون"
+      },
+      "pendingVets": {
+        "title": "طلبات موافقة الأطباء",
+        "subtitle": "حسابات أطباء بانتظار التحقق.",
+        "manage": "مراجعة الطلبات",
+        "awaiting": "بانتظار المراجعة",
+        "more": "ويوجد {{remaining}} إضافي في قائمة الانتظار."
+      }
+    },
+    "vetApprovals": {
+      "title": "موافقات الأطباء",
+      "subtitle": "الموافقة على حسابات الأطباء البيطريين أو رفضها.",
+      "pendingCount": "{{total}} بانتظار المراجعة",
+      "idLabel": "معرف الطبيب {{id}}",
+      "empty": "لا يوجد أطباء بانتظار الموافقة.",
+      "emptyHint": "تظهر الطلبات الجديدة هنا فور تسجيل أي طبيب.",
+      "loadFailed": "تعذر تحميل قائمة الأطباء المعلقة.",
+      "verify": "موافقة",
+      "verifying": "جارٍ الموافقة…",
+      "verifySuccess": "تمت الموافقة على {{name}}.",
+      "reject": "رفض",
+      "rejecting": "جارٍ الرفض…",
+      "rejectSuccess": "تم رفض {{name}}.",
+      "yearsValue": "{{years}} سنوات خبرة",
+      "fields": {
+        "specialization": "التخصص",
+        "clinicName": "اسم العيادة",
+        "clinicAddress": "عنوان العيادة",
+        "licenseNumber": "رقم الترخيص",
+        "experienceYears": "الخبرة",
+        "createdAt": "تاريخ التسجيل"
+      },
+      "rejectConfirm": {
+        "title": "رفض هذا الطبيب؟",
+        "message": "أنت على وشك رفض {{name}}.",
+        "warning": "سيؤدي ذلك إلى حذف حساب الطبيب نهائياً من المنصة، ولا يمكن التراجع عن ذلك.",
+        "confirm": "رفض وحذف"
+      }
+    },
+    "users": {
+      "title": "إدارة المستخدمين",
+      "subtitle": "حظر حسابات المستخدمين أو فك الحظر عنها.",
+      "notice": {
+        "title": "تتم العمليات باستخدام معرف المستخدم",
+        "text": "يوفر الخادم واجهتي الحظر وفك الحظر فقط، ولا توجد واجهة لجلب قائمة المستخدمين، لذلك يتم تحديد الحساب عبر معرفه الرقمي. لا يمكن حظر حسابات المدراء."
+      },
+      "fields": {
+        "userId": "معرف المستخدم",
+        "userIdPlaceholder": "مثال: 42",
+        "reason": "السبب",
+        "reasonPlaceholder": "اذكر سبب حظر هذا الحساب",
+        "reasonHint": "يُرسل إلى الخادم مع طلب الحظر."
+      },
+      "errors": {
+        "invalidUserId": "أدخل معرف مستخدم رقمياً صحيحاً."
+      },
+      "ban": {
+        "title": "حظر مستخدم",
+        "subtitle": "يمنع الحساب من تسجيل الدخول إلى Pet Haven.",
+        "submit": "حظر المستخدم",
+        "submitting": "جارٍ الحظر…",
+        "success": "تم حظر المستخدم {{userId}}.",
+        "confirmTitle": "حظر هذا المستخدم؟",
+        "confirmMessage": "سيفقد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
+      },
+      "unban": {
+        "title": "فك الحظر",
+        "subtitle": "يعيد الوصول لحساب محظور سابقاً.",
+        "submit": "فك الحظر",
+        "submitting": "جارٍ فك الحظر…",
+        "success": "تم فك الحظر عن المستخدم {{userId}}.",
+        "confirmTitle": "فك الحظر عن هذا المستخدم؟",
+        "confirmMessage": "سيستعيد المستخدم صاحب المعرف {{userId}} إمكانية الوصول إلى المنصة."
+      }
+    }
+  },
+  "vetDashboard": {
+    "loading": "جارٍ تحميل لوحة التحكم...",
+    "comingSoon": "قريباً",
+    "header": {
+      "logoAlt": "شعار بيت هافن",
+      "nav": {
+        "dashboard": "لوحة التحكم",
+        "patients": "المرضى",
+        "appointments": "المواعيد",
+        "reviews": "التقييمات"
+      },
+      "language": "تغيير اللغة",
+      "notifications": "الإشعارات",
+      "userMenu": "قائمة المستخدم",
+      "avatarAlt": "صورة المستخدم",
+      "profile": "الملف الشخصي",
+      "logout": "تسجيل الخروج",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "welcome": {
+      "morning": "صباح الخير، {{name}}",
+      "afternoon": "مساء الخير، {{name}}",
+      "evening": "مساء الخير، {{name}}",
+      "subtitle": "إليك آخر مستجدات عيادتك اليوم.",
+      "doctorPrefix": "د. {{name}}",
+      "defaultDoctor": "الطبيب"
+    },
+    "stats": {
+      "totalPatients": {
+        "label": "إجمالي المرضى",
+        "hint": "منذ البداية"
+      },
+      "appointmentsToday": {
+        "label": "مواعيد اليوم",
+        "hint": "{{count}} متبقية"
+      },
+      "reviews": {
+        "label": "إجمالي التقييمات",
+        "hint": "إجمالي التقييمات المستلمة"
+      }
+    },
+    "activity": {
+      "title": "نشاط العيادة",
+      "loading": "جارٍ تحميل نشاط العيادة...",
+      "weekly": "أسبوعي",
+      "monthly": "شهري",
+      "empty": "لا يوجد نشاط مواعيد لهذه الفترة بعد."
+    },
+    "breakdown": {
+      "title": "توزيع المواعيد",
+      "empty": "لا توجد مواعيد مصنّفة بعد.",
+      "categories": {
+        "checkups": "فحوصات",
+        "vaccinations": "تطعيمات",
+        "surgeries": "عمليات جراحية",
+        "other": "أخرى"
+      }
+    },
+    "breeds": {
+      "title": "أكثر السلالات تردداً",
+      "empty": "لا توجد بيانات سلالات بعد."
+    },
+    "schedule": {
+      "title": "جدول اليوم",
+      "viewCalendar": "عرض التقويم",
+      "empty": "لا توجد مواعيد مجدولة اليوم.",
+      "owner": "المالك: {{name}}",
+      "status": {
+        "Completed": "مكتمل",
+        "Cancelled": "ملغى"
+      }
+    },
+    "patients": {
+      "title": "المرضى الأخيرون",
+      "searchPlaceholder": "ابحث عن مريض...",
+      "loading": "جارٍ تحميل المرضى...",
+      "empty": "لا يوجد مرضى حديثون.",
+      "viewRecords": "عرض السجلات",
+      "columns": {
+        "patient": "المريض",
+        "breed": "السلالة/النوع",
+        "lastVisit": "آخر زيارة",
+        "action": "الإجراء"
+      }
+    }
+  },
+  "vetProfile": {
+    "loading": "جارٍ تحميل ملفك الشخصي...",
+    "backToDashboard": "العودة للوحة التحكم",
+    "title": "الملف الشخصي للطبيب",
+    "subtitle": "إدارة ملفك الشخصي ومعلومات التواصل.",
+    "identity": {
+      "unnamed": "طبيب بيطري بدون اسم",
+      "verified": "موثّق",
+      "pendingVerification": "بانتظار التوثيق",
+      "noEmail": "لا يوجد بريد إلكتروني مسجّل"
+    },
+    "basicInfo": {
+      "title": "المعلومات الأساسية",
+      "fullName": "اسم الطبيب",
+      "email": "البريد الإلكتروني",
+      "phoneNumber": "رقم الهاتف",
+      "address": "عنوان العيادة",
+      "addressPlaceholder": "استخدم GPS أو أدخل عنوان العيادة",
+      "useGps": "استخدام GPS",
+      "locating": "جارٍ تحديد الموقع…",
+      "gpsHint": "يملأ GPS العنوان ويحفظ إحداثيات العيادة لاستخدامها في البحث القريب.",
+      "gpsSuccess": "تم تحديد موقع العيادة. احفظ التغييرات لتحديث ملفك.",
+      "gpsUnsupported": "خدمات تحديد الموقع غير مدعومة في هذا المتصفح.",
+      "gpsError": "تعذّر تحديد عنوان العيادة. تحقق من إذن الموقع أو أدخله يدويًا.",
+      "experienceYears": "سنوات الخبرة",
+      "specialization": "التخصص",
+      "clinicName": "اسم العيادة",
+      "licenseNumber": "رقم الترخيص"
+    },
+    "cancel": "إلغاء",
+    "saving": "جارٍ الحفظ...",
+    "saveChanges": "حفظ التغييرات",
+    "saveSuccess": "تم تحديث الملف الشخصي بنجاح.",
+    "saveError": "فشل حفظ التغييرات. حاول مرة أخرى."
+  },
+  "vetReviews": {
+    "loading": "جارٍ تحميل التقييمات...",
+    "title": "تقييمات العملاء",
+    "subtitle": "اطّلع على آراء أصحاب الحيوانات الأليفة حول رعايتك.",
+    "summary": {
+      "title": "التقييم العام",
+      "empty": "لم تتلقَّ أي تقييمات بعد.",
+      "basedOn": "بناءً على {{count}} تقييم",
+      "basedOn_other": "بناءً على {{count}} تقييم"
+    },
+    "toolbar": {
+      "searchPlaceholder": "ابحث عن تقييم بالاسم أو كلمة مفتاحية...",
+      "all": "جميع التقييمات",
+      "ratingOnly": "تقييم بدون تعليق ({{count}})"
+    },
+    "list": {
+      "loading": "جارٍ تحميل التقييمات...",
+      "empty": "لا توجد تقييمات بعد.",
+      "noMatches": "لا توجد تقييمات مطابقة لبحثك."
+    },
+    "card": {
+      "anonymous": "مجهول",
+      "noComment": "بدون تعليق مكتوب — تقييم بالنجوم فقط."
+    },
+    "pagination": {
+      "showing": "عرض {{start}} إلى {{end}} من {{total}} تقييم",
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية"
+    }
+  },
+  "vetPatients": {
+    "title": "دليل المرضى",
+    "subtitle": "إدارة السجلات الطبية والمواعيد والحالة الصحية العامة.",
+    "summary": {
+      "loading": "جارٍ تحميل الإحصائيات...",
+      "totalPatients": "إجمالي المرضى",
+      "activeCases": "الحالات النشطة",
+      "recentlyAdded": "أُضيفوا حديثاً (30 يوم)"
+    },
+    "toolbar": {
+      "searchPlaceholder": "ابحث بالاسم أو السلالة أو النوع...",
+      "allSpecies": "كل الأنواع",
+      "allStatus": "الحالة: الكل",
+      "species": {
+        "dog": "كلاب",
+        "cat": "قطط",
+        "bird": "طيور"
+      }
+    },
+    "status": {
+      "healthy": "سليم",
+      "followup": "يحتاج متابعة",
+      "vaccine": "تطعيم قادم",
+      "default": "غير معروف"
+    },
+    "card": {
+      "owner": "المالك",
+      "lastVisit": "آخر زيارة",
+      "visitCount": "عدد الزيارات",
+      "viewRecords": "عرض السجلات"
+    },
+    "list": {
+      "loading": "جارٍ تحميل المرضى...",
+      "empty": "لا يوجد مرضى بعد.",
+      "noMatches": "لا يوجد مرضى مطابقون لبحثك أو الفلاتر المحددة."
+    },
+    "pagination": {
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية"
+    },
+    "modal": {
+      "close": "إغلاق",
+      "loading": "جارٍ تحميل سجل المريض...",
+      "recordSections": "أقسام سجل المريض",
+      "overview": "نظرة عامة",
+      "age": "العمر",
+      "gender": "الجنس",
+      "medicalHistory": "السجل الطبي",
+      "noMedicalHistory": "لا يوجد سجل طبي بعد."
+    }
+  },
+  "vetAppointments": {
+    "title": "مواعيد العيادة",
+    "subtitle": "إدارة جدولك ومواعيد المرضى القادمة.",
+    "viewToggle": {
+      "list": "عرض القائمة",
+      "calendar": "التقويم"
+    },
+    "dateNav": {
+      "previous": "اليوم السابق",
+      "next": "اليوم التالي",
+      "today": "اليوم",
+      "pickDate": "اختر تاريخاً"
+    },
+    "summary": {
+      "loading": "جارٍ تحميل الإحصائيات...",
+      "total": {
+        "label": "إجمالي مواعيد اليوم",
+        "caption": "لليوم المحدد"
+      },
+      "confirmed": {
+        "label": "مؤكدة",
+        "caption": "مجدولة"
+      },
+      "pending": {
+        "label": "طلبات قيد الانتظار",
+        "caption": "تحتاج إجراء"
+      },
+      "cancelled": {
+        "label": "الإلغاءات",
+        "caption": "لليوم المحدد"
+      }
+    },
+    "toolbar": {
+      "filterLabel": "تصفية:",
+      "allStatuses": "كل الحالات"
+    },
+    "status": {
+      "Pending": "قيد الانتظار",
+      "Confirmed": "مؤكد",
+      "Completed": "مكتمل",
+      "Cancelled": "ملغي"
+    },
+    "list": {
+      "title": "جدول اليوم",
+      "loading": "جارٍ تحميل المواعيد...",
+      "empty": "لا توجد مواعيد مجدولة لهذا اليوم.",
+      "noMatches": "لا توجد مواعيد مطابقة لهذا الفلتر."
+    },
+    "card": {
+      "owner": "المالك: {{name}}",
+      "noReason": "لم يُذكر سبب."
+    },
+    "actions": {
+      "confirm": "قبول",
+      "complete": "تعليم كمكتمل",
+      "cancel": "إلغاء",
+      "reschedule": "إعادة جدولة"
+    },
+    "cancelConfirm": {
+      "message": "إلغاء هذا الموعد؟ لا يمكن التراجع عن هذا الإجراء.",
+      "yes": "نعم، ألغِ",
+      "no": "لا"
+    },
+    "reschedule": {
+      "dateLabel": "التاريخ الجديد",
+      "timeLabel": "الوقت الجديد",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ...",
+      "cancel": "إلغاء",
+      "pastDate": "الرجاء اختيار تاريخ ووقت في المستقبل."
+    }
+  },
+  "vetCalendar": {
+    "title": "تقويم العيادة",
+    "subtitle": "إدارة مواعيد وجداول العيادة البيطرية.",
+    "toolbar": {
+      "previousMonth": "الشهر السابق",
+      "nextMonth": "الشهر التالي"
+    },
+    "grid": {
+      "loading": "جارٍ تحميل التقويم...",
+      "dayError": "فشل تحميل هذا اليوم.",
+      "moreEvents": "+{{count}} أخرى",
+      "showLess": "عرض أقل"
+    },
+    "modal": {
+      "close": "إغلاق"
+    }
+  },
+  "vetVerification": {
+    "title": "التحقق المهني",
+    "subtitle": "ارفع رخصتك البيطرية أو شهادة المجلس لإكمال ملفك الشخصي والوصول إلى أدوات العيادة.",
+    "upload": {
+      "title": "اضغط للرفع أو اسحب وأفلت",
+      "hint": "PDF أو JPG أو PNG (بحد أقصى 10 ميغابايت)",
+      "selected": "الملف المختار: {{name}}",
+      "remove": "إزالة"
+    },
+    "form": {
+      "licenseNumber": "رقم الترخيص",
+      "licenseNumberPlaceholder": "مثال: VET-987654321",
+      "issueDate": "تاريخ الإصدار"
+    },
+    "errors": {
+      "licenseRequired": "رقم الترخيص مطلوب.",
+      "fileRequired": "الرجاء رفع مستند الترخيص أو الشهادة."
+    },
+    "actions": {
+      "saveForLater": "الحفظ لوقت لاحق",
+      "submit": "إرسال التحقق"
+    }
+  },
+  "vetPendingApproval": {
+    "title": "الحساب قيد المراجعة",
+    "message": "حسابك المهني قيد المراجعة حالياً للتحقق من الترخيص.",
+    "note": "لا يمكنك إدارة عيادتك أو استقبال الحجوزات حتى تتم موافقة الإدارة. سنُعلمك عبر البريد الإلكتروني عند تحديث حالتك.",
+    "logOut": "تسجيل الخروج",
+    "contactSupport": "تواصل مع الدعم",
+    "applicationIdLabel": "رقم الطلب:"
+  }
+}

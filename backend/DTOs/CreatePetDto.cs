@@ -24,7 +24,6 @@ namespace PetHaven.DTOs
         [MaxLength(50)]
         public string? HealthStatus { get; set; }
 
-        [MaxLength(500)]
         public string? ImageUrl { get; set; }
     }
 }

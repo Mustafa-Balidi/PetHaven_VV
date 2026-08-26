@@ -16,7 +16,7 @@ namespace PetHaven.Services
 
         public async Task<object> GetServicesAsync(AiRecommendationRequestDto requestData)
         {
-            var response = await _httpClient.PostAsJsonAsync("http://localhost:8000/recommend", requestData);
+            var response = await _httpClient.PostAsJsonAsync("http://localhost:7860/recommend", requestData);
 
             // 👈 التعديل هنا: إذا رفض البايثون الطلب، سنقرأ رسالة الخطأ ونعرضها في Swagger
             if (!response.IsSuccessStatusCode)

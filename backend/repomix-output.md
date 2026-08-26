@@ -1,5 +1,5 @@
 This file is a merged representation of the entire codebase, combined into a single document by Repomix.
-The content has been processed where comments have been removed, empty lines have been removed.
+The content has been processed where empty lines have been removed.
 
 # File Summary
 
@@ -31,13 +31,13 @@ The content is organized as follows:
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
-- Code comments have been removed from supported file types
 - Empty lines have been removed from all files
 - Files are sorted by Git change count (files with more changes are at the bottom)
 
 # Directory Structure
 ```
 Controllers/
+  AdminController.cs
   AdopterDashboardController.cs
   AdoptionController.cs
   AppointmentsController.cs
@@ -45,6 +45,7 @@ Controllers/
   BlacklistController.cs
   CartController.cs
   CenterDashboardController.cs
+  CenterWalletController.cs
   OrdersController.cs
   PaymentsController.cs
   PetReportsController.cs
@@ -64,6 +65,7 @@ Data/
   DatabaseSeeder.cs
 DTOs/
   AddToCartRequestDto.cs
+  AdminStatsDto.cs
   AdopterAppointmentDto.cs
   AdopterDashboardDto.cs
   AdopterRequestResponseDto.cs
@@ -75,12 +77,16 @@ DTOs/
   AppointmentSummaryDto.cs
   AuthResponseDto.cs
   BanAdopterDto.cs
+  BanUserDto.cs
   BlacklistResponseDto.cs
   CartItemResponseDto.cs
   CartResponseDto.cs
   CategoryResponseDto.cs
   CenterDashboardStatsDto.cs
   CenterProductReviewsResponseDto.cs
+  CenterWalletDto.cs
+  CenterWalletTransactionDto.cs
+  CenterWalletTransactionsPageDto.cs
   ClientReviewDto.cs
   ClinicActivityPointDto.cs
   CreateAppointmentDto.cs
@@ -123,6 +129,7 @@ DTOs/
   VaccinationRequestDto.cs
   VetDashboardStatsDto.cs
   VetPatientsStatsDto.cs
+  VetPendingDto.cs
   VetRatingRequestDto.cs
   VetRatingResponseDto.cs
   VetResponseDto.cs
@@ -172,6 +179,7 @@ Models/
 Properties/
   launchSettings.json
 Services/
+  AdminService.cs
   AdopterDashboardService.cs
   AdoptionService.cs
   AppointmentsService.cs
@@ -179,6 +187,8 @@ Services/
   BlacklistService.cs
   CartService.cs
   CenterDashboardService.cs
+  CenterWalletService.cs
+  IAdminService.cs
   IAdopterDashboardService.cs
   IAdoptionService.cs
   IAppointmentsService.cs
@@ -186,6 +196,7 @@ Services/
   IBlacklistService.cs
   ICartService.cs
   ICenterDashboardService.cs
+  ICenterWalletService.cs
   IOrderService.cs
   IPatientsService.cs
   IPaymentService.cs
@@ -228,6 +239,130 @@ Program.cs
 
 # Files
 
+## File: Controllers/AdminController.cs
+```csharp
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PetHaven.DTOs;
+using PetHaven.Services;
+namespace PetHaven.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize(Roles = "Admin")]
+    public class AdminController : ControllerBase
+    {
+        private readonly IAdminService _adminService;
+        public AdminController(IAdminService adminService)
+        {
+            _adminService = adminService;
+        }
+        // =============================================
+        // GET: api/Admin/stats
+        // إحصائيات عامة للمدير
+        // =============================================
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStats()
+        {
+            try
+            {
+                var stats = await _adminService.GetStatsAsync();
+                return Ok(new { Success = true, Data = stats });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+        // =============================================
+        // GET: api/Admin/vets/pending
+        // جلب الأطباء غير الموافق عليهم
+        // =============================================
+        [HttpGet("vets/pending")]
+        public async Task<IActionResult> GetPendingVets()
+        {
+            try
+            {
+                var vets = await _adminService.GetPendingVetsAsync();
+                return Ok(new { Success = true, Data = vets });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+        // =============================================
+        // PUT: api/Admin/vets/{id}/verify
+        // الموافقة على طبيب
+        // =============================================
+        [HttpPut("vets/{id}/verify")]
+        public async Task<IActionResult> VerifyVet(int id)
+        {
+            try
+            {
+                await _adminService.VerifyVetAsync(id);
+                return Ok(new { Success = true, Message = "تمت الموافقة على الطبيب بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+        // =============================================
+        // DELETE: api/Admin/vets/{id}/reject
+        // رفض طبيب (حذف الحساب)
+        // =============================================
+        [HttpDelete("vets/{id}/reject")]
+        public async Task<IActionResult> RejectVet(int id)
+        {
+            try
+            {
+                await _adminService.RejectVetAsync(id);
+                return Ok(new { Success = true, Message = "تم رفض الطبيب وحذف حسابه." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+        // =============================================
+        // PUT: api/Admin/users/{id}/ban
+        // حظر مستخدم (عدا Admin)
+        // =============================================
+        [HttpPut("users/{id}/ban")]
+        public async Task<IActionResult> BanUser(int id, [FromBody] BanUserDto dto)
+        {
+            try
+            {
+                await _adminService.BanUserAsync(id, dto.Reason);
+                return Ok(new { Success = true, Message = "تم حظر المستخدم بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+        // =============================================
+        // PUT: api/Admin/users/{id}/unban
+        // فك الحظر عن مستخدم
+        // =============================================
+        [HttpPut("users/{id}/unban")]
+        public async Task<IActionResult> UnbanUser(int id)
+        {
+            try
+            {
+                await _adminService.UnbanUserAsync(id);
+                return Ok(new { Success = true, Message = "تم فك الحظر عن المستخدم بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+    }
+}
+```
+
 ## File: Controllers/AdopterDashboardController.cs
 ```csharp
 using Microsoft.AspNetCore.Authorization;
@@ -246,6 +381,10 @@ namespace PetHaven.Controllers
         {
             _dashboardService = dashboardService;
         }
+        // =============================================
+        // GET: api/Dashboard/adopter
+        // جلب إحصائيات الـ Dashboard للمتبني
+        // =============================================
         [HttpGet("adopter")]
         public async Task<IActionResult> GetAdopterDashboard()
         {
@@ -274,6 +413,11 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // ─── الحيوانات المتبناة (جديد) ──────────────────────────────────────
+        // =============================================
+        // GET: api/Dashboard/adopter
+        // جلب إحصائيات الـحيوانات المتبناة  Dashboard 
+        // =============================================
         [HttpGet("adopted-pets")]
         public async Task<IActionResult> GetAdoptedPets()
         {
@@ -312,6 +456,10 @@ namespace PetHaven.Controllers
         {
             _adoptionService = adoptionService;
         }
+        // =============================================
+        // تقديم طلب تبني جديد
+        // POST: api/Adoption/SubmitRequest
+        // =============================================
         [HttpPost("SubmitRequest")]
         [Authorize(Roles = "Adopter")]
         public async Task<IActionResult> SubmitRequest([FromBody] SubmitAdoptionRequestDto dto)
@@ -373,6 +521,10 @@ namespace PetHaven.Controllers
                 return StatusCode(403, new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // عرض طلبات التبني للمركز (مرتبة حسب الأفضلية)
+        // GET: api/Adoption/CenterRequests
+        // =============================================
         [HttpGet("CenterRequests")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> GetCenterRequests()
@@ -398,6 +550,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // الرد على طلب تبني (قبول أو رفض)
+        // PUT: api/Adoption/Respond/{id}
+        // =============================================
         [HttpPut("Respond/{id}")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> RespondToRequest(int id, [FromBody] RespondToRequestDto dto)
@@ -456,6 +612,10 @@ namespace PetHaven.Controllers
         {
             _appointmentsService = appointmentsService;
         }
+        // ═══════════════════════════════════════════════════════════════
+        // لوحة تحكم الطبيب البيطري (Clinic Appointments Dashboard)
+        // ═══════════════════════════════════════════════════════════════
+        // جلب جدول مواعيد الطبيب ليوم معيّن
         [Authorize(Roles = "Vet")]
         [HttpGet("schedule")]
         public async Task<IActionResult> GetSchedule([FromQuery] DateTime? date)
@@ -478,6 +638,7 @@ namespace PetHaven.Controllers
                 return StatusCode(500, "حدث خطأ غير متوقع أثناء جلب جدول المواعيد.");
             }
         }
+        // إحصائيات مواعيد اليوم (بطاقات الملخص)
         [Authorize(Roles = "Vet")]
         [HttpGet("summary")]
         public async Task<IActionResult> GetSummary([FromQuery] DateTime? date)
@@ -499,7 +660,11 @@ namespace PetHaven.Controllers
             {
                 return StatusCode(500, "حدث خطأ غير متوقع أثناء جلب الإحصائيات.");
             }
-        }
+        }       
+        // ═══════════════════════════════════════════════════════════════
+        // عمليات الطبيب 
+        // ═══════════════════════════════════════════════════════════════
+        //  قبول أو رفض أو إكمال الموعد
         [Authorize(Roles = "Vet")]
         [HttpPut("update-status/{id}")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] string status)
@@ -528,6 +693,7 @@ namespace PetHaven.Controllers
                 return StatusCode(500, "حدث خطأ غير متوقع أثناء تحديث حالة الموعد.");
             }
         }
+        // إعادة جدولة موعد
         [Authorize(Roles = "Vet,Adopter")]
         [HttpPut("reschedule/{id}")]
         public async Task<IActionResult> Reschedule(int id, [FromBody] RescheduleAppointmentDto dto)
@@ -557,6 +723,9 @@ namespace PetHaven.Controllers
                 return StatusCode(500, "حدث خطأ غير متوقع أثناء إعادة جدولة الموعد.");
             }
         }
+        // ═══════════════════════════════════════════════════════════════
+        // عمليات المربي
+        // ═══════════════════════════════════════════════════════════════
         [Authorize(Roles = "Adopter")]
         [HttpGet("availability")]
         public async Task<IActionResult> GetAvailability([FromQuery] int vetId, [FromQuery] DateTime date)
@@ -616,10 +785,12 @@ namespace PetHaven.Controllers
                 return StatusCode(403, ex.Message);
             }
         }
+        //حجز الموعد 
         [Authorize(Roles = "Adopter")]
         [HttpPost("book")]
         public async Task<IActionResult> BookAppointment([FromBody] CreateAppointmentDto dto)
         {
+            // استخراج الـ UserId من التوكن بشكل آمن
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
             {
@@ -628,26 +799,28 @@ namespace PetHaven.Controllers
             int currentUserId = int.Parse(userIdClaim);
             try
             {
+                // تمرير العمل للخدمة
                 var appointment = await _appointmentsService.BookAppointmentAsync(dto, currentUserId);
                 return Ok(new { message = "تم إرسال طلب الحجز بنجاح وبأمان.", appointmentId = appointment.AppointmentId });
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException ex) // أخطاء التواريخ أو المدخلات
             {
                 return BadRequest(ex.Message);
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException ex) // خطأ إذا كان الطبيب غير موجود
             {
                 return NotFound(ex.Message);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException ex) // خطأ إذا لم يكن Adopter
             {
-                return StatusCode(403, ex.Message);
+                return StatusCode(403, ex.Message); // Forbidden
             }
             catch (Exception)
             {
                 return StatusCode(500, "حدث خطأ داخلي غير متوقع أثناء معالجة الحجز.");
             }
         }
+        // إلغاء موعد (من المربي صاحب الموعد)
         [Authorize(Roles = "Adopter")]
         [HttpPut("cancel/{id}")]
         public async Task<IActionResult> Cancel(int id)
@@ -691,6 +864,10 @@ namespace PetHaven.Controllers
         {
             _authService = authService;
         }
+        // =============================================
+        // تسجيل مستخدم جديد (جميع الأدوار)
+        // POST: api/auth/register
+        // =============================================
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
@@ -713,6 +890,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // تسجيل الدخول (لجميع الأدوار)
+        // POST: api/auth/login
+        // =============================================
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -757,6 +938,10 @@ namespace PetHaven.Controllers
         {
             _blacklistService = blacklistService;
         }
+        // =============================================
+        // حظر متبنٍ (للمركز فقط)
+        // POST: api/Blacklist/BanAdopter
+        // =============================================
         [HttpPost("BanAdopter")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> BanAdopter([FromBody] BanAdopterDto dto)
@@ -782,6 +967,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // عرض قائمة المحظورين النشطة للمركز
+        // GET: api/Blacklist/CenterBlacklist
+        // =============================================
         [HttpGet("CenterBlacklist")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> GetCenterBlacklist()
@@ -807,6 +996,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // رفع الحظر عن متبنٍ (للمركز فقط)
+        // PUT: api/Blacklist/UnbanAdopter/{adopterId}
+        // =============================================
         [HttpPut("UnbanAdopter/{adopterId}")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> UnbanAdopter(int adopterId)
@@ -855,6 +1048,10 @@ namespace PetHaven.Controllers
         {
             _cartService = cartService;
         }
+        // =============================================
+        // GET: api/Cart
+        // Retrieve the current user's cart
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> GetCart()
         {
@@ -871,6 +1068,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // POST: api/Cart/Add
+        // Add a product to the cart
+        // =============================================
         [HttpPost("Add")]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartRequestDto dto)
         {
@@ -887,6 +1088,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // PUT: api/Cart/UpdateItem/{cartItemId}
+        // Update the quantity of a cart item
+        // =============================================
         [HttpPut("UpdateItem/{cartItemId}")]
         public async Task<IActionResult> UpdateCartItem(int cartItemId, [FromBody] UpdateCartItemRequestDto dto)
         {
@@ -907,6 +1112,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // DELETE: api/Cart/RemoveItem/{cartItemId}
+        // Remove a single item from the cart
+        // =============================================
         [HttpDelete("RemoveItem/{cartItemId}")]
         public async Task<IActionResult> RemoveFromCart(int cartItemId)
         {
@@ -927,6 +1136,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // DELETE: api/Cart/Clear
+        // Clear all items from the cart
+        // =============================================
         [HttpDelete("Clear")]
         public async Task<IActionResult> ClearCart()
         {
@@ -1033,6 +1246,70 @@ namespace PetHaven.Controllers
 }
 ```
 
+## File: Controllers/CenterWalletController.cs
+```csharp
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PetHaven.Services;
+using System.Security.Claims;
+namespace PetHaven.Controllers
+{
+    /// <summary>
+    /// محفظة مركز التبني: الرصيد الذي يتلقاه المركز من بيع منتجاته للمتبنّين.
+    /// </summary>
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize(Roles = "AdoptionCenter")]
+    public class CenterWalletController : ControllerBase
+    {
+        private readonly ICenterWalletService _walletService;
+        public CenterWalletController(ICenterWalletService walletService)
+        {
+            _walletService = walletService;
+        }
+        /// <summary>
+        /// ملخّص المحفظة: الرصيد الحالي + أحدث الحركات.
+        /// </summary>
+        /// <param name="transactionsCount">عدد الحركات الأخيرة (افتراضي 10)</param>
+        [HttpGet]
+        public async Task<IActionResult> GetWallet([FromQuery] int transactionsCount = 10)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Success = false, Message = "لم يتم التعرف على المستخدم." });
+                var wallet = await _walletService.GetWalletAsync(userId, transactionsCount);
+                return Ok(new { Success = true, Data = wallet });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+        /// <summary>
+        /// حركات المحفظة مع ترقيم الصفحات.
+        /// </summary>
+        [HttpGet("transactions")]
+        public async Task<IActionResult> GetTransactions([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Success = false, Message = "لم يتم التعرف على المستخدم." });
+                var result = await _walletService.GetTransactionsAsync(userId, page, pageSize);
+                return Ok(new { Success = true, Data = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
+    }
+}
+```
+
 ## File: Controllers/OrdersController.cs
 ```csharp
 using Microsoft.AspNetCore.Authorization;
@@ -1050,6 +1327,10 @@ namespace PetHaven.Controllers
         {
             _orderService = orderService;
         }
+        // =============================================
+        // POST: api/Orders/checkout
+        // Convert the adopter's cart into an order
+        // =============================================
         [HttpPost("checkout")]
         [Authorize(Roles = "Adopter")]
         public async Task<IActionResult> Checkout()
@@ -1067,6 +1348,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/Orders/my-orders
+        // Retrieve all orders for the logged-in adopter
+        // =============================================
         [HttpGet("my-orders")]
         [Authorize(Roles = "Adopter")]
         public async Task<IActionResult> GetMyOrders()
@@ -1084,6 +1369,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // PUT: api/Orders/{orderId}/status
+        // Update the status of an order (AdoptionCenter only)
+        // =============================================
         [HttpPut("{orderId}/status")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] string status)
@@ -1115,7 +1404,7 @@ namespace PetHaven.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Adopter")]
+    [Authorize(Roles = "Adopter")] // حماية المسار للمتبنين فقط
     public class PaymentsController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
@@ -1161,6 +1450,10 @@ namespace PetHaven.Controllers
         {
             _petReportService = petReportService;
         }
+        // =============================================
+        // تقديم تقرير حيوان (للمتبني فقط)
+        // POST: api/PetReports/SubmitReport
+        // =============================================
         [HttpPost("SubmitReport")]
         [Authorize(Roles = "Adopter")]
         public async Task<IActionResult> SubmitReport([FromBody] CreatePetReportDto dto)
@@ -1191,6 +1484,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // عرض تقارير الحيوانات الخاصة بالمركز
+        // GET: api/PetReports/CenterReports
+        // =============================================
         [HttpGet("CenterReports")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> GetCenterReports()
@@ -1238,6 +1535,10 @@ namespace PetHaven.Controllers
         {
             _petService = petService;
         }
+        // =============================================
+        // POST: api/pets/CreateCenterPet
+        // إضافة حيوان أليف جديد (مراكز التبني فقط)
+        // =============================================
         [HttpPost("CreateCenterPet")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> AddPet([FromBody] CreatePetDto dto)
@@ -1264,6 +1565,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // GET: api/pets/AllPets
+        // جلب جميع الحيوانات المتاحة للتبني (عام)
+        // =============================================
         [HttpGet("AllPets")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllAvailablePets()
@@ -1286,6 +1591,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // GET: api/pets/CenterPets
+        // جلب حيوانات المركز المسجّل دخوله (مراكز التبني فقط)
+        // =============================================
         [HttpGet("CenterPets")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> GetMyPets()
@@ -1311,6 +1620,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // PUT: api/pets/UpdateCenterPet/{id}
+        // تعديل بيانات حيوان أليف (مراكز التبني فقط)
+        // =============================================
         [HttpPut("UpdateCenterPet/{id}")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> UpdatePet(int id, [FromBody] UpdatePetDto dto)
@@ -1345,6 +1658,10 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // DELETE: api/pets/DeleteCenterPet/{id}
+        // حذف حيوان أليف (مراكز التبني فقط)
+        // =============================================
         [HttpDelete("DeleteCenterPet/{id}")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> DeletePet(int id)
@@ -1378,8 +1695,12 @@ namespace PetHaven.Controllers
                 });
             }
         }
+        // =============================================
+        // GET: api/pets/{id}
+        // جلب تفاصيل حيوان معين (عام)
+        // =============================================
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        [AllowAnonymous] // يسمح للجميع (سواء مسجل دخول أو لا) بعرض التفاصيل
         public async Task<IActionResult> GetPetById(int id)
         {
             try
@@ -1428,6 +1749,10 @@ namespace PetHaven.Controllers
         {
             _productRatingService = productRatingService;
         }
+        // =============================================
+        // POST: api/ProductRatings
+        // Submit a rating for a product (Adopter only)
+        // =============================================
         [HttpPost]
         [Authorize(Roles = "Adopter")]
         public async Task<IActionResult> AddRating([FromBody] ProductRatingRequestDto request)
@@ -1445,6 +1770,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/ProductRatings/{productId}
+        // Retrieve all ratings for a product (public)
+        // =============================================
         [HttpGet("{productId}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetProductRatings(int productId)
@@ -1459,6 +1788,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/ProductRatings/CenterReviews
+        // Product reviews owned by the logged-in Adoption Center
+        // =============================================
         [HttpGet("CenterReviews")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> GetCenterReviews()
@@ -1491,7 +1824,7 @@ namespace PetHaven.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize] // يتطلب تسجيل الدخول لأي دور لقراءة البروفايل
     public class ProfileController : ControllerBase
     {
         private readonly IProfileService _profileService;
@@ -1499,6 +1832,10 @@ namespace PetHaven.Controllers
         {
             _profileService = profileService;
         }
+        // =============================================
+        // GET: api/Profile/me
+        // جلب تفاصيل الملف الشخصي للمستخدم الحالي
+        // =============================================
         [HttpGet("me")]
         public async Task<IActionResult> GetMyProfile()
         {
@@ -1515,8 +1852,12 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // PUT: api/Profile/update/adopter
+        // تعديل بيانات الملف الشخصي - خاص بالمتبني
+        // =============================================
         [HttpPut("update/adopter")]
-        [Authorize(Roles = "Adopter")]
+        [Authorize(Roles = "Adopter")] // حماية إضافية: فقط المتبني
         public async Task<IActionResult> UpdateAdopterProfile([FromBody] UpdateAdopterProfileDto dto)
         {
             try
@@ -1532,8 +1873,12 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // PUT: api/Profile/update/center
+        // تعديل بيانات الملف الشخصي - خاص بالمركز
+        // =============================================
         [HttpPut("update/center")]
-        [Authorize(Roles = "AdoptionCenter")]
+        [Authorize(Roles = "AdoptionCenter")] // حماية إضافية: فقط المركز
         public async Task<IActionResult> UpdateCenterProfile([FromBody] UpdateCenterProfileDto dto)
         {
             try
@@ -1549,8 +1894,12 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // PUT: api/Profile/update/vet
+        // تعديل بيانات الملف الشخصي - خاص بالطبيب
+        // =============================================
         [HttpPut("update/vet")]
-        [Authorize(Roles = "Vet")]
+        [Authorize(Roles = "Vet")] // حماية إضافية: فقط الطبيب
         public async Task<IActionResult> UpdateVetProfile([FromBody] UpdateVetProfileDto dto)
         {
             try
@@ -1582,10 +1931,11 @@ namespace PetHaven.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Adopter")]
+    [Authorize(Roles = "Adopter")] // يمكنك إزالة التعليق إذا أردت حماية المسار للمتبنين فقط
     public class RecommendationsController : ControllerBase
     {
         private readonly IRecommendationAiService _aiService;
+        // هذا هو الـ Constructor الذي يحل مشكلة الخطأ الأحمر تحت _aiService
         public RecommendationsController(IRecommendationAiService aiService)
         {
             _aiService = aiService;
@@ -1595,6 +1945,8 @@ namespace PetHaven.Controllers
         {
             try
             {
+                // وتعبئة الحقول تلقائياً (Adopter) يمكنك هنا جلب بيانات المتبني من قاعدة البيانات
+                // أو الاعتماد على الواجهة الأمامية لإرسالها بالكامل كما فعلنا الآن.
                 var recommendations = await _aiService.GetServicesAsync(requestData);
                 return Ok(new { Success = true, Data = recommendations });
             }
@@ -1625,6 +1977,16 @@ namespace PetHaven.Controllers
         {
             _reviewsService = reviewsService;
         }
+        // =============================================
+        // GET: api/Reviews
+        // Retrieve the logged-in vet's own client reviews
+        // with search, filter, pagination and stats.
+        // Query params:
+        //   search   : keyword to filter by reviewer name or text
+        //   filter   : "all" | "unanswered"
+        //   page     : page number (default 1)
+        //   pageSize : items per page (default 10)
+        // =============================================
         [HttpGet]
         [Authorize(Roles = "Vet")]
         public async Task<IActionResult> GetClientReviews(
@@ -1633,6 +1995,7 @@ namespace PetHaven.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10)
         {
+            // ─── استخراج الـ UserId من التوكن الحالي ─────────────────────
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized(new { Success = false, Message = "لم يتم العثور على هوية المستخدم في التوكن الحالي." });
@@ -1674,6 +2037,9 @@ namespace PetHaven.Controllers
         {
             _storeCatalogService = storeCatalogService;
         }
+        // =============================================
+        // GET: api/StoreCatalog/Categories
+        // =============================================
         [HttpGet("Categories")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllCategories()
@@ -1688,6 +2054,9 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/StoreCatalog/Products
+        // =============================================
         [HttpGet("Products")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllAvailableProducts()
@@ -1702,6 +2071,9 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/StoreCatalog/CenterProducts
+        // =============================================
         [HttpGet("CenterProducts")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> GetCenterProducts()
@@ -1719,6 +2091,9 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // POST: api/StoreCatalog/AddProduct
+        // =============================================
         [HttpPost("AddProduct")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> AddProduct([FromBody] ProductRequestDto dto)
@@ -1736,6 +2111,9 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // PUT: api/StoreCatalog/UpdateProduct/{id}
+        // =============================================
         [HttpPut("UpdateProduct/{id}")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductRequestDto dto)
@@ -1757,6 +2135,9 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // DELETE: api/StoreCatalog/DeleteProduct/{id}
+        // =============================================
         [HttpDelete("DeleteProduct/{id}")]
         [Authorize(Roles = "AdoptionCenter")]
         public async Task<IActionResult> DeleteProduct(int id)
@@ -1778,6 +2159,9 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/StoreCatalog/Products/{id}
+        // =============================================
         [HttpGet("Products/{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetProductById(int id)
@@ -1815,6 +2199,10 @@ namespace PetHaven.Controllers
         {
             _vetService = vetService;
         }
+        // =============================================
+        // GET: api/Vet
+        // Get all vets (public)
+        // =============================================
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllVets()
@@ -1829,6 +2217,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/Vet/search
+        // Search and filter vets with sorting (public)
+        // =============================================
         [HttpGet("search")]
         [AllowAnonymous]
         public async Task<IActionResult> SearchVets([FromQuery] VetSearchDto searchDto)
@@ -1843,6 +2235,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/Vet/{id}
+        // Get a specific vet by ID (public)
+        // =============================================
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetVetById(int id)
@@ -1885,6 +2281,10 @@ namespace PetHaven.Controllers
         {
             return User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+        // =============================================
+        // GET: api/VetDashboard/stats
+        // بطاقات الإحصائيات (KPI) في الصفحة الرئيسية
+        // =============================================
         [HttpGet("stats")]
         public async Task<IActionResult> GetStats()
         {
@@ -1901,6 +2301,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetDashboard/clinic-activity?period=weekly|monthly
+        // مخطط نشاط العيادة (عدد المواعيد لكل يوم)
+        // =============================================
         [HttpGet("clinic-activity")]
         public async Task<IActionResult> GetClinicActivity([FromQuery] string period = "weekly")
         {
@@ -1917,6 +2321,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetDashboard/appointment-breakdown
+        // توزيع المواعيد حسب الفئة (مخطط الدونات)
+        // =============================================
         [HttpGet("appointment-breakdown")]
         public async Task<IActionResult> GetAppointmentBreakdown()
         {
@@ -1933,6 +2341,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetDashboard/top-breeds?limit=5
+        // السلالات الأكثر تردداً على العيادة
+        // =============================================
         [HttpGet("top-breeds")]
         public async Task<IActionResult> GetTopBreeds([FromQuery] int limit = 5)
         {
@@ -1949,6 +2361,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetDashboard/recent-patients?count=10&search=
+        // جدول المرضى الأخيرين مع إمكانية البحث
+        // =============================================
         [HttpGet("recent-patients")]
         public async Task<IActionResult> GetRecentPatients([FromQuery] int count = 10, [FromQuery] string? search = null)
         {
@@ -1965,6 +2381,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetDashboard/today-schedule
+        // مواعيد اليوم (Today's Schedule)
+        // =============================================
         [HttpGet("today-schedule")]
         public async Task<IActionResult> GetTodaySchedule()
         {
@@ -2008,6 +2428,10 @@ namespace PetHaven.Controllers
         {
             return User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+        // =============================================
+        // GET: api/VetPatients/stats
+        // إحصائيات بطاقات صفحة دليل المرضى
+        // =============================================
         [HttpGet("stats")]
         public async Task<IActionResult> GetStats()
         {
@@ -2024,6 +2448,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetPatients?search=&species=&status=&page=&pageSize=
+        // قائمة المرضى (بطاقات) مع بحث وفلترة وترقيم صفحات
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> GetPatients([FromQuery] string? search = null,
                                                       [FromQuery] string? species = null,
@@ -2044,6 +2472,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetPatients/{petId}
+        // تفاصيل مريض كاملة (معلومات + سجل طبي + تطعيمات)
+        // =============================================
         [HttpGet("{petId:int}")]
         public async Task<IActionResult> GetPatient(int petId)
         {
@@ -2064,6 +2496,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetPatients/{petId}/medical-history
+        // السجل الطبي (الفحوصات) الخاص بالمريض
+        // =============================================
         [HttpGet("{petId:int}/medical-history")]
         public async Task<IActionResult> GetMedicalHistory(int petId)
         {
@@ -2084,6 +2520,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetPatients/{petId}/vaccinations
+        // سجل تطعيمات المريض
+        // =============================================
         [HttpGet("{petId:int}/vaccinations")]
         public async Task<IActionResult> GetVaccinations(int petId)
         {
@@ -2104,6 +2544,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // POST: api/VetPatients/{petId}/vaccinations
+        // إضافة تطعيمة جديدة للمريض
+        // =============================================
         [HttpPost("{petId:int}/vaccinations")]
         public async Task<IActionResult> AddVaccination(int petId, [FromBody] VaccinationRequestDto dto)
         {
@@ -2124,6 +2568,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // PUT: api/VetPatients/vaccinations/{vaccinationId}
+        // تعديل تطعيمة
+        // =============================================
         [HttpPut("vaccinations/{vaccinationId:int}")]
         public async Task<IActionResult> UpdateVaccination(int vaccinationId, [FromBody] VaccinationRequestDto dto)
         {
@@ -2144,6 +2592,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // DELETE: api/VetPatients/vaccinations/{vaccinationId}
+        // حذف تطعيمة
+        // =============================================
         [HttpDelete("vaccinations/{vaccinationId:int}")]
         public async Task<IActionResult> DeleteVaccination(int vaccinationId)
         {
@@ -2188,6 +2640,10 @@ namespace PetHaven.Controllers
         {
             _vetRatingService = vetRatingService;
         }
+        // =============================================
+        // POST: api/VetRatings
+        // Submit a rating for a vet (Adopter only)
+        // =============================================
         [HttpPost]
         [Authorize(Roles = "Adopter")]
         public async Task<IActionResult> AddRating([FromBody] VetRatingRequestDto request)
@@ -2205,6 +2661,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // GET: api/VetRatings/{vetId}
+        // Retrieve all ratings for a vet (public)
+        // =============================================
         [HttpGet("{vetId}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetVetRatings(int vetId)
@@ -2241,6 +2701,10 @@ namespace PetHaven.Controllers
         {
             _wishlistService = wishlistService;
         }
+        // =============================================
+        // GET: api/Wishlist
+        // Retrieve the current user's wishlist
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> GetWishlist()
         {
@@ -2257,6 +2721,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // POST: api/Wishlist/{productId}
+        // Add a product to the wishlist
+        // =============================================
         [HttpPost("{productId}")]
         public async Task<IActionResult> AddToWishlist(int productId)
         {
@@ -2273,6 +2741,10 @@ namespace PetHaven.Controllers
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+        // =============================================
+        // DELETE: api/Wishlist/{productId}
+        // Remove a product from the wishlist
+        // =============================================
         [HttpDelete("{productId}")]
         public async Task<IActionResult> RemoveFromWishlist(int productId)
         {
@@ -2306,7 +2778,10 @@ namespace PetHaven.Data
         {
         }
         public double? CalculateDistance(double? lat1, double? lng1, double? lat2, double? lng2)
-                => throw new NotSupportedException();
+                => throw new NotSupportedException(); // لا يتم تنفيذها هنا، بل تترجم في قاعدة البيانات
+        // =============================================
+        // DbSets (جميع الجداول)
+        // =============================================
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Adopter> Adopters { get; set; }
@@ -2329,15 +2804,24 @@ namespace PetHaven.Data
         public DbSet<Vaccination> Vaccinations { get; set; }
         public DbSet<PetReport> PetReports { get; set; }
         public DbSet<Vet> Vets { get; set; }
+        // =============================================
+        // OnModelCreating
+        // =============================================
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // إخبار EF Core بكيفية ترجمة هذه الدالة إلى معادلة رياضية في الـ SQL
             modelBuilder.HasDbFunction(typeof(ApplicationDbContext).GetMethod(nameof(CalculateDistance),
                 new[] { typeof(double?), typeof(double?), typeof(double?), typeof(double?) })!)
                 .HasTranslation(args =>
                 {
-                    return args.First();
+                    // هنا يتم صياغة معادلة هافرسين الرياضية التي تكلمنا عنها سابقاً لتتحول إلى استعلام SQL
+                    // ملاحظة: هذا يتطلب استخدام مفسر التعبيرات (Expression Tree) الخاص بـ EF لترجمتها لـ SQL Functions مثل COS و SIN.
+                    return args.First(); // (للاختصار، يفضل بناء دالة SQL داخل السيرفر مباشرة كما في الحل بالأسفل)
                 });
+            // =============================================
+            // 1. Precision للأعداد العشرية (Decimal)
+            // =============================================
             modelBuilder.Entity<Order>()
                 .Property(o => o.TotalPrice)
                 .HasPrecision(18, 2);
@@ -2365,141 +2849,228 @@ namespace PetHaven.Data
             modelBuilder.Entity<Vet>()
                 .Property(v => v.Location_Lng)
                 .HasPrecision(18, 8);
+            // =============================================
+            // 2. العلاقات (Relationships)
+            // =============================================
+            // ---------------------------------------------
+            // 2.1 User → Adopter (One-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Adopter>()
                 .HasOne(a => a.User)
                 .WithOne(u => u.Adopter)
                 .HasForeignKey<Adopter>(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.2 User → AdoptionCenter (One-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<AdoptionCenter>()
                 .HasOne(ac => ac.User)
                 .WithOne(u => u.AdoptionCenter)
                 .HasForeignKey<AdoptionCenter>(ac => ac.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.3 User → Vet (One-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Vet>()
                 .HasOne(v => v.User)
                 .WithOne(u => u.Vet)
                 .HasForeignKey<Vet>(v => v.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.4 User → Notifications (One-to-Many) ✅ Restrict
+            // ---------------------------------------------
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
                 .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.5 User → Ratings (One-to-Many) ✅ Restrict
+            // ---------------------------------------------
             modelBuilder.Entity<Rating>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.Ratings)
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.6 User → Cart (One-to-Many) ✅ Restrict
+            // ---------------------------------------------
             modelBuilder.Entity<Cart>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Carts)
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.7 User → Orders (One-to-Many) ✅ Restrict
+            // ---------------------------------------------
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.8 User → Wishlists (One-to-Many) ✅ Restrict
+            // ---------------------------------------------
             modelBuilder.Entity<Wishlist>()
                 .HasOne(w => w.User)
                 .WithMany(u => u.Wishlists)
                 .HasForeignKey(w => w.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.9 User → Diagnoses (One-to-Many) ✅ Restrict
+            // ---------------------------------------------
             modelBuilder.Entity<Diagnosis>()
                 .HasOne(d => d.User)
                 .WithMany(u => u.Diagnoses)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.10 Adopter → Appointments (One-to-Many)
+            // ---------------------------------------------
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Adopter)
                 .WithMany(ad => ad.Appointments)
                 .HasForeignKey(a => a.AdopterId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.11 Appointment → Pet (Many-to-One) ✅ Restrict
+            // ---------------------------------------------
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Pet)
                 .WithMany(p => p.Appointments)
                 .HasForeignKey(a => a.PetId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.12 Pet → AdoptionCenter (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Pet>()
                 .HasOne(p => p.Center)
                 .WithMany(c => c.Pets)
                 .HasForeignKey(p => p.CenterId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.12 appointment → vet (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Vet)
-                .WithMany(v => v.Appointments)
-                .HasForeignKey(a => a.VetId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(a => a.Vet)             // الموعد له طبيب واحد (حسب تسمية الحقل عندك)
+                .WithMany(v => v.Appointments)  // الطبيب له عدة مواعيد
+                .HasForeignKey(a => a.VetId)    // المفتاح الأجنبي
+                .OnDelete(DeleteBehavior.Restrict); // تعادل RESTRICT أو NO ACTION في لارافيل
+            // ---------------------------------------------
+            // 2.13 Diagnosis → Pet (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Diagnosis>()
                 .HasOne(d => d.Pet)
                 .WithMany(p => p.Diagnoses)
                 .HasForeignKey(d => d.PetId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.14 AdoptionCenter → Products (One-to-Many)
+            // ---------------------------------------------
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Center)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CenterId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.15 Product → Category (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.16 Order → Payment (One-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Order)
                 .WithOne(o => o.Payment)
                 .HasForeignKey<Payment>(p => p.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.17 Order → OrderItems (One-to-Many)
+            // ---------------------------------------------
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Order)
                 .WithMany(o => o.OrderItems)
                 .HasForeignKey(oi => oi.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.18 OrderItem → Product (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Product)
                 .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.19 Cart → CartItems (One-to-Many)
+            // ---------------------------------------------
             modelBuilder.Entity<CartItem>()
                 .HasOne(ci => ci.Cart)
                 .WithMany(c => c.CartItems)
                 .HasForeignKey(ci => ci.CartId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.20 CartItem → Product (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<CartItem>()
                 .HasOne(ci => ci.Product)
                 .WithMany(p => p.CartItems)
                 .HasForeignKey(ci => ci.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.21 Wishlist → Product (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<Wishlist>()
                 .HasOne(w => w.Product)
                 .WithMany(p => p.Wishlists)
                 .HasForeignKey(w => w.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.22 Blacklist (Many-to-One with Adopter)
+            // ---------------------------------------------
             modelBuilder.Entity<Blacklist>()
                 .HasOne(b => b.Adopter)
                 .WithMany(a => a.Blacklists)
                 .HasForeignKey(b => b.AdopterId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.23 Blacklist (Many-to-One with Center)
+            // ---------------------------------------------
             modelBuilder.Entity<Blacklist>()
                 .HasOne(b => b.Center)
                 .WithMany(c => c.Blacklists)
                 .HasForeignKey(b => b.CenterId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.24 PetReport (Many-to-One with AdoptionRequest)
+            // ---------------------------------------------
             modelBuilder.Entity<PetReport>()
                 .HasOne(pr => pr.AdoptionRequest)
                 .WithMany(ar => ar.PetReports)
                 .HasForeignKey(pr => pr.AdoptionRequestId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // ---------------------------------------------
+            // 2.25 AdoptionRequest → Adopter (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<AdoptionRequest>()
                 .HasOne(ar => ar.Adopter)
                 .WithMany()
                 .HasForeignKey(ar => ar.AdopterId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.26 AdoptionRequest → Pet (Many-to-One)
+            // ---------------------------------------------
             modelBuilder.Entity<AdoptionRequest>()
                 .HasOne(ar => ar.Pet)
                 .WithMany()
                 .HasForeignKey(ar => ar.PetId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // ---------------------------------------------
+            // 2.27 Pet → Vaccinations (One-to-Many)
+            // ---------------------------------------------
             modelBuilder.Entity<Vaccination>()
                 .HasOne(v => v.Pet)
                 .WithMany(p => p.Vaccinations)
@@ -2525,11 +3096,20 @@ namespace PetHaven.Data
         }
         public async Task SeedAsync()
         {
+            // Guard: if vet ratings are already seeded, there is no need to repeat the whole seed.
+            // This avoids skipping the ratings section when the database already contains other seed data.
             if (await _context.Ratings.AnyAsync(r => r.TargetType == "Vet")) return;
+            // =========================================================
+            // 1. Roles
+            // =========================================================
             var roleAdopter        = await EnsureRoleAsync("Adopter");
             var roleCenter         = await EnsureRoleAsync("AdoptionCenter");
             var roleVet            = await EnsureRoleAsync("Vet");
             await _context.SaveChangesAsync();
+            // =========================================================
+            // 2. Users  (passwords hashed with BCrypt)
+            // =========================================================
+            // --- Adopter user ---
             var adopterUser = new User
             {
                 RoleId      = roleAdopter.RoleId,
@@ -2539,6 +3119,7 @@ namespace PetHaven.Data
                 Password    = BCrypt.Net.BCrypt.HashPassword("Adopter@123"),
                 PhoneNumber = "+1-555-0101"
             };
+            // --- Adoption Center user ---
             var centerUser = new User
             {
                 RoleId      = roleCenter.RoleId,
@@ -2548,6 +3129,7 @@ namespace PetHaven.Data
                 Password    = BCrypt.Net.BCrypt.HashPassword("Center@123"),
                 PhoneNumber = "+1-555-0202"
             };
+            // --- Vet user ---
             var vetUser = new User
             {
                 RoleId      = roleVet.RoleId,
@@ -2559,6 +3141,10 @@ namespace PetHaven.Data
             };
             await _context.Users.AddRangeAsync(adopterUser, centerUser, vetUser);
             await _context.SaveChangesAsync();
+            // =========================================================
+            // 3. Profile records (use generated UserIds)
+            // =========================================================
+            // Adopter profile
             var adopterProfile = new Adopter
             {
                 UserId           = adopterUser.UserId,
@@ -2569,11 +3155,13 @@ namespace PetHaven.Data
                 MissedReportsCount = 0,
                 Balance          = 500.00m
             };
+            // Cart for the adopter
             var adopterCart = new Cart
             {
                 UserId    = adopterUser.UserId,
                 CreatedAt = DateTime.UtcNow
             };
+            // Adoption Center profile
             var centerProfile = new AdoptionCenter
             {
                 UserId      = centerUser.UserId,
@@ -2581,6 +3169,7 @@ namespace PetHaven.Data
                 Address     = "456 Oak Avenue, Chicago, IL 60601",
                 ContactInfo = "contact@happypaws.com | +1-555-0202"
             };
+            // Vet profile
             var vetProfile = new Vet
             {
                 UserId          = vetUser.UserId,
@@ -2602,6 +3191,9 @@ namespace PetHaven.Data
             await _context.AdoptionCenters.AddAsync(centerProfile);
             await _context.Vets.AddAsync(vetProfile);
             await _context.SaveChangesAsync();
+            // =========================================================
+            // 4. Categories
+            // =========================================================
             var catFood = new Category
             {
                 CategoryName = "Food",
@@ -2628,6 +3220,9 @@ namespace PetHaven.Data
             };
             await _context.Categories.AddRangeAsync(catFood, catToys, catMedicine, catAccessories);
             await _context.SaveChangesAsync();
+            // =========================================================
+            // 5. Products  (linked to center + categories)
+            // =========================================================
             var products = new List<Product>
             {
                 new Product
@@ -2699,6 +3294,9 @@ namespace PetHaven.Data
             };
             await _context.Products.AddRangeAsync(products);
             await _context.SaveChangesAsync();
+            // =========================================================
+            // 6. Pets  (linked to center)
+            // =========================================================
             var pets = new List<Pet>
             {
                 new Pet
@@ -2776,49 +3374,57 @@ namespace PetHaven.Data
             };
 await _context.Pets.AddRangeAsync(pets);
             await _context.SaveChangesAsync();
+            // =========================================================
+            // 7. Appointments (مواعيد اليوم للوحة تحكم العيادة)
+            // =========================================================
             var today = DateTime.Today;
             var appointments = new List<Appointment>
             {
+                // موعد قيد الانتظار (Pending)
                 new Appointment
                 {
                     AdopterId      = adopterProfile.AdopterId,
-                    PetId          = pets[0].PetId,
+                    PetId          = pets[0].PetId, // Buddy
                     VetId          = vetProfile.VetId,
                     AppointmentDate = today.AddHours(9),
                     Status         = "Pending",
                     Reason         = "فحص دوري وتطعيمات"
                 },
+                // موعد مؤكد (Confirmed)
                 new Appointment
                 {
                     AdopterId      = adopterProfile.AdopterId,
-                    PetId          = pets[1].PetId,
+                    PetId          = pets[1].PetId, // Luna
                     VetId          = vetProfile.VetId,
                     AppointmentDate = today.AddHours(10).AddMinutes(30),
                     Status         = "Confirmed",
                     Reason         = "تنظيف الأسنان"
                 },
+                // موعد مؤكد (Confirmed)
                 new Appointment
                 {
                     AdopterId      = adopterProfile.AdopterId,
-                    PetId          = pets[4].PetId,
+                    PetId          = pets[4].PetId, // Charlie
                     VetId          = vetProfile.VetId,
                     AppointmentDate = today.AddHours(13).AddMinutes(15),
                     Status         = "Confirmed",
                     Reason         = "فحص العرج المفاجئ"
                 },
+                // موعد مكتمل (Completed)
                 new Appointment
                 {
                     AdopterId      = adopterProfile.AdopterId,
-                    PetId          = pets[3].PetId,
+                    PetId          = pets[3].PetId, // Bella
                     VetId          = vetProfile.VetId,
                     AppointmentDate = today.AddHours(8),
                     Status         = "Completed",
                     Reason         = "متابعة ما بعد العملية"
                 },
+                // موعد ملغي (Cancelled)
                 new Appointment
                 {
                     AdopterId      = adopterProfile.AdopterId,
-                    PetId          = pets[2].PetId,
+                    PetId          = pets[2].PetId, // Max
                     VetId          = vetProfile.VetId,
                     AppointmentDate = today.AddHours(11),
                     Status         = "Cancelled",
@@ -2827,6 +3433,11 @@ await _context.Pets.AddRangeAsync(pets);
             };
             await _context.Appointments.AddRangeAsync(appointments);
             await _context.SaveChangesAsync();
+            // =========================================================
+            // 8. Ratings — تقييمات الأطباء (تقييمات الطبيب الحالي)
+            //    تُستخدم في صفحة Client Reviews الخاصة بلوحة الطبيب
+            // =========================================================
+            // --- مستخدمون إضافيون (مربّون) لتقييم الطبيب ---
             var sarahUser = new User
             {
                 RoleId      = roleAdopter.RoleId,
@@ -2874,6 +3485,7 @@ await _context.Pets.AddRangeAsync(pets);
             };
             await _context.Users.AddRangeAsync(sarahUser, markUser, lindaUser, omarUser, emilyUser);
             await _context.SaveChangesAsync();
+            // --- ملفات المربّين (Adopter profiles) ---
             var sarahProfile = new Adopter { UserId = sarahUser.UserId, HousingType = "House", HasPetBefore = true, Balance = 120.00m };
             var markProfile  = new Adopter { UserId = markUser.UserId,  HousingType = "Apartment", HasPetBefore = true, Balance = 80.00m };
             var lindaProfile = new Adopter { UserId = lindaUser.UserId, HousingType = "House", HasPetBefore = true, Balance = 200.00m };
@@ -2881,6 +3493,7 @@ await _context.Pets.AddRangeAsync(pets);
             var emilyProfile = new Adopter { UserId = emilyUser.UserId, HousingType = "House", HasPetBefore = false, Balance = 150.00m };
             await _context.Adopters.AddRangeAsync(sarahProfile, markProfile, lindaProfile, omarProfile, emilyProfile);
             await _context.SaveChangesAsync();
+            // --- تقييمات الطبيب الحالي (TargetType = "Vet", TargetId = vetProfile.VetId) ---
             var ratings = new List<Rating>
             {
                 new Rating
@@ -2928,6 +3541,7 @@ await _context.Pets.AddRangeAsync(pets);
                     ReviewText  = "Great experience overall. The vet was knowledgeable and took time to answer all my questions.",
                     CreatedAt   = DateTime.UtcNow.AddDays(-20)
                 },
+                // تقييم بدون نص (يُعتبر "غير مُجاب عنه" Unanswered)
                 new Rating
                 {
                     UserId      = adopterUser.UserId,
@@ -2941,6 +3555,9 @@ await _context.Pets.AddRangeAsync(pets);
             await _context.Ratings.AddRangeAsync(ratings);
             await _context.SaveChangesAsync();
         }
+        // =========================================================
+        // Helper: ensure a Role exists, return it (create if missing)
+        // =========================================================
         private async Task<Role> EnsureRoleAsync(string roleName)
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
@@ -2971,6 +3588,25 @@ namespace PetHaven.DTOs
 }
 ```
 
+## File: DTOs/AdminStatsDto.cs
+```csharp
+namespace PetHaven.DTOs
+{
+    public class AdminStatsDto
+    {
+        public int TotalUsers { get; set; }
+        public int Adopters { get; set; }
+        public int Centers { get; set; }
+        public int Vets { get; set; }
+        public int Admins { get; set; }
+        public int TotalPets { get; set; }
+        public int BannedUsers { get; set; }
+        //   public int TotalOrders { get; set; }
+        //   public int PendingAdoptions { get; set; }
+    }
+}
+```
+
 ## File: DTOs/AdopterAppointmentDto.cs
 ```csharp
 namespace PetHaven.DTOs
@@ -2995,9 +3631,11 @@ namespace PetHaven.DTOs
 {
     public class AdopterDashboardDto
     {
+        // 📊 الإحصائيات الأساسية (الأرقام التي تظهر في البطاقات)
         public int PendingAdoptionsCount { get; set; }
         public int AdoptedPetsCount { get; set; }
         public int RecentOrdersCount { get; set; }
+        // 🎯 معلومات لرسالة التذكير (Adoption Milestone)
         public int? DaysSinceLastAdoption { get; set; }
         public string? LastAdoptedPetName { get; set; }
         public string? WelcomeMessage { get; set; }
@@ -3093,6 +3731,10 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// Public availability information for a veterinarian on one date.
+    /// Contains no adopter, pet, or occupied-appointment details.
+    /// </summary>
     public class AppointmentAvailabilityDto
     {
         public int VetId { get; set; }
@@ -3107,6 +3749,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// فئة من فئات المواعيد في مخطط التوزيع (Check-up / Vaccination / Surgeries / Other).
+    /// </summary>
     public class AppointmentBreakdownDto
     {
         public string Category { get; set; } = string.Empty;
@@ -3120,6 +3765,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// يعرض بيانات موعد واحد في لوحة تحكم العيادة البيطرية.
+    /// </summary>
     public class AppointmentResponseDto
     {
         public int AppointmentId { get; set; }
@@ -3132,6 +3780,7 @@ namespace PetHaven.DTOs
         public DateTime AppointmentDate { get; set; }
         public string? Status { get; set; }
         public string? Reason { get; set; }
+        /// <summary>تنسيق وقت الموعد (مثال 09:00 AM)</summary>
         public string TimeDisplay { get; set; } = string.Empty;
     }
 }
@@ -3141,6 +3790,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// إحصائيات مواعيد اليوم لبطاقات الملخص في لوحة التحكم.
+    /// </summary>
     public class AppointmentSummaryDto
     {
         public int TotalToday { get; set; }
@@ -3174,6 +3826,17 @@ namespace PetHaven.DTOs
     {
         public int AdopterId { get; set; }
         public string Reason { get; set; } = string.Empty;
+    }
+}
+```
+
+## File: DTOs/BanUserDto.cs
+```csharp
+namespace PetHaven.DTOs
+{
+    public class BanUserDto
+    {
+        public string? Reason { get; set; }
     }
 }
 ```
@@ -3279,6 +3942,78 @@ namespace PetHaven.DTOs
 }
 ```
 
+## File: DTOs/CenterWalletDto.cs
+```csharp
+namespace PetHaven.DTOs
+{
+    /// <summary>
+    /// محفظة مركز التبني: الرصيد المتحصّل من بيع منتجات المركز للمتبنّين.
+    /// </summary>
+    public class CenterWalletDto
+    {
+        public int CenterId { get; set; }
+        public string CenterName { get; set; } = string.Empty;
+        /// <summary>الرصيد الحالي = مجموع قيمة منتجات المركز في الطلبات المدفوعة.</summary>
+        public decimal Balance { get; set; }
+        /// <summary>مبالغ طلبات لم تُدفع بعد (غير محسوبة ضمن الرصيد).</summary>
+        public decimal PendingBalance { get; set; }
+        public decimal EarningsToday { get; set; }
+        public decimal EarningsThisMonth { get; set; }
+        /// <summary>عدد الطلبات المدفوعة التي احتوت منتجات لهذا المركز.</summary>
+        public int PaidOrdersCount { get; set; }
+        /// <summary>عدد القطع المباعة (مجموع الكميات).</summary>
+        public int SoldItemsCount { get; set; }
+        public DateTime? LastTransactionDate { get; set; }
+        /// <summary>أحدث الحركات على المحفظة.</summary>
+        public IEnumerable<CenterWalletTransactionDto> Transactions { get; set; }
+            = new List<CenterWalletTransactionDto>();
+    }
+}
+```
+
+## File: DTOs/CenterWalletTransactionDto.cs
+```csharp
+namespace PetHaven.DTOs
+{
+    /// <summary>
+    /// حركة واحدة في محفظة المركز (طلب واحد مدفوع يخص منتجات هذا المركز).
+    /// </summary>
+    public class CenterWalletTransactionDto
+    {
+        /// <summary>معرّف الحركة (order-{OrderId}) لاستخدامه كـ key في الواجهة.</summary>
+        public string Id { get; set; } = string.Empty;
+        public int OrderId { get; set; }
+        /// <summary>وصف مختصر: أسماء المنتجات المباعة في هذا الطلب.</summary>
+        public string Description { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+        /// <summary>المبلغ الذي دخل محفظة المركز من هذا الطلب.</summary>
+        public decimal Amount { get; set; }
+        /// <summary>credit = دخل للمحفظة، debit = خرج منها.</summary>
+        public string Type { get; set; } = "credit";
+        public int ItemsCount { get; set; }
+        public string? BuyerName { get; set; }
+    }
+}
+```
+
+## File: DTOs/CenterWalletTransactionsPageDto.cs
+```csharp
+namespace PetHaven.DTOs
+{
+    /// <summary>
+    /// صفحة من حركات محفظة المركز مع ترقيم الصفحات.
+    /// </summary>
+    public class CenterWalletTransactionsPageDto
+    {
+        public int TotalCount { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public IEnumerable<CenterWalletTransactionDto> Items { get; set; }
+            = new List<CenterWalletTransactionDto>();
+    }
+}
+```
+
 ## File: DTOs/ClientReviewDto.cs
 ```csharp
 namespace PetHaven.DTOs
@@ -3298,6 +4033,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// نقطة واحدة في مخطط نشاط العيادة (عدد المواعيد لكل يوم/فترة).
+    /// </summary>
     public class ClinicActivityPointDto
     {
         public string Label { get; set; } = string.Empty;
@@ -3310,9 +4048,25 @@ namespace PetHaven.DTOs
 ```csharp
 public class CreateAppointmentDto
 {
+    /// <summary>
+    /// معرف المربي في النظام
+    /// </summary>
+    /// <example>1</example>     
     public int PetId { get; set; }
+    /// <summary>
+    /// معرف الطبيب البيطري
+    /// </summary>
+    /// <example>1</example>
     public int VetId { get; set; }
+    /// <summary>
+    /// تاريخ الموعد
+    /// </summary>
+    /// <example>2026-07-10T10:00:00Z</example>
     public DateTime AppointmentDate { get; set; }
+    /// <summary>
+    /// سبب حجز الموعد
+    /// </summary>
+    /// <example>فحص دوري وتلقيم القطة</example>
     public string? Reason { get; set; }
 }
 ```
@@ -3377,10 +4131,14 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// إدخال واحد ضمن السجل الطبي (Timeline) - يُشتق من الفحوصات (Diagnoses).
+    /// </summary>
     public class MedicalHistoryEntryDto
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        /// <summary>نوع الإدخال: CONSULTATION / ROUTINE / TREATMENT</summary>
         public string Type { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -3422,6 +4180,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// تفاصيل مريض كاملة في صفحة تفصيل المريض.
+    /// </summary>
     public class PatientDetailDto
     {
         public int PetId { get; set; }
@@ -3447,6 +4208,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// بطاقة مريض واحدة في صفحة دليل المرضى.
+    /// </summary>
     public class PatientListDto
     {
         public int PetId { get; set; }
@@ -3457,6 +4221,7 @@ namespace PetHaven.DTOs
         public string? Gender { get; set; }
         public string? ImageUrl { get; set; }
         public string? HealthStatus { get; set; }
+        /// <summary>شارة الحالة: Healthy / Requires Follow-up / Upcoming Vaccine</summary>
         public string Status { get; set; } = "Healthy";
         public string OwnerName { get; set; } = string.Empty;
         public DateTime? LastVisitDate { get; set; }
@@ -3470,6 +4235,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// نتيجة صفحة دليل المرضى مع ترقيم الصفحات.
+    /// </summary>
     public class PatientListPageDto
     {
         public int TotalCount { get; set; }
@@ -3487,7 +4255,9 @@ namespace PetHaven.DTOs
     public class PaymentRequestDto
     {
         public int OrderId { get; set; }
+        // قد يرسل لك "Stripe" أو "ShamCash" لتسجيلها في قاعدة البيانات
         public string PaymentMethod { get; set; } = string.Empty;
+        // إذا استخدموا Stripe، سيرسلون لك رقم العملية كإثبات
         public string? TransactionId { get; set; }
     }
 }
@@ -3528,6 +4298,7 @@ namespace PetHaven.DTOs
         public string? HealthStatus { get; set; }
         public string? ImageUrl { get; set; }
         public string CenterName { get; set; } = string.Empty;
+        // 🆕 حالة الحيوان (Available / Adopted)
         public string Status { get; set; } = "Available";
     }
 }
@@ -3645,6 +4416,7 @@ namespace PetHaven.DTOs
 {
     public class RecentAdoptionDto
     {
+      //  public int PetId { get; set; }              // للتنقل لصفحة التفاصيل
         public string PetName { get; set; } = string.Empty;
         public string? PetImageUrl { get; set; }
         public DateTime AdoptedDate { get; set; }
@@ -3656,6 +4428,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// مريض من قائمة المرضى الأخيرين في لوحة تحكم الطبيب.
+    /// </summary>
     public class RecentPatientDto
     {
         public int PetId { get; set; }
@@ -3678,7 +4453,7 @@ namespace PetHaven.DTOs
         public string ProductName { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public DateTime SoldDate { get; set; }
-        public string? ProductImageUrl { get; set; }
+        public string? ProductImageUrl { get; set; }  
     }
 }
 ```
@@ -3708,6 +4483,18 @@ namespace PetHaven.DTOs
         [Required]
         [MaxLength(100)]
         public string Role { get; set; } = string.Empty;
+        //// حقول الطبيب البيطري (Vet) — تُستخدم فقط عند التسجيل بدور Veterinarian
+        //[MaxLength(100)]
+        //public string? Specialization { get; set; }
+        //[MaxLength(500)]
+        //public string? ClinicName { get; set; }
+        //[MaxLength(500)]
+        //public string? ClinicAddress { get; set; }
+        //public int? ExperienceYears { get; set; }
+        //[MaxLength(50)]
+        //public string? LicenseNumber { get; set; }
+        //public decimal? Location_Lat { get; set; }
+        //public decimal? Location_Lng { get; set; }
     }
 }
 ```
@@ -3717,8 +4504,15 @@ namespace PetHaven.DTOs
 using System;
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// طلب إعادة جدولة موعد.
+    /// </summary>
     public class RescheduleAppointmentDto
     {
+        /// <summary>
+        /// التاريخ الجديد للموعد.
+        /// </summary>
+        /// <example>2026-07-15T14:30:00Z</example>
         public DateTime NewDate { get; set; }
     }
 }
@@ -3730,6 +4524,7 @@ namespace PetHaven.DTOs
 {
     public class RespondToRequestDto
     {
+        /// <summary>Expected values: "Approved" | "Rejected"</summary>
         public string Status { get; set; } = string.Empty;
         public string? CenterNote { get; set; }
     }
@@ -3758,10 +4553,15 @@ namespace PetHaven.DTOs
 {
     public class ReviewsStatsDto
     {
+        /// <summary>معدل التقييم العام (من 5)</summary>
         public double AverageRating { get; set; }
+        /// <summary>إجمالي عدد التقييمات</summary>
         public int TotalCount { get; set; }
+        /// <summary>عدد التقييمات التي لا تحتوي نصوص (بدون تعليق)</summary>
         public int UnansweredCount { get; set; }
+        /// <summary>توزيع النجوم: عدد التقييمات لكل نجمة (المفتاح 1..5)</summary>
         public Dictionary<int, int> StarDistribution { get; set; } = new();
+        /// <summary>نسب النجوم المئوية (المفتاح 1..5)</summary>
         public Dictionary<int, double> StarPercentages { get; set; } = new();
     }
 }
@@ -3799,6 +4599,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// سلالة ضمن قائمة السلالات الأكثر تردداً على العيادة.
+    /// </summary>
     public class TopBreedDto
     {
         public string Breed { get; set; } = string.Empty;
@@ -3916,21 +4719,26 @@ namespace PetHaven.DTOs
 {
     public class UserProfileDto
     {
+        // 🔹 الحقول الأساسية المشتركة لجميع المستخدمين
         public int UserId { get; set; }
-        public string Username { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty; // تأكد من الاسم هنا (Username أو UserName حسب ما اعتمدته)
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
         public string Role { get; set; } = string.Empty;
         public string? ProfileImageUrl { get; set; }
+        // 🔹 حقل مشترك بين المتبني والمركز
         public string? Address { get; set; }
+        // 🔹 حقول خاصة بالمتبني (Adopter) فقط
         public string? HousingType { get; set; }
         public bool? HasPetBefore { get; set; }
         public string? ExperienceLevel { get; set; }
         public int? FreeHoursPerDay { get; set; }
         public decimal? Balance { get; set; }
+        // 🔹 حقول خاصة بالمركز (Center) فقط
         public string? CenterName { get; set; }
         public string? ContactInfo { get; set; }
+        // 🔹 حقول خاصة بالطبيب البيطري (Vet) فقط
         public string? ClinicName { get; set; }
         public string? ClinicAddress { get; set; }
         public string? Specialization { get; set; }
@@ -3945,6 +4753,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// تطعيمة ضمن سجل المناعة للحيوان.
+    /// </summary>
     public class VaccinationDto
     {
         public int VaccinationId { get; set; }
@@ -3953,6 +4764,7 @@ namespace PetHaven.DTOs
         public string? Description { get; set; }
         public DateTime VaccinationDate { get; set; }
         public DateTime? NextDueDate { get; set; }
+        /// <summary>الحالة المستنتجة: Up to date / Due soon / Overdue</summary>
         public string Status { get; set; } = string.Empty;
     }
 }
@@ -3981,6 +4793,9 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// بطاقات الإحصائيات (KPI) في لوحة تحكم الطبيب البيطري.
+    /// </summary>
     public class VetDashboardStatsDto
     {
         public int TotalPatients { get; set; }
@@ -3996,11 +4811,33 @@ namespace PetHaven.DTOs
 ```csharp
 namespace PetHaven.DTOs
 {
+    /// <summary>
+    /// إحصائيات بطاقات صفحة دليل المرضى (Patient Directory).
+    /// </summary>
     public class VetPatientsStatsDto
     {
         public int TotalPatients { get; set; }
         public int ActiveCases { get; set; }
         public int RecentlyAdded30d { get; set; }
+    }
+}
+```
+
+## File: DTOs/VetPendingDto.cs
+```csharp
+namespace PetHaven.DTOs
+{
+    public class VetPendingDto
+    {
+        public int VetId { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Specialization { get; set; }
+        public string? ClinicName { get; set; }
+        public string? ClinicAddress { get; set; }
+        public string? LicenseNumber { get; set; }
+        public int? ExperienceYears { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
 ```
@@ -4012,11 +4849,19 @@ namespace PetHaven.DTOs
 {
     public class VetRatingRequestDto
     {
+        /// <summary>
+        /// معرف الطبيب البيطري
+        /// </summary>
+        /// <example>1</example>
         [Required]
         public int VetId { get; set; }
         [Required]
         [Range(1, 5, ErrorMessage = "التقييم يجب أن يكون بين 1 و 5.")]
         public int Rating { get; set; }
+        /// <summary>
+        /// التعليق
+        /// </summary>
+        /// <example>كان الطبيب فوق الوصف</example>
         public string? ReviewText { get; set; }
     }
 }
@@ -4070,10 +4915,23 @@ namespace PetHaven.DTOs
 {
     public class VetSearchDto
     {
+        // 33.600368070539005, 36.329190419824755
+        /// <summary>
+        /// خط عرض المستخدم -  التل،
+        /// </summary>
+        /// <example>33.600368</example>
         public double? UserLatitude { get; set; }
+        /// <summary> خط طول المستخدم -  التل </summary>
+        /// <example>36.329190</example>
         public double? UserLongitude { get; set; }
+        /// <summary> نصف قطر البحث بالكيلومتر </summary>
+        /// <example>50</example>
         public decimal? Radius { get; set; }
+        /// <summary> طريقة الترتيب </summary>
+        /// <example>Distance</example>
         public string? SortBy { get; set; }
+        /// <summary>  التخصص </summary>
+        /// <example>Small Animal Medicine</example>
         public string? Specialization { get; set; }
     }
 }
@@ -4114,6 +4972,7 @@ namespace PetHaven.Helpers
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]!);
+            // ✅ READ EXPIRY FROM appsettings.json
             var expiryInMinutes = _configuration.GetValue<int>("Jwt:ExpiryInMinutes", 20);
             var claims = new List<Claim>
                 {
@@ -4126,7 +4985,7 @@ namespace PetHaven.Helpers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(expiryInMinutes),
+                Expires = DateTime.UtcNow.AddMinutes(expiryInMinutes),  // ← USE IT HERE
                 Issuer = _configuration["Jwt:Issuer"],
                 Audience = _configuration["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(
@@ -4152,8 +5011,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace PetHaven.Migrations
 {
+    /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -4752,6 +5613,7 @@ namespace PetHaven.Migrations
                 table: "Wishlists",
                 column: "UserId");
         }
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -4803,6 +5665,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/20260620120853_InitialCreate.Designer.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -4817,6 +5680,7 @@ namespace PetHaven.Migrations
     [Migration("20260620120853_InitialCreate")]
     partial class InitialCreate
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -5592,8 +6456,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace PetHaven.Migrations
 {
+    /// <inheritdoc />
     public partial class AddScoringAndNotesToAdoption : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
@@ -5603,6 +6469,7 @@ namespace PetHaven.Migrations
                 nullable: false,
                 defaultValue: 0);
         }
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
@@ -5615,6 +6482,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/20260701125852_AddScoringAndNotesToAdoption.Designer.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -5629,6 +6497,7 @@ namespace PetHaven.Migrations
     [Migration("20260701125852_AddScoringAndNotesToAdoption")]
     partial class AddScoringAndNotesToAdoption
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -6407,8 +7276,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace PetHaven.Migrations
 {
+    /// <inheritdoc />
     public partial class FixAdoptionAndRemoveAppointmentRequest : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
@@ -6476,6 +7347,7 @@ namespace PetHaven.Migrations
                 principalColumn: "AdoptionRequestId",
                 onDelete: ReferentialAction.Cascade);
         }
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
@@ -6521,6 +7393,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/20260701144125_FixAdoptionAndRemoveAppointmentRequest.Designer.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -6535,6 +7408,7 @@ namespace PetHaven.Migrations
     [Migration("20260701144125_FixAdoptionAndRemoveAppointmentRequest")]
     partial class FixAdoptionAndRemoveAppointmentRequest
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -7342,8 +8216,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace PetHaven.Migrations
 {
+    /// <inheritdoc />
     public partial class add_vetIdToAppointment : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
@@ -7364,6 +8240,7 @@ namespace PetHaven.Migrations
                 principalColumn: "VetId",
                 onDelete: ReferentialAction.Restrict);
         }
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
@@ -7382,6 +8259,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/20260717045016_add_vetIdToAppointment.Designer.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -7396,6 +8274,7 @@ namespace PetHaven.Migrations
     [Migration("20260717045016_add_vetIdToAppointment")]
     partial class add_vetIdToAppointment
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -8216,8 +9095,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace PetHaven.Migrations
 {
+    /// <inheritdoc />
     public partial class AddProfileImageUrlToUser : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -8227,6 +9108,7 @@ namespace PetHaven.Migrations
                 maxLength: 500,
                 nullable: true);
         }
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
@@ -8239,6 +9121,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/20260814094117_AddProfileImageUrlToUser.Designer.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -8253,6 +9136,7 @@ namespace PetHaven.Migrations
     [Migration("20260814094117_AddProfileImageUrlToUser")]
     partial class AddProfileImageUrlToUser
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -9077,8 +9961,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace PetHaven.Migrations
 {
+    /// <inheritdoc />
     public partial class AddVaccinations : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -9108,6 +9994,7 @@ namespace PetHaven.Migrations
                 table: "Vaccinations",
                 column: "PetId");
         }
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -9119,6 +10006,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/20260814123755_AddVaccinations.Designer.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -9133,6 +10021,7 @@ namespace PetHaven.Migrations
     [Migration("20260814123755_AddVaccinations")]
     partial class AddVaccinations
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -9986,8 +10875,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace PetHaven.Migrations
 {
+    /// <inheritdoc />
     public partial class UpdateAddProfileImageUrlToUser : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -10032,6 +10923,7 @@ namespace PetHaven.Migrations
                 oldMaxLength: 500,
                 oldNullable: true);
         }
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
@@ -10080,6 +10972,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/20260818082858_UpdateAddProfileImageUrlToUser.Designer.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -10094,6 +10987,7 @@ namespace PetHaven.Migrations
     [Migration("20260818082858_UpdateAddProfileImageUrlToUser")]
     partial class UpdateAddProfileImageUrlToUser
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -10941,6 +11835,7 @@ namespace PetHaven.Migrations
 
 ## File: Migrations/ApplicationDbContextModelSnapshot.cs
 ```csharp
+// <auto-generated />
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -11813,17 +12708,20 @@ namespace PetHaven.Models
         [MaxLength(500)]
         public string? Address { get; set; }
         [MaxLength(50)]
-        public string? HousingType { get; set; }
+        public string? HousingType { get; set; }  // 👈 جديد (نوع السكن)
         public bool HasPetBefore { get; set; }
         [MaxLength(50)]
         public string? ExperienceLevel { get; set; }
         public int MissedReportsCount { get; set; }
         public int FreeHoursPerDay { get; set; }
         public DateTime? LastReportDate { get; set; }
+        // 👈 جديد: الرصيد
         [Required]
         public decimal Balance { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
+        // 👈 جديد: Adopter لديه عدة Appointments
         public virtual ICollection<Appointment>? Appointments { get; set; }
         public virtual ICollection<Blacklist>? Blacklists { get; set; }
         public virtual ICollection<PetReport>? PetReports { get; set; }
@@ -11850,8 +12748,10 @@ namespace PetHaven.Models
         public string? Address { get; set; }
         [MaxLength(200)]
         public string? ContactInfo { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
+        //    المركز لديه عدة منتجات   
         public virtual ICollection<Product>? Products { get; set; }
         public virtual ICollection<Pet>? Pets { get; set; }
         public virtual ICollection<Blacklist>? Blacklists { get; set; }
@@ -11876,8 +12776,9 @@ namespace PetHaven.Models
         [MaxLength(50)]
         public string? Status { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int Score { get; set; }
-        public string? CenterNote { get; set; }
+        public int Score { get; set; }  // لحساب الاولوية 
+        public string? CenterNote { get; set; }  // عندما يرفض المركز طلباً، يمكنه كتابة سبب الرفض هنا (مثلاً: "نعتذر، ساعات تفرغك لا تناسب هذا النوع من الكلاب")
+        // Navigation properties
         [ForeignKey("AdopterId")]
         public virtual Adopter Adopter { get; set; } = null!;
         [ForeignKey("PetId")]
@@ -11898,7 +12799,7 @@ namespace PetHaven.Models
         [Key]
         public int AppointmentId { get; set; }
         [Required]
-        public int AdopterId { get; set; }
+        public int AdopterId { get; set; }  // 👈 تغير من UserId إلى AdopterId
         [Required]
         public int PetId { get; set; }
         [Required]
@@ -11907,12 +12808,13 @@ namespace PetHaven.Models
         [MaxLength(50)]
         public string? Status { get; set; }
         public string? Reason { get; set; }
+        // العلاقات
         [ForeignKey("AdopterId")]
-        public virtual Adopter? Adopter { get; set; }
+        public virtual Adopter? Adopter { get; set; }  // 👈 العلاقة مع Adopter
         [ForeignKey("PetId")]
         public virtual Pet? Pet { get; set; }
         [ForeignKey("VetId")]
-        public virtual Vet? Vet { get; set; }
+        public virtual Vet? Vet { get; set; }   // 👈 علاقة الطبيب
     }
 }
 ```
@@ -11935,6 +12837,7 @@ namespace PetHaven.Models
         public string? Reason { get; set; }
         public DateTime BlockedAt { get; set; }
         public bool IsActive { get; set; }
+        // العلاقات
         [ForeignKey("AdopterId")]
         public virtual Adopter? Adopter { get; set; }
         [ForeignKey("CenterId")]
@@ -11956,6 +12859,7 @@ namespace PetHaven.Models
         [Required]
         public int UserId { get; set; }
         public DateTime CreatedAt { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
         public virtual ICollection<CartItem>? CartItems { get; set; }
@@ -11980,6 +12884,7 @@ namespace PetHaven.Models
         [Required]
         [Range(1, int.MaxValue)]
         public int Quantity { get; set; }
+        // العلاقات
         [ForeignKey("CartId")]
         public virtual Cart? Cart { get; set; }
         [ForeignKey("ProductId")]
@@ -12001,7 +12906,9 @@ namespace PetHaven.Models
         [MaxLength(100)]
         public string CategoryName { get; set; } = string.Empty;
         public string? Description { get; set; }
+      //  [MaxLength(500)]
         public string? ImageURL { get; set; }
+        // العلاقة: Category لديه عدة Products
         public virtual ICollection<Product>? Products { get; set; }
     }
 }
@@ -12024,6 +12931,7 @@ namespace PetHaven.Models
         public string? Symptoms { get; set; }
         public string? Result { get; set; }
         public DateTime CreatedAt { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
         [ForeignKey("PetId")]
@@ -12052,6 +12960,7 @@ namespace PetHaven.Models
         public string? Type { get; set; }
         public bool IsRead { get; set; }
         public DateTime CreatedAt { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
     }
@@ -12072,13 +12981,14 @@ namespace PetHaven.Models
         public int UserId { get; set; }
         public DateTime OrderDate { get; set; }
         [Required]
-        public decimal TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }  // أو TotalAmount
         [MaxLength(50)]
         public string? Status { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
         public virtual ICollection<OrderItem>? OrderItems { get; set; }
-        public virtual Payment? Payment { get; set; }
+        public virtual Payment? Payment { get; set; }  // 👈 إضافة العلاقة مع Payment
     }
 }
 ```
@@ -12102,7 +13012,9 @@ namespace PetHaven.Models
         public int Quantity { get; set; }
         [Required]
         public decimal UnitPrice { get; set; }
+        // 👈 جديد: سعر الشراء في وقت الطلب
         public decimal PriceAtPurchase { get; set; }
+        // العلاقات
         [ForeignKey("OrderId")]
         public virtual Order? Order { get; set; }
         [ForeignKey("ProductId")]
@@ -12122,7 +13034,7 @@ namespace PetHaven.Models
         [Key]
         public int PaymentId { get; set; }
         [Required]
-        public int OrderId { get; set; }
+        public int OrderId { get; set; }  // 👈 هذا هو المفتاح الخارجي
         [Required]
         public decimal Amount { get; set; }
         [MaxLength(50)]
@@ -12130,8 +13042,9 @@ namespace PetHaven.Models
         [MaxLength(50)]
         public string? PaymentStatus { get; set; }
         public DateTime PaymentDate { get; set; }
+        // العلاقات
         [ForeignKey("OrderId")]
-        public virtual Order? Order { get; set; }
+        public virtual Order? Order { get; set; }  // 👈 العلاقة مع Order
     }
 }
 ```
@@ -12161,7 +13074,9 @@ namespace PetHaven.Models
         [MaxLength(50)]
         public string? HealthStatus { get; set; }
         public string? Description { get; set; }
+       // [MaxLength(500)]
         public string? ImageURL { get; set; }
+        // العلاقات
         [ForeignKey("CenterId")]
         public virtual AdoptionCenter? Center { get; set; }
         public virtual ICollection<Appointment>? Appointments { get; set; }
@@ -12183,11 +13098,13 @@ namespace PetHaven.Models
         public int ReportId { get; set; }
         [Required]
         public int AdoptionRequestId { get; set; }
+     //   [MaxLength(500)]
         public string? ImageURL { get; set; }
         [MaxLength(50)]
         public string? HealthStatus { get; set; }
         public string? Notes { get; set; }
         public DateTime CreatedAt { get; set; }
+        // العلاقات
         [ForeignKey("AdoptionRequestId")]
         public virtual AdoptionRequest AdoptionRequest { get; set; } = null!;
     }
@@ -12205,9 +13122,9 @@ namespace PetHaven.Models
         [Key]
         public int ProductId { get; set; }
         [Required]
-        public int CenterId { get; set; }
+        public int CenterId { get; set; }  // 👈 تغير من CategoryId إلى CenterId
         [Required]
-        public int CategoryId { get; set; }
+        public int CategoryId { get; set; }  // 👈 أضفنا هذا (التصنيف)
         [Required]
         [MaxLength(200)]
         public string Name { get; set; } = string.Empty;
@@ -12217,9 +13134,11 @@ namespace PetHaven.Models
         public decimal DiscountRate { get; set; }
         [Required]
         public int StockQuantity { get; set; }
+       // [MaxLength(500)]
         public string? ImageURL { get; set; }
+        // العلاقات
         [ForeignKey("CenterId")]
-        public virtual AdoptionCenter? Center { get; set; }
+        public virtual AdoptionCenter? Center { get; set; }  // 👈 العلاقة مع المركز
         [ForeignKey("CategoryId")]
         public virtual Category? Category { get; set; }
         public virtual ICollection<CartItem>? CartItems { get; set; }
@@ -12243,7 +13162,7 @@ namespace PetHaven.Models
         public int UserId { get; set; }
         [Required]
         [MaxLength(50)]
-        public string TargetType { get; set; } = string.Empty;
+        public string TargetType { get; set; } = string.Empty; // "Product" or "Vet"
         [Required]
         public int TargetId { get; set; }
         [Required]
@@ -12251,6 +13170,7 @@ namespace PetHaven.Models
         public int StarsCount { get; set; }
         public string? ReviewText { get; set; }
         public DateTime CreatedAt { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
     }
@@ -12269,6 +13189,7 @@ namespace PetHaven.Models
         [Required]
         [MaxLength(100)]
         public string RoleName { get; set; } = string.Empty;
+        // العلاقة: Role لديه عدة Users
         public virtual ICollection<User>? Users { get; set; }
     }
 }
@@ -12299,7 +13220,12 @@ namespace PetHaven.Models
         public string Password { get; set; } = string.Empty;
         [MaxLength(50)]
         public string? PhoneNumber { get; set; }
+        // ImageUrl 
         public string? ImageUrl { get; set; }
+ // This line to make the admin ban  any user 
+        //IsBanned
+        public bool IsBanned { get; set; } = false;
+        // العلاقات
         [ForeignKey("RoleId")]
         public virtual Role? Role { get; set; }
         public virtual ICollection<Notification>? Notifications { get; set; }
@@ -12308,6 +13234,8 @@ namespace PetHaven.Models
         public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<Wishlist>? Wishlists { get; set; }
         public virtual ICollection<Diagnosis>? Diagnoses { get; set; }
+      //  public virtual ICollection<Payment>? Payments { get; set; }
+      //  public virtual ICollection<Appointment>? Appointments { get; set; }
         public virtual Adopter? Adopter { get; set; }
         public virtual AdoptionCenter? AdoptionCenter { get; set; }
         public virtual Vet? Vet { get; set; }
@@ -12334,6 +13262,7 @@ namespace PetHaven.Models
         public string? Description { get; set; }
         public DateTime VaccinationDate { get; set; }
         public DateTime? NextDueDate { get; set; }
+        // العلاقات
         [ForeignKey("PetId")]
         public virtual Pet? Pet { get; set; }
     }
@@ -12365,13 +13294,14 @@ namespace PetHaven.Models
         public string? PhoneNumber { get; set; }
         [MaxLength(100)]
         public string? Email { get; set; }
-        public int? ExperienceYears { get; set; }
+        public int? ExperienceYears { get; set; }  // 👈 تغير من YearsOfExperience
         [MaxLength(50)]
         public string? LicenseNumber { get; set; }
-        public decimal? Location_Lat { get; set; }
-        public decimal? Location_Lng { get; set; }
+        public decimal? Location_Lat { get; set; }  // 👈 تغير من Latitude
+        public decimal? Location_Lng { get; set; }  // 👈 تغير من Longitude
         public bool IsVerified { get; set; }
         public DateTime CreatedAt { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
@@ -12396,6 +13326,7 @@ namespace PetHaven.Models
         [Required]
         public int ProductId { get; set; }
         public DateTime AddedDate { get; set; }
+        // العلاقات
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
         [ForeignKey("ProductId")]
@@ -12449,6 +13380,120 @@ namespace PetHaven.Models
 }
 ```
 
+## File: Services/AdminService.cs
+```csharp
+using Microsoft.EntityFrameworkCore;
+using PetHaven.Data;
+using PetHaven.DTOs;
+namespace PetHaven.Services
+{
+    public class AdminService : IAdminService
+    {
+        private readonly ApplicationDbContext _context;
+        public AdminService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        public async Task<AdminStatsDto> GetStatsAsync()
+        {
+            var stats = new AdminStatsDto
+            {
+                TotalUsers = await _context.Users.CountAsync(),
+                Adopters = await _context.Users.CountAsync(u => u.Role.RoleName == "Adopter"),
+                Centers = await _context.Users.CountAsync(u => u.Role.RoleName == "AdoptionCenter"),
+                Vets = await _context.Users.CountAsync(u => u.Role.RoleName == "Vet"),
+                Admins = await _context.Users.CountAsync(u => u.Role.RoleName == "Admin"),
+                BannedUsers = await _context.Users.CountAsync(u => u.IsBanned), 
+                TotalPets = await _context.Pets.CountAsync()
+            };
+            return stats;
+        }
+        // ─── جلب الأطباء غير الموافق عليهم ────────────────────────
+        public async Task<IEnumerable<VetPendingDto>> GetPendingVetsAsync()
+        {
+            return await _context.Vets
+                .Include(v => v.User)
+                .Where(v => v.IsVerified == false)
+                .Select(v => new VetPendingDto
+                {
+                    VetId = v.VetId,
+                    FullName = v.FullName,
+                    Email = v.Email ?? string.Empty,
+                    Specialization = v.Specialization ?? string.Empty,
+                    ClinicName = v.ClinicName ?? string.Empty,
+                    ClinicAddress = v.ClinicAddress ?? string.Empty,
+                    LicenseNumber = v.LicenseNumber ?? string.Empty,
+                    ExperienceYears = v.ExperienceYears ?? 0,
+                    CreatedAt = v.CreatedAt
+                })
+                .ToListAsync();
+        }
+        // ─── الموافقة على طبيب ──────────────────────────────────
+        public async Task<bool> VerifyVetAsync(int vetId)
+        {
+            var vet = await _context.Vets.FindAsync(vetId);
+            if (vet == null)
+                throw new Exception("الطبيب غير موجود.");
+            if (vet.IsVerified)
+                throw new Exception("تمت الموافقة على هذا الطبيب مسبقاً.");
+            vet.IsVerified = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        // ─── رفض طبيب (حذف الحساب) ──────────────────────────────
+        public async Task<bool> RejectVetAsync(int vetId)
+        {
+            var vet = await _context.Vets
+                .Include(v => v.User)
+                .FirstOrDefaultAsync(v => v.VetId == vetId);
+            if (vet == null)
+                throw new Exception("الطبيب غير موجود.");
+            // حذف حساب المستخدم المرتبط (سيحذف الطبيب تلقائياً بسبب Cascade)
+            if (vet.User != null)
+            {
+                _context.Users.Remove(vet.User);
+            }
+            else
+            {
+                _context.Vets.Remove(vet);
+            }
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        // ─── 5. حظر مستخدم (أي دور عدا Admin) ─────────────────────────────
+        public async Task<bool> BanUserAsync(int userId, string? reason)
+        {
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+            if (user == null)
+                throw new Exception("المستخدم غير موجود.");
+            // منع حظر المدير
+            if (user.Role?.RoleName == "Admin")
+                throw new Exception("لا يمكن حظر حساب المدير.");
+            if (user.IsBanned)
+                throw new Exception("هذا المستخدم محظور بالفعل.");
+            user.IsBanned = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        // ─── 6. فك الحظر عن مستخدم ──────────────────────────────────────────
+        public async Task<bool> UnbanUserAsync(int userId)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+            if (user == null)
+                throw new Exception("المستخدم غير موجود.");
+            if (!user.IsBanned)
+                throw new Exception("هذا المستخدم غير محظور.");
+            user.IsBanned = false;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+    }
+}
+```
+
 ## File: Services/AdopterDashboardService.cs
 ```csharp
 using Microsoft.EntityFrameworkCore;
@@ -12467,27 +13512,34 @@ namespace PetHaven.Services
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // ─── 1. جلب المتبني ────────────────────────────────────────────────
             var adopter = await _context.Adopters
                 .FirstOrDefaultAsync(a => a.UserId == parsedUserId);
             if (adopter == null)
                 throw new Exception("لم يتم العثور على حساب المتبني.");
+            // ─── 2. حساب عدد طلبات التبني المعلقة ─────────────────────────────
             var pendingCount = await _context.AdoptionRequests
                 .CountAsync(r => r.AdopterId == adopter.AdopterId && r.Status == "Pending");
+            // ─── 3. حساب عدد الحيوانات المتبناة ────────────────────────────────
             var adoptedCount = await _context.AdoptionRequests
                 .CountAsync(r => r.AdopterId == adopter.AdopterId && r.Status == "Approved");
+            // ─── 4. حساب عدد الطلبات الأخيرة ───────────────────────────────────
             var recentOrdersCount = await _context.Orders
                 .CountAsync(o => o.UserId == parsedUserId);
+            // ─── 5. جلب آخر حيوان تم تبنيه ──────────────────────────────────────
             var lastAdoption = await _context.AdoptionRequests
                 .Include(r => r.Pet)
                 .Where(r => r.AdopterId == adopter.AdopterId && r.Status == "Approved")
                 .OrderByDescending(r => r.CreatedAt)
                 .FirstOrDefaultAsync();
             string? lastPetName = lastAdoption?.Pet?.PetName;
+            // ─── 6. حساب عدد الأيام منذ آخر تبني ──────────────────────────────
             int? daysSinceLastAdoption = null;
             if (adopter.LastReportDate.HasValue)
             {
                 daysSinceLastAdoption = (int)(DateTime.UtcNow - adopter.LastReportDate.Value).TotalDays;
             }
+            // ─── 7. بناء رسالة الترحيب ──────────────────────────────────────────
             string welcomeMessage = "مرحباً بعودتك! 👋";
             if (daysSinceLastAdoption.HasValue && daysSinceLastAdoption >= 180 && !string.IsNullOrEmpty(lastPetName))
             {
@@ -12502,6 +13554,7 @@ namespace PetHaven.Services
             {
                 welcomeMessage = $"نتمنى لك أوقاتاً سعيدة مع {lastPetName}! 🐾";
             }
+            // ─── 8. بناء الـ Response ───────────────────────────────────────────
             return new AdopterDashboardDto
             {
                 PendingAdoptionsCount = pendingCount,
@@ -12512,14 +13565,17 @@ namespace PetHaven.Services
                 WelcomeMessage = welcomeMessage
             };
         }
+        //               الحيوانات المتبناة 
         public async Task<IEnumerable<PetResponseDto>> GetAdoptedPetsAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // 1. جلب المتبني
             var adopter = await _context.Adopters
                 .FirstOrDefaultAsync(a => a.UserId == parsedUserId);
             if (adopter == null)
                 throw new Exception("لم يتم العثور على حساب المتبني.");
+            // 2. جلب طلبات التبني المقبولة لهذا المتبني
             var adoptedPets = await _context.AdoptionRequests
                 .Include(r => r.Pet)
                     .ThenInclude(p => p.Center)
@@ -12562,16 +13618,19 @@ namespace PetHaven.Services
         }
         public async Task<bool> SubmitRequestAsync(SubmitAdoptionRequestDto dto, string userId)
         {
+            // ─── a. Resolve Adopter ────────────────────────────────────────────────
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
             var adopter = await _context.Adopters
                 .FirstOrDefaultAsync(a => a.UserId == parsedUserId);
             if (adopter == null)
                 throw new Exception("لم يتم العثور على ملف المتبني. يرجى التأكد من تسجيل الحساب كمتبنٍ.");
+            // ─── b. Update Adopter profile ─────────────────────────────────────────
             adopter.HousingType     = dto.HousingType;
             adopter.HasPetBefore    = dto.HasPetBefore;
             adopter.ExperienceLevel = dto.ExperienceLevel;
             adopter.FreeHoursPerDay = dto.FreeHoursPerDay;
+            // ─── c. Calculate Score ────────────────────────────────────────────────
             int score = 0;
             if (dto.HasPetBefore)
                 score += 25;
@@ -12589,15 +13648,22 @@ namespace PetHaven.Services
                 score += 20;
             else if (dto.ExperienceLevel == "Beginner")
                 score += 10;
+            // ─── d. Verify Pet exists ──────────────────────────────────────────────
+            //var petExists = await _context.Pets.AnyAsync(p => p.PetId == dto.PetId);
+            //if (!petExists)
+            //    throw new Exception("الحيوان المطلوب غير موجود أو تم اعتماده بالفعل.");
+            // --- d. Verify Pet exists ---
             var pet = await _context.Pets.FindAsync(dto.PetId);
             if (pet == null)
                 throw new Exception("الحيوان المطلوب غير موجود أو تم اعتماده بالفعل.");
+            // 🛑 فحص القائمة السوداء: هل هذا المتبني محظور في مركز هذا الحيوان؟
             var isBlacklisted = await _context.Blacklists
                 .AnyAsync(b => b.AdopterId == adopter.AdopterId
                             && b.CenterId == pet.CenterId
                             && b.IsActive);
             if (isBlacklisted)
                 throw new UnauthorizedAccessException("عذراً، لا يمكنك إرسال طلب تبني. لقد تم حظرك من قبل هذا المركز.");
+            // ─── e. Create AdoptionRequest ─────────────────────────────────────────
             var request = new AdoptionRequest
             {
                 AdopterId = adopter.AdopterId,
@@ -12606,6 +13672,7 @@ namespace PetHaven.Services
                 Score     = score,
                 CreatedAt = DateTime.UtcNow
             };
+            // ─── f. Persist ────────────────────────────────────────────────────────
             _context.AdoptionRequests.Add(request);
             await _context.SaveChangesAsync();
             return true;
@@ -12661,6 +13728,9 @@ namespace PetHaven.Services
                 })
                 .FirstOrDefaultAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: طلبات التبني الخاصة بالمركز (مرتبة تنازلياً حسب Score)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<AdoptionRequestResponseDto>> GetCenterRequestsAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -12687,10 +13757,14 @@ namespace PetHaven.Services
                 .ToListAsync();
             return requests;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: استجابة المركز على طلب تبني (قبول / رفض)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<bool> RespondToRequestAsync(int requestId, RespondToRequestDto dto, string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // تحميل الطلب مع العلاقات المطلوبة للتحقق من الصلاحية
             var request = await _context.AdoptionRequests
                 .Include(r => r.Pet)
                     .ThenInclude(p => p.Center)
@@ -12698,10 +13772,13 @@ namespace PetHaven.Services
                 .FirstOrDefaultAsync(r => r.AdoptionRequestId == requestId);
             if (request == null)
                 throw new Exception("الطلب غير موجود.");
+            // تأكد أن هذا الطلب يخص حيواناً تابعاً لمركز المستخدم الحالي
             if (request.Pet?.Center?.UserId != parsedUserId)
                 throw new UnauthorizedAccessException("ليس لديك صلاحية للرد على هذا الطلب.");
+            // تحديث الحالة والملاحظة
             request.Status     = dto.Status;
             request.CenterNote = dto.CenterNote;
+            // إذا تمت الموافقة → تحديث بيانات المتبني
             if (dto.Status == "Approved" && request.Adopter != null)
             {
                 request.Adopter.LastReportDate     = DateTime.UtcNow;
@@ -12737,6 +13814,8 @@ namespace PetHaven.Services
 {
     public class AppointmentsService : IAppointmentsService
     {
+        // Application-level defaults. Vet working hours and appointment duration
+        // are not persisted in the current database schema.
         private static readonly TimeSpan DefaultStartTime = new(9, 0, 0);
         private static readonly TimeSpan DefaultEndTime = new(17, 0, 0);
         private const int SlotDurationMinutes = 30;
@@ -12745,6 +13824,10 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        //****** لوحة التحكم *****/
+        // ═══════════════════════════════════════════════════════════════
+        // جلب جدول مواعيد الطبيب
+        // ═══════════════════════════════════════════════════════════════
         public async Task<IEnumerable<AppointmentResponseDto>> GetVetScheduleAsync(int vetUserId, DateTime? date)
         {
             var vet = await _context.Vets.FirstOrDefaultAsync(v => v.UserId == vetUserId);
@@ -12758,6 +13841,9 @@ namespace PetHaven.Services
             var appointments = await query.ToListAsync();
             return appointments.Select(MapToDto);
         }
+        // ═══════════════════════════════════════════════════════════════
+        // إحصائيات مواعيد اليوم (بطاقات الملخص)
+        // ═══════════════════════════════════════════════════════════════
         public async Task<AppointmentSummaryDto> GetVetSummaryAsync(int vetUserId, DateTime? date)
         {
             var vet = await _context.Vets.FirstOrDefaultAsync(v => v.UserId == vetUserId);
@@ -12775,6 +13861,10 @@ namespace PetHaven.Services
                 CompletedCount = todayAppointments.Count(a => a.Status == "Completed")
             };
         }
+        //*** عمليات الطبيب ******/
+        // ═══════════════════════════════════════════════════════════════
+        // تحديث حالة الموعد (مقيد بطبيب الطلب)
+        // ═══════════════════════════════════════════════════════════════
         public async Task<bool> UpdateAppointmentStatusAsync(int appointmentId, string status, int vetUserId)
         {
             var vet = await _context.Vets.FirstOrDefaultAsync(v => v.UserId == vetUserId);
@@ -12782,12 +13872,16 @@ namespace PetHaven.Services
             var appointment = await _context.Appointments
                 .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
             if (appointment == null) return false;
+            // التأكد من أن الموعد يخص الطبيب الحالي فقط
             if (appointment.VetId != vet.VetId)
                 throw new UnauthorizedAccessException("لا يمكنك تعديل موعد لا يخصك.");
             appointment.Status = status;
             await _context.SaveChangesAsync();
             return true;
         }
+        // ═══════════════════════════════════════════════════════════════
+        // إعادة جدولة موعد
+        // ═══════════════════════════════════════════════════════════════
         public async Task<bool> RescheduleAppointmentAsync(int appointmentId, DateTime newDate, int vetUserId)
         {
             var vet = await _context.Vets.FirstOrDefaultAsync(v => v.UserId == vetUserId);
@@ -12805,6 +13899,7 @@ namespace PetHaven.Services
             await _context.SaveChangesAsync();
             return true;
         }
+        //***  عمليات المربي  ******/
         public async Task<IEnumerable<AdopterAppointmentDto>> GetAdopterAppointmentsAsync(int adopterUserId)
         {
             var adopter = await ResolveAdopterAsync(adopterUserId);
@@ -12910,12 +14005,15 @@ namespace PetHaven.Services
             await _context.SaveChangesAsync();
             return true;
         }
+        //  إضافة طلب الحجز 
         public async Task<Appointment> BookAppointmentAsync(CreateAppointmentDto dto, int currentUserId)
         {
+            // أ) التحقق من التاريخ
             if (dto.AppointmentDate <= DateTime.Now)
             {
                 throw new ArgumentException("لا يمكن حجز موعد في وقت سابق أو في الوقت الحالي.");
             }
+            // ب) التحقق من أن الـ VetId يخص طبيباً فعلياً ومسجلاً
             var vet = await _context.Vets
                 .AsNoTracking()
                 .FirstOrDefaultAsync(v => v.VetId == dto.VetId);
@@ -12925,13 +14023,16 @@ namespace PetHaven.Services
             }
             if (!vet.IsVerified)
                 throw new ArgumentException("الطبيب البيطري غير متاح للحجز حاليًا.");
+            // ج) جلب الـ AdopterId المرتبط بـ الـ UserId الحالي
             var adopter = await _context.Adopters.FirstOrDefaultAsync(a => a.UserId == currentUserId);
             if (adopter == null)
             {
                 throw new UnauthorizedAccessException("يوجد خطأ في بيانات المربي (السجل غير موجود)");
             }
+            // Re-check immediately before creation because the availability response is advisory.
             if (!await IsSlotAvailableAsync(dto.VetId, dto.AppointmentDate))
                 throw new ArgumentException("وقت الموعد المحدد لم يعد متاحًا.");
+            // د) إنشاء كائن الموعد بعد نجاح كل الشروط
             var appointment = new Appointment
             {
                 AdopterId = adopter.AdopterId,
@@ -12945,6 +14046,9 @@ namespace PetHaven.Services
             await _context.SaveChangesAsync();
             return appointment;
         }
+        // ═══════════════════════════════════════════════════════════════
+        // إلغاء موعد 
+        // ═══════════════════════════════════════════════════════════════
         public async Task<bool> CancelAppointmentAsync(int appointmentId, int adopterUserId)
         {
             var adopter = await _context.Adopters.FirstOrDefaultAsync(a => a.UserId == adopterUserId);
@@ -12952,12 +14056,16 @@ namespace PetHaven.Services
             var appointment = await _context.Appointments
                 .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
             if (appointment == null) return false;
+            // التأكد من أن الموعد يخص المربي الحالي فقط
             if (appointment.AdopterId != adopter.AdopterId)
                 throw new UnauthorizedAccessException("لا يمكنك إلغاء موعد لا يخصك.");
             appointment.Status = "Cancelled";
             await _context.SaveChangesAsync();
             return true;
         }
+        // ═══════════════════════════════════════════════════════════════
+        // Helper: تحويل كيان الموعد إلى DTO
+        // ═══════════════════════════════════════════════════════════════
         private AppointmentResponseDto MapToDto(Appointment a)
         {
             return new AppointmentResponseDto
@@ -13030,28 +14138,38 @@ namespace PetHaven.Services
             _jwtHelper = jwtHelper;
             _configuration = configuration;
         }
+        // =============================================
+        // تسجيل مستخدم جديد (جميع الأدوار)
+        // =============================================
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
+            // 1. التحقق من وجود البريد الإلكتروني
             var emailExists = await _context.Users
                 .AnyAsync(u => u.Email == dto.Email);
             if (emailExists)
                 throw new Exception("البريد الإلكتروني مستخدم بالفعل!");
+            // 2. التحقق من وجود اسم المستخدم
             var userNameExists = await _context.Users
                 .AnyAsync(u => u.UserName == dto.UserName);
             if (userNameExists)
                 throw new Exception("اسم المستخدم مستخدم بالفعل!");
+            // 3. تعيين دور واجهة المستخدم إلى دور قاعدة البيانات
             var mappedRole = dto.Role.Trim() switch
             {
                 "Pet Owner"       => "Adopter",
                 "Veterinarian"    => "Vet",
                 "Adoption Center" => "AdoptionCenter",
+                "Admin" => "Admin", 
                 _                 => throw new Exception($"الدور '{dto.Role}' غير مدعوم. الأدوار المقبولة: Pet Owner, Veterinarian, Adoption Center.")
             };
+            // 4. جلب الدور من قاعدة البيانات
             var role = await _context.Roles
                 .FirstOrDefaultAsync(r => r.RoleName == mappedRole);
             if (role == null)
                 throw new Exception($"الدور '{mappedRole}' غير موجود في قاعدة البيانات! أضف الأدوار أولاً.");
+            // 5. تشفير كلمة المرور باستخدام BCrypt
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            // 6. إنشاء المستخدم الأساسي
             var user = new User
             {
                 FullName    = dto.FullName,
@@ -13063,6 +14181,7 @@ namespace PetHaven.Services
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            // 7. إنشاء الكيان الفرعي بناءً على الدور
             switch (mappedRole)
             {
                 case "Adopter":
@@ -13102,13 +14221,24 @@ namespace PetHaven.Services
                         FullName        = dto.FullName,
                         Email           = dto.Email,
                         PhoneNumber     = dto.PhoneNumber,
+                    //    Specialization  = dto.Specialization,
+                      //  ClinicName      = dto.ClinicName,
+                       // ClinicAddress   = dto.ClinicAddress,
+                        //ExperienceYears = dto.ExperienceYears,
+                        //LicenseNumber   = dto.LicenseNumber,
+                        //Location_Lat    = dto.Location_Lat,
+                        //Location_Lng    = dto.Location_Lng,
+                        //IsVerified      = false,
+                        //CreatedAt       = DateTime.UtcNow
                     };
                     _context.Vets.Add(vet);
                     break;
             }
             await _context.SaveChangesAsync();
+            // 8. قراءة مدة انتهاء الصلاحية من appsettings.json وإنشاء JWT
             var expiryInMinutes = _configuration.GetValue<int>("Jwt:ExpiryInMinutes", 20);
             var token = _jwtHelper.GenerateToken(user, role.RoleName);
+            // 9. إرجاع الرد
             return new AuthResponseDto
             {
                 Token        = token,
@@ -13125,18 +14255,29 @@ namespace PetHaven.Services
                 }
             };
         }
+        // =============================================
+        // تسجيل الدخول (لجميع الأدوار)
+        // =============================================
         public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
         {
+            // 1. البحث عن المستخدم بالبريد الإلكتروني
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
             if (user == null)
                 throw new Exception("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+            // 2. التحقق من كلمة المرور باستخدام BCrypt
             var isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password);
             if (!isPasswordValid)
                 throw new Exception("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+ // New for Admin 
+            //  التحقق من الحظر
+            if (user.IsBanned)
+                throw new Exception("تم حظر حسابك من قبل الإدارة.");
+            // 3. قراءة مدة انتهاء الصلاحية من appsettings.json وإنشاء JWT
             var expiryInMinutes = _configuration.GetValue<int>("Jwt:ExpiryInMinutes", 20);
             var token = _jwtHelper.GenerateToken(user, user.Role?.RoleName ?? "User");
+            // 4. إرجاع الرد
             return new AuthResponseDto
             {
                 Token        = token,
@@ -13172,20 +14313,27 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: حظر متبنٍ من قِبَل مركز التبني
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<bool> BanAdopterAsync(BanAdopterDto dto, string centerUserId)
         {
+            // ─── 1. Parse centerUserId ──────────────────────────────────────────
             if (!int.TryParse(centerUserId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // ─── 2. Find AdoptionCenter ─────────────────────────────────────────
             var center = await _context.AdoptionCenters
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (center == null)
                 throw new Exception("لم يتم العثور على ملف المركز.");
+            // ─── 3. Check for existing active ban ───────────────────────────────
             var existingBan = await _context.Blacklists
                 .AnyAsync(b => b.CenterId  == center.CenterId
                             && b.AdopterId == dto.AdopterId
                             && b.IsActive  == true);
             if (existingBan)
                 throw new Exception("هذا المتبني محظور بالفعل لدى مركزكم.");
+            // ─── 4. Create Blacklist entry ──────────────────────────────────────
             var ban = new Blacklist
             {
                 CenterId   = center.CenterId,
@@ -13198,14 +14346,20 @@ namespace PetHaven.Services
             await _context.SaveChangesAsync();
             return true;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: قائمة المحظورين النشطة لمركز التبني
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<BlacklistResponseDto>> GetCenterBlacklistAsync(string centerUserId)
         {
+            // ─── 1. Parse centerUserId ──────────────────────────────────────────
             if (!int.TryParse(centerUserId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // ─── 2. Find AdoptionCenter ─────────────────────────────────────────
             var center = await _context.AdoptionCenters
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (center == null)
                 throw new Exception("لم يتم العثور على ملف المركز.");
+            // ─── 3. Fetch active blacklist entries with Adopter.User ────────────
             var blacklist = await _context.Blacklists
                 .Include(b => b.Adopter)
                     .ThenInclude(a => a!.User)
@@ -13224,20 +14378,27 @@ namespace PetHaven.Services
                 .ToListAsync();
             return blacklist;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: رفع الحظر عن متبنٍ
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<bool> UnbanAdopterAsync(int adopterId, string centerUserId)
         {
+            // ─── 1. Parse centerUserId ──────────────────────────────────────────
             if (!int.TryParse(centerUserId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // ─── 2. Find AdoptionCenter ─────────────────────────────────────────
             var center = await _context.AdoptionCenters
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (center == null)
                 throw new Exception("لم يتم العثور على ملف المركز.");
+            // ─── 3. Find the active ban record ──────────────────────────────────
             var ban = await _context.Blacklists
                 .FirstOrDefaultAsync(b => b.CenterId  == center.CenterId
                                        && b.AdopterId == adopterId
                                        && b.IsActive  == true);
             if (ban == null)
                 throw new Exception("لا يوجد حظر نشط لهذا المتبني في مركزكم.");
+            // ─── 4. Deactivate the ban ──────────────────────────────────────────
             ban.IsActive = false;
             await _context.SaveChangesAsync();
             return true;
@@ -13261,6 +14422,9 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Retrieve the current user's cart with all items
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<CartResponseDto> GetUserCartAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -13269,6 +14433,7 @@ namespace PetHaven.Services
                 .Include(c => c.CartItems!)
                     .ThenInclude(ci => ci.Product)
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
+            // Return an empty cart if none exists yet
             if (cart == null)
                 return new CartResponseDto { CartId = 0, CartTotal = 0, Items = new List<CartItemResponseDto>() };
             var items = cart.CartItems?
@@ -13296,10 +14461,14 @@ namespace PetHaven.Services
                 Items     = items
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: Add a product to the cart (or increase its quantity)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task AddToCartAsync(AddToCartRequestDto dto, string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("Invalid user identifier.");
+            // ─── Find or create the user's cart ───────────────────────────────
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
@@ -13311,13 +14480,16 @@ namespace PetHaven.Services
                     CreatedAt = DateTime.UtcNow
                 };
                 _context.Carts.Add(cart);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // Save to get CartId
             }
+            // ─── Find the product ─────────────────────────────────────────────
             var product = await _context.Products.FindAsync(dto.ProductId);
             if (product == null)
                 throw new Exception("Product not found.");
+            // ─── Check if requested quantity is available ─────────────────────
             if (dto.Quantity > product.StockQuantity)
                 throw new Exception($"Insufficient stock. Only {product.StockQuantity} unit(s) available.");
+            // ─── Check if product is already in the cart ──────────────────────
             var existingItem = cart.CartItems?
                 .FirstOrDefault(ci => ci.ProductId == dto.ProductId);
             if (existingItem != null)
@@ -13339,18 +14511,24 @@ namespace PetHaven.Services
             }
             await _context.SaveChangesAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: Update the quantity of a specific cart item
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task UpdateCartItemQuantityAsync(int cartItemId, UpdateCartItemRequestDto dto, string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("Invalid user identifier.");
+            // Load the cart item with its parent cart for ownership verification
             var cartItem = await _context.CartItems
                 .Include(ci => ci.Cart)
                 .Include(ci => ci.Product)
                 .FirstOrDefaultAsync(ci => ci.CartItemId == cartItemId);
             if (cartItem == null)
                 throw new Exception("Cart item not found.");
+            // ─── Verify ownership ─────────────────────────────────────────────
             if (cartItem.Cart?.UserId != parsedUserId)
                 throw new UnauthorizedAccessException("You do not have permission to modify this cart item.");
+            // ─── Check stock availability ─────────────────────────────────────
             if (cartItem.Product == null)
                 throw new Exception("The product associated with this cart item no longer exists.");
             if (dto.Quantity > cartItem.Product.StockQuantity)
@@ -13358,6 +14536,9 @@ namespace PetHaven.Services
             cartItem.Quantity = dto.Quantity;
             await _context.SaveChangesAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // DELETE: Remove a single item from the cart
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task RemoveFromCartAsync(int cartItemId, string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -13367,11 +14548,15 @@ namespace PetHaven.Services
                 .FirstOrDefaultAsync(ci => ci.CartItemId == cartItemId);
             if (cartItem == null)
                 throw new Exception("Cart item not found.");
+            // ─── Verify ownership ─────────────────────────────────────────────
             if (cartItem.Cart?.UserId != parsedUserId)
                 throw new UnauthorizedAccessException("You do not have permission to remove this cart item.");
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // DELETE: Clear all items from the user's cart
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task ClearCartAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -13380,7 +14565,7 @@ namespace PetHaven.Services
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
-                return;
+                return; // Nothing to clear
             _context.CartItems.RemoveRange(cart.CartItems);
             await _context.SaveChangesAsync();
         }
@@ -13402,6 +14587,7 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ─── 1. الإحصائيات (أرقام فقط) ──────────────────────────────────────
         public async Task<CenterDashboardStatsDto> GetDashboardStatsAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -13433,6 +14619,7 @@ namespace PetHaven.Services
                 StoreSalesToday = storeSalesToday
             };
         }
+        // ─── 2. الطلبات الأخيرة ──────────────────────────────────────────────
         public async Task<IEnumerable<OrderResponseDto>> GetLatestOrdersAsync(string userId, int count = 5)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -13486,15 +14673,17 @@ namespace PetHaven.Services
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // 1. جلب المركز
             var center = await _context.AdoptionCenters
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (center == null)
                 throw new Exception("لم يتم العثور على حساب المركز.");
+            // 2. جلب أحدث المنتجات المباعة من هذا المركز
             return await _context.OrderItems
                 .Include(oi => oi.Order)
                 .Include(oi => oi.Product)
-                .Where(oi => oi.Product.CenterId == center.CenterId
-                             && oi.Order.Status == "Paid")
+                .Where(oi => oi.Product.CenterId == center.CenterId  // ✅ منتجات هذا المركز فقط
+                             && oi.Order.Status == "Paid")           // ✅ مدفوعة فقط
                 .OrderByDescending(oi => oi.Order.OrderDate)
                 .Take(count)
                 .Select(oi => new RecentProductSaleDto
@@ -13510,6 +14699,184 @@ namespace PetHaven.Services
 }
 ```
 
+## File: Services/CenterWalletService.cs
+```csharp
+using Microsoft.EntityFrameworkCore;
+using PetHaven.Data;
+using PetHaven.DTOs;
+using PetHaven.Models;
+namespace PetHaven.Services
+{
+    public class CenterWalletService : ICenterWalletService
+    {
+        private const string PaidStatus = "Paid";
+        private readonly ApplicationDbContext _context;
+        public CenterWalletService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: ملخّص المحفظة (الرصيد + أحدث الحركات)
+        // ═══════════════════════════════════════════════════════════════════════
+        public async Task<CenterWalletDto> GetWalletAsync(string userId, int transactionsCount = 10)
+        {
+            var center = await GetCenterAsync(userId);
+            if (transactionsCount < 1) transactionsCount = 1;
+            if (transactionsCount > 50) transactionsCount = 50;
+            var paidItems = PaidItemsQuery(center.CenterId);
+            var today = DateTime.UtcNow.Date;
+            var startOfMonth = new DateTime(today.Year, today.Month, 1);
+            var balance = await paidItems.SumAsync(oi => oi.UnitPrice * oi.Quantity);
+            var pendingBalance = await _context.OrderItems
+                .Where(oi => oi.Product!.CenterId == center.CenterId
+                             && oi.Order!.Status != PaidStatus)
+                .SumAsync(oi => oi.UnitPrice * oi.Quantity);
+            var earningsToday = await paidItems
+                .Where(oi => oi.Order!.OrderDate.Date == today)
+                .SumAsync(oi => oi.UnitPrice * oi.Quantity);
+            var earningsThisMonth = await paidItems
+                .Where(oi => oi.Order!.OrderDate >= startOfMonth)
+                .SumAsync(oi => oi.UnitPrice * oi.Quantity);
+            var soldItemsCount = await paidItems.SumAsync(oi => oi.Quantity);
+            var paidOrdersCount = await paidItems
+                .Select(oi => oi.OrderId)
+                .Distinct()
+                .CountAsync();
+            var transactions = await BuildTransactionsAsync(center.CenterId, skip: 0, take: transactionsCount);
+            return new CenterWalletDto
+            {
+                CenterId            = center.CenterId,
+                CenterName          = center.CenterName,
+                Balance             = balance,
+                PendingBalance      = pendingBalance,
+                EarningsToday       = earningsToday,
+                EarningsThisMonth   = earningsThisMonth,
+                PaidOrdersCount     = paidOrdersCount,
+                SoldItemsCount      = soldItemsCount,
+                LastTransactionDate = transactions.FirstOrDefault()?.Date,
+                Transactions        = transactions
+            };
+        }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: حركات المحفظة مع ترقيم الصفحات
+        // ═══════════════════════════════════════════════════════════════════════
+        public async Task<CenterWalletTransactionsPageDto> GetTransactionsAsync(string userId, int page = 1, int pageSize = 10)
+        {
+            var center = await GetCenterAsync(userId);
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 1;
+            if (pageSize > 100) pageSize = 100;
+            var totalCount = await PaidItemsQuery(center.CenterId)
+                .Select(oi => oi.OrderId)
+                .Distinct()
+                .CountAsync();
+            var items = await BuildTransactionsAsync(center.CenterId, (page - 1) * pageSize, pageSize);
+            return new CenterWalletTransactionsPageDto
+            {
+                TotalCount = totalCount,
+                Page       = page,
+                PageSize   = pageSize,
+                Items      = items
+            };
+        }
+        // ─── مساعدات خاصة ────────────────────────────────────────────────────
+        /// <summary>عناصر الطلبات المدفوعة التي تخص منتجات هذا المركز فقط.</summary>
+        private IQueryable<OrderItem> PaidItemsQuery(int centerId) =>
+            _context.OrderItems
+                .Where(oi => oi.Product!.CenterId == centerId
+                             && oi.Order!.Status == PaidStatus);
+        private async Task<AdoptionCenter> GetCenterAsync(string userId)
+        {
+            if (!int.TryParse(userId, out int parsedUserId))
+                throw new Exception("معرّف المستخدم غير صالح.");
+            var center = await _context.AdoptionCenters
+                .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
+            if (center == null)
+                throw new Exception("لم يتم العثور على حساب المركز.");
+            return center;
+        }
+        /// <summary>
+        /// بناء الحركات: كل طلب مدفوع يُحسب كحركة واحدة، ومبلغها = مجموع منتجات
+        /// هذا المركز داخل الطلب (الطلب قد يحتوي منتجات لمراكز أخرى).
+        /// </summary>
+        private async Task<List<CenterWalletTransactionDto>> BuildTransactionsAsync(int centerId, int skip, int take)
+        {
+            // 1. تحديد الطلبات المطلوبة أولاً (حتى لا نجلب كل السجلات)
+            var pagedOrders = await PaidItemsQuery(centerId)
+                .Select(oi => new { oi.OrderId, oi.Order!.OrderDate })
+                .Distinct()
+                .OrderByDescending(x => x.OrderDate)
+                .ThenByDescending(x => x.OrderId)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+            if (pagedOrders.Count == 0)
+                return new List<CenterWalletTransactionDto>();
+            var orderIds = pagedOrders.Select(x => x.OrderId).ToList();
+            // 2. جلب تفاصيل عناصر هذه الطلبات فقط
+            var rows = await PaidItemsQuery(centerId)
+                .Where(oi => orderIds.Contains(oi.OrderId))
+                .Select(oi => new
+                {
+                    oi.OrderId,
+                    oi.Quantity,
+                    oi.UnitPrice,
+                    OrderDate   = oi.Order!.OrderDate,
+                    ProductName = oi.Product!.Name,
+                    BuyerName   = oi.Order!.User != null ? oi.Order.User.FullName : null
+                })
+                .ToListAsync();
+            // 3. تجميع العناصر في حركة واحدة لكل طلب
+            return rows
+                .GroupBy(r => r.OrderId)
+                .Select(g => new CenterWalletTransactionDto
+                {
+                    Id          = $"order-{g.Key}",
+                    OrderId     = g.Key,
+                    Description = BuildDescription(g.Select(x => x.ProductName).ToList()),
+                    Date        = g.First().OrderDate,
+                    Amount      = g.Sum(x => x.UnitPrice * x.Quantity),
+                    Type        = "credit",
+                    ItemsCount  = g.Sum(x => x.Quantity),
+                    BuyerName   = g.First().BuyerName
+                })
+                .OrderByDescending(t => t.Date)
+                .ThenByDescending(t => t.OrderId)
+                .ToList();
+        }
+        private static string BuildDescription(List<string> productNames)
+        {
+            if (productNames.Count == 0) return string.Empty;
+            if (productNames.Count == 1) return productNames[0];
+            return $"{productNames[0]} +{productNames.Count - 1}";
+        }
+    }
+}
+```
+
+## File: Services/IAdminService.cs
+```csharp
+using PetHaven.DTOs;
+namespace PetHaven.Services
+{
+    public interface IAdminService
+    {
+        // إحصائيات النظام
+        Task<AdminStatsDto> GetStatsAsync();
+        // الأطباء غير الموافق عليهم
+        Task<IEnumerable<VetPendingDto>> GetPendingVetsAsync();
+        // الموافقة على طبيب
+        Task<bool> VerifyVetAsync(int vetId);
+        // رفض طبيب
+        Task<bool> RejectVetAsync(int vetId);
+        // حظر مستخدم
+        Task<bool> BanUserAsync(int userId, string? reason);
+        // فك الحظر عن مستخدم
+        Task<bool> UnbanUserAsync(int userId);
+    }
+}
+```
+
 ## File: Services/IAdopterDashboardService.cs
 ```csharp
 using PetHaven.DTOs;
@@ -13517,7 +14884,9 @@ namespace PetHaven.Services
 {
     public interface IAdopterDashboardService
     {
+        // 📊 الإحصائيات
         Task<AdopterDashboardDto> GetAdopterDashboardAsync(string userId);
+        // 🐾 الحيوانات المتبناة
         Task<IEnumerable<PetResponseDto>> GetAdoptedPetsAsync(string userId);
     }
 }
@@ -13550,10 +14919,19 @@ namespace PetHaven.Services
 {
     public interface IAppointmentsService
     {
+        // ═══════════════════════════════════════════════════════════════
+        // لوحة تحكم العيادة البيطرية (Vet Dashboard)
+        // ═══════════════════════════════════════════════════════════════
         Task<IEnumerable<AppointmentResponseDto>> GetVetScheduleAsync(int vetUserId, DateTime? date);
         Task<AppointmentSummaryDto> GetVetSummaryAsync(int vetUserId, DateTime? date);
+        // ═══════════════════════════════════════════════════════════════
+        // عمليات الطبيب (Vet operations)
+        // ═══════════════════════════════════════════════════════════════
         Task<bool> UpdateAppointmentStatusAsync(int appointmentId, string status, int vetUserId);
         Task<bool> RescheduleAppointmentAsync(int appointmentId, DateTime newDate, int vetUserId);
+        // ═══════════════════════════════════════════════════════════════
+        // عمليات المربي (Adopter operations)
+        // ═══════════════════════════════════════════════════════════════
         Task<IEnumerable<AdopterAppointmentDto>> GetAdopterAppointmentsAsync(int adopterUserId);
         Task<AdopterAppointmentDto?> GetAdopterAppointmentAsync(int appointmentId, int adopterUserId);
         Task<AppointmentAvailabilityDto> GetAvailableSlotsAsync(int vetId, DateTime date);
@@ -13614,10 +14992,49 @@ namespace PetHaven.Services
 {
     public interface ICenterDashboardService
     {
+        /// <summary>
+        /// جلب الإحصائيات الأربع للمركز
+        /// </summary>
+        /// <param name="userId">معرّف المستخدم (من التوكن)</param>
+        /// <returns>كائن يحتوي على الأرقام الإحصائية</returns>
         Task<CenterDashboardStatsDto> GetDashboardStatsAsync(string userId);
+        /// <summary>
+        /// جلب أحدث الطلبات للمركز
+        /// </summary>
+        /// <param name="userId">معرّف المستخدم (من التوكن)</param>
+        /// <param name="count">عدد الطلبات المطلوبة (افتراضي 5)</param>
+        /// <returns>قائمة بالطلبات مرتبة من الأحدث للأقدم</returns>
         Task<IEnumerable<OrderResponseDto>> GetLatestOrdersAsync(string userId, int count = 5);
+        // To Get Recently pets Adopted 
         Task<IEnumerable<RecentAdoptionDto>> GetRecentAdoptionsAsync(string userId);
+        // To Get Recently Products Sold 
         Task<IEnumerable<RecentProductSaleDto>> GetRecentProductSalesAsync(string userId, int count = 3);
+    }
+}
+```
+
+## File: Services/ICenterWalletService.cs
+```csharp
+using PetHaven.DTOs;
+namespace PetHaven.Services
+{
+    /// <summary>
+    /// محفظة مركز التبني: الرصيد المتحصّل من بيع منتجات المركز.
+    /// الرصيد مشتق من الطلبات المدفوعة (Order.Status == "Paid") ولا يحتاج أي عمود جديد
+    /// في قاعدة البيانات، لذلك يبقى متوافقاً مع أي طلب دُفع سابقاً.
+    /// </summary>
+    public interface ICenterWalletService
+    {
+        /// <summary>
+        /// جلب ملخّص المحفظة (الرصيد + أحدث الحركات) للمركز صاحب هذا المستخدم.
+        /// </summary>
+        /// <param name="userId">معرّف المستخدم (من التوكن)</param>
+        /// <param name="transactionsCount">عدد الحركات الأخيرة المطلوبة (افتراضي 10)</param>
+        Task<CenterWalletDto> GetWalletAsync(string userId, int transactionsCount = 10);
+        /// <summary>
+        /// جلب حركات المحفظة مع ترقيم الصفحات.
+        /// </summary>
+        Task<CenterWalletTransactionsPageDto> GetTransactionsAsync(string userId, int page = 1, int pageSize = 10);
     }
 }
 ```
@@ -13629,8 +15046,11 @@ namespace PetHaven.Services
 {
     public interface IOrderService
     {
+        /// <summary>Converts the user's current cart into a new Order and clears the cart.</summary>
         Task<OrderResponseDto> CheckoutAsync(string userId);
+        /// <summary>Returns all orders belonging to the specified adopter.</summary>
         Task<IEnumerable<OrderResponseDto>> GetAdopterOrdersAsync(string userId);
+        /// <summary>Updates the Status field of an existing order.</summary>
         Task UpdateOrderStatusAsync(int orderId, string status);
     }
 }
@@ -13687,11 +15107,31 @@ namespace PetHaven.Services
 {
     public interface IPetService
     {
+        /// <summary>
+        /// Adds a new pet linked to the AdoptionCenter that belongs to the given userId.
+        /// </summary>
         Task<PetResponseDto> AddPetAsync(CreatePetDto dto, string userId);
+        /// <summary>
+        /// Returns all pets that are available for adoption (no active appointment / not yet adopted).
+        /// Currently returns every pet in the system; extend the filter as your business rules evolve.
+        /// </summary>
         Task<IEnumerable<PetResponseDto>> GetAllAvailablePetsAsync();
+        /// <summary>
+        /// Returns all pets belonging to the AdoptionCenter linked to the given userId.
+        /// </summary>
         Task<IEnumerable<PetResponseDto>> GetPetsByCenterAsync(string userId);
+        /// <summary>
+        /// Updates the editable fields of a pet. Verifies that the pet belongs
+        /// to the AdoptionCenter of the logged-in user before applying changes.
+        /// </summary>
         Task<PetResponseDto> UpdatePetAsync(int petId, UpdatePetDto dto, string userId);
+        /// <summary>
+        /// Deletes a pet permanently. Verifies ownership before removal.
+        /// </summary>
         Task DeletePetAsync(int petId, string userId);
+        //
+        /// Returns pet from PetId
+        //
         Task<PetResponseDto?> GetPetByIdAsync(int petId);
     }
 }
@@ -13745,6 +15185,15 @@ namespace PetHaven.Services
 {
     public interface IReviewsService
     {
+        /// <summary>
+        /// جلب تقييمات طبيب محدد (اعتماداً على UserId الخاص بالطبيب)
+        /// مع بحث وفلاتر وتقسيم صفحات وإحصائيات.
+        /// </summary>
+        /// <param name="vetUserId">معرّف المستخدم الخاص بالطبيب</param>
+        /// <param name="search">كلمة بحث في اسم المُقيّم أو النص</param>
+        /// <param name="filter">all | unanswered</param>
+        /// <param name="page">رقم الصفحة (يبدأ من 1)</param>
+        /// <param name="pageSize">عدد العناصر في الصفحة</param>
         Task<ReviewsListResponseDto> GetClientReviewsAsync(int vetUserId, string? search, string? filter, int page, int pageSize);
     }
 }
@@ -13841,30 +15290,37 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: Checkout — convert the user's cart into a new Order
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<OrderResponseDto> CheckoutAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("Invalid user identifier.");
+            // ─── Load the user's cart with items and products ─────────────────
             var cart = await _context.Carts
                 .Include(c => c.CartItems!)
                     .ThenInclude(ci => ci.Product)
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
                 throw new Exception("Your cart is empty. Please add items before checking out.");
+            // ─── Create the Order ─────────────────────────────────────────────
             var order = new Order
             {
                 UserId    = parsedUserId,
                 OrderDate = DateTime.UtcNow,
                 Status    = "Pending",
-                TotalPrice = 0
+                TotalPrice = 0  // will be calculated below
             };
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save now to get the generated OrderId
+            // ─── Create OrderItems and calculate total ────────────────────────
             decimal total = 0;
             var orderItems = new List<OrderItem>();
             foreach (var cartItem in cart.CartItems)
             {
                 if (cartItem.Product == null) continue;
+                // ─── Validate stock availability ──────────────────────────────
                 if (cartItem.Quantity > cartItem.Product.StockQuantity)
                     throw new InvalidOperationException(
                         $"Not enough stock for product: {cartItem.Product.Name}. " +
@@ -13878,16 +15334,22 @@ namespace PetHaven.Services
                     UnitPrice       = Math.Round(unitPrice, 2),
                     PriceAtPurchase = Math.Round(unitPrice, 2)
                 };
+                // ─── Deduct purchased quantity from inventory ─────────────────
                 cartItem.Product.StockQuantity -= cartItem.Quantity;
                 orderItems.Add(orderItem);
                 total += orderItem.UnitPrice * orderItem.Quantity;
             }
             _context.OrderItems.AddRange(orderItems);
+            // ─── Update the total and clear the cart ──────────────────────────
             order.TotalPrice = Math.Round(total, 2);
             _context.CartItems.RemoveRange(cart.CartItems);
             await _context.SaveChangesAsync();
+            // ─── Map to response DTO ──────────────────────────────────────────
             return MapToDto(order, orderItems, cart.CartItems.ToList());
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Retrieve all orders for the logged-in adopter
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<OrderResponseDto>> GetAdopterOrdersAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -13915,6 +15377,9 @@ namespace PetHaven.Services
                     .ToList() ?? new List<OrderItemDto>()
             });
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: Update the status of an existing order
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task UpdateOrderStatusAsync(int orderId, string status)
         {
             var order = await _context.Orders.FindAsync(orderId);
@@ -13923,8 +15388,10 @@ namespace PetHaven.Services
             order.Status = status;
             await _context.SaveChangesAsync();
         }
+        // ─── Private helper: map an Order + its items to a response DTO ───────
         private static OrderResponseDto MapToDto(Order order, List<OrderItem> orderItems, List<CartItem> originalCartItems)
         {
+            // Build a lookup of ProductName from the original cart items (products are already loaded)
             var productNames = originalCartItems
                 .Where(ci => ci.Product != null)
                 .ToDictionary(ci => ci.ProductId, ci => ci.Product!.Name);
@@ -13962,6 +15429,9 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // Helper: جلب حساب الطبيب البيطري من معرف المستخدم
+        // ═══════════════════════════════════════════════════════════════════════
         private async Task<Vet> GetVetAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -13972,6 +15442,9 @@ namespace PetHaven.Services
                 throw new Exception("لم يتم العثور على حساب الطبيب البيطري.");
             return vet;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // Helper: التأكد من أن الحيوان من مرضى هذا الطبيب
+        // ═══════════════════════════════════════════════════════════════════════
         private async Task EnsurePetBelongsToVetAsync(int vetId, int petId)
         {
             var exists = await _context.Appointments
@@ -13979,6 +15452,9 @@ namespace PetHaven.Services
             if (!exists)
                 throw new UnauthorizedAccessException("هذا المريض لا يخص عيادتك.");
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 1. إحصائيات بطاقات صفحة دليل المرضى
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<VetPatientsStatsDto> GetPatientsStatsAsync(string userId)
         {
             var vet = await GetVetAsync(userId);
@@ -14000,6 +15476,9 @@ namespace PetHaven.Services
                 RecentlyAdded30d = patientGroups.Count(p => p.FirstVisit.Date >= from30DaysAgo)
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 2. قائمة المرضى (مع بحث/فلترة/ترقيم صفحات)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<PatientListPageDto> GetPatientsAsync(string userId, string? search, string? species, string? status, int page, int pageSize)
         {
             var vet = await GetVetAsync(userId);
@@ -14062,6 +15541,9 @@ namespace PetHaven.Services
                 Items = paged
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 3. تفاصيل مريض كاملة
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<PatientDetailDto> GetPatientDetailAsync(string userId, int petId)
         {
             var vet = await GetVetAsync(userId);
@@ -14109,6 +15591,9 @@ namespace PetHaven.Services
                 Vaccinations = await GetPetVaccinationsInternalAsync(petId)
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 4. السجل الطبي (من الفحوصات - Diagnoses)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<MedicalHistoryEntryDto>> GetMedicalHistoryAsync(string userId, int petId)
         {
             var vet = await GetVetAsync(userId);
@@ -14132,6 +15617,9 @@ namespace PetHaven.Services
                 DoctorName = d.User?.FullName
             }).ToList();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 5. التطعيمات (عمليات قراءة وإضافة وتعديل وحذف)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<VaccinationDto>> GetPetVaccinationsAsync(string userId, int petId)
         {
             var vet = await GetVetAsync(userId);
@@ -14189,6 +15677,9 @@ namespace PetHaven.Services
             await _context.SaveChangesAsync();
             return true;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // Helper: إثراء القائمة بالمُلكية والحالة
+        // ═══════════════════════════════════════════════════════════════════════
         private async Task EnrichPatientsAsync(int vetId, List<PatientListDto> items)
         {
             if (items.Count == 0) return;
@@ -14235,6 +15726,9 @@ namespace PetHaven.Services
                     item.Status = "Healthy";
             }
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // Helper: تحويل كيان التطعيم إلى DTO
+        // ═══════════════════════════════════════════════════════════════════════
         private VaccinationDto MapVaccination(Vaccination v)
         {
             var today = DateTime.UtcNow.Date;
@@ -14279,19 +15773,24 @@ namespace PetHaven.Services
         {
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // 1. جلب الطلب والتأكد من أنه يخص هذا المستخدم
             var order = await _context.Orders
                 .FirstOrDefaultAsync(o => o.OrderId == dto.OrderId && o.UserId == parsedUserId);
             if (order == null)
                 throw new Exception("الطلب غير موجود أو لا تملك صلاحية الوصول إليه.");
             if (order.Status == "Paid")
                 throw new Exception("تم دفع قيمة هذا الطلب مسبقاً.");
+            // 2. جلب المتبني (Adopter) للتحقق من الرصيد
             var adopter = await _context.Adopters
                 .FirstOrDefaultAsync(a => a.UserId == parsedUserId);
             if (adopter == null)
                 throw new Exception("لم يتم العثور على حساب المتبني.");
+            //  3. التحقق من كفاية الرصيد
             if (adopter.Balance < order.TotalPrice)
                 throw new Exception($"الرصيد غير كافٍ. الرصيد الحالي: {adopter.Balance:C}، المطلوب: {order.TotalPrice:C}.");
+            //  4. خصم المبلغ من الرصيد
             adopter.Balance -= order.TotalPrice;
+            // 5. إنشاء سجل الدفع الجديد في قاعدة البيانات
             var payment = new Payment
             {
                 OrderId = order.OrderId,
@@ -14301,7 +15800,11 @@ namespace PetHaven.Services
                 PaymentDate = DateTime.UtcNow
             };
             _context.Payments.Add(payment);
+            // 6. تحديث حالة الطلب ليصبح مدفوعاً
+            // ملاحظة: بمجرد أن تصبح الحالة "Paid" يدخل مبلغ منتجات كل مركز إلى
+            // محفظته تلقائياً (انظر CenterWalletService) دون أي عمود إضافي في القاعدة.
             order.Status = "Paid";
+            // 7. حفظ جميع التغييرات في معاملة واحدة (Transaction)
             await _context.SaveChangesAsync();
             return true;
         }
@@ -14324,14 +15827,20 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: تقديم تقرير حيوان من قِبَل المتبني
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<PetReportResponseDto> SubmitReportAsync(CreatePetReportDto dto, string userId)
         {
+            // ─── 1. Parse userId ────────────────────────────────────────────────
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // ─── 2. Find Adopter ────────────────────────────────────────────────
             var adopter = await _context.Adopters
                 .FirstOrDefaultAsync(a => a.UserId == parsedUserId);
             if (adopter == null)
                 throw new Exception("لم يتم العثور على ملف المتبني.");
+            // ─── 3. Find AdoptionRequest (with Pet and Adopter.User) ────────────
             var request = await _context.AdoptionRequests
                 .Include(r => r.Pet)
                 .Include(r => r.Adopter)
@@ -14339,10 +15848,13 @@ namespace PetHaven.Services
                 .FirstOrDefaultAsync(r => r.AdoptionRequestId == dto.AdoptionRequestId);
             if (request == null)
                 throw new Exception("طلب التبني غير موجود.");
+            // ─── 4. Verify ownership ────────────────────────────────────────────
             if (request.AdopterId != adopter.AdopterId)
                 throw new UnauthorizedAccessException("ليس لديك صلاحية لتقديم تقرير عن هذا الطلب.");
+            // ─── 5. Verify request is Approved ─────────────────────────────────
             if (request.Status != "Approved")
                 throw new Exception("لا يمكن تقديم تقرير إلا بعد الموافقة على طلب التبني.");
+            // ─── 6. Create PetReport entity ─────────────────────────────────────
             var report = new PetReport
             {
                 AdoptionRequestId = dto.AdoptionRequestId,
@@ -14352,8 +15864,10 @@ namespace PetHaven.Services
                 CreatedAt         = DateTime.UtcNow
             };
             _context.PetReports.Add(report);
+            // ─── 7. Update Adopter tracking fields ──────────────────────────────
             adopter.LastReportDate     = DateTime.UtcNow;
             adopter.MissedReportsCount = 0;
+            // ─── 8. Save and return DTO ─────────────────────────────────────────
             await _context.SaveChangesAsync();
             return new PetReportResponseDto
             {
@@ -14368,14 +15882,20 @@ namespace PetHaven.Services
                 CreatedAt         = report.CreatedAt
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: جميع تقارير حيوانات المركز
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<PetReportResponseDto>> GetCenterReportsAsync(string userId)
         {
+            // ─── 1. Parse userId ────────────────────────────────────────────────
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // ─── 2. Find AdoptionCenter ─────────────────────────────────────────
             var center = await _context.AdoptionCenters
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (center == null)
                 throw new Exception("لم يتم العثور على ملف المركز.");
+            // ─── 3. Fetch PetReports for this center ────────────────────────────
             var reports = await _context.PetReports
                 .Include(pr => pr.AdoptionRequest)
                     .ThenInclude(ar => ar.Pet)
@@ -14420,14 +15940,20 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // =============================================
+        // Add a pet linked to the logged-in center
+        // =============================================
         public async Task<PetResponseDto> AddPetAsync(CreatePetDto dto, string userId)
         {
+            // 1. Parse the userId claim (stored as int in the database)
             if (!int.TryParse(userId, out var parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // 2. Find the AdoptionCenter that belongs to this user
             var center = await _context.AdoptionCenters
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (center == null)
                 throw new Exception("لم يتم العثور على مركز تبني مرتبط بهذا الحساب.");
+            // 3. Create and persist the Pet entity
             var pet = new Pet
             {
                 CenterId     = center.CenterId,
@@ -14442,6 +15968,7 @@ namespace PetHaven.Services
             };
             _context.Pets.Add(pet);
             await _context.SaveChangesAsync();
+            // 4. Return response DTO
             return new PetResponseDto
             {
                 PetId        = pet.PetId,
@@ -14456,6 +15983,9 @@ namespace PetHaven.Services
                 CenterName   = center.CenterName
             };
         }
+        // =============================================
+        // Get all available pets (public endpoint)
+        // =============================================
         public async Task<IEnumerable<PetResponseDto>> GetAllAvailablePetsAsync()
         {
             var pets = await _context.Pets
@@ -14475,14 +16005,20 @@ namespace PetHaven.Services
                 CenterName   = p.Center?.CenterName ?? string.Empty
             });
         }
+        // =============================================
+        // Get pets belonging to the logged-in center
+        // =============================================
         public async Task<IEnumerable<PetResponseDto>> GetPetsByCenterAsync(string userId)
         {
+            // 1. Parse the userId claim
             if (!int.TryParse(userId, out var parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // 2. Find the AdoptionCenter linked to this user
             var center = await _context.AdoptionCenters
                 .FirstOrDefaultAsync(c => c.UserId == parsedUserId);
             if (center == null)
                 throw new Exception("لم يتم العثور على مركز تبني مرتبط بهذا الحساب.");
+            // 3. Query only pets that belong to this center
             var pets = await _context.Pets
                 .Where(p => p.CenterId == center.CenterId)
                 .ToListAsync();
@@ -14500,23 +16036,31 @@ namespace PetHaven.Services
                 CenterName   = center.CenterName
             });
         }
+        // =============================================
+        // Update a pet (ownership-verified)
+        // =============================================
         public async Task<PetResponseDto> UpdatePetAsync(int petId, UpdatePetDto dto, string userId)
         {
+            // 1. Parse the userId claim
             if (!int.TryParse(userId, out var parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // 2. Load the pet together with its center (single DB round-trip)
             var pet = await _context.Pets
                 .Include(p => p.Center)
                 .FirstOrDefaultAsync(p => p.PetId == petId);
             if (pet == null)
                 throw new Exception("الحيوان الأليف المطلوب غير موجود.");
+            // 3. Verify ownership — the center linked to this pet must belong to the logged-in user
             if (pet.Center == null || pet.Center.UserId != parsedUserId)
                 throw new UnauthorizedAccessException("ليس لديك صلاحية لتعديل هذا الحيوان الأليف.");
+            // 4. Apply only the fields that were provided (null = keep existing value)
             if (dto.Name        != null) pet.PetName      = dto.Name;
             if (dto.Age         != null) pet.Age          = dto.Age;
             if (dto.HealthStatus!= null) pet.HealthStatus = dto.HealthStatus;
             if (dto.Description != null) pet.Description  = dto.Description;
             if (dto.ImageUrl    != null) pet.ImageURL     = dto.ImageUrl;
             await _context.SaveChangesAsync();
+            // 5. Return the updated response DTO
             return new PetResponseDto
             {
                 PetId        = pet.PetId,
@@ -14531,29 +16075,43 @@ namespace PetHaven.Services
                 CenterName   = pet.Center.CenterName
             };
         }
+        // =============================================
+        // Delete a pet (ownership-verified)
+        // =============================================
         public async Task DeletePetAsync(int petId, string userId)
         {
+            // 1. Parse the userId claim
             if (!int.TryParse(userId, out var parsedUserId))
                 throw new Exception("معرّف المستخدم غير صالح.");
+            // 2. Load the pet together with its center
             var pet = await _context.Pets
                 .Include(p => p.Center)
                 .FirstOrDefaultAsync(p => p.PetId == petId);
             if (pet == null)
                 throw new Exception("الحيوان الأليف المطلوب غير موجود.");
+            // 3. Verify ownership
             if (pet.Center == null || pet.Center.UserId != parsedUserId)
                 throw new UnauthorizedAccessException("ليس لديك صلاحية لحذف هذا الحيوان الأليف.");
+            // 4. Remove and persist
             _context.Pets.Remove(pet);
             await _context.SaveChangesAsync();
         }
+        // =============================================
+        // جلب حيوان معين بواسطة المعرف (Id)
+        // =============================================
         public async Task<PetResponseDto?> GetPetByIdAsync(int petId)
         {
+            // 1. البحث عن الحيوان مع جلب بيانات المركز المرتبط به
             var pet = await _context.Pets
-                .Include(p => p.Center)
+                .Include(p => p.Center) // لازم عشان نجيب اسم المركز
                 .FirstOrDefaultAsync(p => p.PetId == petId);
+            // 🆕 حساب الحالة: هل يوجد طلب تبني مقبول لهذا الحيوان؟
             var isAdopted = await _context.AdoptionRequests
                 .AnyAsync(r => r.PetId == petId && r.Status == "Approved");
+            // 2. إذا لم يتم العثور عليه، نرجّع null (ليتم التعامل معه في الـ Controller)
             if (pet == null)
                 return null;
+            // 3. تحويل الكيان إلى DTO وإرجاعه
             return new PetResponseDto
             {
                 PetId = pet.PetId,
@@ -14588,21 +16146,29 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: Add a rating for a product by the logged-in Adopter
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<ProductRatingResponseDto> AddRatingAsync(string userId, ProductRatingRequestDto request)
         {
+            // ─── Parse and validate userId ────────────────────────────────────
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("Invalid user identifier.");
+            // ─── Validate rating range ────────────────────────────────────────
             if (request.Rating < 1 || request.Rating > 5)
                 throw new Exception("Rating must be between 1 and 5.");
+            // ─── Check product exists ─────────────────────────────────────────
             var productExists = await _context.Products.AnyAsync(p => p.ProductId == request.ProductId);
             if (!productExists)
                 throw new Exception("Product not found.");
+            // ─── Enforce one rating per user per product ──────────────────────
             var alreadyRated = await _context.Ratings.AnyAsync(r =>
                 r.UserId == parsedUserId &&
                 r.TargetType == "Product" &&
                 r.TargetId == request.ProductId);
             if (alreadyRated)
                 throw new Exception("You have already rated this product.");
+            // ─── Create and persist the new rating ────────────────────────────
             var rating = new Rating
             {
                 UserId     = parsedUserId,
@@ -14614,6 +16180,7 @@ namespace PetHaven.Services
             };
             _context.Ratings.Add(rating);
             await _context.SaveChangesAsync();
+            // ─── Load user + adopter details for the response ─────────────────
             var user = await _context.Users
                 .Include(u => u.Adopter)
                 .FirstOrDefaultAsync(u => u.UserId == parsedUserId);
@@ -14628,6 +16195,9 @@ namespace PetHaven.Services
                 CreatedAt   = rating.CreatedAt
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Fetch all ratings for a specific product
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<ProductRatingResponseDto>> GetProductRatingsAsync(int productId)
         {
             var ratings = await _context.Ratings
@@ -14646,6 +16216,9 @@ namespace PetHaven.Services
                 CreatedAt   = r.CreatedAt
             });
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Product ratings belonging only to the logged-in Adoption Center
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<CenterProductReviewsResponseDto> GetCenterReviewsAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -14721,6 +16294,9 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: جلب ملف المستخدم بناءً على نوع دوره (يبقى كما هو)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<UserProfileDto> GetUserProfileAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -14743,6 +16319,7 @@ namespace PetHaven.Services
                 Role = user.Role?.RoleName ?? string.Empty,
                ProfileImageUrl = user.ImageUrl
             };
+            // ربط البيانات الفرعية حسب الدور
             if (user.Adopter != null)
             {
                 dto.Address = user.Adopter.Address;
@@ -14757,13 +16334,23 @@ namespace PetHaven.Services
                 dto.CenterName = user.AdoptionCenter.CenterName;
                 dto.Address = user.AdoptionCenter.Address;
                 dto.ContactInfo = user.AdoptionCenter.ContactInfo;
+                // رصيد محفظة المركز = مجموع مبيعات منتجاته في الطلبات المدفوعة
+                var centerId = user.AdoptionCenter.CenterId;
+                dto.Balance = await _context.OrderItems
+                    .Where(oi => oi.Product!.CenterId == centerId && oi.Order!.Status == "Paid")
+                    .SumAsync(oi => oi.UnitPrice * oi.Quantity);
             }
             else if (user.Vet != null)
             {
+                // dto.ClinicName = user.Vet.ClinicName;
+                // dto.ClinicAddress = user.Vet.ClinicAddress;
                 dto.ExperienceLevel = user.Vet.ExperienceYears.ToString();
             }
             return dto;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: تحديث بيانات المتبني
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<bool> UpdateAdopterProfileAsync(string userId, UpdateAdopterProfileDto dto)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -14773,19 +16360,25 @@ namespace PetHaven.Services
                 .FirstOrDefaultAsync(u => u.UserId == parsedUserId);
             if (user == null || user.Adopter == null)
                 throw new Exception("المستخدم غير موجود أو لا يملك حساب متبني.");
+            // تحديث بيانات المستخدم الأساسية
             user.FullName = dto.FullName;
             user.PhoneNumber = dto.PhoneNumber;
             user.ImageUrl = dto.ImageUrl ?? user.ImageUrl;
+            // تحديث بيانات المتبني
             user.Adopter.Address = dto.Address;
             user.Adopter.HousingType = dto.HousingType;
             user.Adopter.ExperienceLevel = dto.ExperienceLevel;
             if (dto.FreeHoursPerDay.HasValue)
                 user.Adopter.FreeHoursPerDay = dto.FreeHoursPerDay.Value;
+            // new after update 
             if (dto.HasPetBefore.HasValue)
                 user.Adopter.HasPetBefore = dto.HasPetBefore.Value;
             await _context.SaveChangesAsync();
             return true;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: تحديث بيانات المركز
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<bool> UpdateCenterProfileAsync(string userId, UpdateCenterProfileDto dto)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -14803,6 +16396,9 @@ namespace PetHaven.Services
             await _context.SaveChangesAsync();
             return true;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: تحديث بيانات الطبيب البيطري
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<bool> UpdateVetProfileAsync(string userId, UpdateVetProfileDto dto)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -14849,6 +16445,7 @@ namespace PetHaven.Services
         public async Task<object> GetServicesAsync(AiRecommendationRequestDto requestData)
         {
             var response = await _httpClient.PostAsJsonAsync("http://localhost:8000/recommend", requestData);
+            // 👈 التعديل هنا: إذا رفض البايثون الطلب، سنقرأ رسالة الخطأ ونعرضها في Swagger
             if (!response.IsSuccessStatusCode)
             {
                 var errorDetails = await response.Content.ReadAsStringAsync();
@@ -14875,18 +16472,26 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+// ═══════════════════════════════════════════════════════════════════
+        // GET: Client Reviews (clinic feedback) — قائمة + إحصائيات
+        // نستخدم جدول Ratings الحالي مع TargetType = "Vet" لطبيب محدد
+        // ═══════════════════════════════════════════════════════════════════
         public async Task<ReviewsListResponseDto> GetClientReviewsAsync(
             int vetUserId, string? search, string? filter, int page, int pageSize)
         {
+            //  الحصول على سجل الطبيب الحالي من الـ UserId ──────────────────
             var vet = await _context.Vets.FirstOrDefaultAsync(v => v.UserId == vetUserId);
             if (vet == null)
                 throw new UnauthorizedAccessException("هوية الطبيب غير معروفة.");
+            // ─── ضبط ترقيم الصفحات ───────────────────────────────────────
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
+            // ───  تقييمات  الطبيب  ───────────────
             var query = _context.Ratings
                 .Where(r => r.TargetType == "Vet" && r.TargetId == vet.VetId)
                 .Include(r => r.User)
                 .AsQueryable();
+            // ─── البحث باسم المُقيّم أو في نص المراجعة ─────────────────────
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim();
@@ -14894,10 +16499,13 @@ namespace PetHaven.Services
                     (r.User != null && r.User.FullName.Contains(search)) ||
                     (r.ReviewText != null && r.ReviewText.Contains(search)));
             }
+            // ─── الفلترة: الكل أو غير المُجاب عنه ─────────────────────────
             if (string.Equals(filter, "unanswered", StringComparison.OrdinalIgnoreCase))
             {
+                // التقييمات التي لا تحتوي نص مراجعة (تعتبر بدون رد )
                 query = query.Where(r => string.IsNullOrEmpty(r.ReviewText));
             }
+            // ─── حساب الإحصائيات (قبل التقسيم) ────────────────────────────
             var allQuery = _context.Ratings
                 .Where(r => r.TargetType == "Vet" && r.TargetId == vet.VetId);
             var totalCount = await allQuery.CountAsync();
@@ -14916,6 +16524,7 @@ namespace PetHaven.Services
             var starPercentages = starDistribution.ToDictionary(
                 kv => kv.Key,
                 kv => totalCount > 0 ? Math.Round(kv.Value * 100.0 / totalCount, 1) : 0.0);
+            // ─── الترتيب والترقيم ─────────────────────────────────────────
             var totalItems = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
             var items = await query
@@ -14967,6 +16576,9 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: All Categories
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync()
         {
             return await _context.Categories
@@ -14978,6 +16590,9 @@ namespace PetHaven.Services
                 })
                 .ToListAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: All Available Products (StockQuantity > 0)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<ProductResponseDto>> GetAllAvailableProductsAsync()
         {
             return await _context.Products
@@ -15001,6 +16616,9 @@ namespace PetHaven.Services
                 })
                 .ToListAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Products belonging to the calling center
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<ProductResponseDto>> GetCenterProductsAsync(string userId)
         {
             var center = await ResolveCenterAsync(userId);
@@ -15025,9 +16643,13 @@ namespace PetHaven.Services
                 })
                 .ToListAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: Add a new Product
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<ProductResponseDto> AddProductAsync(ProductRequestDto dto, string userId)
         {
             var center = await ResolveCenterAsync(userId);
+            // Validate category exists
             var categoryExists = await _context.Categories.AnyAsync(c => c.CategoryId == dto.CategoryId);
             if (!categoryExists)
                 throw new Exception("التصنيف المحدد غير موجود.");
@@ -15044,10 +16666,14 @@ namespace PetHaven.Services
             };
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
+            // Reload with navigation properties for the response
             await _context.Entry(product).Reference(p => p.Center).LoadAsync();
             await _context.Entry(product).Reference(p => p.Category).LoadAsync();
             return MapToResponseDto(product);
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // PUT: Update an existing Product
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<ProductResponseDto> UpdateProductAsync(int productId, ProductRequestDto dto, string userId)
         {
             var center = await ResolveCenterAsync(userId);
@@ -15059,6 +16685,7 @@ namespace PetHaven.Services
                 throw new Exception("المنتج غير موجود.");
             if (product.CenterId != center.CenterId)
                 throw new UnauthorizedAccessException("ليس لديك صلاحية لتعديل هذا المنتج.");
+            // Validate new category if it changed
             if (product.CategoryId != dto.CategoryId)
             {
                 var categoryExists = await _context.Categories.AnyAsync(c => c.CategoryId == dto.CategoryId);
@@ -15073,9 +16700,13 @@ namespace PetHaven.Services
             product.ImageURL      = dto.ImageUrl;
             product.CategoryId    = dto.CategoryId;
             await _context.SaveChangesAsync();
+            // Refresh navigation properties after category may have changed
             await _context.Entry(product).Reference(p => p.Category).LoadAsync();
             return MapToResponseDto(product);
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // DELETE: Remove a Product
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task DeleteProductAsync(int productId, string userId)
         {
             var center = await ResolveCenterAsync(userId);
@@ -15088,6 +16719,12 @@ namespace PetHaven.Services
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // Private Helpers
+        // ═══════════════════════════════════════════════════════════════════════
+        /// <summary>
+        /// Parses userId and returns the corresponding AdoptionCenter, or throws.
+        /// </summary>
         private async Task<AdoptionCenter> ResolveCenterAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -15098,6 +16735,9 @@ namespace PetHaven.Services
                 throw new Exception("لم يتم العثور على ملف المركز.");
             return center;
         }
+        /// <summary>
+        /// Maps a Product entity (with loaded Center and Category) to ProductResponseDto.
+        /// </summary>
         private static ProductResponseDto MapToResponseDto(Product product)
         {
             return new ProductResponseDto
@@ -15116,6 +16756,9 @@ namespace PetHaven.Services
                 ImageUrl          = product.ImageURL
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Product Details by ID
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<ProductDetailDto?> GetProductByIdAsync(int productId)
         {
             var product = await _context.Products
@@ -15124,6 +16767,7 @@ namespace PetHaven.Services
                 .FirstOrDefaultAsync(p => p.ProductId == productId);
             if (product == null)
                 return null;
+            // جلب التقييمات الخاصة بهذا المنتج من جدول Ratings
             var ratings = await _context.Ratings
                 .Include(r => r.User)
                 .Where(r => r.TargetType == "Product" && r.TargetId == productId)
@@ -15177,6 +16821,9 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // Helper: جلب حساب الطبيب البيطري من معرف المستخدم
+        // ═══════════════════════════════════════════════════════════════════════
         private async Task<Vet> GetVetAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -15187,11 +16834,15 @@ namespace PetHaven.Services
                 throw new Exception("لم يتم العثور على حساب الطبيب البيطري.");
             return vet;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 1. بطاقات الإحصائيات (KPI Cards)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<VetDashboardStatsDto> GetDashboardStatsAsync(string userId)
         {
             var vet = await GetVetAsync(userId);
             var today = DateTime.UtcNow.Date;
             var startOfMonth = new DateTime(today.Year, today.Month, 1);
+            // إجمالي المرضى: عدد الحيوانات الفريدة التي حجزت موعداً لدى الطبيب
             var totalPatients = await _context.Appointments
                 .Where(a => a.VetId == vet.VetId)
                 .Select(a => a.PetId)
@@ -15205,6 +16856,7 @@ namespace PetHaven.Services
                 a.Status != "Completed" && a.Status != "Cancelled");
             var reviews = await _context.Ratings
                 .CountAsync(r => r.TargetType == "Vet" && r.TargetId == vet.VetId);
+            // لا يوجد جدول إيرادات مرتبط بالطبيب حالياً، لذلك يعاد صفر
             decimal revenueThisMonth = 0;
             return new VetDashboardStatsDto
             {
@@ -15215,6 +16867,9 @@ namespace PetHaven.Services
                 RevenueThisMonth = revenueThisMonth
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 2. نشاط العيادة (Clinic Activity Chart) - أسبوعي أو شهري
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<ClinicActivityPointDto>> GetClinicActivityAsync(string userId, string period)
         {
             var vet = await GetVetAsync(userId);
@@ -15230,6 +16885,7 @@ namespace PetHaven.Services
             }
             else
             {
+                // الأسبوع يبدأ من الإثنين (Monday) وينتهي الأحد (Sunday)
                 var monday = today.AddDays(-(((int)today.DayOfWeek + 6) % 7));
                 days = Enumerable.Range(0, 7).Select(d => monday.AddDays(d)).ToList();
             }
@@ -15248,6 +16904,9 @@ namespace PetHaven.Services
                 Count = counts.TryGetValue(d, out var c) ? c.Count : 0
             }).ToList();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 3. توزيع المواعيد حسب الفئة (Appointment Breakdown)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<AppointmentBreakdownDto>> GetAppointmentBreakdownAsync(string userId)
         {
             var vet = await GetVetAsync(userId);
@@ -15284,6 +16943,9 @@ namespace PetHaven.Services
             });
             return result;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 4. السلالات الأكثر تردداً (Top Pet Breeds)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<TopBreedDto>> GetTopBreedsAsync(string userId, int limit)
         {
             var vet = await GetVetAsync(userId);
@@ -15303,6 +16965,9 @@ namespace PetHaven.Services
                 Percentage = total == 0 ? 0 : Math.Round(b.Count * 100.0 / total, 1)
             }).ToList();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 5. المرضى الأخيرون (Recent Patients)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<RecentPatientDto>> GetRecentPatientsAsync(string userId, int count, string? search)
         {
             var vet = await GetVetAsync(userId);
@@ -15337,6 +17002,9 @@ namespace PetHaven.Services
                 .Take(count)
                 .ToListAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // 6. مواعيد اليوم (Today's Schedule)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<AppointmentResponseDto>> GetTodayScheduleAsync(string userId)
         {
             var vet = await GetVetAsync(userId);
@@ -15381,21 +17049,29 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: Add a rating for a vet by the logged-in Adopter
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<VetRatingResponseDto> AddRatingAsync(string userId, VetRatingRequestDto request)
         {
+            // ─── Parse and validate userId ────────────────────────────────────
             if (!int.TryParse(userId, out int parsedUserId))
                 throw new Exception("Invalid user identifier.");
+            // ─── Validate rating range ────────────────────────────────────────
             if (request.Rating < 1 || request.Rating > 5)
                 throw new Exception("التقييم يجب أن يكون بين 1 و 5.");
+            // ─── Check vet exists ─────────────────────────────────────────────
             var vetExists = await _context.Vets.AnyAsync(v => v.VetId == request.VetId);
             if (!vetExists)
                 throw new Exception("الطبيب البيطري غير موجود.");
+            // ─── Enforce one rating per user per vet ──────────────────────────
             var alreadyRated = await _context.Ratings.AnyAsync(r =>
                 r.UserId == parsedUserId &&
                 r.TargetType == "Vet" &&
                 r.TargetId == request.VetId);
             if (alreadyRated)
                 throw new Exception("لقد قمت بتقييم هذا الطبيب بالفعل.");
+            // ─── Create and persist the new rating ────────────────────────────
             var rating = new Rating
             {
                 UserId = parsedUserId,
@@ -15407,6 +17083,7 @@ namespace PetHaven.Services
             };
             _context.Ratings.Add(rating);
             await _context.SaveChangesAsync();
+            // ─── Load user details for the response ───────────────────────────
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.UserId == parsedUserId);
             return new VetRatingResponseDto
@@ -15420,14 +17097,19 @@ namespace PetHaven.Services
                 CreatedAt = rating.CreatedAt
             };
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Fetch all ratings for a specific vet
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<double> GetVetAverageRatingAsync(int vetId)
         {
+            // التحقق أولاً مما إذا كان هناك أي تقييمات لهذا الطبيب تجنباً لخطأ الحساب
             var hasRatings = await _context.Ratings
                 .AnyAsync(r => r.TargetType == "Vet" && r.TargetId == vetId);
             if (!hasRatings)
             {
-                return 0.0;
+                return 0.0; // يعيد صفر إذا لم يكن للطبيب أي تقييمات بعد
             }
+            // حساب متوسط عدد النجوم مباشرة من قاعدة البيانات
             return await _context.Ratings
                 .Where(r => r.TargetType == "Vet" && r.TargetId == vetId)
                 .AverageAsync(r => r.StarsCount);
@@ -15451,6 +17133,9 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Fetch all vets with ratings
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<VetResponseDto>> GetAllVetsAsync()
         {
             var vets = await _context.Vets.ToListAsync();
@@ -15464,21 +17149,29 @@ namespace PetHaven.Services
                 ratingStats.ContainsKey(v.VetId) ? ratingStats[v.VetId].AverageRating : null,
                 ratingStats.ContainsKey(v.VetId) ? ratingStats[v.VetId].TotalRatings : 0));
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Search and filter vets with sorting
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<VetResponseDto>> SearchVetsAsync(VetSearchDto searchDto)
         {
+            // 1. بناء الاستعلام الأساسي للأطباء المؤهلين
             var query = _context.Vets
                 .Where(v => v.IsVerified)
                 .AsQueryable();
+            // 2. الفلترة حسب التخصص
             if (!string.IsNullOrEmpty(searchDto.Specialization))
             {
                 query = query.Where(v => v.Specialization != null &&
                                          v.Specialization.Contains(searchDto.Specialization));
             }
+            // تجهيز قيم إحداثيات المستخدم لتمريرها للدالة
             double? userLat = searchDto.UserLatitude;
             double? userLng = searchDto.UserLongitude;
+            // 3. دمج الحسابات (المسافة الاحترافية + التقييمات) في خطوة واحدة على مستوى الـ DB
             var projectedQuery = query.Select(v => new
             {
                 Vet = v,
+                // استدعاء دالة المسافة التي تم تعريفها في الـ DbContext مباشرة
                 Distance = _context.CalculateDistance(userLat, userLng, (double?)v.Location_Lat, (double?)v.Location_Lng),
                 AverageRating = _context.Ratings
                     .Where(r => r.TargetType == "Vet" && r.TargetId == v.VetId)
@@ -15487,11 +17180,13 @@ namespace PetHaven.Services
                 TotalRatings = _context.Ratings
                     .Count(r => r.TargetType == "Vet" && r.TargetId == v.VetId)
             });
+            // 4. الفلترة حسب القطر الجغرافي (Radius) داخل قاعدة البيانات
             if (searchDto.Radius.HasValue && searchDto.Radius.Value > 0 && userLat.HasValue && userLng.HasValue)
             {
                 var maxDistance = (double)searchDto.Radius.Value;
                 projectedQuery = projectedQuery.Where(p => p.Distance.HasValue && p.Distance.Value <= maxDistance);
             }
+            // 5. الترتيب (Sorting) على مستوى قاعدة البيانات
             projectedQuery = (searchDto.SortBy?.ToLower()) switch
             {
                 "distance" => projectedQuery.OrderBy(p => p.Distance).ThenBy(p => p.Vet.FullName),
@@ -15499,7 +17194,9 @@ namespace PetHaven.Services
                 "experience" => projectedQuery.OrderByDescending(p => p.Vet.ExperienceYears ?? 0).ThenBy(p => p.Vet.FullName),
                 _ => projectedQuery.OrderBy(p => p.Vet.FullName)
             };
+            // 6. تنفيذ الاستعلام النهائي وجلب النتائج المفلترة فقط للذاكرة
             var results = await projectedQuery.ToListAsync();
+            // 7. تحويل النتائج النهائية المحدودة إلى DTO
             return results.Select(p => MapToDto(
                 p.Vet,
                 p.Distance,
@@ -15507,6 +17204,9 @@ namespace PetHaven.Services
                 p.TotalRatings
             ));
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Fetch a specific vet by ID
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<VetResponseDto?> GetVetByIdAsync(int vetId)
         {
             var vet = await _context.Vets
@@ -15521,6 +17221,9 @@ namespace PetHaven.Services
                 ratingStats?.AverageRating,
                 ratingStats?.TotalRatings ?? 0);
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // Helper: Map Vet entity to VetResponseDto
+        // ═══════════════════════════════════════════════════════════════════════
         private VetResponseDto MapToDto(Vet vet, double? distanceInKm, double? averageRating, int totalRatings)
         {
             return new VetResponseDto
@@ -15561,6 +17264,9 @@ namespace PetHaven.Services
         {
             _context = context;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // GET: Retrieve all wishlist items for the current user
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task<IEnumerable<WishlistResponseDto>> GetUserWishlistAsync(string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -15588,6 +17294,9 @@ namespace PetHaven.Services
                 .ToList() ?? new List<WishlistResponseDto>();
             return wishlistItems;
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // POST: Add a product to the user's wishlist (if not already present)
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task AddToWishlistAsync(int productId, string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -15597,9 +17306,11 @@ namespace PetHaven.Services
                 .FirstOrDefaultAsync(u => u.UserId == parsedUserId);
             if (user == null)
                 throw new Exception("User not found.");
+            // ─── Check if product exists ──────────────────────────────────────
             var productExists = await _context.Products.AnyAsync(p => p.ProductId == productId);
             if (!productExists)
                 throw new Exception("Product not found.");
+            // ─── Check for duplicates ─────────────────────────────────────────
             var alreadyInWishlist = user.Wishlists?
                 .Any(w => w.ProductId == productId) ?? false;
             if (alreadyInWishlist)
@@ -15613,6 +17324,9 @@ namespace PetHaven.Services
             _context.Wishlists.Add(wishlistItem);
             await _context.SaveChangesAsync();
         }
+        // ═══════════════════════════════════════════════════════════════════════
+        // DELETE: Remove a product from the user's wishlist by ProductId
+        // ═══════════════════════════════════════════════════════════════════════
         public async Task RemoveFromWishlistAsync(int productId, string userId)
         {
             if (!int.TryParse(userId, out int parsedUserId))
@@ -16228,14 +17942,19 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
+// Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
+        // هذه الإعدادات تخبر الإطار بإهمال أي حقل قيمته null أثناء عمل Serialize
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+//  To allow swagger to take Tokens and enabel Authoriz button
 builder.Services.AddSwaggerGen(c =>
 {
+    // تفعيل قراءة التعليقات والأمثلة داخل Swagger مثل تحديد قيمة البارامترات
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
@@ -16262,34 +17981,67 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+//   Registring DbContext 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
+//   Registring DbContext 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
+//--------------------------------------------------------------------------------------------
+// ******************** Registering Dependency Injections (DI) ***************************  : 
+//--------------------------------------------------------------------------------------------
+// Registering Auth services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<JwtHelper>();
+// Registering Pet services
 builder.Services.AddScoped<IPetService, PetService>();
+// Registering PetReport services
 builder.Services.AddScoped<IPetReportService, PetReportService>();
+// Registering Blacklist services
 builder.Services.AddScoped<IBlacklistService, BlacklistService>();
+// Registering Adoption services
 builder.Services.AddScoped<IAdoptionService, AdoptionService>();
+// Registering Store Catalog services
 builder.Services.AddScoped<IStoreCatalogService, StoreCatalogService>();
+// Registering Cart services
 builder.Services.AddScoped<ICartService, CartService>();
+// Registering Wishlist services
 builder.Services.AddScoped<IWishlistService, WishlistService>();
+// Registering Order services
 builder.Services.AddScoped<IOrderService, OrderService>();
+// Registering ProductRating services
 builder.Services.AddScoped<IProductRatingService, ProductRatingService>();
+// Registering VetRating services
 builder.Services.AddScoped<IVetRatingService, VetRatingService>();
+// Registering Reviews (clinic feedback) services
 builder.Services.AddScoped<IReviewsService, ReviewsService>();
+// Registering Vet services
 builder.Services.AddScoped<IVetService, VetService>();
+// Registering vet Booking 
 builder.Services.AddScoped<IAppointmentsService, AppointmentsService>();
+// Registering Database Seeder
 builder.Services.AddTransient<DatabaseSeeder>();
+// إضافة HttpClient للاتصال بخدمة الـ AI
 builder.Services.AddHttpClient();
+// تسجيل خدمة الذكاء الاصطناعي
 builder.Services.AddScoped<IRecommendationAiService, RecommendationAiService>();
+// تسجيل خدمة الدفع
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+// Registering Profile DI
 builder.Services.AddScoped<IProfileService, ProfileService>();
+// Registering AdopterDashboardService services
 builder.Services.AddScoped<IAdopterDashboardService, AdopterDashboardService>();
+// Registering Center Dashboard Service
 builder.Services.AddScoped<ICenterDashboardService, CenterDashboardService>();
+// Registering Center Wallet Service
+builder.Services.AddScoped<ICenterWalletService, CenterWalletService>();
+// Registering Vet Dashboard Service
 builder.Services.AddScoped<IVetDashboardService, VetDashboardService>();
+// Registering Patients Service
 builder.Services.AddScoped<IPatientsService, PatientsService>();
+// Registering Admin Service
+builder.Services.AddScoped<IAdminService, AdminService>();
+// إعدادات قراءة وتأكيد الـ Token
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -16300,6 +18052,7 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
+        // الكود هنا يقرأ المفتاح السري من ملف appsettings.json
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? "YourSuperSecretKeyForPetHaven123456789")),
         ValidateIssuer = false,
         ValidateAudience = false,
@@ -16307,13 +18060,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 var app = builder.Build();
+// Run the database seeder on startup
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await db.Database.MigrateAsync();
+    await db.Database.MigrateAsync(); 
     var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
     await seeder.SeedAsync();
 }
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
