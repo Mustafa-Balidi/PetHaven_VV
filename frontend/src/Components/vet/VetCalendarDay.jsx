@@ -15,6 +15,7 @@ export default function VetCalendarDay({
   loading,
   error,
   onEventClick,
+  onRetry,
 }) {
   const { t, i18n } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -48,9 +49,15 @@ export default function VetCalendarDay({
         </span>
         {inCurrentMonth && loading && <span className="vet-calendar-day__spinner" aria-hidden="true" />}
         {inCurrentMonth && !loading && error && (
-          <span className="vet-calendar-day__error" title={t("vetCalendar.grid.dayError")}>
+          <button
+            type="button"
+            className="vet-calendar-day__error"
+            title={error || t("vetCalendar.grid.dayError")}
+            onClick={onRetry}
+            aria-label={t("vetCalendar.grid.retryDay", { date: fullDate })}
+          >
             <Icon name="error" label={t("vetCalendar.grid.dayError")} />
-          </span>
+          </button>
         )}
       </div>
 

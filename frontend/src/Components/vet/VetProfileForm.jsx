@@ -36,8 +36,10 @@ export default function VetProfileForm({ values, onChange, onSubmit, onCancel, o
               className="vet-profile-input"
               type="email"
               value={values.email}
-              onChange={(event) => onChange("email", event.target.value)}
+              readOnly
+              aria-describedby="vet-email-hint"
             />
+            <p className="vet-profile-location-hint" id="vet-email-hint">{t("vetProfile.basicInfo.emailReadOnly")}</p>
           </div>
 
           <div className="vet-profile-field vet-profile-field--full">
@@ -54,6 +56,25 @@ export default function VetProfileForm({ values, onChange, onSubmit, onCancel, o
                 onChange={(event) => onChange("phoneNumber", event.target.value)}
               />
             </div>
+          </div>
+
+          <div className="vet-profile-field vet-profile-field--full">
+            <label className="vet-profile-label" htmlFor="vet-certificate-file">
+              {t("vetProfile.certificate.replace")}
+            </label>
+            <input
+              id="vet-certificate-file"
+              className="vet-profile-input"
+              type="file"
+              accept=".pdf,application/pdf"
+              onChange={(event) => onChange("certificateFile", event.target.files?.[0] ?? null)}
+              disabled={saving || locating}
+            />
+            <p className="vet-profile-location-hint">
+              {values.certificateFile
+                ? t("vetProfile.certificate.selected", { name: values.certificateFile.name })
+                : t("vetProfile.certificate.pdfHint")}
+            </p>
           </div>
 
           <div className="vet-profile-field">

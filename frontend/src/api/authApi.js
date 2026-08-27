@@ -1,3 +1,10 @@
+import {
+  clearAuthStorage,
+  getStoredToken,
+  getStoredUser,
+  isSessionExpired,
+} from "../utils/authStorage.js";
+
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5248/api";
 
 async function handleAuthResponse(response) {
@@ -19,6 +26,10 @@ async function handleAuthResponse(response) {
 
   if (!token) {
     throw new Error('لم يتم استلام التوكن من السيرفر');
+  }
+  if (!user || typeof user !== "object" || typeof user.role !== "string") {
+    clearAuthSession();
+    throw new Error("بيانات المستخدم المستلمة من الخادم غير مكتملة");
   }
 
   localStorage.setItem('token', token);
@@ -64,21 +75,31 @@ export async function loginUser({ email, password }) {
 }
 
 export function logoutUser() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('expiresAt');
-  localStorage.removeItem('user');
+  clearAuthSession();
+}
+
+/**
+ * يمسح الجلسة كاملة. القائمة نفسها يستخدمها apiClient عند 401، فلا يبقى
+ * توكن يقرأه أحدهما بعد أن يمسحه الآخر. تفضيلات الثيم (`pethaven-theme`)
+ * واللغة (`i18nextLng`) خارج القائمة فتبقى بعد الخروج.
+ */
+export function clearAuthSession() {
+  clearAuthStorage();
 }
 
 export function getCurrentUser() {
-  const raw = localStorage.getItem('user');
-  try {
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+  return getStoredUser();
 }
 
 export function isAuthenticated() {
-  return !!localStorage.getItem('token');
+  if (!getStoredToken()) return false;
+
+  // جلسة منتهية: هذا التوكن لن يجلب سوى 401 عند أول نداء، فيُمسح هنا قبل
+  // تصيير أي صفحة محمية — بدل وميض واجهة صالحة يعقبه خطأ.
+  if (isSessionExpired()) {
+    clearAuthSession();
+    return false;
+  }
+
+  return true;
 }

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { fetchMyProfile } from "../../api/profileApi";
+import { logoutUser } from "../../api/authApi.js";
+import { resolveBackendAssetUrl } from "../../api/apiClient.js";
 import ThemeToggle from "../ThemeToggle.jsx";
+import Icon from "../Icon.jsx";
 
 function getInitials(name) {
   const parts = String(name ?? "")
@@ -17,8 +21,12 @@ function getInitials(name) {
 
 export default function AdminNavbar() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [profileError, setProfileError] = useState(null);
+  // The stored URL can point at a file that no longer exists; falling back to
+  // the initials keeps a broken-image glyph out of the navbar.
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -46,9 +54,20 @@ export default function AdminNavbar() {
     i18n.changeLanguage(nextLanguage);
   };
 
-  const displayName = profile?.fullName || profile?.userName || profile?.username || "";
+  const handleLogout = () => {
+    // Shared session cleanup: the same key list apiClient clears on 401, so no
+    // stale token can survive in another slot and be replayed on the next call.
+    logoutUser();
+    navigate("/", { replace: true });
+  };
+
+  // UserProfileDto exposes `Username` (serialised as `username`); there is no
+  // `userName` on the contract, so it is not consulted.
+  const displayName = profile?.fullName || profile?.username || "";
   const email = profile?.email || "";
-  const imageUrl = profile?.profileImageUrl || "";
+  // ProfileImageUrl is stored raw, so a relative `/uploads/...` path has to be
+  // resolved against the API origin — the app itself is served from another one.
+  const imageUrl = avatarFailed ? null : resolveBackendAssetUrl(profile?.profileImageUrl);
   const initials = getInitials(displayName || email);
 
   return (
@@ -89,6 +108,7 @@ export default function AdminNavbar() {
               <img
                 className="admin-navbar__avatar user-menu-avatar user-menu-avatar--image"
                 src={imageUrl}
+                onError={() => setAvatarFailed(true)}
                 alt={
                   displayName
                     ? t("a11y.alt.userAvatar", { name: displayName })
@@ -108,6 +128,15 @@ export default function AdminNavbar() {
             </span>
           </div>
         ) : null}
+
+        <button
+          className="admin-navbar__logout-btn"
+          type="button"
+          onClick={handleLogout}
+        >
+          <Icon name="logout" />
+          {t("admin.navbar.logout")}
+        </button>
       </div>
     </header>
   );

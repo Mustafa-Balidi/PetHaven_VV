@@ -14,7 +14,7 @@ const LABEL_KEYS = {
   Other: "other",
 };
 
-export default function VetAppointmentBreakdown({ data }) {
+export default function VetAppointmentBreakdown({ data, loading = false, error = "" }) {
   const { t } = useTranslation();
   const total = data.reduce((sum, item) => sum + item.count, 0);
 
@@ -31,7 +31,11 @@ export default function VetAppointmentBreakdown({ data }) {
         {t("vetDashboard.breakdown.title")}
       </h2>
 
-      {total ? (
+      {loading ? (
+        <p className="vet-dashboard-empty" role="status">{t("vetDashboard.loading")}</p>
+      ) : error ? (
+        <div className="vet-dashboard-alert" role="alert"><span>{error}</span></div>
+      ) : total ? (
         <div className="vet-dashboard-donut">
           <div className="vet-dashboard-donut__chart">
             {/* Decorative: the legend beside it already states every

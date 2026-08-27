@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Icon from "../Icon.jsx";
 import { REASON_CATEGORY_STYLES, classifyReason } from "../../utils/appointmentReason.js";
 
-export default function VetSchedule({ appointments }) {
+export default function VetSchedule({ appointments, loading = false, error = "" }) {
   const { t } = useTranslation();
 
   return (
@@ -15,7 +15,11 @@ export default function VetSchedule({ appointments }) {
         </Link>
       </div>
 
-      {appointments.length ? (
+      {loading ? (
+        <p className="vet-dashboard-empty" role="status">{t("vetDashboard.loading")}</p>
+      ) : error ? (
+        <div className="vet-dashboard-alert" role="alert"><span>{error}</span></div>
+      ) : appointments.length ? (
         <div className="vet-dashboard-schedule__list">
           {appointments.map((appointment) => {
             const category = classifyReason(appointment.reason);

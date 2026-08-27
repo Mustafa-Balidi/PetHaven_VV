@@ -19,6 +19,9 @@
 
 .toast-success { background-color: #22a55b; }
 .toast-error   { background-color: #e04444; }
+/* Partial success: the action landed but a non-essential step did not
+   (e.g. GPS fix stored, reverse geocoding unavailable). */
+.toast-warning { background-color: #d98613; }
 
 .toast-message { font-size: 14px; }
 

@@ -21,7 +21,7 @@ function buildMonthCells(year, month) {
   });
 }
 
-export default function VetCalendarGrid({ year, month, eventsByDate, dayState, todayKey, onEventClick }) {
+export default function VetCalendarGrid({ year, month, eventsByDate, dayState, todayKey, onEventClick, onRetryDay }) {
   const { i18n } = useTranslation();
   const weekdayLabels = buildWeekdayLabels(i18n.language);
   const cells = buildMonthCells(year, month);
@@ -52,6 +52,7 @@ export default function VetCalendarGrid({ year, month, eventsByDate, dayState, t
               loading={Boolean(state.loading)}
               error={state.error}
               onEventClick={onEventClick}
+              onRetry={() => onRetryDay(date)}
             />
           );
         })}

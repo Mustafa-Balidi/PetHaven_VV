@@ -8,60 +8,17 @@ import Icon from "../../Components/Icon.jsx";
 import Toast from "../../Components/Toast.jsx";
 import VetProfileDetails from "../../Components/vet/VetProfileDetails.jsx";
 import VetProfileForm from "../../Components/vet/VetProfileForm.jsx";
-import { fetchMyProfile, updateVetProfile } from "../../api/profileApi.js";
+import { updateVetProfile } from "../../api/profileApi.js";
+import { useVetContext } from "../../context/vetContextBase.js";
 import "../../Styling/VetProfile.css";
 
-const VET_CACHE_FIELDS = [
-  "email",
-  "clinicName",
-  "clinicAddress",
-  "specialization",
-  "experienceYears",
-  "licenseNumber",
-  "location_Lat",
-  "location_Lng",
-];
-
-function getVetProfileCache(userId) {
-  if (!userId) return null;
-  try {
-    return JSON.parse(localStorage.getItem(`petHaven:vet-profile:${userId}`));
-  } catch {
-    return null;
-  }
-}
-
-function mergeVetProfile(profile) {
-  const cached = getVetProfileCache(profile.userId);
-  if (!cached) return profile;
-
-  const merged = { ...profile };
-  VET_CACHE_FIELDS.forEach((field) => {
-    if (field === "email" || merged[field] == null || merged[field] === "") {
-      if (cached[field] != null) merged[field] = cached[field];
-    }
-  });
-  return merged;
-}
-
-function cacheVetProfile(userId, values) {
-  if (!userId) return;
-  localStorage.setItem(
-    `petHaven:vet-profile:${userId}`,
-    JSON.stringify({
-      email: values.email.trim(),
-      clinicName: values.clinicName.trim(),
-      clinicAddress: values.clinicAddress.trim(),
-      specialization: values.specialization.trim(),
-      experienceYears: values.experienceYears === "" ? null : Number(values.experienceYears),
-      licenseNumber: values.licenseNumber.trim(),
-      location_Lat: toNullableCoordinate(values.locationLat),
-      location_Lng: toNullableCoordinate(values.locationLng),
-    })
-  );
-}
-
-function toFormValues(profile) {
+/**
+ * `/Profile/me` (UserProfileDto) carries no Location_Lat / Location_Lng, so the
+ * coordinate fields are always empty when built from a fetched profile. They
+ * are form-only values that the vet fills through GPS and that the multipart
+ * update sends back — never something the profile read returns.
+ */
+function toFormValues(profile, coordinates) {
   return {
     fullName: profile.fullName ?? "",
     email: profile.email ?? "",
@@ -71,8 +28,9 @@ function toFormValues(profile) {
     specialization: profile.specialization ?? "",
     experienceYears: profile.experienceYears ?? profile.experienceLevel ?? "",
     licenseNumber: profile.licenseNumber ?? "",
-    locationLat: profile.location_Lat ?? profile.Location_Lat ?? "",
-    locationLng: profile.location_Lng ?? profile.Location_Lng ?? "",
+    locationLat: coordinates?.locationLat ?? "",
+    locationLng: coordinates?.locationLng ?? "",
+    certificateFile: null,
   };
 }
 
@@ -85,41 +43,44 @@ function toNullableCoordinate(value) {
 export default function VetProfile() {
   const { t, i18n } = useTranslation();
   useDocumentTitle(t("vetProfile.title"));
-  const [profile, setProfile] = useState(null);
+  const { profile, profileLoading, profileError, ensureProfile, refreshProfile } = useVetContext();
+
   const [form, setForm] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // The profile object the current `form` was built from, so a fresh one
+  // (first load, or a refetch after save) rebuilds the editable copy.
+  const [formSource, setFormSource] = useState(null);
   const [saving, setSaving] = useState(false);
   const [locating, setLocating] = useState(false);
-  const [error, setError] = useState("");
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    let active = true;
-    fetchMyProfile()
-      .then((data) => {
-        if (!active) return;
-        const mergedProfile = mergeVetProfile(data);
-        setProfile(mergedProfile);
-        setForm(toFormValues(mergedProfile));
-      })
-      .catch((err) => {
-        if (active) setError(err.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+    ensureProfile().catch(() => {
+      /* surfaced through profileError below */
+    });
+  }, [ensureProfile]);
 
-    return () => {
-      active = false;
-    };
-  }, []);
+  // Derived during render, not in an effect: React re-renders immediately with
+  // the new form and never commits the intermediate state, so the page has no
+  // paint where `profile` and `form` disagree. Coordinates are carried over
+  // from the values still in the form, because the backend read cannot
+  // return them.
+  if (profile && profile !== formSource) {
+    setFormSource(profile);
+    setForm((current) => toFormValues(profile, current));
+  }
 
   function updateField(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
   function handleCancel() {
-    if (profile) setForm(toFormValues(profile));
+    if (profile) setForm((current) => toFormValues(profile, current));
+  }
+
+  function handleRetry() {
+    refreshProfile().catch(() => {
+      /* surfaced through profileError below */
+    });
   }
 
   function handleUseGps() {
@@ -131,6 +92,15 @@ export default function VetProfile() {
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
+        // The coordinates are what Save Changes actually persists, so they are
+        // stored the moment the browser hands them over. Reverse geocoding is
+        // a convenience on top; its failure must never discard a good fix.
+        setForm((current) => ({
+          ...current,
+          locationLat: coords.latitude,
+          locationLng: coords.longitude,
+        }));
+
         try {
           const params = new URLSearchParams({
             format: "jsonv2",
@@ -144,15 +114,11 @@ export default function VetProfile() {
           const result = await response.json();
           if (!result.display_name) throw new Error("No address was found.");
 
-          setForm((current) => ({
-            ...current,
-            clinicAddress: result.display_name,
-            locationLat: coords.latitude,
-            locationLng: coords.longitude,
-          }));
+          setForm((current) => ({ ...current, clinicAddress: result.display_name }));
           setToast({ message: t("vetProfile.basicInfo.gpsSuccess"), type: "success" });
         } catch {
-          setToast({ message: t("vetProfile.basicInfo.gpsError"), type: "error" });
+          // Coordinates are already in the form; only the address is missing.
+          setToast({ message: t("vetProfile.basicInfo.gpsAddressFailed"), type: "warning" });
         } finally {
           setLocating(false);
         }
@@ -169,6 +135,9 @@ export default function VetProfile() {
     event.preventDefault();
     setSaving(true);
     try {
+      if (form.certificateFile && !form.certificateFile.name.toLowerCase().endsWith(".pdf")) {
+        throw new Error(t("vetProfile.certificate.pdfOnly"));
+      }
       await updateVetProfile({
         fullName: form.fullName.trim(),
         email: form.email.trim() || null,
@@ -180,11 +149,10 @@ export default function VetProfile() {
         licenseNumber: form.licenseNumber.trim() || null,
         locationLat: toNullableCoordinate(form.locationLat),
         locationLng: toNullableCoordinate(form.locationLng),
+        certificateFile: form.certificateFile,
       });
-      cacheVetProfile(profile.userId, form);
-      const refreshed = mergeVetProfile(await fetchMyProfile());
-      setProfile(refreshed);
-      setForm(toFormValues(refreshed));
+      // Re-read from the backend rather than trusting the values just sent.
+      await refreshProfile();
       setToast({ message: t("vetProfile.saveSuccess"), type: "success" });
     } catch (err) {
       setToast({ message: err.message || t("vetProfile.saveError"), type: "error" });
@@ -193,11 +161,36 @@ export default function VetProfile() {
     }
   }
 
-  if (loading || !profile || !form) {
+  // A failed first read used to render the same "Loading…" box forever. Error
+  // and loading are now separate states, and the error one offers a way out.
+  if (!profile && profileError) {
     return (
       <div className="vet-profile-page">
         <VetHeader />
-        <div className="vet-profile-loading" role="status">{error || t("vetProfile.loading")}</div>
+        <main id="main-content" tabIndex={-1} className="vet-profile-main">
+          <div className="vet-profile-alert" role="alert">
+            <p>{profileError}</p>
+            <button
+              type="button"
+              className="vet-profile-btn vet-profile-btn--cancel"
+              onClick={handleRetry}
+              disabled={profileLoading}
+              aria-busy={profileLoading || undefined}
+            >
+              {profileLoading ? t("vetProfile.loading") : t("vetPendingApproval.retry")}
+            </button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!profile || !form) {
+    return (
+      <div className="vet-profile-page">
+        <VetHeader />
+        <div className="vet-profile-loading" role="status">{t("vetProfile.loading")}</div>
       </div>
     );
   }
@@ -219,9 +212,11 @@ export default function VetProfile() {
           <p className="vet-profile-subtitle">{t("vetProfile.subtitle")}</p>
         </div>
 
-        {error && (
+        {/* A refresh that fails after the profile is already on screen is a
+            non-blocking warning: the rendered data is simply stale. */}
+        {profileError && (
           <div className="vet-profile-alert" role="alert">
-            {error}
+            {profileError}
           </div>
         )}
 

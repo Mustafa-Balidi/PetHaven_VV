@@ -122,6 +122,13 @@
   font-weight: 700;
 }
 
+.vet-profile-identity__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 .vet-profile-identity__body {
   min-width: 0;
 }

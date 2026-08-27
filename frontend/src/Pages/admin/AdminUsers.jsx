@@ -139,10 +139,14 @@ export default function AdminUsers() {
             {t("admin.users.notice.title")}
           </p>
           <p className="admin-notice__text">{t("admin.users.notice.text")}</p>
+          {/* UserId and VetId are separate key spaces. The approvals screen
+              shows a Vet ID prominently, and pasting it here would ban an
+              unrelated account, so the distinction is called out in the UI. */}
+          <p className="admin-notice__text">{t("admin.users.notice.idWarning")}</p>
         </div>
       </div>
 
-      <AdminFeedback type="error" message={dashboardError} />
+      <AdminFeedback type="error" message={dashboardError?.message} />
 
       {stats ? (
         <section className="admin-section" aria-label={t("admin.dashboard.statsSection")}>

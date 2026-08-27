@@ -1,5 +1,30 @@
 import { apiRequest } from "./apiClient.js";
 
+export async function getVetVerificationStatus() {
+  const status = await apiRequest("/Vet/verification/status");
+  return {
+    vetId: status.vetId ?? status.VetId,
+    status: status.status ?? status.Status,
+    licenseNumber: status.licenseNumber ?? status.LicenseNumber ?? null,
+    licenseIssueDate: status.licenseIssueDate ?? status.LicenseIssueDate ?? null,
+    certificateUrl: status.certificateUrl ?? status.CertificateUrl ?? null,
+    submittedAt: status.submittedAt ?? status.SubmittedAt ?? null,
+    rejectionReason: status.rejectionReason ?? status.RejectionReason ?? null,
+  };
+}
+
+export async function submitVetVerification({ licenseNumber, issueDate, certificateFile }) {
+  const formData = new FormData();
+  formData.append("LicenseNumber", licenseNumber);
+  if (issueDate) formData.append("IssueDate", issueDate);
+  formData.append("CertificateFile", certificateFile);
+
+  return apiRequest("/Vet/verification/submit", {
+    method: "POST",
+    body: formData,
+  });
+}
+
 export async function searchVets({
   specialization = "",
   sortBy = "rating",

@@ -31,39 +31,41 @@ export default function VetDashboard() {
   const [schedule, setSchedule] = useState([]);
   const [activity, setActivity] = useState([]);
   const [period, setPeriod] = useState("weekly");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState("");
+  const [breakdownLoading, setBreakdownLoading] = useState(true);
+  const [breakdownError, setBreakdownError] = useState("");
+  const [breedsLoading, setBreedsLoading] = useState(true);
+  const [breedsError, setBreedsError] = useState("");
+  const [scheduleLoading, setScheduleLoading] = useState(true);
+  const [scheduleError, setScheduleError] = useState("");
   const [activityLoading, setActivityLoading] = useState(true);
   const [activityError, setActivityError] = useState("");
 
   useEffect(() => {
     let active = true;
 
-    Promise.all([getVetDashboardStats(), getAppointmentBreakdown(), getTopBreeds(5), getTodaySchedule()])
-      .then(([statsData, breakdownData, breedsData, scheduleData]) => {
+    Promise.allSettled([getVetDashboardStats(), getAppointmentBreakdown(), getTopBreeds(5), getTodaySchedule()])
+      .then(([statsResult, breakdownResult, breedsResult, scheduleResult]) => {
         if (!active) return;
-        setStats(statsData);
-        setBreakdown(breakdownData);
-        setBreeds(breedsData);
-        setSchedule(scheduleData);
-      })
-      .catch((err) => {
-        if (active) {
-          setStats(null);
-          setBreakdown([]);
-          setBreeds([]);
-          setSchedule([]);
-          setError(err.message);
-        }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
+        if (statsResult.status === "fulfilled") setStats(statsResult.value);
+        else setStatsError(statsResult.reason?.message || t("vetDashboard.widgetError"));
+        if (breakdownResult.status === "fulfilled") setBreakdown(breakdownResult.value);
+        else setBreakdownError(breakdownResult.reason?.message || t("vetDashboard.widgetError"));
+        if (breedsResult.status === "fulfilled") setBreeds(breedsResult.value);
+        else setBreedsError(breedsResult.reason?.message || t("vetDashboard.widgetError"));
+        if (scheduleResult.status === "fulfilled") setSchedule(scheduleResult.value);
+        else setScheduleError(scheduleResult.reason?.message || t("vetDashboard.widgetError"));
+        setStatsLoading(false);
+        setBreakdownLoading(false);
+        setBreedsLoading(false);
+        setScheduleLoading(false);
       });
 
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     let active = true;
@@ -101,36 +103,34 @@ export default function VetDashboard() {
       <main id="main-content" tabIndex={-1} className="vet-dashboard-main">
         <VetWelcomeSection fullName={user?.fullName} />
 
-        {loading ? (
+        {statsLoading ? (
           <div className="vet-dashboard-loading" role="status">{t("vetDashboard.loading")}</div>
-        ) : error ? (
+        ) : statsError ? (
           <div className="vet-dashboard-alert" role="alert">
-            <span>{error}</span>
+            <span>{statsError}</span>
           </div>
         ) : (
-          <>
-            <VetStatsCards stats={stats} />
-
-            <div className="vet-dashboard-analytics-grid">
-              <VetClinicActivity
-                data={activity}
-                period={period}
-                onPeriodChange={changeActivityPeriod}
-                loading={activityLoading}
-                error={activityError}
-              />
-              <div className="vet-dashboard-analytics-side">
-                <VetAppointmentBreakdown data={breakdown} />
-                <VetTopBreeds data={breeds} />
-              </div>
-            </div>
-
-            <div className="vet-dashboard-bento-grid">
-              <VetSchedule appointments={schedule} />
-              <VetPatients />
-            </div>
-          </>
+          <VetStatsCards stats={stats} />
         )}
+
+        <div className="vet-dashboard-analytics-grid">
+          <VetClinicActivity
+            data={activity}
+            period={period}
+            onPeriodChange={changeActivityPeriod}
+            loading={activityLoading}
+            error={activityError}
+          />
+          <div className="vet-dashboard-analytics-side">
+            <VetAppointmentBreakdown data={breakdown} loading={breakdownLoading} error={breakdownError} />
+            <VetTopBreeds data={breeds} loading={breedsLoading} error={breedsError} />
+          </div>
+        </div>
+
+        <div className="vet-dashboard-bento-grid">
+          <VetSchedule appointments={schedule} loading={scheduleLoading} error={scheduleError} />
+          <VetPatients />
+        </div>
       </main>
 
       <Footer />

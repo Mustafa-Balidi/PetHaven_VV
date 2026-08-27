@@ -240,6 +240,7 @@ export default function VetCalendar() {
               dayState={dayState}
               todayKey={todayKey}
               onEventClick={setSelectedAppointment}
+              onRetryDay={loadDay}
             />
           )}
         </div>

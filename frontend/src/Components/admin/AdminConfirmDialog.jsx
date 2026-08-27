@@ -7,6 +7,7 @@ export default function AdminConfirmDialog({
   title,
   message,
   details,
+  body,
   confirmLabel,
   cancelLabel,
   danger = false,
@@ -65,6 +66,11 @@ export default function AdminConfirmDialog({
             {details}
           </div>
         ) : null}
+        {/* Interactive slot (form fields). Deliberately outside
+            aria-describedby: a description is read as one flat string, and
+            pulling a labelled control into it would make the dialog announce
+            the field's text twice and hide its own label. */}
+        {body ? <div className="admin-modal__body">{body}</div> : null}
         <div className="admin-modal__actions">
           <button
             type="button"

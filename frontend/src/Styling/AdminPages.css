@@ -1132,3 +1132,66 @@
     flex: 1;
   }
 }
+
+/* ── Navbar logout ───────────────────────────────────────── */
+.admin-navbar__logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--admin-outline-variant);
+  background: var(--admin-surface);
+  color: var(--admin-on-surface-variant);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.admin-navbar__logout-btn:hover {
+  color: var(--admin-emergency-red);
+  border-color: var(--admin-emergency-red);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.admin-navbar__logout-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* ── Vet certificate row ─────────────────────────────────── */
+.admin-vet-card__certificate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.admin-vet-card__certificate-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--admin-outline);
+}
+
+.admin-vet-card__certificate-note--error {
+  color: var(--admin-emergency-red);
+}
+
+/* ── Modal form slot ─────────────────────────────────────── */
+/* The panel centres its children; a labelled field has to read as a form, so
+   it reclaims the start alignment and the full panel width. */
+.admin-modal__body {
+  width: 100%;
+  text-align: start;
+}
+
+/* ── Success panel accent (mirrors .admin-panel--danger) ─── */
+.admin-panel--success {
+  border-color: rgba(34, 197, 94, 0.32);
+}
+
+.admin-panel--success .admin-panel__title .material-symbols-outlined {
+  color: var(--admin-routine-green);
+}

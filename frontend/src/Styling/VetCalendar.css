@@ -318,6 +318,10 @@
   width: 20px;
   height: 20px;
   color: #ba1a1a;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .vet-calendar-day__error span {

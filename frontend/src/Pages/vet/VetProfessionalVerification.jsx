@@ -5,12 +5,29 @@ import VetHeader from "../../Components/common/header/VetHeader.jsx";
 import Footer from "../../Components/Footer.jsx";
 import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import Icon from "../../Components/Icon.jsx";
+import { submitVetVerification } from "../../api/vetApi.js";
+import { VET_VERIFICATION_STATE } from "../../utils/vetVerification.js";
+import { useVetContext } from "../../context/vetContextBase.js";
 import "../../Styling/VetVerification.css";
+
+const MAX_CERTIFICATE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_CERTIFICATE_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png"];
+
+function validateCertificate(file, t) {
+  if (!file || file.size === 0) return t("vetVerification.errors.fileRequired");
+  const extension = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
+  if (!ALLOWED_CERTIFICATE_EXTENSIONS.includes(extension)) return t("vetVerification.errors.fileType");
+  if (file.size > MAX_CERTIFICATE_SIZE) return t("vetVerification.errors.fileSize");
+  return "";
+}
 
 export default function VetProfessionalVerification() {
   const { t } = useTranslation();
   useDocumentTitle(t("vetVerification.title"));
   const navigate = useNavigate();
+  // Reads the status the guard already resolved, and classifies it through the
+  // shared helper rather than comparing the raw backend string here.
+  const { verification, verificationState, refreshVerification } = useVetContext();
   const fileInputRef = useRef(null);
   const licenseInputRef = useRef(null);
   const dropzoneRef = useRef(null);
@@ -19,6 +36,7 @@ export default function VetProfessionalVerification() {
   const [issueDate, setIssueDate] = useState("");
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   function handleChooseFile() {
     fileInputRef.current?.click();
@@ -26,8 +44,15 @@ export default function VetProfessionalVerification() {
 
   function handleFileChange(event) {
     const selected = event.target.files?.[0] ?? null;
+    const validationError = selected ? validateCertificate(selected, t) : "";
+    if (validationError) {
+      setFile(null);
+      event.target.value = "";
+      setError(validationError);
+      return;
+    }
     setFile(selected);
-    if (selected) setError("");
+    setError("");
   }
 
   function handleRemoveFile(event) {
@@ -37,10 +62,10 @@ export default function VetProfessionalVerification() {
   }
 
   function handleSaveForLater() {
-    navigate("/vet/dashboard");
+    navigate("/");
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     if (!licenseNumber.trim()) {
       setError(t("vetVerification.errors.licenseRequired"));
@@ -48,13 +73,30 @@ export default function VetProfessionalVerification() {
       licenseInputRef.current?.focus();
       return;
     }
-    if (!file) {
-      setError(t("vetVerification.errors.fileRequired"));
+    const fileError = validateCertificate(file, t);
+    if (fileError) {
+      setError(fileError);
       dropzoneRef.current?.focus();
       return;
     }
     setError("");
-    navigate("/vet/pending-approval");
+    setSubmitting(true);
+    try {
+      await submitVetVerification({
+        licenseNumber: licenseNumber.trim(),
+        issueDate,
+        certificateFile: file,
+      });
+      // The cached status still says "not submitted"; without this refresh the
+      // pending-approval guard would read the stale value and bounce straight
+      // back to this form.
+      await refreshVerification();
+      navigate("/vet/pending-approval", { replace: true });
+    } catch (err) {
+      setError(err.message || t("vetVerification.errors.submitFailed"));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -72,6 +114,13 @@ export default function VetProfessionalVerification() {
             <h1 className="vet-verification-title">{t("vetVerification.title")}</h1>
             <p className="vet-verification-subtitle">{t("vetVerification.subtitle")}</p>
           </div>
+
+          {verificationState === VET_VERIFICATION_STATE.REJECTED && (
+            <div className="vet-verification-error" role="status">
+              <strong>{t("vetVerification.rejectedTitle")}</strong>
+              {verification?.rejectionReason && <p>{verification.rejectionReason}</p>}
+            </div>
+          )}
 
           {/* The real file input is display:none, so this stand-in is the
               only way in. Without a label of its own its name would be the
@@ -174,11 +223,17 @@ export default function VetProfessionalVerification() {
               type="button"
               className="vet-verification-btn vet-verification-btn--secondary"
               onClick={handleSaveForLater}
+              disabled={submitting}
             >
               {t("vetVerification.actions.saveForLater")}
             </button>
-            <button type="submit" className="vet-verification-btn vet-verification-btn--primary">
-              {t("vetVerification.actions.submit")}
+            <button
+              type="submit"
+              className="vet-verification-btn vet-verification-btn--primary"
+              disabled={submitting}
+              aria-busy={submitting || undefined}
+            >
+              {submitting ? t("vetVerification.actions.submitting") : t("vetVerification.actions.submit")}
               <Icon name="arrow_forward" />
             </button>
           </div>

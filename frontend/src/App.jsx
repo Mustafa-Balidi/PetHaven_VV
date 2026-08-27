@@ -10,7 +10,11 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { isAuthenticated } from "./api/authApi.js";
+import { getVetDestination, VET_VERIFICATION_STATE } from "./utils/vetVerification.js";
+import VetProvider from "./context/VetContext.jsx";
+import { useVetContext } from "./context/vetContextBase.js";
 import { onSessionExpired } from "./utils/sessionEvents.js";
+import { useTranslation } from "react-i18next";
 
 // CSS imports (keep ALL existing CSS imports)
 import "./Styling/AdminPages.css";
@@ -88,6 +92,76 @@ function ProtectedRoute({ allowedRoles, element }) {
     return <Navigate to={getRoleRedirect(role)} replace />;
   }
   return element;
+}
+
+function VetVerificationGuard({ mode, element }) {
+  const { t } = useTranslation();
+  const {
+    verification,
+    verificationLoading,
+    verificationError,
+    verificationState,
+    verificationStateError,
+    ensureVerification,
+    refreshVerification,
+  } = useVetContext();
+
+  // `ensureVerification` reuses whatever the provider already holds, so moving
+  // between vet routes no longer refetches the status on every mount.
+  useEffect(() => {
+    ensureVerification().catch(() => {
+      /* surfaced through verificationError below */
+    });
+  }, [ensureVerification]);
+
+  // Only the first resolution blocks the route. A later re-check (the
+  // pending page polls on window focus) keeps the page on screen and reports
+  // itself inline, instead of flashing this screen over a working page.
+  if (!verification && verificationLoading) {
+    return (
+      <div role="status" className="vet-route-status">
+        {t("vetPendingApproval.checkingStatus")}
+      </div>
+    );
+  }
+
+  if (!verification && verificationError) {
+    return (
+      <div role="alert" className="vet-route-status">
+        <p>{verificationError || t("vetPendingApproval.statusError")}</p>
+        <button type="button" onClick={() => refreshVerification().catch(() => {})}>
+          {t("vetPendingApproval.retry")}
+        </button>
+      </div>
+    );
+  }
+
+  if (!verification || verificationStateError) {
+    return (
+      <div role="alert" className="vet-route-status">
+        {verificationStateError || t("vetPendingApproval.checkingStatus")}
+      </div>
+    );
+  }
+
+  const allowed =
+    (mode === "operational" && verificationState === VET_VERIFICATION_STATE.APPROVED) ||
+    (mode === "verification" && [VET_VERIFICATION_STATE.NOT_SUBMITTED, VET_VERIFICATION_STATE.REJECTED].includes(verificationState)) ||
+    (mode === "pending" && [VET_VERIFICATION_STATE.PENDING, VET_VERIFICATION_STATE.REJECTED].includes(verificationState));
+
+  if (!allowed) return <Navigate to={getVetDestination(verification)} replace />;
+  // No prop-drilling of the status any more: the pages that need it read the
+  // same value straight from VetContext.
+  return element;
+}
+
+function ProtectedVetRoute({ mode, element }) {
+  return (
+    <ProtectedRoute
+      allowedRoles={["Vet"]}
+      element={<VetVerificationGuard mode={mode} element={element} />}
+    />
+  );
 }
 
 function SessionExpiryHandler() {
@@ -217,14 +291,27 @@ function App() {
         />
 
         {/* VETERINARIAN */}
-        <Route path="/vet/dashboard" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetDashboard />} />} />
-        <Route path="/vet/profile" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetProfile />} />} />
-        <Route path="/vet/reviews" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetReviews />} />} />
-        <Route path="/vet/patients" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetPatients />} />} />
-        <Route path="/vet/appointments" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetAppointments />} />} />
-        <Route path="/vet/calendar" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetCalendar />} />} />
-        <Route path="/vet/professional-verification" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetProfessionalVerification />} />} />
-        <Route path="/vet/pending-approval" element={<ProtectedRoute allowedRoles={["Vet"]} element={<VetPendingApproval />} />} />
+        {/* One provider for the whole section: it stays mounted across
+            /vet/* navigations, so the verification status and the profile are
+            fetched once instead of once per route. */}
+        <Route
+          path="/vet/*"
+          element={
+            <VetProvider>
+              <Routes>
+                <Route path="dashboard" element={<ProtectedVetRoute mode="operational" element={<VetDashboard />} />} />
+                <Route path="profile" element={<ProtectedVetRoute mode="operational" element={<VetProfile />} />} />
+                <Route path="reviews" element={<ProtectedVetRoute mode="operational" element={<VetReviews />} />} />
+                <Route path="patients" element={<ProtectedVetRoute mode="operational" element={<VetPatients />} />} />
+                <Route path="appointments" element={<ProtectedVetRoute mode="operational" element={<VetAppointments />} />} />
+                <Route path="calendar" element={<ProtectedVetRoute mode="operational" element={<VetCalendar />} />} />
+                <Route path="professional-verification" element={<ProtectedVetRoute mode="verification" element={<VetProfessionalVerification />} />} />
+                <Route path="pending-approval" element={<ProtectedVetRoute mode="pending" element={<VetPendingApproval />} />} />
+                <Route path="*" element={<Navigate to="/vet/dashboard" replace />} />
+              </Routes>
+            </VetProvider>
+          }
+        />
 
         {/* CATCH-ALL */}
         <Route path="*" element={<Navigate to="/" replace />} />

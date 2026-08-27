@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
 import { loginUser, registerUser } from "../../api/authApi.js";
+import { getVetVerificationStatus } from "../../api/vetApi.js";
+import { getVetDestination } from "../../utils/vetVerification.js";
 import useModalA11y from "../../hooks/useModalA11y.js";
 
 const getRoleRedirect = (role) => {
@@ -15,11 +17,31 @@ const getRoleRedirect = (role) => {
   }
 };
 
+async function getAuthenticatedDestination(user) {
+  if (!user || typeof user.role !== "string") {
+    throw new Error("بيانات المستخدم المستلمة غير مكتملة.");
+  }
+  if (user.role !== "Vet") return getRoleRedirect(user.role);
+  return getVetDestination(await getVetVerificationStatus());
+}
+
+/**
+ * الأدوار المتاحة للتسجيل العام.
+ *
+ * دور "Admin" مُزال عمداً: لا يُنشأ حساب مدير عبر التسجيل الذاتي. هذا إخفاء
+ * من الواجهة فقط — AuthService.RegisterAsync ما زال يقبل Role="Admin" لمن
+ * ينادي الـ API مباشرةً، والإغلاق الكامل يتطلب تغييراً في الـ backend.
+ *
+ * تسجيل الدخول لحسابات المدراء القائمة غير متأثر: getRoleRedirect أعلاه
+ * ما زال يوجّه دور "Admin" إلى /admin.
+ *
+ * الترتيب هنا مقترن بالفهرس مع authModal.roles في ملفات الترجمة — أي تعديل
+ * على أحدهما يلزمه تعديل مطابق على الآخر.
+ */
 const ROLE_VALUES = [
   { value: "Pet Owner", icon: "🐾" },
   { value: "Adoption Center", icon: "🏠" },
   { value: "Veterinarian", icon: "🩺" },
-  { value: "Admin", icon: "🔑" },
 ];
 
 export default function AuthModal({ mode, onClose }) {
@@ -32,9 +54,12 @@ export default function AuthModal({ mode, onClose }) {
   const [error, setError] = useState("");
   const [roleError, setRoleError] = useState("");
 
-  const roleOptions = t("authModal.roles", { returnObjects: true }).map((role, i) => ({
+  // ROLE_VALUES is the source of truth for what may be registered. Zipping
+  // from it (rather than from the translation list) means a stale locale entry
+  // can never resurrect a role the app no longer offers.
+  const roleOptions = ROLE_VALUES.map((role, i) => ({
+    ...(t("authModal.roles", { returnObjects: true })[i] ?? {}),
     ...role,
-    ...ROLE_VALUES[i],
   }));
 
   const [signInForm, setSignInForm] = useState({ email: "", password: "" });
@@ -74,8 +99,9 @@ export default function AuthModal({ mode, onClose }) {
     setLoading(true);
     try {
       const user = await loginUser(signInForm);
+      const destination = await getAuthenticatedDestination(user);
       onClose();
-      navigate(getRoleRedirect(user.role));
+      navigate(destination);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -108,8 +134,9 @@ export default function AuthModal({ mode, onClose }) {
     setLoading(true);
     try {
       const user = await registerUser(signUpForm);
+      const destination = await getAuthenticatedDestination(user);
       onClose();
-      navigate(getRoleRedirect(user.role));
+      navigate(destination);
     } catch (err) {
       setError(err.message);
     } finally {

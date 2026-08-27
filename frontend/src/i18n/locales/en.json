@@ -1280,10 +1280,6 @@
       {
         "label": "Vet",
         "description": "Offer veterinary services"
-      },
-      {
-        "label": "Admin",
-        "description": "Manage the platform"
       }
     ],
     "tabsLabel": "Sign in or create an account"
@@ -1994,7 +1990,8 @@
       "profileTitle": "Admin profile",
       "profileError": "Profile unavailable",
       "switchToEnglish": "Switch language to English",
-      "switchToArabic": "Switch language to Arabic"
+      "switchToArabic": "Switch language to Arabic",
+      "logout": "Log out"
     },
     "sidebar": {
       "logoAlt": "Pet Haven Logo",
@@ -2028,11 +2025,11 @@
     },
     "vetApprovals": {
       "title": "Vet Approvals",
-      "subtitle": "Verify or reject veterinarian accounts submitted for review.",
+      "subtitle": "Review the veterinarian accounts currently returned by the verification queue.",
       "pendingCount": "{{total}} pending",
       "idLabel": "Vet ID {{id}}",
       "empty": "No veterinarians are waiting for approval.",
-      "emptyHint": "New submissions appear here as soon as a veterinarian registers.",
+      "emptyHint": "Accounts appear here while the verification queue still returns them.",
       "listLabel": "Veterinarians pending approval",
       "verifyFor": "Verify {{name}}",
       "rejectFor": "Reject {{name}}",
@@ -2055,23 +2052,35 @@
       "rejectConfirm": {
         "title": "Reject this veterinarian?",
         "message": "You are about to reject {{name}}.",
-        "warning": "This permanently deletes the veterinarian account from the platform. The action cannot be undone.",
-        "confirm": "Reject and delete"
-      }
+        "warning": "This rejects the veterinarian's verification request. The account is not deleted, and it can be approved later.",
+        "confirm": "Reject request",
+        "reasonLabel": "Reason for rejection (optional)",
+        "reasonPlaceholder": "Explain what was missing from the submitted documents",
+        "reasonHint": "Shown to the veterinarian. Left blank, the server records its own default reason."
+      },
+      "certificate": {
+        "view": "View certificate",
+        "viewFor": "View the certificate of {{name}}",
+        "open": "Open the certificate of {{name}}",
+        "loading": "Loading certificate…",
+        "missing": "This veterinarian has not uploaded a certificate yet."
+      },
+      "queueNote": "This queue lists the accounts the server currently returns as not yet verified. It does not distinguish a new application from one that was already rejected."
     },
     "users": {
       "title": "User Management",
       "subtitle": "Ban or unban platform accounts.",
       "notice": {
         "title": "Actions are performed by User ID",
-        "text": "The backend exposes ban and unban endpoints only — there is no user listing endpoint — so accounts are targeted by their numeric User ID. Admin accounts cannot be banned."
+        "text": "The backend exposes ban and unban endpoints only — there is no user listing endpoint — so accounts are targeted by their numeric User ID. Admin accounts cannot be banned.",
+        "idWarning": "This screen targets a User ID. The Vet Approvals screen shows a Vet ID — the two are different identifiers and are not interchangeable."
       },
       "fields": {
         "userId": "User ID",
         "userIdPlaceholder": "e.g. 42",
         "reason": "Reason",
         "reasonPlaceholder": "Describe why this account is being banned",
-        "reasonHint": "Sent to the backend together with the ban request."
+        "reasonHint": "Sent with the ban request. The server does not currently keep a record of it."
       },
       "errors": {
         "invalidUserId": "Enter a valid numeric User ID."
@@ -2097,6 +2106,7 @@
     }
   },
   "vetDashboard": {
+    "widgetError": "This dashboard section couldn't be loaded.",
     "loading": "Loading your dashboard...",
     "comingSoon": "Coming soon",
     "header": {
@@ -2181,7 +2191,7 @@
       "columns": {
         "patient": "Patient",
         "breed": "Breed/Species",
-        "lastVisit": "Last Visit",
+        "lastVisit": "Latest Appointment",
         "action": "Action"
       },
       "searchLabel": "Search recent patients",
@@ -2198,12 +2208,14 @@
       "unnamed": "Unnamed Veterinarian",
       "verified": "Verified",
       "pendingVerification": "Pending Verification",
-      "noEmail": "No email on file"
+      "noEmail": "No email on file",
+      "profileImageAlt": "Profile image for {{name}}"
     },
     "basicInfo": {
       "title": "Basic Information",
       "fullName": "Vet Name",
       "email": "Email",
+      "emailReadOnly": "Email is read-only because the current backend does not reliably return Vet email updates.",
       "phoneNumber": "Phone Number",
       "address": "Clinic Address",
       "addressPlaceholder": "Use GPS or enter the clinic address",
@@ -2216,7 +2228,16 @@
       "experienceYears": "Years of Experience",
       "specialization": "Specialization",
       "clinicName": "Clinic Name",
-      "licenseNumber": "License Number"
+      "licenseNumber": "License Number",
+      "gpsAddressFailed": "Clinic coordinates saved. The address lookup failed — enter the clinic address manually, then save changes."
+    },
+    "certificate": {
+      "view": "View current certificate",
+      "none": "No certificate is currently available.",
+      "replace": "Replace Certificate",
+      "selected": "Selected: {{name}}",
+      "pdfHint": "Optional. The profile endpoint accepts PDF certificates only.",
+      "pdfOnly": "The profile certificate must be a PDF file."
     },
     "cancel": "Cancel",
     "saving": "Saving...",
@@ -2290,7 +2311,7 @@
     },
     "card": {
       "owner": "Owner",
-      "lastVisit": "Last Visit",
+      "lastVisit": "Latest Appointment",
       "visitCount": "Visits",
       "viewRecords": "View Records",
       "viewRecordsFor": "View the records of {{name}}"
@@ -2351,6 +2372,10 @@
       "cancelled": {
         "label": "Cancellations",
         "caption": "For the selected day"
+      },
+      "completed": {
+        "label": "Completed",
+        "caption": "For the selected day"
       }
     },
     "toolbar": {
@@ -2407,6 +2432,7 @@
     "grid": {
       "loading": "Loading calendar...",
       "dayError": "Failed to load this day.",
+      "retryDay": "Retry loading {{date}}",
       "moreEvents": "+{{count}} more",
       "showLess": "Show less",
       "dayEvents": "{{count}} appointment",
@@ -2434,12 +2460,17 @@
     },
     "errors": {
       "licenseRequired": "License number is required.",
-      "fileRequired": "Please upload your license or certification document."
+      "fileRequired": "Please upload your license or certification document.",
+      "fileType": "Upload a PDF, JPG, JPEG, or PNG file.",
+      "fileSize": "The certificate file must be 10 MB or smaller.",
+      "submitFailed": "We couldn't submit your verification request."
     },
     "actions": {
       "saveForLater": "Save for Later",
-      "submit": "Submit Verification"
-    }
+      "submit": "Submit Verification",
+      "submitting": "Submitting..."
+    },
+    "rejectedTitle": "Your previous verification request was rejected. You may submit updated documents."
   },
   "vetPendingApproval": {
     "title": "Account Under Review",
@@ -2447,6 +2478,12 @@
     "note": "You cannot manage your clinic or receive bookings until Admin approval. We will notify you via email once your status is updated.",
     "logOut": "Log Out",
     "contactSupport": "Contact Support",
-    "applicationIdLabel": "Application ID:"
+    "applicationIdLabel": "Application ID:",
+    "checkingStatus": "Checking your verification status...",
+    "statusError": "We couldn't check your verification status.",
+    "retry": "Retry",
+    "rejectedTitle": "Verification Needs Attention",
+    "rejectedMessage": "Your verification request was rejected. Review the reason below and submit updated documents.",
+    "resubmit": "Resubmit Documents"
   }
 }

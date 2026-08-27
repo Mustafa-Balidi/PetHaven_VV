@@ -221,7 +221,7 @@
 
 @media (min-width: 1100px) {
   .vet-appointments-summary {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 

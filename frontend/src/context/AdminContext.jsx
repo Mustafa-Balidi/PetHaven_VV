@@ -17,8 +17,25 @@ export default function AdminProvider({ children }) {
   // ── In-flight mutation key, e.g. "verify-12" / "ban" / "unban" ─────
   const [actionLoading, setActionLoading] = useState(null);
 
+  // ── Vet whose certificate is being fetched (a read, not a mutation, so
+  //    it stays out of actionLoading and never blocks approve/reject) ──
+  const [certificateLoadingId, setCertificateLoadingId] = useState(null);
+
   const mountedRef = useRef(true);
   const statsLoadedRef = useRef(false);
+
+  /**
+   * Errors are kept as `{ message, forbidden }` rather than a bare string.
+   *
+   * A 403 means the signed-in account is authenticated but its role is not
+   * allowed here, so retrying the exact same request can never succeed — the
+   * pages read `forbidden` to drop the "Try again" affordance. Every other
+   * failure (network, 5xx, malformed payload) stays retryable.
+   */
+  const toErrorState = (error) => ({
+    message: error.message,
+    forbidden: Boolean(error.forbidden),
+  });
 
   useEffect(() => {
     mountedRef.current = true;
@@ -38,7 +55,7 @@ export default function AdminProvider({ children }) {
       return data;
     } catch (error) {
       if (!mountedRef.current) return null;
-      setDashboardError(error.message);
+      setDashboardError(toErrorState(error));
       return null;
     } finally {
       if (mountedRef.current) setDashboardLoading(false);
@@ -56,7 +73,7 @@ export default function AdminProvider({ children }) {
       return data;
     } catch (error) {
       if (!mountedRef.current) return [];
-      setPendingVetsError(error.message);
+      setPendingVetsError(toErrorState(error));
       setPendingVets([]);
       setPendingVetsLoaded(false);
       return [];
@@ -101,19 +118,42 @@ export default function AdminProvider({ children }) {
   );
 
   const rejectVet = useCallback(
-    (vetId) =>
+    (vetId, reason) =>
       runAction(
         `reject-${vetId}`,
-        () => adminApi.rejectVet(vetId),
+        () => adminApi.rejectVet(vetId, reason),
         () => {
           if (!mountedRef.current) return;
+          // Rejection only flips VerificationStatus to "Rejected" — no user
+          // and no vet row is deleted — so none of the stat counters move and
+          // refetching them here would be a pointless request.
+          //
+          // The card is dropped for this session only: the backend selects the
+          // queue with `IsVerified == false`, which a rejected vet still
+          // matches, so the next refresh can legitimately bring it back.
           setPendingVets((previous) => previous.filter((vet) => vet.vetId !== vetId));
-          // Rejection deletes the user account, so the counters move too.
-          refreshStatsIfLoaded();
         }
       ),
-    [runAction, refreshStatsIfLoaded]
+    [runAction]
   );
+
+  /**
+   * Loads one vet's certificate URL on demand.
+   *
+   * Kept out of `runAction` because it mutates nothing: it must not lock the
+   * approve/reject buttons, and it returns a URL rather than a message.
+   */
+  const loadVetCertificate = useCallback(async (vetId) => {
+    setCertificateLoadingId(vetId);
+    try {
+      const { url } = await adminApi.getVetCertificate(vetId);
+      return { success: true, url, message: "" };
+    } catch (error) {
+      return { success: false, url: null, message: error.message };
+    } finally {
+      if (mountedRef.current) setCertificateLoadingId(null);
+    }
+  }, []);
 
   const banUser = useCallback(
     (userId, reason) =>
@@ -136,10 +176,12 @@ export default function AdminProvider({ children }) {
       pendingVetsLoading,
       pendingVetsError,
       actionLoading,
+      certificateLoadingId,
       fetchStats,
       fetchPendingVets,
       verifyVet,
       rejectVet,
+      loadVetCertificate,
       banUser,
       unbanUser,
     }),
@@ -152,10 +194,12 @@ export default function AdminProvider({ children }) {
       pendingVetsLoading,
       pendingVetsError,
       actionLoading,
+      certificateLoadingId,
       fetchStats,
       fetchPendingVets,
       verifyVet,
       rejectVet,
+      loadVetCertificate,
       banUser,
       unbanUser,
     ]

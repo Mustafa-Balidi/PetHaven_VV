@@ -62,7 +62,7 @@ export default function AdminDashboard() {
         </button>
       }
     >
-      <AdminFeedback type="error" message={dashboardError} />
+      <AdminFeedback type="error" message={dashboardError?.message} />
 
       {!stats && dashboardLoading ? (
         <div className="admin-state admin-state--loading" role="status">
@@ -75,9 +75,13 @@ export default function AdminDashboard() {
         <div className="admin-state">
           <Icon name="cloud_off" />
           <p>{t("admin.dashboard.statsUnavailable")}</p>
-          <button type="button" className="admin-btn admin-btn--primary" onClick={fetchStats}>
-            {t("admin.common.retry")}
-          </button>
+          {/* A 403 is a role problem, not a transient one: the same request
+              would fail identically, so no retry is offered. */}
+          {dashboardError.forbidden ? null : (
+            <button type="button" className="admin-btn admin-btn--primary" onClick={fetchStats}>
+              {t("admin.common.retry")}
+            </button>
+          )}
         </div>
       ) : null}
 
@@ -115,7 +119,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
 
-          <AdminFeedback type="error" message={pendingVetsError} />
+          <AdminFeedback type="error" message={pendingVetsError?.message} />
 
           {pendingVetsLoading && !pendingVets.length ? (
             <div className="admin-state admin-state--inline" role="status">

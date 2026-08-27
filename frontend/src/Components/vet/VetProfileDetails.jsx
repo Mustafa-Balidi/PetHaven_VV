@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon.jsx";
+import { resolveBackendAssetUrl } from "../../api/apiClient.js";
 
 export default function VetProfileDetails({ profile }) {
   const { t } = useTranslation();
@@ -10,11 +11,17 @@ export default function VetProfileDetails({ profile }) {
     .slice(0, 2)
     .join("")
     .toUpperCase();
+  const profileImageUrl = resolveBackendAssetUrl(profile.profileImageUrl);
+  const certificateUrl = resolveBackendAssetUrl(profile.certificateUrl);
 
   return (
     <section className="vet-profile-identity">
-      <div className="vet-profile-identity__avatar" aria-hidden="true">
-        {initials || <Icon name="person" />}
+      <div className="vet-profile-identity__avatar">
+        {profileImageUrl ? (
+          <img src={profileImageUrl} alt={t("vetProfile.identity.profileImageAlt", { name: profile.fullName })} />
+        ) : (
+          <span aria-hidden="true">{initials || <Icon name="person" />}</span>
+        )}
       </div>
       <div className="vet-profile-identity__body">
         <div className="vet-profile-identity__name-row">
@@ -31,6 +38,15 @@ export default function VetProfileDetails({ profile }) {
         <p className="vet-profile-identity__meta vet-profile-identity__meta--muted">
           {profile.email || t("vetProfile.identity.noEmail")}
         </p>
+        {certificateUrl ? (
+          <a href={certificateUrl} target="_blank" rel="noreferrer" className="vet-profile-identity__meta">
+            <Icon name="description" className="vet-profile-icon-sm" /> {t("vetProfile.certificate.view")}
+          </a>
+        ) : (
+          <p className="vet-profile-identity__meta vet-profile-identity__meta--muted">
+            {t("vetProfile.certificate.none")}
+          </p>
+        )}
       </div>
     </section>
   );

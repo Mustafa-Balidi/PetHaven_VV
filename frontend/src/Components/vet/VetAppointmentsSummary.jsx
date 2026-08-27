@@ -5,6 +5,7 @@ const CARDS = [
   { key: "total", icon: "event", accent: "primary" },
   { key: "confirmed", icon: "check_circle", accent: "green" },
   { key: "pending", icon: "pending_actions", accent: "yellow" },
+  { key: "completed", icon: "done_all", accent: "primary" },
   { key: "cancelled", icon: "cancel", accent: "red" },
 ];
 
@@ -15,6 +16,7 @@ export default function VetAppointmentsSummary({ summary }) {
     total: s.totalToday ?? 0,
     confirmed: s.confirmedCount ?? 0,
     pending: s.pendingCount ?? 0,
+    completed: s.completedCount ?? 0,
     cancelled: s.cancelledCount ?? 0,
   };
 

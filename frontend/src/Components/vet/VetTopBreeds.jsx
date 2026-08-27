@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-export default function VetTopBreeds({ data }) {
+export default function VetTopBreeds({ data, loading = false, error = "" }) {
   const { t } = useTranslation();
 
   return (
@@ -9,7 +9,11 @@ export default function VetTopBreeds({ data }) {
         {t("vetDashboard.breeds.title")}
       </h2>
 
-      {data.length ? (
+      {loading ? (
+        <p className="vet-dashboard-empty" role="status">{t("vetDashboard.loading")}</p>
+      ) : error ? (
+        <div className="vet-dashboard-alert" role="alert"><span>{error}</span></div>
+      ) : data.length ? (
         <ul className="vet-dashboard-breeds">
           {data.map((item, index) => (
             <li key={item.breed} className="vet-dashboard-breeds__row">
